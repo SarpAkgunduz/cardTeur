@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import BackButton from '../components/BackButton';
+
 
 const AddPlayerForm = () => {
+
+    // Redirect to the previous page
+    const navigate = useNavigate();
+
+
+  // State variables for player attributes
   const [name, setName] = useState('');
   const [cardImage, setCardImage] = useState('');
   const [jerseyNumber, setjerseyNumber] = useState<number | string>('');
@@ -99,6 +108,10 @@ const AddPlayerForm = () => {
   };
 
   return (
+    <div className="container mt-4">
+      {/* Back button */}
+      <BackButton position="absolute" top="20px" right="20px" />
+      {/* Form for adding a player */}
     <form onSubmit={handleSubmit} className="container mt-4">
       <h2 className="mb-4">Add Player</h2>
   
@@ -243,6 +256,7 @@ const AddPlayerForm = () => {
         Add Player
       </button>
     </form>
+    </div>
   );
   
 };
