@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import BackButton from '../components/BackButton';
 
 
 const AddPlayerForm = () => {
-
-    // Redirect to the previous page
-    const navigate = useNavigate();
 
 
   // State variables for player attributes
@@ -19,6 +15,7 @@ const AddPlayerForm = () => {
   const [dribbling, setDribbling] = useState(0);
   const [shotAccuracy, setShotAccuracy] = useState(0);
   const [shotSpeed, setShotSpeed] = useState(0);
+  const [headers, setHeader] = useState(0);
   const [longPass, setLongPass] = useState(0);
   const [shortPass, setShortPass] = useState(0);
   const [ballControl, setBallControl] = useState(0);
@@ -36,7 +33,7 @@ const AddPlayerForm = () => {
   const [stamina, setStamina] = useState(0);
 
 
-  const offensiveStats = [dribbling, shotAccuracy, shotSpeed, ballControl, vision, positioning, finishing, longPass, shortPass];
+  const offensiveStats = [dribbling, shotAccuracy, shotSpeed, headers,ballControl, vision, positioning, finishing, longPass, shortPass];
   const defensiveStats = [tackling, interceptions, marking];
   const athleticismStats = [speed, strength, stamina];
   // Overalls (calculated)
@@ -74,6 +71,7 @@ const AddPlayerForm = () => {
         dribbling,
         shotAccuracy,
         shotSpeed,
+        headers,
         longPass,
         shortPass,
         ballControl,
@@ -178,6 +176,9 @@ const AddPlayerForm = () => {
       <label htmlFor="shotSpeed">Shot Speed</label>
       <input id="shotSpeed" type="number" className="form-control mb-2" value={shotSpeed} onChange={(e) => setShotSpeed(+e.target.value)} />
 
+      <label htmlFor="headers">Headers</label>
+      <input id="headers" type="number" className="form-control mb-2" value={headers} onChange={(e) => setHeader(+e.target.value)} />
+      
       <label htmlFor="finishing">Offensive IQ</label>
       <input id="finishing" type="number" className="form-control mb-2" value={finishing} onChange={(e) => setFinishing(+e.target.value)} />
 

@@ -1,2 +1,4 @@
-.DS_Store
 .env
+server/.env
+.DS_Store
+**/.DS_Store
