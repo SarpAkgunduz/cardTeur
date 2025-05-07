@@ -61,8 +61,11 @@ npm install --save-dev typescript @types/react @types/react-dom
 npm install react-router-dom
 npm install --save-dev @types/react-router-dom
 npm install bootstrap
+npm install recharts
+npm install react-bootstrap bootstrap
 
-✅ server/ (Backend)
+
+### ✅ 'server/' (Backend)
 
 cd server
 npm install express mongoose cors dotenv
