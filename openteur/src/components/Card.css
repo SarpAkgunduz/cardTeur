@@ -1,6 +1,6 @@
 .card {
   width: 200px;
-  height: 240px;
+  height: 300px !important; /* increased height */
   border: 1px solid #ccc;
   padding: 16px;
   border-radius: 8px;
@@ -13,9 +13,12 @@
 }
 
 .card img {
-  width: 100px;
-  height: 120px;
+  width: 120px;        /* fixed image width */
+  height: 160px;       /* fixed image height */
   margin-bottom: 8px;
+  margin-top: 8px;     /* shift image slightly down */
+  object-fit: cover;   /* make sure it fits without distortion */
+  border-radius: 4px;
 }
 
 .card h3 {
@@ -36,7 +39,6 @@
   font-size: 0.9rem;
   padding: 0 8px;
 }
-
 
 .stat-bar span {
   margin: 0;

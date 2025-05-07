@@ -13,6 +13,8 @@ export interface CardProps {
   cardTitle: "gold" | "silver" | "bronze" | "platinum";
   deleteMode?: boolean;
   onDelete?: () => void; // or (id: string) => void if you want to pass an id
+  compareMode?: boolean;
+  onCompareSelect?: () => void;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -23,8 +25,17 @@ const Card: React.FC<CardProps> = ({
   cardImage,
   /*Card title is not used in the component, but it's part of the props in future it can be added as a feature.*/
   cardTitle,
+
+
+  /*deleteMode is a boolean that will be used to toggle the delete button*/
   deleteMode = false,
   onDelete,
+
+
+  /*onCompareSelect is a function that will be called when the compare button is clicked*/
+  compareMode = false,
+  onCompareSelect,
+  
 }) => {
   return (
     <div className="card position-relative">
@@ -38,7 +49,19 @@ const Card: React.FC<CardProps> = ({
           ➖
         </button>
       )}
-
+      {/* Plus button in compare mode */}
+      {/* This button will be used to select the player for comparison */}
+      {/* It will be shown only if compareMode is true */}
+      {/* The button will call the onCompareSelect function when clicked */}
+      {compareMode && (
+        <button
+          onClick={onCompareSelect}
+          className="btn btn-primary btn-sm position-absolute top-0 end-0 m-2"
+          style={{ zIndex: 10 }}
+        >
+          ➕
+        </button>
+      )}
       {/* Card content */}
       <h3>{name}</h3>
       <img src={cardImage} alt={name} />
