@@ -2,11 +2,23 @@ const mongoose = require('mongoose');
 
 const PlayerSchema = new mongoose.Schema({
   name: String,
+  jerseyNumber: Number,
+  preferredPosition: {
+    type: String,
+    enum: ['forward', 'midfielder', 'defender', 'goalkeeper'],
+  },
+  marketValue: Number,
   cardImage: String,
   cardTitle: {
     type: String,
     enum: ['gold', 'silver', 'bronze', 'platinum'],
   },
+
+
+  //!!!!!TO DO: Check the fields if it matches the database
+  //!!!!!TO DO: Check the fields if it matches the database
+  //!!!!!TO DO: Check the fields if it matches the database
+  
   // Overalls
   offensiveOverall: Number,
   defensiveOverall: Number,

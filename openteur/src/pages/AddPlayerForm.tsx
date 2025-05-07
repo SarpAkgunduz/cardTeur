@@ -9,6 +9,7 @@ const AddPlayerForm = () => {
   const [name, setName] = useState('');
   const [cardImage, setCardImage] = useState('');
   const [jerseyNumber, setjerseyNumber] = useState<number | string>('');
+  const [marketValue, setMarketValue] = useState<number | string>('');
   const [preferredPosition, setpreferredPosition] = useState('');
     // Sub-stats
     // Offensive stats
@@ -62,6 +63,7 @@ const AddPlayerForm = () => {
         jerseyNumber,
         preferredPosition,
         cardTitle,
+        marketValue,
         cardImage,
         offensiveOverall,
         defensiveOverall,
@@ -129,6 +131,14 @@ const AddPlayerForm = () => {
         value={jerseyNumber}
         onChange={(e) => setjerseyNumber(e.target.value)}
       />
+      {/* Market value input */}
+      <input
+        className="form-control mb-2"
+        placeholder="Market Value"
+        type="string"
+        value={marketValue}
+        onChange={(e) => setMarketValue(e.target.value)}
+      />
       {/* Preferred position input */}
       <input
         className="form-control mb-2"
@@ -189,7 +199,7 @@ const AddPlayerForm = () => {
       <label htmlFor="shortPass">Short Pass</label>
       <input id="shortPass" type="number" className="form-control mb-3" value={shortPass} onChange={(e) => setShortPass(+e.target.value)} />
 
-      <label htmlFor="ballControl">Short Pass</label>
+      <label htmlFor="ballControl">Ball Control</label>
       <input id="ballControl" type="number" className="form-control mb-3" value={ballControl} onChange={(e) => setBallControl(+e.target.value)} />
 
       <label htmlFor="positioning">Positioning</label>

@@ -1,52 +1,49 @@
-# cardTeur
-
-This is a website created with react.
-
-Purpose of this project is creating player cards like menager games or fifa but the card created by users.
-
-So you can create cards of your friends and set their abilities as you wish.
-
-After I build the main card creation process I will make this a matchmaking tool which divides teams as fair as it can be.
-
-
 # CardTeur
 
-A full-stack app to manage custom football player cards. Inspired by FIFA, this system allows users to create, view, and update players with rich stats and visuals.
+CardTeur is a full-stack web application that allows users to create, view, and manage custom football player cards, similar to those seen in FIFA or football manager games.
+
+The app lets users assign abilities, upload images, and categorize player cards. Future plans include implementing team-matching features to automatically form balanced teams.
 
 ---
 
-## 🧱 Tech Stack
+## 🛠️ Tech Stack
 
 ### Frontend (`openteur/`)
-- React
-- TypeScript
-- React Router DOM
-- Bootstrap
-- Vite
+
+* React
+* TypeScript
+* React Router DOM
+* Bootstrap
+* React Bootstrap
+* Recharts (for radar charts)
+* Vite
 
 ### Backend (`server/`)
-- Node.js
-- Express
-- Mongoose (MongoDB ODM)
-- CORS
-- dotenv
+
+* Node.js
+* Express.js
+* MongoDB (with Mongoose ODM)
+* CORS
+* dotenv
 
 ---
 
-## 📁 Project Structure
+## 📂 Project Structure
 
+```
 cardteur/
-├── openteur/ # Frontend (Vite + React)
-│ ├── src/
-│ ├── public/
-│ └── package.json
-├── server/ # Backend (Express + MongoDB)
-│ ├── routes/
-│ ├── models/
-│ ├── index.js
-│ └── package.json
-└── .env # MongoDB credentials
-
+├── openteur/              # Frontend (React + Vite)
+│   ├── public/
+│   ├── src/
+│   └── package.json
+├── server/                # Backend (Express + MongoDB)
+│   ├── models/
+│   ├── routes/
+│   ├── index.js
+│   └── package.json
+├── .gitignore
+└── .env                   # MongoDB URI stored here
+```
 
 ---
 
@@ -58,25 +55,73 @@ cardteur/
 cd openteur
 npm install react react-dom
 npm install --save-dev typescript @types/react @types/react-dom
-npm install react-router-dom
-npm install --save-dev @types/react-router-dom
-npm install bootstrap
+npm install react-router-dom @types/react-router-dom
+npm install bootstrap react-bootstrap
 npm install recharts
-npm install react-bootstrap bootstrap
+```
 
+### ✅ `server/` (Backend)
 
-### ✅ 'server/' (Backend)
-
+```bash
 cd server
 npm install express mongoose cors dotenv
 npm install --save-dev nodemon
+```
 
-CORS is explicitly configured to allow communication from http://localhost:5173.
+> Note: CORS is explicitly configured to allow communication from `http://localhost:5173`
 
+---
 
-⚙️ Setup Guide
-1. Clone the Project
-on bash:
+## ⚙️ Setup Guide
 
+### 1. Clone the Project
+
+```bash
 git clone https://github.com/your-username/cardteur.git
 cd cardteur
+```
+
+### 2. Setup the Backend
+
+```bash
+cd server
+npm install
+```
+
+Create a `.env` file in the `server/` directory:
+
+```
+MONGO_URI=your_mongodb_connection_string
+```
+
+Start the server:
+
+```bash
+npm run dev
+```
+
+### 3. Setup the Frontend
+
+```bash
+cd ../openteur
+npm install
+npm run dev
+```
+
+Visit `http://localhost:5173` in your browser to access the app.
+
+---
+
+## 📖 Features
+
+* Create custom player cards
+* Upload player images
+* Assign detailed stats (offense, defense, athleticism, etc.)
+* Delete or compare player cards with radar charts
+* Responsive UI with sliding compare panel
+
+---
+
+## 🔐 License
+
+This project is open-source and available under the MIT License.
