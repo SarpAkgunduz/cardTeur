@@ -6,6 +6,7 @@ export interface CardProps {
   // _id is used for delete operation, so it's required
   // but not used in the component itself
   name: string;
+  preferredPosition: string;
   offensiveOverall: number;
   defensiveOverall: number;
   athleticismOverall: number;
@@ -19,6 +20,7 @@ export interface CardProps {
 
 const Card: React.FC<CardProps> = ({
   name,
+  preferredPosition,
   offensiveOverall,
   defensiveOverall,
   athleticismOverall,
@@ -65,6 +67,7 @@ const Card: React.FC<CardProps> = ({
       {/* Card content */}
       <h3>{name}</h3>
       <img src={cardImage} alt={name} />
+      <p>{preferredPosition}</p>
       <div className="stat-bar">
         <span>OFF: {offensiveOverall}</span>
         <span>ATH: {athleticismOverall}</span>
