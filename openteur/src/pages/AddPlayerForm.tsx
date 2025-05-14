@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import BackButton from '../components/BackButton';
-
+import { useNavigate } from 'react-router-dom';
+import ToastNotification from '../components/ToastNotification';
 
 const AddPlayerForm = () => {
 
-
+  
+  const navigate = useNavigate();
+  const [showToast, setShowToast] = useState(false);
   // State variables for player attributes
   const [name, setName] = useState('');
   const [cardImage, setCardImage] = useState('');
@@ -101,7 +104,10 @@ const AddPlayerForm = () => {
     });
 
     if (res.ok) {
-      alert('Player added!');
+      setShowToast(true);
+      setTimeout(() => {
+        navigate('/edit');
+      }, 2000); // let user see the toast for 2 seconds, then redirect
     } else {
       alert('Error adding player.');
     }
@@ -140,12 +146,26 @@ const AddPlayerForm = () => {
         onChange={(e) => setMarketValue(e.target.value)}
       />
       {/* Preferred position input */}
-      <input
-        className="form-control mb-2"
-        placeholder="Preferred Position"
+      <h5>Preferred Position</h5>
+      <select
+        className="form-select mb-2"
         value={preferredPosition}
         onChange={(e) => setpreferredPosition(e.target.value)}
-      />
+      >
+        <option value="">-- Choose a position --</option>
+        <option value="ST">Striker</option>
+        <option value="LW">Left Winger</option>
+        <option value="RW">Right Winger</option>
+        <option value="CAM">Central Attacking Midfielder</option>
+        <option value="CM">Central Midfielder</option>
+        <option value="CDM">Central Defensive Midfielder</option>
+        <option value="LB">Left Back</option>
+        <option value="RB">Right Back</option>
+        <option value="CB">Center Back</option>
+        <option value="GK">Goalkeeper</option>
+        <option value="LM">Left Midfielder</option>
+        <option value="RM">Right Midfielder</option>
+      </select>
   
       {/* Image select */}
       <h5>Select Player Image</h5>
@@ -179,34 +199,34 @@ const AddPlayerForm = () => {
       <h5>Offensive Stats</h5>
 
       <label htmlFor="dribbling">Dribbling</label>
-      <input id="dribbling" type="number" className="form-control mb-2" value={dribbling} onChange={(e) => setDribbling(+e.target.value)} />
+      <input id="dribbling" type="number" min={0} max={100} className="form-control mb-2" value={dribbling} onChange={(e) => setDribbling(+e.target.value)} />
 
       <label htmlFor="shotAccuracy">Shot Accuracy</label>
-      <input id="shotAccuracy" type="number" className="form-control mb-2" value={shotAccuracy} onChange={(e) => setShotAccuracy(+e.target.value)} />
+      <input id="shotAccuracy" type="number" min={0} max={100} className="form-control mb-2" value={shotAccuracy} onChange={(e) => setShotAccuracy(+e.target.value)} />
 
       <label htmlFor="shotSpeed">Shot Speed</label>
-      <input id="shotSpeed" type="number" className="form-control mb-2" value={shotSpeed} onChange={(e) => setShotSpeed(+e.target.value)} />
+      <input id="shotSpeed" type="number" min={0} max={100} className="form-control mb-2" value={shotSpeed} onChange={(e) => setShotSpeed(+e.target.value)} />
 
       <label htmlFor="headers">Headers</label>
-      <input id="headers" type="number" className="form-control mb-2" value={headers} onChange={(e) => setHeader(+e.target.value)} />
+      <input id="headers" type="number" min={0} max={100} className="form-control mb-2" value={headers} onChange={(e) => setHeader(+e.target.value)} />
       
       <label htmlFor="finishing">Offensive IQ</label>
-      <input id="finishing" type="number" className="form-control mb-2" value={finishing} onChange={(e) => setFinishing(+e.target.value)} />
+      <input id="finishing" type="number" min={0} max={100} className="form-control mb-2" value={finishing} onChange={(e) => setFinishing(+e.target.value)} />
 
       <label htmlFor="longPass">Long Pass</label>
-      <input id="longPass" type="number" className="form-control mb-2" value={longPass} onChange={(e) => setLongPass(+e.target.value)} />
+      <input id="longPass" type="number" min={0} max={100} className="form-control mb-2" value={longPass} onChange={(e) => setLongPass(+e.target.value)} />
 
       <label htmlFor="shortPass">Short Pass</label>
-      <input id="shortPass" type="number" className="form-control mb-3" value={shortPass} onChange={(e) => setShortPass(+e.target.value)} />
+      <input id="shortPass" type="number" min={0} max={100} className="form-control mb-3" value={shortPass} onChange={(e) => setShortPass(+e.target.value)} />
 
       <label htmlFor="ballControl">Ball Control</label>
-      <input id="ballControl" type="number" className="form-control mb-3" value={ballControl} onChange={(e) => setBallControl(+e.target.value)} />
+      <input id="ballControl" type="number" min={0} max={100} className="form-control mb-3" value={ballControl} onChange={(e) => setBallControl(+e.target.value)} />
 
       <label htmlFor="positioning">Positioning</label>
-      <input id="positioning" type="number" className="form-control mb-2" value={positioning} onChange={(e) => setPositioning(+e.target.value)} />
+      <input id="positioning" type="number" min={0} max={100} className="form-control mb-2" value={positioning} onChange={(e) => setPositioning(+e.target.value)} />
       
       <label htmlFor="vision">Vision</label>
-      <input id="vision" type="number" className="form-control mb-2" value={vision} onChange={(e) => setVision(+e.target.value)} />
+      <input id="vision" type="number" min={0} max={100} className="form-control mb-2" value={vision} onChange={(e) => setVision(+e.target.value)} />
       
 
 
@@ -214,16 +234,16 @@ const AddPlayerForm = () => {
       <h5>Defensive Stats</h5>
 
       <label htmlFor="tackling">Tackling</label>
-      <input id="tackling" type="number" className="form-control mb-2" value={tackling} onChange={(e) => setTackling(+e.target.value)} />
+      <input id="tackling" type="number" min={0} max={100} className="form-control mb-2" value={tackling} onChange={(e) => setTackling(+e.target.value)} />
 
       <label htmlFor="interceptions">Interceptions</label>
-      <input id="interceptions" type="number" className="form-control mb-2" placeholder="Interceptions" value={interceptions} onChange={(e) => setInterceptions(+e.target.value)} />
+      <input id="interceptions" type="number" min={0} max={100} className="form-control mb-2" placeholder="Interceptions" value={interceptions} onChange={(e) => setInterceptions(+e.target.value)} />
 
       <label htmlFor="marking">Marking</label>
-      <input id="marking" type="number" className="form-control mb-3" placeholder="Marking" value={marking} onChange={(e) => setMarking(+e.target.value)} />
+      <input id="marking" type="number" min={0} max={100} className="form-control mb-3" placeholder="Marking" value={marking} onChange={(e) => setMarking(+e.target.value)} />
 
       <label htmlFor="defensiveIQ">Defensive IQ</label>
-      <input id="defensiveIQ" type="number" className="form-control mb-2" placeholder="Defensive IQ" value={defensiveIQ} onChange={(e) => setDefensiveIQ(+e.target.value)} />
+      <input id="defensiveIQ" type="number" min={0} max={100} className="form-control mb-2" placeholder="Defensive IQ" value={defensiveIQ} onChange={(e) => setDefensiveIQ(+e.target.value)} />
   
       {/* Athleticism Stats */}
       <h5>Athleticism Stats</h5>
@@ -234,6 +254,7 @@ const AddPlayerForm = () => {
         type="number"
         className="form-control mb-2"
         value={speed}
+        min={0} max={100}
         onChange={(e) => setSpeed(+e.target.value)}
       />
 
@@ -243,6 +264,7 @@ const AddPlayerForm = () => {
         type="number"
         className="form-control mb-2"
         value={strength}
+        min={0} max={100}
         onChange={(e) => setStrength(+e.target.value)}
       />
 
@@ -252,6 +274,7 @@ const AddPlayerForm = () => {
         type="number"
         className="form-control mb-3"
         value={stamina}
+        min={0} max={100}
         onChange={(e) => setStamina(+e.target.value)}
       />
   
