@@ -8,6 +8,7 @@ interface Player {
   _id: string;
   name: string;
   cardImage: string;
+  preferredPosition: string;
   cardTitle: 'gold' | 'silver' | 'bronze' | 'platinum';
   offensiveOverall: number;
   defensiveOverall: number;
@@ -105,6 +106,7 @@ const PlayersPage = () => {
                   _id={player._id}
                   name={player.name}
                   cardImage={player.cardImage}
+                  preferredPosition={player.preferredPosition}
                   cardTitle={player.cardTitle}
                   offensiveOverall={player.offensiveOverall}
                   defensiveOverall={player.defensiveOverall}

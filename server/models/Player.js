@@ -5,7 +5,7 @@ const PlayerSchema = new mongoose.Schema({
   jerseyNumber: Number,
   preferredPosition: {
     type: String,
-    enum: ['forward', 'midfielder', 'defender', 'goalkeeper'],
+    enum: ['GK', 'CB', 'RB', 'LB', 'CDM', 'CM', 'CAM', 'RW', 'LW', 'ST', "LM", "RM"],
   },
   marketValue: Number,
   cardImage: String,
@@ -18,7 +18,7 @@ const PlayerSchema = new mongoose.Schema({
   //!!!!!TO DO: Check the fields if it matches the database
   //!!!!!TO DO: Check the fields if it matches the database
   //!!!!!TO DO: Check the fields if it matches the database
-  
+
   // Overalls
   offensiveOverall: Number,
   defensiveOverall: Number,
