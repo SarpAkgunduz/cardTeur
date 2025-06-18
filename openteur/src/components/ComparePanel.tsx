@@ -1,7 +1,7 @@
 import React from 'react';
 import { Offcanvas } from 'react-bootstrap';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend } from 'recharts';
-
+import './ComparePanel.css'; // Assuming you have some styles for the panel
 interface Player {
   _id: string;
   name: string;
@@ -14,17 +14,18 @@ interface ComparePanelProps {
   show: boolean;
   onClose: () => void;
   players: Player[];
+  onRemovePlayer: (id: string) => void;
 }
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff6b6b', '#00bcd4'];
 
-const ComparePanel: React.FC<ComparePanelProps> = ({ show, onClose, players }) => {
-  const radarData: Array<{ stat: string; [key: string]: number | string }> = [
+const ComparePanel: React.FC<ComparePanelProps> = ({ show, onClose, players, onRemovePlayer }) => {
+  const radarData: Array<{ stat: string;[key: string]: number | string }> = [
     { stat: 'Offense' },
     { stat: 'Defense' },
     { stat: 'Athleticism' },
   ];
-  
+
   players.forEach((player) => {
     radarData[0][player.name] = player.offensiveOverall;
     radarData[1][player.name] = player.defensiveOverall;
@@ -64,6 +65,19 @@ const ComparePanel: React.FC<ComparePanelProps> = ({ show, onClose, players }) =
             </RadarChart>
           </div>
         )}
+        <div className="d-flex flex-wrap mb-3">
+          {players.map((player) => (
+            <span key={player._id} className="player-badge">
+            {player.name}
+            <button
+              className="remove-btn"
+              onClick={() => onRemovePlayer(player._id)}
+            >
+              ❌
+            </button>
+          </span>
+          ))}
+        </div>
       </Offcanvas.Body>
     </Offcanvas>
   );
