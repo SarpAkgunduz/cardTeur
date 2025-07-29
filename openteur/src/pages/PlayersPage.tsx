@@ -58,9 +58,9 @@ const PlayersPage = () => {
     setCompareSelection([]);
     setCompareMode(false);
   };
-  
+
   return (
-    <div style={{ display: 'flex', transition: 'all 0.3s ease', marginRight: compareSelection.length > 0 ? '500px' : '0px',}}>
+    <div style={{ display: 'flex', transition: 'all 0.3s ease', marginRight: compareSelection.length > 0 ? '500px' : '0px', }}>
       <div
         className="container mt-4"
         style={{
@@ -70,7 +70,7 @@ const PlayersPage = () => {
       >
         {/* Back button */}
         <BackButton position="absolute" top="20px" right="20px" />
-  
+
         {/* Header and Buttons */}
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2>Players</h2>
@@ -91,14 +91,16 @@ const PlayersPage = () => {
               {deleteMode ? '❌ Cancel' : '➖ Delete Player'}
             </button>
             <button
-              className="btn btn-success"
+              className="btn btn-success btn-create-card"
+              id="createCard" // ✅ Locator for test automation
               onClick={() => navigate('/add')}
             >
               ➕ Add Player
             </button>
+
           </div>
         </div>
-  
+
         {/* Players Grid */}
         {players.length === 0 ? (
           <p>No players found.</p>
@@ -125,7 +127,7 @@ const PlayersPage = () => {
           </div>
         )}
       </div>
-  
+
       {/* Compare Panel */}
       {compareSelection.length > 0 && (
         <ComparePanel
@@ -135,7 +137,7 @@ const PlayersPage = () => {
           onRemovePlayer={handleRemoveFromCompare}
         />
       )}
-        </div> // ✅ close outermost div
+    </div> // ✅ close outermost div
   );
 }; // ✅ <-- Missing closing brace for the PlayersPage function
 
