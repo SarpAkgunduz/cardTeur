@@ -58,7 +58,7 @@ const ComparePanel: React.FC<ComparePanelProps> = ({ show, onClose, players, onR
                   dataKey={player.name}
                   stroke={COLORS[idx % COLORS.length]}
                   fill={COLORS[idx % COLORS.length]}
-                  fillOpacity={0.9}
+                  fillOpacity={Math.max(0.2, 1 - players.length * 0.15)}
                 />
               ))}
               <Legend />
