@@ -50,6 +50,10 @@ const PlayersPage = () => {
     }
   };
 
+  const handleRemoveFromCompare = (id: string) => {
+    setCompareSelection(prev => prev.filter(p => p._id !== id));
+  };
+
   const handleCloseCompare = () => {
     setCompareSelection([]);
     setCompareMode(false);
@@ -130,6 +134,7 @@ const PlayersPage = () => {
           show={true}
           onClose={handleCloseCompare}
           players={compareSelection}
+          onRemovePlayer={handleRemoveFromCompare}
         />
       )}
     </div> // ✅ close outermost div

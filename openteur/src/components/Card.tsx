@@ -40,7 +40,7 @@ const Card: React.FC<CardProps> = ({
   
 }) => {
   return (
-    <div className="card position-relative">
+    <div className="card position-relative card-container">
       {/* Minus button in delete mode */}
       {deleteMode && (
         <button

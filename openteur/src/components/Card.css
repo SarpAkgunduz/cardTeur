@@ -1,9 +1,8 @@
 .card {
+  border: none !important;
   width: 200px;
   height: 300px !important; /* increased height */
-  border: 1px solid #ccc;
   padding: 16px;
-  border-radius: 8px;
   background-color: white;
   position: relative;
   display: flex;
@@ -14,11 +13,12 @@
 
 .card img {
   width: 120px;        /* fixed image width */
-  height: 160px;       /* fixed image height */
+  height: 120px;       /* fixed image height */
   margin-bottom: 8px;
   margin-top: 8px;     /* shift image slightly down */
   object-fit: cover;   /* make sure it fits without distortion */
-  border-radius: 4px;
+  border-radius: 12px; /* rounded corners for the image */
+  image-rendering: optimizeQuality;
 }
 
 .card h3 {
@@ -29,7 +29,7 @@
 /* Stats at the bottom */
 .stat-bar {
   position: absolute;
-  bottom: 8px;
+  bottom: 48px;
   left: 0;
   width: 100%;
   display: grid;
@@ -44,4 +44,12 @@
   margin: 0;
   padding: 0;
   white-space: nowrap;
+}
+
+.card-container {
+  background-image: url('/assets/cardBackground.png');
+  background-size: 120%;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 1rem;
 }
