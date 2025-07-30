@@ -1,4 +1,4 @@
-import React from 'react';
+import LoginPage from './pages/LoginPage';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import PlayersPage from './pages/PlayersPage';
 import PreviewPage from './pages/PreviewPage';
@@ -26,7 +26,7 @@ const Home = () => {
           </div>
         </div>
       </div>
-      
+
     </div>
   );
 };
@@ -37,6 +37,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/edit" element={<PlayersPage />} />
         <Route path="/preview" element={<PreviewPage />} />
         <Route path="/match" element={<MatchPage />} />
