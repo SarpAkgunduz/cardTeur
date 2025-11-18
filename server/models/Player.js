@@ -28,6 +28,7 @@ const PlayerSchema = new mongoose.Schema({
   dribbling: Number,
   shotAccuracy: Number,
   shotSpeed: Number,
+  headers: Number,
   shortPass: Number,
   longPass: Number,
   ballControl: Number,
