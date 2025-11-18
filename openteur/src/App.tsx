@@ -1,14 +1,17 @@
-import LoginPage from './pages/LoginPage';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import PlayersPage from './pages/PlayersPage';
 import PreviewPage from './pages/PreviewPage';
 import MatchPage from './pages/MatchPage';
 import AddPlayerForm from './pages/AddPlayerForm';
-import './App.css';
+import LoginPage from './pages/LoginPage';
+import PrivateRoute from './components/routes/PrivateRoute';
+import Homepage from './pages/HomePage';
+import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const navigate = useNavigate();
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   return (
     <div className="row">
 
@@ -26,7 +29,14 @@ const Home = () => {
           </div>
         </div>
       </div>
-
+      <Route
+        path="/add"
+        element={
+          <PrivateRoute isAuthenticated={isAuthenticated}>
+            <AddPlayerForm />
+          </PrivateRoute>
+        }
+      />
     </div>
   );
 };

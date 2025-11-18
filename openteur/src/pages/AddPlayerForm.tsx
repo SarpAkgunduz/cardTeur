@@ -8,6 +8,7 @@ const AddPlayerForm = () => {
   
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
   // State variables for player attributes
   const [name, setName] = useState('');
   const [cardImage, setCardImage] = useState('');
@@ -95,8 +96,17 @@ const AddPlayerForm = () => {
         strength,
         stamina,
       };
-      
+    
+    // Check for missing required fields  
+    const missing = Object.entries(newPlayer)
+    .filter(([key, value]) => value === "" || value === null || value === undefined)
+    .map(([key]) => key);
 
+    if (missing.length > 0) {
+      setToastMsg(`Please fill these fields: ${missing.join(", ")}`);
+      setShowToast(true);
+      return;
+    }
     const res = await fetch('http://localhost:5000/api/players', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -104,10 +114,11 @@ const AddPlayerForm = () => {
     });
 
     if (res.ok) {
+      setToastMsg('Player added successfully!');
       setShowToast(true);
       setTimeout(() => {
         navigate('/edit');
-      }, 2000); // let user see the toast for 2 seconds, then redirect
+      }, 3000); // let user see the toast for 3 seconds, then redirect
     } else {
       alert('Error adding player.');
     }
@@ -115,12 +126,20 @@ const AddPlayerForm = () => {
 
   return (
     <div className="container mt-4">
+      {/* Toast Notification */}
+      <ToastNotification
+      show={showToast}
+      message={toastMsg}
+      onClose={() => setShowToast(false)}
+      />
+
       {/* Back button */}
       <BackButton position="absolute" top="20px" right="20px" />
+
       {/* Form for adding a player */}
     <form onSubmit={handleSubmit} className="container mt-4">
       <h2 className="mb-4">Add Player</h2>
-  
+
       {/* Name input */}
       <input
         className="form-control mb-2"

@@ -9,8 +9,8 @@ interface ToastNotificationProps {
 
 const ToastNotification: React.FC<ToastNotificationProps> = ({ show, message, onClose }) => {
   return (
-    <ToastContainer position="top-end" className="p-3">
-      <Toast onClose={onClose} show={show} delay={3000} autohide bg="success">
+    <ToastContainer position="bottom-end" className="p-3">
+      <Toast onClose={onClose} show={show} delay={5000} autohide={true} bg="success">
         <Toast.Body>{message}</Toast.Body>
       </Toast>
     </ToastContainer>
