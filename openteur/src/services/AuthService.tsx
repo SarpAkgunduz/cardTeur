@@ -1,4 +1,3 @@
-// src/services/authService.ts
 import { setWithExpiry, getWithExpiry, remove } from "../utils/Storage";
 
 const SESSION_KEY = "openteur:auth:session";
