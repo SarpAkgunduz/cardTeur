@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
 
 import PlayersPage from './pages/PlayersPage';
 import PreviewPage from './pages/PreviewPage';
@@ -10,23 +9,46 @@ import HomePage from './pages/HomePage';
 import PrivateRoute from './components/routes/PrivateRoute';
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route
-          path="/login"
-          element={<LoginPage onLogin={() => setIsAuthenticated(true)} />}
+          path="/"
+          element={
+            <PrivateRoute>
+              <HomePage />
+            </PrivateRoute>
+          }
         />
-        <Route path="/edit" element={<PlayersPage />} />
-        <Route path="/preview" element={<PreviewPage />} />
-        <Route path="/match" element={<MatchPage />} />
+        <Route
+          path="/edit"
+          element={
+            <PrivateRoute>
+              <PlayersPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/preview"
+          element={
+            <PrivateRoute>
+              <PreviewPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/match"
+          element={
+            <PrivateRoute>
+              <MatchPage />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/add"
           element={
-            <PrivateRoute isAuthenticated={isAuthenticated}>
+            <PrivateRoute>
               <AddPlayerForm />
             </PrivateRoute>
           }

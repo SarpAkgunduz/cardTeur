@@ -14,7 +14,9 @@ export function getSession(): SessionValue | null {
   return getWithExpiry<SessionValue>(SESSION_KEY);
 }
 
+
 export function isLoggedIn(): boolean {
+  /// Check if user is logged in with isAuthenticated flag in session and return boolean
   return getSession()?.isAuthenticated === true;
 }
 

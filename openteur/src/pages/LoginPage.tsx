@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginSuccess } from '../services/AuthService';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -18,8 +19,8 @@ const LoginPage = () => {
 
     // Dummy auth (replace with real backend logic later)
     if (email === 'admin@example.com' && password === 'admin123') {
-      localStorage.setItem('isAuthenticated', 'true');
-      navigate('/edit');
+      loginSuccess();
+      navigate('/');
     } else {
       setError('Invalid email or password.');
     }
