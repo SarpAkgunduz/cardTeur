@@ -16,9 +16,9 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "mongoose": "^8.14.1",
-    "react": "^19.1.0",
+    "react": "^19.2.0",
     "react-bootstrap": "^2.10.10",
-    "react-dom": "^19.1.0",
+    "react-dom": "^19.2.0",
     "react-router-dom": "^7.5.3",
     "recharts": "^2.15.3"
   },

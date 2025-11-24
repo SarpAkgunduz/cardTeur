@@ -1,8 +1,14 @@
 import { useNavigate } from 'react-router-dom';
-
+import { useEffect } from 'react';
+import { isLoggedIn } from '../services/AuthService';
 const HomePage = () => {
   const navigate = useNavigate();
-
+  
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      navigate('/login');
+    }
+  }, [navigate]);
   return (
     <div className="row">
       <div className="container col-9 mt-5 body">
