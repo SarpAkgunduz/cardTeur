@@ -15,7 +15,7 @@ const PlayersPage = () => {
   useEffect(() => {
     playerApi.getAll()
       .then((data) => setPlayers(data))
-      .catch((err) => console.error('Failed to fetch players:', err));
+      .catch((error) => console.error('Failed to fetch players:', error));
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -25,6 +25,7 @@ const PlayersPage = () => {
       await playerApi.delete(id);
       setPlayers((prev) => prev.filter((p) => p._id !== id));
     } catch (error) {
+      console.error('Delete error:', error);
       alert('Failed to delete player.');
     }
   };

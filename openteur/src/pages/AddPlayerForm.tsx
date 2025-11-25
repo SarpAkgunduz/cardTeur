@@ -98,8 +98,10 @@ const AddPlayerForm = () => {
       };
     
     // Check for missing required fields  
+    const isEmpty = (value: unknown) => value === "" || value === null || value === undefined;
+
     const missing = Object.entries(newPlayer)
-    .filter(([key, value]) => value === "" || value === null || value === undefined)
+    .filter(([, value]) => isEmpty(value))
     .map(([key]) => key);
 
     if (missing.length > 0) {
