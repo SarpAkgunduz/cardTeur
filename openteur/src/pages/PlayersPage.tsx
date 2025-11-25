@@ -3,17 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Card from '../components/Card';
 import ComparePanel from '../components/ComparePanel';
-
-interface Player {
-  _id: string;
-  name: string;
-  cardImage: string;
-  preferredPosition: string;
-  cardTitle: 'gold' | 'silver' | 'bronze' | 'platinum';
-  offensiveOverall: number;
-  defensiveOverall: number;
-  athleticismOverall: number;
-}
+import { playerApi, Player } from '../services';
 
 const PlayersPage = () => {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -23,8 +13,7 @@ const PlayersPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/players')
-      .then((res) => res.json())
+    playerApi.getAll()
       .then((data) => setPlayers(data))
       .catch((err) => console.error('Failed to fetch players:', err));
   }, []);
@@ -32,13 +21,10 @@ const PlayersPage = () => {
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this player?')) return;
 
-    const res = await fetch(`http://localhost:5000/api/players/${id}`, {
-      method: 'DELETE',
-    });
-
-    if (res.ok) {
+    try {
+      await playerApi.delete(id);
       setPlayers((prev) => prev.filter((p) => p._id !== id));
-    } else {
+    } catch (error) {
       alert('Failed to delete player.');
     }
   };

@@ -19,7 +19,10 @@ const LoginPage = () => {
 
     // Dummy auth (replace with real backend logic later)
     if (email === 'admin@example.com' && password === 'admin123') {
-      loginSuccess();
+      loginSuccess('admin');  // ← Give admin role
+      navigate('/');
+    } else if (email === 'user@example.com' && password === 'user123') {
+      loginSuccess('user');   // ← Give user role
       navigate('/');
     } else {
       setError('Invalid email or password.');
