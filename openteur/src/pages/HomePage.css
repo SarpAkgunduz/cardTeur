@@ -1,0 +1,62 @@
+.welcome {
+  background-image: url('/assets/welcomeBackground.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 40vh;
+  border-radius: 8px;
+  border: 4px solid #2D4C5C;
+}
+
+.btn-homepage {
+  position: relative;
+  height: 250px;
+  font-size: 1.2rem;
+  padding-bottom: 10px;
+  border: 4px solid black !important;
+}
+
+/* Pseudo-element for bottom-centered background image */
+.btn-homepage::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 200px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+/* Specific button images */
+.btn-player-preview::after {
+  background-image: url('/assets/homepageButtons/previewPlayer.png');
+}
+
+.btn-player-edit::after {
+  background-image: url('/assets/homepageButtons/editPlayer.png');
+}
+
+.btn-prepare-match::after {
+  background-image: url('/assets/homepageButtons/prepareMatch.png');
+}
+
+.btn-home:hover {
+  animation: kick 1.5s ease forwards;
+}
+
+@keyframes kick {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  30% {
+    transform: translateY(-10px) rotate(-10deg);
+  }
+  60% {
+    transform: translateY(2px) rotate(10deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}

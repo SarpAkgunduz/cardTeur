@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
 
 import PlayersPage from './pages/PlayersPage';
 import PreviewPage from './pages/PreviewPage';
@@ -13,14 +14,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <HomePage />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/" element={<HomePage />} />
         <Route
           path="/edit"
           element={
