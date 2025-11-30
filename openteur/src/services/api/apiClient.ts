@@ -19,7 +19,7 @@ export async function apiRequest<T>(
       throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
 
-    // DELETE işlemi için boş response dönebilir
+    // For delete requests or responses with no content
     const contentType = response.headers.get('content-type');
     if (contentType && contentType.includes('application/json')) {
       return await response.json();

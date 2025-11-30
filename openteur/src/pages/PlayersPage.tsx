@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Card from '../components/Card';
@@ -124,8 +124,8 @@ const PlayersPage = () => {
           onRemovePlayer={handleRemoveFromCompare}
         />
       )}
-    </div> // ✅ close outermost div
+    </div>
   );
-}; // ✅ <-- Missing closing brace for the PlayersPage function
+};
 
 export default PlayersPage;
