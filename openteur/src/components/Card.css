@@ -53,3 +53,14 @@
   background-position: center;
   padding: 1rem;
 }
+
+.position-badge {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1px 12px;
+  margin: 14px auto 8px;
+  width: fit-content;
+  color: #34495e;
+  font-weight: 600;
+  font-size: 14px;
+}

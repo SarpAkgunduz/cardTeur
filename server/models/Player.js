@@ -32,7 +32,6 @@ const PlayerSchema = new mongoose.Schema({
   shortPass: Number,
   longPass: Number,
   ballControl: Number,
-  finishing: Number,
   positioning: Number,
   vision: Number,
   // Sub-stats (Defensive)

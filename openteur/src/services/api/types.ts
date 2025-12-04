@@ -17,7 +17,6 @@ export interface Player {
   longPass: number;
   shortPass: number;
   ballControl: number;
-  finishing: number;
   positioning: number;
   vision: number;
   // Defensive stats

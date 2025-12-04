@@ -5,9 +5,9 @@ require('dotenv').config();
 
 const app = express();
 
-// ✅ CORS middleware must be FIRST
+// CORS middleware must be FIRST
 app.use(cors({
-  origin: 'http://localhost:5173', // ✅ Your frontend port
+  origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));

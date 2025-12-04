@@ -8,6 +8,7 @@ import { playerApi, Player } from '../services';
 const PlayersPage = () => {
   const [players, setPlayers] = useState<Player[]>([]);
   const [deleteMode, setDeleteMode] = useState(false);
+  const [editMode, setEditMode] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
   const [compareSelection, setCompareSelection] = useState<Player[]>([]);
   const navigate = useNavigate();
@@ -28,6 +29,10 @@ const PlayersPage = () => {
       console.error('Delete error:', error);
       alert('Failed to delete player.');
     }
+  };
+
+  const handleEdit = (id: string) => {
+    navigate(`/edit-player/${id}`);
   };
 
   const handleCompareSelect = (player: Player) => {
@@ -72,6 +77,12 @@ const PlayersPage = () => {
               {compareMode ? '❌ Cancel Compare' : '📊 Compare'}
             </button>
             <button
+              className="btn btn-primary me-2"
+              onClick={() => setEditMode(!editMode)}
+            >
+              {editMode ? '❌ Cancel Edit' : '✏️ Edit Player'}
+            </button>
+            <button
               className="btn btn-danger me-2"
               onClick={() => setDeleteMode(!deleteMode)}
             >
@@ -106,6 +117,8 @@ const PlayersPage = () => {
                   athleticismOverall={player.athleticismOverall}
                   deleteMode={deleteMode}
                   onDelete={() => handleDelete(player._id)}
+                  editMode={editMode}
+                  onEdit={() => handleEdit(player._id)}
                   compareMode={compareMode}
                   onCompareSelect={() => handleCompareSelect(player)}
                 />

@@ -47,6 +47,14 @@ const App = () => {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/edit-player/:id"
+          element={
+            <PrivateRoute>
+              <AddPlayerForm />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );

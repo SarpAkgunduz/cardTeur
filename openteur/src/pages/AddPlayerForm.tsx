@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import BackButton from '../components/BackButton';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ToastNotification from '../components/ToastNotification';
+import { playerApi } from '../services';
 
 const AddPlayerForm = () => {
-
-  
+  const { id } = useParams<{ id: string }>();
+  const isEditMode = Boolean(id);
   const navigate = useNavigate();
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
@@ -24,7 +25,6 @@ const AddPlayerForm = () => {
   const [longPass, setLongPass] = useState(0);
   const [shortPass, setShortPass] = useState(0);
   const [ballControl, setBallControl] = useState(0);
-  const [finishing, setFinishing] = useState(0);
   const [positioning, setPositioning] = useState(0);
   const [vision, setVision] = useState(0);
     // Defensive stats
@@ -38,9 +38,47 @@ const AddPlayerForm = () => {
   const [stamina, setStamina] = useState(0);
 
 
-  const offensiveStats = [dribbling, shotAccuracy, shotSpeed, headers,ballControl, vision, positioning, finishing, longPass, shortPass];
+  const offensiveStats = [dribbling, shotAccuracy, shotSpeed, headers, ballControl, vision, positioning, longPass, shortPass];
   const defensiveStats = [tackling, interceptions, marking];
   const athleticismStats = [speed, strength, stamina];
+  
+  // Load player data if in edit mode
+  useEffect(() => {
+    if (isEditMode && id) {
+      playerApi.getById(id)
+        .then((player) => {
+          setName(player.name);
+          setCardImage(player.cardImage);
+          setjerseyNumber(player.jerseyNumber);
+          setMarketValue(player.marketValue);
+          setpreferredPosition(player.preferredPosition);
+          setDribbling(player.dribbling);
+          setShotAccuracy(player.shotAccuracy);
+          setShotSpeed(player.shotSpeed);
+          setHeader(player.headers);
+          setLongPass(player.longPass);
+          setShortPass(player.shortPass);
+          setBallControl(player.ballControl);
+          setPositioning(player.positioning);
+          setVision(player.vision);
+          setTackling(player.tackling);
+          setInterceptions(player.interceptions);
+          setMarking(player.marking);
+          setDefensiveIQ(player.defensiveIQ);
+          setSpeed(player.speed);
+          setStrength(player.strength);
+          setStamina(player.stamina);
+        })
+        .catch((error) => {
+          console.error('Failed to fetch player:', error);
+          setToastMsg('Failed to load player data');
+          setShowToast(true);
+        });
+    } else {
+      console.log('ℹ️ Not in edit mode. ID:', id, 'isEditMode:', isEditMode);
+    }
+  }, [id, isEditMode]);
+  
   // Overalls (calculated)
   const calculateAverage = (stats: number[]) =>
     stats.length ? Math.round(stats.reduce((a, b) => a + b, 0) / stats.length) : 0;
@@ -64,10 +102,10 @@ const AddPlayerForm = () => {
     e.preventDefault();
     const newPlayer = {
         name,
-        jerseyNumber,
+        jerseyNumber: Number(jerseyNumber),
         preferredPosition,
         cardTitle,
-        marketValue,
+        marketValue: String(marketValue),
         cardImage,
         offensiveOverall,
         defensiveOverall,
@@ -81,7 +119,6 @@ const AddPlayerForm = () => {
         longPass,
         shortPass,
         ballControl,
-        finishing,
         positioning,
         vision,
 
@@ -97,11 +134,11 @@ const AddPlayerForm = () => {
         stamina,
       };
     
-    // Check for missing required fields  
+    // Check for missing required fields (excluding marketValue)
     const isEmpty = (value: unknown) => value === "" || value === null || value === undefined;
 
     const missing = Object.entries(newPlayer)
-    .filter(([, value]) => isEmpty(value))
+    .filter(([key, value]) => key !== 'marketValue' && isEmpty(value))
     .map(([key]) => key);
 
     if (missing.length > 0) {
@@ -109,20 +146,26 @@ const AddPlayerForm = () => {
       setShowToast(true);
       return;
     }
-    const res = await fetch('http://localhost:5000/api/players', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newPlayer),
-    });
-
-    if (res.ok) {
-      setToastMsg('Player added successfully!');
+    
+    try {
+      if (isEditMode && id) {
+        // Update existing player
+        await playerApi.update(id, newPlayer);
+        setToastMsg('Player updated successfully!');
+      } else {
+        // Create new player
+        await playerApi.create(newPlayer);
+        setToastMsg('Player added successfully!');
+      }
+      
       setShowToast(true);
       setTimeout(() => {
         navigate('/edit');
-      }, 3000); // let user see the toast for 3 seconds, then redirect
-    } else {
-      alert('Error adding player.');
+      }, 3000);
+    } catch (error) {
+      console.error('Error saving player:', error);
+      setToastMsg(`Error ${isEditMode ? 'updating' : 'adding'} player.`);
+      setShowToast(true);
     }
   };
 
@@ -140,7 +183,7 @@ const AddPlayerForm = () => {
 
       {/* Form for adding a player */}
     <form onSubmit={handleSubmit} className="container mt-4">
-      <h2 className="mb-4">Add Player</h2>
+      <h2 className="mb-4">{isEditMode ? 'Edit Player' : 'Add Player'}</h2>
 
       {/* Name input */}
       <input
@@ -201,7 +244,13 @@ const AddPlayerForm = () => {
         <option value="/assets/rbesen.png">Ruşen Besen</option>
         <option value="/assets/eakkoc.png">Emre Akkoç</option>
         <option value="/assets/celbir.png">Zekeriya Cengiz</option>
-        <option value="/assets/fimaro.png">Emre Karakaş</option>
+        <option value="/assets/fimaro.png">Furkan İmaro</option>
+        <option value="/assets/raltunel.png">Rıdvan Altunel</option>
+        <option value="/assets/eyildirim.png">Emre Yıldırım</option>
+        <option value="/assets/ambostan.png">Ali Mert Bostan</option>
+        <option value="/assets/dbekaroglu.png">Doğa Bekaroğlu</option>
+        <option value="/assets/berdinc.png">Burak Erdinç</option>
+        <option value="/assets/.png">Doğa Bekaroğlu</option>
       </select>
   
       {/* Preview */}
@@ -230,9 +279,6 @@ const AddPlayerForm = () => {
 
       <label htmlFor="headers">Headers</label>
       <input id="headers" type="number" min={0} max={100} className="form-control mb-2" value={headers} onChange={(e) => setHeader(+e.target.value)} />
-      
-      <label htmlFor="finishing">Offensive IQ</label>
-      <input id="finishing" type="number" min={0} max={100} className="form-control mb-2" value={finishing} onChange={(e) => setFinishing(+e.target.value)} />
 
       <label htmlFor="longPass">Long Pass</label>
       <input id="longPass" type="number" min={0} max={100} className="form-control mb-2" value={longPass} onChange={(e) => setLongPass(+e.target.value)} />
@@ -309,7 +355,7 @@ const AddPlayerForm = () => {
   
       {/* Submit */}
       <button type="submit" className="btn btn-primary mt-3">
-        Add Player
+        {isEditMode ? 'Update Player' : 'Add Player'}
       </button>
     </form>
     </div>

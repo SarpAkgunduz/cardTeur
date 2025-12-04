@@ -14,6 +14,8 @@ export interface CardProps {
   cardTitle: "gold" | "silver" | "bronze" | "platinum";
   deleteMode?: boolean;
   onDelete?: () => void; // or (id: string) => void if you want to pass an id
+  editMode?: boolean;
+  onEdit?: () => void;
   compareMode?: boolean;
   onCompareSelect?: () => void;
 }
@@ -33,6 +35,9 @@ const Card: React.FC<CardProps> = ({
   deleteMode = false,
   onDelete,
 
+  /*editMode is a boolean that will be used to toggle the edit button*/
+  editMode = false,
+  onEdit,
 
   /*onCompareSelect is a function that will be called when the compare button is clicked*/
   compareMode = false,
@@ -51,6 +56,16 @@ const Card: React.FC<CardProps> = ({
           ➖
         </button>
       )}
+      {/* Edit button in edit mode */}
+      {editMode && (
+        <button
+          onClick={onEdit}
+          className="btn btn-warning btn-sm position-absolute top-0 start-0 ms-2 mt-2"
+          style={{ zIndex: 10 }}
+        >
+          ✏️
+        </button>
+      )}
       {/* Plus button in compare mode */}
       {/* This button will be used to select the player for comparison */}
       {/* It will be shown only if compareMode is true */}
@@ -67,7 +82,9 @@ const Card: React.FC<CardProps> = ({
       {/* Card content */}
       <h3>{name}</h3>
       <img src={cardImage} alt={name} />
-      <p>{preferredPosition}</p>
+      <div className="position-badge">
+        {preferredPosition}
+      </div>
       <div className="stat-bar">
         <span>OFF: {offensiveOverall}</span>
         <span>ATH: {athleticismOverall}</span>

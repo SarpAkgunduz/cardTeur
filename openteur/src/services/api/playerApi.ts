@@ -3,17 +3,17 @@ import { Player, CreatePlayerDto, UpdatePlayerDto } from './types';
 
 export const playerApi = {
   /**
-   * Tüm oyuncuları getir
+   * Get all players
    */
   getAll: () => apiRequest<Player[]>('/players'),
 
   /**
-   * ID'ye göre tek oyuncu getir
+   * get player by id
    */
   getById: (id: string) => apiRequest<Player>(`/players/${id}`),
 
   /**
-   * Yeni oyuncu oluştur
+   * Create new player
    */
   create: (playerData: CreatePlayerDto) =>
     apiRequest<Player>('/players', {
@@ -22,7 +22,7 @@ export const playerApi = {
     }),
 
   /**
-   * Oyuncu güncelle
+   * Update/edit existing player
    */
   update: (id: string, playerData: UpdatePlayerDto) =>
     apiRequest<Player>(`/players/${id}`, {
@@ -31,7 +31,7 @@ export const playerApi = {
     }),
 
   /**
-   * Oyuncu sil
+   * Delete player by id
    */
   delete: (id: string) =>
     apiRequest<void>(`/players/${id}`, {

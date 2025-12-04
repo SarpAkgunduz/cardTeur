@@ -8,6 +8,19 @@ router.get('/', async (req, res) => {
   res.json(players);
 });
 
+// Get single player by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const player = await Player.findById(req.params.id);
+    if (!player) {
+      return res.status(404).json({ error: 'Player not found' });
+    }
+    res.json(player);
+  } catch (error) {
+    res.status(400).json({ error: 'Invalid player ID' });
+  }
+});
+
 // Create a new player
 router.post('/', async (req, res) => {
   const newPlayer = new Player(req.body);
