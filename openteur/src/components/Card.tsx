@@ -44,8 +44,17 @@ const Card: React.FC<CardProps> = ({
   onCompareSelect,
   
 }) => {
+  const handleCardClick = () => {
+    if (editMode && onEdit) {
+      onEdit();
+    }
+  };
+
   return (
-    <div className="card position-relative card-container">
+    <div 
+      className={`card position-relative card-container ${editMode ? 'editable' : ''}`}
+      onClick={handleCardClick}
+    >
       {/* Minus button in delete mode */}
       {deleteMode && (
         <button
@@ -56,8 +65,8 @@ const Card: React.FC<CardProps> = ({
           ➖
         </button>
       )}
-      {/* Edit button in edit mode */}
-      {editMode && (
+      {/* Edit button in edit mode - removed, now card itself is clickable */}
+      {editMode && false && (
         <button
           onClick={onEdit}
           className="btn btn-warning btn-sm position-absolute top-0 start-0 ms-2 mt-2"

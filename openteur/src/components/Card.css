@@ -9,6 +9,18 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.card.editable {
+  cursor: pointer;
+}
+
+.card.editable:hover {
+  transform: scale(1.05) translateY(-5px);
+  box-shadow: 0 10px 25px rgba(74, 124, 155, 0.4);
+  border: 2px solid #4A7C9B;
 }
 
 .card img {

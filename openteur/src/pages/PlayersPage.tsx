@@ -52,60 +52,54 @@ const PlayersPage = () => {
   };
 
   return (
-    <div style={{ display: 'flex', transition: 'all 0.3s ease', marginRight: compareSelection.length > 0 ? '500px' : '0px', }}>
-      <div
-        className="container mt-4"
-        style={{
-          flex: '1 1 auto',
-          transition: 'all 0.3s ease',
-        }}
-      >
-        {/* Back button */}
-        <BackButton position="absolute" top="20px" right="20px" />
-
-        {/* Header and Buttons */}
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2>Players</h2>
-          <div>
-            <button
-              className="btn btn-warning me-2"
-              onClick={() => {
-                setCompareMode(!compareMode);
-                setCompareSelection([]);
-              }}
-            >
-              {compareMode ? '❌ Cancel Compare' : '📊 Compare'}
-            </button>
-            <button
-              className="btn btn-primary me-2"
-              onClick={() => setEditMode(!editMode)}
-            >
-              {editMode ? '❌ Cancel Edit' : '✏️ Edit Player'}
-            </button>
-            <button
-              className="btn btn-danger me-2"
-              onClick={() => setDeleteMode(!deleteMode)}
-            >
-              {deleteMode ? '❌ Cancel' : '➖ Delete Player'}
-            </button>
-            <button
-              className="btn btn-success btn-create-card"
-              id="createCard" // ✅ Locator for test automation
-              onClick={() => navigate('/add')}
-            >
+    <div className="page-wrapper" style={{ marginRight: compareSelection.length > 0 ? '500px' : '0px' }}>
+      <div className="page-container">
+        <div className="content-card">
+          {/* Header and Buttons */}
+                    <div className="page-header" style={{ borderBottom: 'none', width: '100%', justifyContent: 'space-between' }}>
+            <div className="back-button-container">
+              <BackButton position="static" />
+            </div>
+            <h2 className="page-title" style={{ flex: 1, textAlign: 'center' }}>Players</h2>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+              <button
+                className="gradient-button"
+                onClick={() => {
+                  setCompareMode(!compareMode);
+                  setCompareSelection([]);
+                }}
+              >
+                {compareMode ? 'Cancel Compare' : 'Compare'}
+              </button>
+              <button
+                className="gradient-button"
+                onClick={() => setEditMode(!editMode)}
+              >
+                {editMode ? 'Cancel Edit' : 'Edit Player'}
+              </button>
+              <button
+                className="gradient-button"
+                onClick={() => setDeleteMode(!deleteMode)}
+              >
+                {deleteMode ? 'Cancel' : 'Delete Player'}
+              </button>
+              <button
+                className="gradient-button btn-create-card"
+                id="createCard" // ✅ Locator for test automation
+                onClick={() => navigate('/add')}
+              >
               ➕ Add Player
-            </button>
-
-          </div>
+              </button>
+            </div>
         </div>
 
         {/* Players Grid */}
         {players.length === 0 ? (
           <p>No players found.</p>
         ) : (
-          <div className="row">
+          <div className="row" style={{ width: '100%', margin: 0 }}>
             {players.map((player) => (
-              <div key={player._id} className="col-md-4 mb-4">
+              <div key={player._id} className="col-md-4 col-lg-3 mb-4" style={{ display: 'flex', justifyContent: 'center' }}>
                 <Card
                   _id={player._id}
                   name={player.name}
@@ -126,6 +120,7 @@ const PlayersPage = () => {
             ))}
           </div>
         )}
+        </div>
       </div>
 
       {/* Compare Panel */}

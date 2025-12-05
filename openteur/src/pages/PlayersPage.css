@@ -1,0 +1,126 @@
+.players-page-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1F3A4A 0%, #4A7C9B 100%);
+  transition: all 0.3s ease;
+  padding: 20px;
+}
+
+.players-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.back-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.players-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #4A7C9B;
+}
+
+.players-title {
+  color: #4A7C9B;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styles */
+.players-header .btn {
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.players-header .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.players-header .btn-warning {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border: none;
+}
+
+.players-header .btn-primary {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  border: none;
+}
+
+.players-header .btn-danger {
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  border: none;
+}
+
+.players-header .btn-success {
+  background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+  border: none;
+}
+
+/* Players Grid */
+.row {
+  margin-top: 20px;
+}
+
+.col-md-4 {
+  transition: transform 0.3s ease;
+}
+
+.col-md-4:hover {
+  transform: scale(1.02);
+}
+
+/* No Players Message */
+.players-page p {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #4A7C9B;
+  margin-top: 50px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .players-page {
+    padding: 20px;
+    border-radius: 15px;
+  }
+
+  .players-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .players-title {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .players-header > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .players-header .btn {
+    flex: 1 1 calc(50% - 10px);
+    min-width: 140px;
+  }
+}

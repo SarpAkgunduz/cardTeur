@@ -23,7 +23,7 @@ const BackButton = ({
       }
     >
       <button
-        className={`btn btn-secondary ${className}`}
+        className={`btn btn-secondary ${className} gradient-button`}
         onClick={() => navigate(-1)}
       >
         ⬅️ Back

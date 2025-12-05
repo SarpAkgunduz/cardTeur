@@ -170,22 +170,27 @@ const AddPlayerForm = () => {
   };
 
   return (
-    <div className="container mt-4">
-      {/* Toast Notification */}
-      <ToastNotification
-      show={showToast}
-      message={toastMsg}
-      onClose={() => setShowToast(false)}
-      />
+    <div className="page-wrapper">
+      <div className="page-container">
+        {/* Toast Notification */}
+        <ToastNotification
+        show={showToast}
+        message={toastMsg}
+        onClose={() => setShowToast(false)}
+        />
 
-      {/* Back button */}
-      <BackButton position="absolute" top="20px" right="20px" />
+        <div className="content-card">
+          {/* Back button */}
+          <div className="back-button-container" style={{ marginBottom: '20px' }}>
+            <BackButton position="static" />
+          </div>
 
-      {/* Form for adding a player */}
-    <form onSubmit={handleSubmit} className="container mt-4">
-      <h2 className="mb-4">{isEditMode ? 'Edit Player' : 'Add Player'}</h2>
+          {/* Form for adding a player */}
+          <form onSubmit={handleSubmit}>
+            <h2 className="page-title" style={{ marginBottom: '30px' }}>{isEditMode ? 'Edit Player' : 'Add Player'}</h2>
 
       {/* Name input */}
+      <h5>Name</h5>
       <input
         className="form-control mb-2"
         placeholder="Name"
@@ -194,6 +199,7 @@ const AddPlayerForm = () => {
       />
 
       {/* Jersey number input */}
+      <h5>Jersey Number</h5>
       <input
         className="form-control mb-2"
         placeholder="Jersey Number"
@@ -202,6 +208,7 @@ const AddPlayerForm = () => {
         onChange={(e) => setjerseyNumber(e.target.value)}
       />
       {/* Market value input */}
+      <h5>Market Value</h5>
       <input
         className="form-control mb-2"
         placeholder="Market Value"
@@ -250,7 +257,6 @@ const AddPlayerForm = () => {
         <option value="/assets/ambostan.png">Ali Mert Bostan</option>
         <option value="/assets/dbekaroglu.png">Doğa Bekaroğlu</option>
         <option value="/assets/berdinc.png">Burak Erdinç</option>
-        <option value="/assets/.png">Doğa Bekaroğlu</option>
       </select>
   
       {/* Preview */}
@@ -345,19 +351,21 @@ const AddPlayerForm = () => {
         onChange={(e) => setStamina(+e.target.value)}
       />
   
-      {/* Calculated Overalls */}
-      <div className="mt-4">
-        <h5>Calculated Overalls</h5>
-        <p>Offense: {offensiveOverall}</p>
-        <p>Defense: {defensiveOverall}</p>
-        <p>Athleticism: {athleticismOverall}</p>
+            {/* Calculated Overalls */}
+            <div className="mt-4">
+              <h5>Calculated Overalls</h5>
+              <p>Offense: {offensiveOverall}</p>
+              <p>Defense: {defensiveOverall}</p>
+              <p>Athleticism: {athleticismOverall}</p>
+            </div>
+        
+            {/* Submit */}
+            <button type="submit" className="gradient-button" style={{ padding: '15px 40px', fontSize: '1.1rem', marginTop: '20px' }}>
+              {isEditMode ? 'Update Player' : 'Add Player'}
+            </button>
+          </form>
+        </div>
       </div>
-  
-      {/* Submit */}
-      <button type="submit" className="btn btn-primary mt-3">
-        {isEditMode ? 'Update Player' : 'Add Player'}
-      </button>
-    </form>
     </div>
   );
   
