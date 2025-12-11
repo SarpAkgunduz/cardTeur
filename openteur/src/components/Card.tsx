@@ -3,19 +3,23 @@ import './Card.css';
 
 export interface CardProps {
   _id: string;
-  // _id is used for delete operation, so it's required
-  // but not used in the component itself
   name: string;
   preferredPosition: string;
   offensiveOverall: number;
   defensiveOverall: number;
   athleticismOverall: number;
   cardImage: string;
-  cardTitle: "gold" | "silver" | "bronze" | "platinum";
+  cardTitle?: 'bronze' | 'silver' | 'gold' | 'platinum' | string; // optional
+
+  /*deleteMode is a boolean that will be used to toggle the delete button*/
   deleteMode?: boolean;
   onDelete?: () => void; // or (id: string) => void if you want to pass an id
+
+  /*editMode is a boolean that will be used to toggle the edit button*/
   editMode?: boolean;
   onEdit?: () => void;
+
+  /*onCompareSelect is a function that will be called when the compare button is clicked*/
   compareMode?: boolean;
   onCompareSelect?: () => void;
 }
@@ -30,7 +34,6 @@ const Card: React.FC<CardProps> = ({
   /*Card title is not used in the component, but it's part of the props in future it can be added as a feature.*/
   cardTitle,
 
-
   /*deleteMode is a boolean that will be used to toggle the delete button*/
   deleteMode = false,
   onDelete,
@@ -42,7 +45,6 @@ const Card: React.FC<CardProps> = ({
   /*onCompareSelect is a function that will be called when the compare button is clicked*/
   compareMode = false,
   onCompareSelect,
-  
 }) => {
   const handleCardClick = () => {
     if (editMode && onEdit) {
@@ -51,7 +53,7 @@ const Card: React.FC<CardProps> = ({
   };
 
   return (
-    <div 
+    <div
       className={`card position-relative card-container ${editMode ? 'editable' : ''}`}
       onClick={handleCardClick}
     >
