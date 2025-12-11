@@ -257,6 +257,7 @@ const AddPlayerForm = () => {
         <option value="/assets/ambostan.png">Ali Mert Bostan</option>
         <option value="/assets/dbekaroglu.png">Doğa Bekaroğlu</option>
         <option value="/assets/berdinc.png">Burak Erdinç</option>
+        <option value="/assets/ycetin.png">Yasin Çetin</option>
       </select>
   
       {/* Preview */}
