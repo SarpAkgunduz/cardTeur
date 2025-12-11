@@ -7,8 +7,9 @@
   padding: 20px;
 }
 
+/* allow container to grow with card content */
 .match-container {
-  max-width: 900px;
+  max-width: none;
   width: 100%;
   text-align: center;
 }
@@ -112,7 +113,173 @@
   text-transform: uppercase;
 }
 
-/* Responsive */
+/* backdrop and white panel */
+.count-panel-backdrop {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.card-white {
+  position: relative;
+  z-index: 50; /* ensure panel/buttons are on top and clickable */
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  width: auto;
+  min-width: 240px;
+  max-width: 95%;
+  display: inline-block;
+  box-shadow: 0 12px 30px rgba(32,45,60,0.15);
+  transform-origin: top center;
+  animation: panelIn 360ms cubic-bezier(.2,.9,.2,1);
+  text-align: center;
+}
+
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(-10px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.count-input {
+  width: 80px;
+  padding: 8px 10px;
+  margin: 0;
+  display: inline-block;
+  border-radius: 6px;
+  border: 1px solid #e0e6ea;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.count-input-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.vs-text {
+  color: #6b7f89;
+  font-size: 1rem;
+}
+
+.vs-text strong {
+  color: #2b6b83;
+  margin-left: 6px;
+}
+
+.count-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* slots grid (not used in sided layout but kept for reuse) */
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+
+/* slot card container: let the Card component determine its natural size */
+.player-slot {
+  background: linear-gradient(180deg, #ffffff, #fbfdff);
+  border: 1px solid rgba(74,124,155,0.12);
+  border-radius: 10px;
+  padding: 10px;
+  width: auto;
+  max-width: 280px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: translateY(6px) scale(.995);
+  transition: transform 320ms cubic-bezier(.2,.9,.2,1), opacity 320ms;
+  overflow: visible; /* ensure Card not clipped */
+  box-sizing: border-box;
+  margin-bottom: 12px;
+}
+
+.player-slot.slot-enter {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* prevent child overflow while preserving its intrinsic size */
+.player-slot > * {
+  max-width: none; /* let Card keep its natural size */
+  box-sizing: border-box;
+}
+
+/* layout for the two sides and center board */
+.sides-wrapper {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+/* vertical stack of slots on each side */
+.side-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 120px;
+  align-items: center;
+  padding: 8px 6px;
+}
+
+/* small white center card between columns */
+.center-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.center-small {
+  width: 220px;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 8px 22px rgba(32,45,60,0.08);
+  text-align: center;
+  background: #fff;
+}
+
+/* ensure a slot separates its child Card and avoids overlap */
+.player-slot {
+  margin-bottom: 12px;
+}
+
+/* styles to avoid negative margins or absolute positioning inside Card */
+.player-slot .card,
+.player-slot .player-card {
+  margin: 0;
+  display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 520px) {
+  .card-white { width: calc(100% - 40px); padding: 16px; }
+  .slots-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 760px) {
+  .sides-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+  .center-small { width: 90%; }
+  .side-column { flex-direction: row; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .player-slot { max-width: 45%; }
+}
+
 @media (max-width: 768px) {
   .match-title {
     font-size: 2rem;
@@ -135,4 +302,45 @@
   .mode-icon {
     font-size: 3rem;
   }
+}
+
+/* selected mode highlight */
+.mode-selected {
+  position: relative;
+  z-index: 2;
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 18px 40px rgba(74,124,155,0.18), 0 6px 12px rgba(74,124,155,0.08);
+  border-radius: 12px;
+  transition: transform 240ms cubic-bezier(.2,.9,.2,1), box-shadow 240ms, filter 240ms;
+  filter: saturate(1.06) brightness(1.03);
+  outline: 2px solid rgba(74,124,155,0.08);
+}
+
+/* subtle glowing ring for selected mode */
+.mode-selected::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 14px;
+  background: radial-gradient(ellipse at center, rgba(74,124,155,0.12), transparent 40%);
+  opacity: 0;
+  transition: opacity 260ms;
+  pointer-events: none;
+}
+
+.mode-selected:hover::after,
+.mode-selected:focus::after {
+  opacity: 1;
+}
+
+/* slight icon emphasis for selected mode */
+.mode-selected > div:first-child {
+  transform: translateY(-2px);
+  transition: transform 240ms;
+}
+
+/* ensure smooth hover while selected */
+.gradient-button:hover.mode-selected {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 22px 48px rgba(74,124,155,0.22), 0 10px 20px rgba(74,124,155,0.10);
 }
