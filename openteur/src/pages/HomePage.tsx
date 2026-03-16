@@ -6,26 +6,37 @@ const HomePage = () => {
   return (
     <div className="page-wrapper">
       <div className="page-container">
-        <div className="content-card" style={{ display: 'block' }}>
-          <div className="welcome mb-5"></div>
+        <div className="content-card">
+          <div className="welcome mb-5">
+            <h1 className="welcome-title">Your Cardteur League</h1>
+          </div>
           <div className="row">
             <div className="col-sm d-grid mb-3">
               <button
-                className="btn btn-lg btn-homepage btn-player-edit btn-home"
+                className="btn btn-lg btn-homepage btn-home"
                 onClick={() => navigate('/edit')}
-              ></button>
+              >
+                <i className="bi bi-person-fill-gear btn-icon"></i>
+                <span className="btn-label">Edit Player</span>
+              </button>
             </div>
             <div className="col-sm d-grid mb-3">
               <button
-                className="btn btn-lg btn-homepage btn-player-preview btn-home"
+                className="btn btn-lg btn-homepage btn-home"
                 onClick={() => navigate('/preview')}
-              ></button>
+              >
+                <i className="bi bi-person-lines-fill btn-icon"></i>
+                <span className="btn-label">Preview Player</span>
+              </button>
             </div>
             <div className="col-sm d-grid mb-3">
               <button
-                className="btn btn-lg btn-homepage btn-prepare-match btn-home"
+                className="btn btn-lg btn-homepage btn-home"
                 onClick={() => navigate('/match')}
-              ></button>
+              >
+                <i className="bi bi-trophy-fill btn-icon"></i>
+                <span className="btn-label">Prepare Match</span>
+              </button>
             </div>
           </div>
         </div>

@@ -30,15 +30,23 @@
 }
 
 .mode-button {
-  background: white;
-  border: none;
-  border-radius: 20px;
-  padding: 3rem 2rem;
+  height: 200px;
+  border: 2px solid rgba(74, 124, 155, 0.4) !important;
+  background: linear-gradient(160deg, #1e3d52 0%, #2c5f7d 100%) !important;
+  color: white !important;
+  border-radius: 16px !important;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   position: relative;
   overflow: hidden;
+  flex: 1;
+  min-width: 220px;
+  max-width: 320px;
 }
 
 .mode-button::before {
@@ -46,55 +54,58 @@
   position: absolute;
   top: 0;
   left: -100%;
-  width: 100%;
+  width: 60%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  transition: left 0.5s;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  transition: left 0.5s ease;
 }
 
 .mode-button:hover::before {
-  left: 100%;
+  left: 150%;
 }
 
 .mode-button:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  border-color: #5a94b8 !important;
+  background: linear-gradient(160deg, #2c5f7d 0%, #3a7599 100%) !important;
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(90, 148, 184, 0.3);
 }
 
-.advance-mode {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.standard-mode {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  color: white;
+.mode-button:active {
+  transform: translateY(-2px) scale(0.99);
+  transition-duration: 0.1s;
 }
 
 .mode-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  animation: bounce 2s infinite;
+  font-size: 3rem;
+  line-height: 1;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+.mode-button:hover .mode-icon {
+  transform: scale(1.2);
 }
 
 .mode-button h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  font-weight: bold;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.5px;
+  transition: letter-spacing 0.35s ease;
+}
+
+.mode-button:hover h2 {
+  letter-spacing: 1.5px;
 }
 
 .mode-button p {
-  font-size: 1rem;
-  opacity: 0.9;
+  font-size: 0.85rem;
+  opacity: 0.75;
   margin: 0;
 }
 
@@ -123,18 +134,20 @@
 
 .card-white {
   position: relative;
-  z-index: 50; /* ensure panel/buttons are on top and clickable */
-  background: #ffffff;
+  z-index: 50;
+  background: linear-gradient(160deg, #1e3d52 0%, #2c5f7d 100%);
+  border: 1px solid rgba(74, 124, 155, 0.3);
   border-radius: 12px;
   padding: 16px 20px;
   width: auto;
   min-width: 240px;
   max-width: 95%;
   display: inline-block;
-  box-shadow: 0 12px 30px rgba(32,45,60,0.15);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
   transform-origin: top center;
   animation: panelIn 360ms cubic-bezier(.2,.9,.2,1);
   text-align: center;
+  color: white;
 }
 
 @keyframes panelIn {
@@ -148,9 +161,17 @@
   margin: 0;
   display: inline-block;
   border-radius: 6px;
-  border: 1px solid #e0e6ea;
+  border: 1px solid rgba(74, 124, 155, 0.4);
+  background: rgba(31, 58, 74, 0.8);
+  color: white;
   font-size: 1rem;
   text-align: center;
+}
+
+.count-input:focus {
+  outline: none;
+  border-color: #5a94b8;
+  box-shadow: 0 0 0 3px rgba(90, 148, 184, 0.2);
 }
 
 .count-input-row {
@@ -162,12 +183,12 @@
 }
 
 .vs-text {
-  color: #6b7f89;
+  color: rgba(255,255,255,0.7);
   font-size: 1rem;
 }
 
 .vs-text strong {
-  color: #2b6b83;
+  color: #90caf9;
   margin-left: 6px;
 }
 
@@ -176,6 +197,11 @@
   justify-content: center;
   gap: 12px;
   margin-top: 12px;
+}
+
+.muted {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.88rem;
 }
 
 /* slots grid (not used in sided layout but kept for reuse) */
@@ -188,8 +214,8 @@
 
 /* slot card container: let the Card component determine its natural size */
 .player-slot {
-  background: linear-gradient(180deg, #ffffff, #fbfdff);
-  border: 1px solid rgba(74,124,155,0.12);
+  background: linear-gradient(160deg, #1e3d52 0%, #244c68 100%);
+  border: 1px solid rgba(74,124,155,0.25);
   border-radius: 10px;
   padding: 10px;
   width: auto;
@@ -199,10 +225,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  color: white;
   opacity: 0;
   transform: translateY(6px) scale(.995);
   transition: transform 320ms cubic-bezier(.2,.9,.2,1), opacity 320ms;
-  overflow: visible; /* ensure Card not clipped */
+  overflow: visible;
   box-sizing: border-box;
   margin-bottom: 12px;
 }
@@ -247,9 +274,11 @@
   width: 220px;
   padding: 12px;
   border-radius: 10px;
-  box-shadow: 0 8px 22px rgba(32,45,60,0.08);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.25);
   text-align: center;
-  background: #fff;
+  background: linear-gradient(160deg, #1e3d52 0%, #2c5f7d 100%);
+  border: 1px solid rgba(74, 124, 155, 0.3);
+  color: white;
 }
 
 /* ensure a slot separates its child Card and avoids overlap */
@@ -309,38 +338,14 @@
   position: relative;
   z-index: 2;
   transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 18px 40px rgba(74,124,155,0.18), 0 6px 12px rgba(74,124,155,0.08);
+  box-shadow: 0 18px 40px rgba(74,124,155,0.3), 0 0 0 2px rgba(90,148,184,0.5);
   border-radius: 12px;
-  transition: transform 240ms cubic-bezier(.2,.9,.2,1), box-shadow 240ms, filter 240ms;
-  filter: saturate(1.06) brightness(1.03);
-  outline: 2px solid rgba(74,124,155,0.08);
-}
-
-/* subtle glowing ring for selected mode */
-.mode-selected::after {
-  content: '';
-  position: absolute;
-  inset: -6px;
-  border-radius: 14px;
-  background: radial-gradient(ellipse at center, rgba(74,124,155,0.12), transparent 40%);
-  opacity: 0;
-  transition: opacity 260ms;
-  pointer-events: none;
-}
-
-.mode-selected:hover::after,
-.mode-selected:focus::after {
-  opacity: 1;
-}
-
-/* slight icon emphasis for selected mode */
-.mode-selected > div:first-child {
-  transform: translateY(-2px);
-  transition: transform 240ms;
+  transition: transform 240ms cubic-bezier(.2,.9,.2,1), box-shadow 240ms;
+  border-color: #5a94b8 !important;
 }
 
 /* ensure smooth hover while selected */
-.gradient-button:hover.mode-selected {
+.mode-button:hover.mode-selected {
   transform: translateY(-8px) scale(1.03);
-  box-shadow: 0 22px 48px rgba(74,124,155,0.22), 0 10px 20px rgba(74,124,155,0.10);
+  box-shadow: 0 22px 48px rgba(74,124,155,0.4), 0 0 0 2px rgba(90,148,184,0.6);
 }

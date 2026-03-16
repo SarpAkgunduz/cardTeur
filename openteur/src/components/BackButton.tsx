@@ -50,10 +50,11 @@ const BackButton = ({
       }
     >
       <button
-        className={`btn btn-secondary ${className} gradient-button`}
+        className={`btn btn-ct ${className}`}
         onClick={handleClick}
       >
-        ⬅️ Back
+        <i className="bi bi-arrow-left-circle-fill" style={{ marginRight: 8, fontSize: '1.1em' }}></i>
+        Back
       </button>
     </div>
   );

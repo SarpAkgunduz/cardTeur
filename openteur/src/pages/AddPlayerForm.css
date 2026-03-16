@@ -1,0 +1,260 @@
+/* Form section card */
+.form-section {
+  background: rgba(19, 47, 76, 0.6);
+  border: 1px solid rgba(74, 124, 155, 0.2);
+  border-left: 3px solid #4A7C9B;
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin-bottom: 20px;
+}
+
+/* Section header */
+.form-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(74, 124, 155, 0.2);
+}
+
+.form-section-header i {
+  font-size: 1.3rem;
+  color: #64B5F6;
+}
+
+.form-section-header h4,
+.form-section-header span {
+  margin: 0;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* 2-column stat grid */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+}
+
+/* Single column override */
+.stat-grid.single {
+  grid-template-columns: 1fr;
+}
+
+/* Identity grid — 2 col for most, full-width for selects */
+.identity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+}
+
+.identity-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+/* Stat input group */
+.stat-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-field label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Dark themed inputs */
+.form-control-dark,
+.form-select-dark {
+  background: rgba(10, 25, 41, 0.7) !important;
+  border: 1px solid rgba(74, 124, 155, 0.3) !important;
+  border-radius: 8px !important;
+  color: white !important;
+  padding: 8px 12px !important;
+  font-size: 0.95rem !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+
+.form-control-dark:focus,
+.form-select-dark:focus {
+  border-color: #5a94b8 !important;
+  box-shadow: 0 0 0 3px rgba(90, 148, 184, 0.15) !important;
+  outline: none !important;
+  background: rgba(10, 25, 41, 0.9) !important;
+}
+
+.form-control-dark::placeholder {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.form-select-dark option {
+  background: #0D2137;
+  color: white;
+}
+
+/* Number stat input — compact */
+.stat-input {
+  width: 100%;
+  background: rgba(10, 25, 41, 0.7);
+  border: 1px solid rgba(74, 124, 155, 0.3);
+  border-radius: 8px;
+  color: white;
+  padding: 7px 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.stat-input:focus {
+  outline: none;
+  border-color: #5a94b8;
+  box-shadow: 0 0 0 3px rgba(90, 148, 184, 0.15);
+  background: rgba(10, 25, 41, 0.9);
+}
+
+/* Stat value bar under input */
+.stat-bar-track {
+  height: 3px;
+  background: rgba(74, 124, 155, 0.2);
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #4A7C9B, #64B5F6);
+  transition: width 0.3s ease;
+}
+
+/* Player image preview */
+.image-preview,
+.player-preview-img {
+  width: 110px;
+  height: 110px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid rgba(74, 124, 155, 0.4);
+  margin-top: 4px;
+}
+
+.image-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Stat sub-header label */
+.stat-subheader {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 10px 0;
+}
+
+/* Overall badges in summary section */
+.overall-badges-row,
+.overall-badges {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.overall-badge {
+  flex: 1;
+  min-width: 120px;
+  background: rgba(10, 25, 41, 0.7);
+  border: 1px solid rgba(74, 124, 155, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.overall-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.overall-badge .badge-title {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.overall-badge .badge-value {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #64B5F6;
+  line-height: 1;
+}
+
+.overall-badge .badge-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* Card title pill in summary */
+.card-title-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.card-title-pill.bronze  { background: rgba(176, 141, 87, 0.2); border: 1px solid #b08d57; color: #e0b97a; }
+.card-title-pill.silver  { background: rgba(180, 180, 180, 0.2); border: 1px solid #aaa; color: #d0d0d0; }
+.card-title-pill.gold    { background: rgba(255, 215, 0, 0.15); border: 1px solid #ffd700; color: #ffd700; }
+.card-title-pill.platinum { background: rgba(180, 230, 255, 0.15); border: 1px solid #90caf9; color: #90caf9; }
+
+/* Card title row */
+.card-title-row {
+  margin-bottom: 20px;
+}
+
+/* Submit row */
+.form-submit-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .stat-grid,
+  .identity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .identity-grid .full-width {
+    grid-column: 1;
+  }
+
+  .overall-badges,
+  .overall-badges-row {
+    flex-direction: column;
+  }
+}

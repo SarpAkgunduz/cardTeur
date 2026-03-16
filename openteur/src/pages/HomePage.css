@@ -1,62 +1,90 @@
 .welcome {
-  background-image: url('/assets/welcomeBackground.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  height: 40vh;
-  border-radius: 8px;
-  border: 4px solid #2D4C5C;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30vh;
+  border-radius: 12px;
+  border: 2px solid rgba(74, 124, 155, 0.3);
+  background: linear-gradient(135deg, rgba(31, 58, 74, 0.8) 0%, rgba(44, 95, 125, 0.6) 100%);
+  margin-bottom: 2rem;
+}
+
+.welcome-title {
+  color: white;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  margin: 0;
 }
 
 .btn-homepage {
+  height: 200px;
+  border: 2px solid rgba(74, 124, 155, 0.4) !important;
+  background: linear-gradient(160deg, #1e3d52 0%, #2c5f7d 100%) !important;
+  color: white !important;
+  border-radius: 16px !important;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  overflow: hidden;
   position: relative;
-  height: 250px;
-  font-size: 1.2rem;
-  padding-bottom: 10px;
-  border: 4px solid black !important;
 }
 
-/* Pseudo-element for bottom-centered background image */
-.btn-homepage::after {
+/* Shimmer sweep on hover */
+.btn-homepage::before {
   content: '';
   position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 200px;
-  background-size: contain;
-  background-repeat: no-repeat;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  transition: left 0.5s ease;
 }
 
-/* Specific button images */
-.btn-player-preview::after {
-  background-image: url('/assets/homepageButtons/previewPlayer.png');
+.btn-homepage:hover::before {
+  left: 150%;
 }
 
-.btn-player-edit::after {
-  background-image: url('/assets/homepageButtons/editPlayer.png');
+.btn-homepage:hover {
+  border-color: #5a94b8 !important;
+  background: linear-gradient(160deg, #2c5f7d 0%, #3a7599 100%) !important;
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(90, 148, 184, 0.3);
 }
 
-.btn-prepare-match::after {
-  background-image: url('/assets/homepageButtons/prepareMatch.png');
+.btn-homepage:active {
+  transform: translateY(-2px) scale(0.99);
+  transition-duration: 0.1s;
 }
 
-.btn-home:hover {
-  animation: kick 1.5s ease forwards;
+.btn-icon {
+  font-size: 3rem;
+  line-height: 1;
+  transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-@keyframes kick {
-  0% {
-    transform: scale(1) rotate(0deg);
-  }
-  30% {
-    transform: translateY(-10px) rotate(-10deg);
-  }
-  60% {
-    transform: translateY(2px) rotate(10deg);
-  }
-  100% {
-    transform: translateY(0px) rotate(0deg);
-  }
+.btn-homepage:hover .btn-icon {
+  transform: scale(1.2);
+}
+
+.btn-label {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: letter-spacing 0.35s ease;
+}
+
+.btn-homepage:hover .btn-label {
+  letter-spacing: 1.5px;
 }

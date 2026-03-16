@@ -150,41 +150,23 @@ const MatchPage = () => {
         <div className="content-card">
           <div style={{ display: 'flex', gap: '30px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button
-              className={`gradient-button ${selectedMode === 'advance' ? 'mode-selected' : ''}`}
-              style={{
-                padding: '40px',
-                fontSize: '1.3rem',
-                minWidth: '250px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '15px'
-              }}
+              className={`mode-button ${selectedMode === 'advance' ? 'mode-selected' : ''}`}
               onClick={() => handleModeSelect('advance')}
               aria-pressed={selectedMode === 'advance'}
             >
-              <div style={{ fontSize: '3rem' }}>⚡</div>
-              <h2 style={{ margin: 0 }}>Advance Match</h2>
-              <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.9 }}>Detailed statistics and advanced tactics</p>
+              <i className="bi bi-lightning-charge-fill mode-icon"></i>
+              <h2>Advance Match</h2>
+              <p>Detailed statistics and advanced tactics</p>
             </button>
 
             <button
-              className={`gradient-button ${selectedMode === 'standard' ? 'mode-selected' : ''}`}
-              style={{
-                padding: '40px',
-                fontSize: '1.3rem',
-                minWidth: '250px',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '15px'
-              }}
+              className={`mode-button ${selectedMode === 'standard' ? 'mode-selected' : ''}`}
               onClick={() => handleModeSelect('standard')}
               aria-pressed={selectedMode === 'standard'}
             >
-              <div style={{ fontSize: '3rem' }}>⚽</div>
-              <h2 style={{ margin: 0 }}>Standard Match</h2>
-              <p style={{ margin: 0, fontSize: '0.9rem', opacity: 0.9 }}>Quick match with basic rules</p>
+              <i className="bi bi-shield-fill-check mode-icon"></i>
+              <h2>Standard Match</h2>
+              <p>Quick match with basic rules</p>
             </button>
           </div>
 
@@ -207,8 +189,8 @@ const MatchPage = () => {
                   <span className="vs-text">vs <strong>{playerCount ?? 0}</strong></span>
                 </div>
                 <div className="count-actions">
-                  <button type="button" className="btn btn-secondary" onClick={() => setShowCountPanel(false)}>Cancel</button>
-                  <button type="submit" className="btn btn-primary" onClick={() => handleSubmitCount()}>Create</button>
+                  <button type="button" className="btn btn-ct active-mode" onClick={() => setShowCountPanel(false)}>Cancel</button>
+                  <button type="submit" className="btn btn-ct" onClick={() => handleSubmitCount()}>Create</button>
                 </div>
               </form>
             </div>

@@ -3,6 +3,7 @@ import BackButton from '../components/BackButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import ToastNotification from '../components/ToastNotification';
 import { playerApi } from '../services';
+import './AddPlayerForm.css';
 
 const AddPlayerForm = () => {
   const { id } = useParams<{ id: string }>();
@@ -172,204 +173,255 @@ const AddPlayerForm = () => {
   return (
     <div className="page-wrapper">
       <div className="page-container">
-        {/* Toast Notification */}
         <ToastNotification
-        show={showToast}
-        message={toastMsg}
-        onClose={() => setShowToast(false)}
+          show={showToast}
+          message={toastMsg}
+          onClose={() => setShowToast(false)}
         />
 
         <div className="content-card">
-          {/* Back button */}
           <div className="back-button-container" style={{ marginBottom: '20px' }}>
             <BackButton position="static" />
           </div>
 
-          {/* Form for adding a player */}
+          <h2 className="page-title" style={{ marginBottom: '30px' }}>
+            {isEditMode ? 'Edit Player' : 'Add Player'}
+          </h2>
+
           <form onSubmit={handleSubmit}>
-            <h2 className="page-title" style={{ marginBottom: '30px' }}>{isEditMode ? 'Edit Player' : 'Add Player'}</h2>
 
-      {/* Name input */}
-      <h5>Name</h5>
-      <input
-        className="form-control mb-2"
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-
-      {/* Jersey number input */}
-      <h5>Jersey Number</h5>
-      <input
-        className="form-control mb-2"
-        placeholder="Jersey Number"
-        type="number"
-        value={jerseyNumber}
-        onChange={(e) => setjerseyNumber(e.target.value)}
-      />
-      {/* Market value input */}
-      <h5>Market Value</h5>
-      <input
-        className="form-control mb-2"
-        placeholder="Market Value"
-        type="string"
-        value={marketValue}
-        onChange={(e) => setMarketValue(e.target.value)}
-      />
-      {/* Preferred position input */}
-      <h5>Preferred Position</h5>
-      <select
-        className="form-select mb-2"
-        value={preferredPosition}
-        onChange={(e) => setpreferredPosition(e.target.value)}
-      >
-        <option value="">-- Choose a position --</option>
-        <option value="ST">Striker</option>
-        <option value="LW">Left Winger</option>
-        <option value="RW">Right Winger</option>
-        <option value="CAM">Central Attacking Midfielder</option>
-        <option value="CM">Central Midfielder</option>
-        <option value="CDM">Central Defensive Midfielder</option>
-        <option value="LB">Left Back</option>
-        <option value="RB">Right Back</option>
-        <option value="CB">Center Back</option>
-        <option value="GK">Goalkeeper</option>
-        <option value="LM">Left Midfielder</option>
-        <option value="RM">Right Midfielder</option>
-      </select>
-  
-      {/* Image select */}
-      <h5>Select Player Image</h5>
-      <select
-        className="form-select mb-3"
-        value={cardImage}
-        onChange={(e) => setCardImage(e.target.value)}
-      >
-        <option value="">-- Choose an image --</option>
-        <option value="/assets/sakgunduz.png">Sarp Akgündüz</option>
-        <option value="/assets/faksakal.png">Furkan Mert Aksakal</option>
-        <option value="/assets/rbesen.png">Ruşen Besen</option>
-        <option value="/assets/eakkoc.png">Emre Akkoç</option>
-        <option value="/assets/celbir.png">Zekeriya Cengiz</option>
-        <option value="/assets/fimaro.png">Furkan İmaro</option>
-        <option value="/assets/raltunel.png">Rıdvan Altunel</option>
-        <option value="/assets/eyildirim.png">Emre Yıldırım</option>
-        <option value="/assets/ambostan.png">Ali Mert Bostan</option>
-        <option value="/assets/dbekaroglu.png">Doğa Bekaroğlu</option>
-        <option value="/assets/berdinc.png">Burak Erdinç</option>
-        <option value="/assets/ycetin.png">Yasin Çetin</option>
-      </select>
-  
-      {/* Preview */}
-      {cardImage && (
-        <div className="text-center mb-3">
-          <img
-            src={cardImage}
-            alt="preview"
-            className="img-thumbnail"
-            style={{ width: '150px' }}
-          />
-        </div>
-      )}
-  
-      {/* Offensive Stats */}
-      <h5>Offensive Stats</h5>
-
-      <label htmlFor="dribbling">Dribbling</label>
-      <input id="dribbling" type="number" min={0} max={100} className="form-control mb-2" value={dribbling} onChange={(e) => setDribbling(+e.target.value)} />
-
-      <label htmlFor="shotAccuracy">Shot Accuracy</label>
-      <input id="shotAccuracy" type="number" min={0} max={100} className="form-control mb-2" value={shotAccuracy} onChange={(e) => setShotAccuracy(+e.target.value)} />
-
-      <label htmlFor="shotSpeed">Shot Speed</label>
-      <input id="shotSpeed" type="number" min={0} max={100} className="form-control mb-2" value={shotSpeed} onChange={(e) => setShotSpeed(+e.target.value)} />
-
-      <label htmlFor="headers">Headers</label>
-      <input id="headers" type="number" min={0} max={100} className="form-control mb-2" value={headers} onChange={(e) => setHeader(+e.target.value)} />
-
-      <label htmlFor="longPass">Long Pass</label>
-      <input id="longPass" type="number" min={0} max={100} className="form-control mb-2" value={longPass} onChange={(e) => setLongPass(+e.target.value)} />
-
-      <label htmlFor="shortPass">Short Pass</label>
-      <input id="shortPass" type="number" min={0} max={100} className="form-control mb-3" value={shortPass} onChange={(e) => setShortPass(+e.target.value)} />
-
-      <label htmlFor="ballControl">Ball Control</label>
-      <input id="ballControl" type="number" min={0} max={100} className="form-control mb-3" value={ballControl} onChange={(e) => setBallControl(+e.target.value)} />
-
-      <label htmlFor="positioning">Positioning</label>
-      <input id="positioning" type="number" min={0} max={100} className="form-control mb-2" value={positioning} onChange={(e) => setPositioning(+e.target.value)} />
-      
-      <label htmlFor="vision">Vision</label>
-      <input id="vision" type="number" min={0} max={100} className="form-control mb-2" value={vision} onChange={(e) => setVision(+e.target.value)} />
-      
-
-
-      {/* Defensive Stats */}
-      <h5>Defensive Stats</h5>
-
-      <label htmlFor="tackling">Tackling</label>
-      <input id="tackling" type="number" min={0} max={100} className="form-control mb-2" value={tackling} onChange={(e) => setTackling(+e.target.value)} />
-
-      <label htmlFor="interceptions">Interceptions</label>
-      <input id="interceptions" type="number" min={0} max={100} className="form-control mb-2" placeholder="Interceptions" value={interceptions} onChange={(e) => setInterceptions(+e.target.value)} />
-
-      <label htmlFor="marking">Marking</label>
-      <input id="marking" type="number" min={0} max={100} className="form-control mb-3" placeholder="Marking" value={marking} onChange={(e) => setMarking(+e.target.value)} />
-
-      <label htmlFor="defensiveIQ">Defensive IQ</label>
-      <input id="defensiveIQ" type="number" min={0} max={100} className="form-control mb-2" placeholder="Defensive IQ" value={defensiveIQ} onChange={(e) => setDefensiveIQ(+e.target.value)} />
-  
-      {/* Athleticism Stats */}
-      <h5>Athleticism Stats</h5>
-
-      <label htmlFor="speed">Speed</label>
-      <input
-        id="speed"
-        type="number"
-        className="form-control mb-2"
-        value={speed}
-        min={0} max={100}
-        onChange={(e) => setSpeed(+e.target.value)}
-      />
-
-      <label htmlFor="strength">Strength</label>
-      <input
-        id="strength"
-        type="number"
-        className="form-control mb-2"
-        value={strength}
-        min={0} max={100}
-        onChange={(e) => setStrength(+e.target.value)}
-      />
-
-      <label htmlFor="stamina">Stamina</label>
-      <input
-        id="stamina"
-        type="number"
-        className="form-control mb-3"
-        value={stamina}
-        min={0} max={100}
-        onChange={(e) => setStamina(+e.target.value)}
-      />
-  
-            {/* Calculated Overalls */}
-            <div className="mt-4">
-              <h5>Calculated Overalls</h5>
-              <p>Offense: {offensiveOverall}</p>
-              <p>Defense: {defensiveOverall}</p>
-              <p>Athleticism: {athleticismOverall}</p>
+            {/* ── SECTION 1: IDENTITY ── */}
+            <div className="form-section">
+              <div className="form-section-header">
+                <i className="bi bi-person-badge-fill"></i>
+                <span>Player Identity</span>
+              </div>
+              <div className="identity-grid">
+                <div className="stat-field">
+                  <label htmlFor="name">Player Name</label>
+                  <input
+                    id="name"
+                    className="form-control-dark"
+                    placeholder="Full name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                <div className="stat-field">
+                  <label htmlFor="jerseyNumber">Jersey Number</label>
+                  <input
+                    id="jerseyNumber"
+                    className="form-control-dark"
+                    placeholder="e.g. 10"
+                    type="number"
+                    value={jerseyNumber}
+                    onChange={(e) => setjerseyNumber(e.target.value)}
+                  />
+                </div>
+                <div className="stat-field">
+                  <label htmlFor="marketValue">Market Value</label>
+                  <input
+                    id="marketValue"
+                    className="form-control-dark"
+                    placeholder="e.g. 5M"
+                    value={marketValue}
+                    onChange={(e) => setMarketValue(e.target.value)}
+                  />
+                </div>
+                <div className="stat-field">
+                  <label htmlFor="preferredPosition">Preferred Position</label>
+                  <select
+                    id="preferredPosition"
+                    className="form-select-dark"
+                    value={preferredPosition}
+                    onChange={(e) => setpreferredPosition(e.target.value)}
+                  >
+                    <option value="">-- Choose --</option>
+                    <option value="ST">Striker (ST)</option>
+                    <option value="LW">Left Winger (LW)</option>
+                    <option value="RW">Right Winger (RW)</option>
+                    <option value="CAM">Attacking Mid (CAM)</option>
+                    <option value="CM">Central Mid (CM)</option>
+                    <option value="CDM">Defensive Mid (CDM)</option>
+                    <option value="LB">Left Back (LB)</option>
+                    <option value="RB">Right Back (RB)</option>
+                    <option value="CB">Center Back (CB)</option>
+                    <option value="GK">Goalkeeper (GK)</option>
+                    <option value="LM">Left Mid (LM)</option>
+                    <option value="RM">Right Mid (RM)</option>
+                  </select>
+                </div>
+                <div className="stat-field full-width">
+                  <label htmlFor="cardImage">Player Photo</label>
+                  <select
+                    id="cardImage"
+                    className="form-select-dark"
+                    value={cardImage}
+                    onChange={(e) => setCardImage(e.target.value)}
+                  >
+                    <option value="">-- Choose an image --</option>
+                    <option value="/assets/sakgunduz.png">Sarp Akgündüz</option>
+                    <option value="/assets/faksakal.png">Furkan Mert Aksakal</option>
+                    <option value="/assets/rbesen.png">Ruşen Besen</option>
+                    <option value="/assets/eakkoc.png">Emre Akkoç</option>
+                    <option value="/assets/celbir.png">Zekeriya Cengiz</option>
+                    <option value="/assets/fimaro.png">Furkan İmaro</option>
+                    <option value="/assets/raltunel.png">Rıdvan Altunel</option>
+                    <option value="/assets/eyildirim.png">Emre Yıldırım</option>
+                    <option value="/assets/ambostan.png">Ali Mert Bostan</option>
+                    <option value="/assets/dbekaroglu.png">Doğa Bekaroğlu</option>
+                    <option value="/assets/berdinc.png">Burak Erdinç</option>
+                    <option value="/assets/ycetin.png">Yasin Çetin</option>
+                  </select>
+                </div>
+                {cardImage && (
+                  <div className="stat-field full-width image-preview-row">
+                    <img src={cardImage} alt="preview" className="player-preview-img" />
+                  </div>
+                )}
+              </div>
             </div>
-        
-            {/* Submit */}
-            <button type="submit" className="gradient-button" style={{ padding: '15px 40px', fontSize: '1.1rem', marginTop: '20px' }}>
-              {isEditMode ? 'Update Player' : 'Add Player'}
-            </button>
+
+            {/* ── SECTION 2: OFFENSIVE STATS ── */}
+            <div className="form-section">
+              <div className="form-section-header">
+                <i className="bi bi-lightning-fill"></i>
+                <span>Offensive Stats</span>
+              </div>
+              <div className="stat-grid">
+                {[
+                  { id: 'dribbling',    label: 'Dribbling',     value: dribbling,    setter: setDribbling },
+                  { id: 'shotAccuracy', label: 'Shot Accuracy', value: shotAccuracy, setter: setShotAccuracy },
+                  { id: 'shotSpeed',    label: 'Shot Speed',    value: shotSpeed,    setter: setShotSpeed },
+                  { id: 'headers',      label: 'Headers',       value: headers,      setter: setHeader },
+                  { id: 'longPass',     label: 'Long Pass',     value: longPass,     setter: setLongPass },
+                  { id: 'shortPass',    label: 'Short Pass',    value: shortPass,    setter: setShortPass },
+                  { id: 'ballControl',  label: 'Ball Control',  value: ballControl,  setter: setBallControl },
+                  { id: 'positioning',  label: 'Positioning',   value: positioning,  setter: setPositioning },
+                  { id: 'vision',       label: 'Vision',        value: vision,       setter: setVision },
+                ].map(({ id, label, value, setter }) => (
+                  <div className="stat-field" key={id}>
+                    <label htmlFor={id}>{label}</label>
+                    <input
+                      id={id}
+                      type="number"
+                      min={0}
+                      max={100}
+                      className="stat-input"
+                      value={value}
+                      onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))}
+                    />
+                    <div className="stat-bar-track">
+                      <div className="stat-bar-fill" style={{ width: `${value}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── SECTION 3: DEFENSIVE & ATHLETICISM ── */}
+            <div className="form-section">
+              <div className="form-section-header">
+                <i className="bi bi-shield-fill"></i>
+                <span>Defensive &amp; Athleticism</span>
+              </div>
+
+              <p className="stat-subheader">Defensive</p>
+              <div className="stat-grid">
+                {[
+                  { id: 'tackling',     label: 'Tackling',      value: tackling,     setter: setTackling },
+                  { id: 'interceptions',label: 'Interceptions', value: interceptions,setter: setInterceptions },
+                  { id: 'marking',      label: 'Marking',       value: marking,      setter: setMarking },
+                  { id: 'defensiveIQ',  label: 'Defensive IQ',  value: defensiveIQ,  setter: setDefensiveIQ },
+                ].map(({ id, label, value, setter }) => (
+                  <div className="stat-field" key={id}>
+                    <label htmlFor={id}>{label}</label>
+                    <input
+                      id={id}
+                      type="number"
+                      min={0}
+                      max={100}
+                      className="stat-input"
+                      value={value}
+                      onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))}
+                    />
+                    <div className="stat-bar-track">
+                      <div className="stat-bar-fill" style={{ width: `${value}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <p className="stat-subheader" style={{ marginTop: '24px' }}>Athleticism</p>
+              <div className="stat-grid">
+                {[
+                  { id: 'speed',    label: 'Speed',    value: speed,    setter: setSpeed },
+                  { id: 'strength', label: 'Strength', value: strength, setter: setStrength },
+                  { id: 'stamina',  label: 'Stamina',  value: stamina,  setter: setStamina },
+                ].map(({ id, label, value, setter }) => (
+                  <div className="stat-field" key={id}>
+                    <label htmlFor={id}>{label}</label>
+                    <input
+                      id={id}
+                      type="number"
+                      min={0}
+                      max={100}
+                      className="stat-input"
+                      value={value}
+                      onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))}
+                    />
+                    <div className="stat-bar-track">
+                      <div className="stat-bar-fill" style={{ width: `${value}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── SECTION 4: SUMMARY & SUBMIT ── */}
+            <div className="form-section">
+              <div className="form-section-header">
+                <i className="bi bi-clipboard-check-fill"></i>
+                <span>Summary</span>
+              </div>
+
+              <div className="overall-badges-row">
+                <div className="overall-badge">
+                  <span className="badge-title">Offensive</span>
+                  <span className="badge-value">{offensiveOverall}</span>
+                  <span className="badge-label">OVR</span>
+                </div>
+                <div className="overall-badge">
+                  <span className="badge-title">Defensive</span>
+                  <span className="badge-value">{defensiveOverall}</span>
+                  <span className="badge-label">OVR</span>
+                </div>
+                <div className="overall-badge">
+                  <span className="badge-title">Athleticism</span>
+                  <span className="badge-value">{athleticismOverall}</span>
+                  <span className="badge-label">OVR</span>
+                </div>
+              </div>
+
+              <div className="card-title-row">
+                <span className={`card-title-pill ${cardTitle}`}>
+                  {cardTitle.charAt(0).toUpperCase() + cardTitle.slice(1)}
+                </span>
+              </div>
+
+              <div className="form-submit-row">
+                <button type="submit" className="btn btn-ct">
+                  <i className={`bi ${isEditMode ? 'bi-pencil-fill' : 'bi-person-plus-fill'} me-2`}></i>
+                  {isEditMode ? 'Update Player' : 'Add Player'}
+                </button>
+              </div>
+            </div>
+
           </form>
         </div>
       </div>
     </div>
   );
-  
 };
 
 export default AddPlayerForm;

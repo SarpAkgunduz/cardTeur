@@ -4,6 +4,7 @@ import BackButton from '../components/BackButton';
 import Card from '../components/Card';
 import ComparePanel from '../components/ComparePanel';
 import { playerApi, Player } from '../services';
+import './PlayersPage.css';
 
 const PlayersPage = () => {
   const [players, setPlayers] = useState<Player[]>([]);
@@ -63,32 +64,36 @@ const PlayersPage = () => {
             <h2 className="page-title" style={{ flex: 1, textAlign: 'center' }}>Players</h2>
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
               <button
-                className="gradient-button"
+                className={`btn btn-ct ${compareMode ? 'active-mode' : ''}`}
                 onClick={() => {
                   setCompareMode(!compareMode);
                   setCompareSelection([]);
                 }}
               >
+                <i className={`bi ${compareMode ? 'bi-x-circle-fill' : 'bi-columns-gap'}`} style={{ marginRight: 8 }}></i>
                 {compareMode ? 'Cancel Compare' : 'Compare'}
               </button>
               <button
-                className="gradient-button"
+                className={`btn btn-ct ${editMode ? 'active-mode' : ''}`}
                 onClick={() => setEditMode(!editMode)}
               >
+                <i className={`bi ${editMode ? 'bi-x-circle-fill' : 'bi-pencil-fill'}`} style={{ marginRight: 8 }}></i>
                 {editMode ? 'Cancel Edit' : 'Edit Player'}
               </button>
               <button
-                className="gradient-button"
+                className={`btn btn-ct ${deleteMode ? 'active-mode' : ''}`}
                 onClick={() => setDeleteMode(!deleteMode)}
               >
+                <i className={`bi ${deleteMode ? 'bi-x-circle-fill' : 'bi-trash-fill'}`} style={{ marginRight: 8 }}></i>
                 {deleteMode ? 'Cancel' : 'Delete Player'}
               </button>
               <button
-                className="gradient-button btn-create-card"
-                id="createCard" // ✅ Locator for test automation
+                className="btn btn-ct"
+                id="createCard"
                 onClick={() => navigate('/add')}
               >
-              ➕ Add Player
+                <i className="bi bi-person-plus-fill" style={{ marginRight: 8 }}></i>
+                Add Player
               </button>
             </div>
         </div>
