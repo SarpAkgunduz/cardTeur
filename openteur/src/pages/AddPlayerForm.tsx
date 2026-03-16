@@ -164,9 +164,31 @@ const AddPlayerForm = () => {
         navigate('/edit');
       }, 3000);
     } catch (error) {
-      console.error('Error saving player:', error);
-      setToastMsg(`Error ${isEditMode ? 'updating' : 'adding'} player.`);
+      if (marketValue !== '' && isNaN(Number(marketValue))) {
+      setToastMsg('Market Value must be a number (e.g. 5000000, not "44M")');
       setShowToast(true);
+      return;
+      }
+      else if (jerseyNumber !== '' && isNaN(Number(jerseyNumber))) {
+        setToastMsg('Jersey Number must be a number (e.g. 10)');
+        setShowToast(true);
+        return;
+      }
+      else if(preferredPosition === '') {
+        setToastMsg('Please select a Preferred Position');
+        setShowToast(true);
+        return;
+      }
+      else if(name.trim() === '') {
+        setToastMsg('Player Name cannot be empty');
+        setShowToast(true);
+        return;
+      }
+      else{
+        console.error('Error saving player:', error);
+        setToastMsg(`Error ${isEditMode ? 'updating' : 'adding'} player.`);
+        setShowToast(true);
+      }
     }
   };
 

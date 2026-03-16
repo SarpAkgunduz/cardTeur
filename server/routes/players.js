@@ -23,9 +23,16 @@ router.get('/:id', async (req, res) => {
 
 // Create a new player
 router.post('/', async (req, res) => {
-  const newPlayer = new Player(req.body);
-  await newPlayer.save();
-  res.json(newPlayer);
+  try {
+    const newPlayer = new Player(req.body);
+    await newPlayer.save();
+    res.json(newPlayer);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ error: err.message });
+    }
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // Update player
