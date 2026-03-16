@@ -37,8 +37,16 @@ router.post('/', async (req, res) => {
 
 // Update player
 router.put('/:id', async (req, res) => {
-  const updated = await Player.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(updated);
+  try {
+    const updated = await Player.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!updated) return res.status(404).json({ error: 'Player not found' });
+    res.json(updated);
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ error: err.message });
+    }
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // Delete player

@@ -3,7 +3,7 @@ export interface Player {
   name: string;
   cardImage: string;
   jerseyNumber: number;
-  marketValue: string;
+  marketValue: number;
   preferredPosition: string;
   cardTitle: 'gold' | 'silver' | 'bronze' | 'platinum';
   offensiveOverall: number;

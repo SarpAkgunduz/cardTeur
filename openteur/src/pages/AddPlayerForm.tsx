@@ -106,7 +106,7 @@ const AddPlayerForm = () => {
         jerseyNumber: Number(jerseyNumber),
         preferredPosition,
         cardTitle,
-        marketValue: String(marketValue),
+        marketValue: marketValue !== '' ? Number(marketValue) : 0,
         cardImage,
         offensiveOverall,
         defensiveOverall,
@@ -147,7 +147,29 @@ const AddPlayerForm = () => {
       setShowToast(true);
       return;
     }
-    
+
+    // Pre-submit validations
+    if (name.trim() === '') {
+      setToastMsg('Player Name cannot be empty');
+      setShowToast(true);
+      return;
+    }
+    if (preferredPosition === '') {
+      setToastMsg('Please select a Preferred Position');
+      setShowToast(true);
+      return;
+    }
+    if (jerseyNumber !== '' && isNaN(Number(jerseyNumber))) {
+      setToastMsg('Jersey Number must be a number (e.g. 10)');
+      setShowToast(true);
+      return;
+    }
+    if (marketValue !== '' && isNaN(Number(marketValue))) {
+      setToastMsg('Market Value must be a number (e.g. 5000000)');
+      setShowToast(true);
+      return;
+    }
+
     try {
       if (isEditMode && id) {
         // Update existing player
@@ -164,31 +186,9 @@ const AddPlayerForm = () => {
         navigate('/edit');
       }, 3000);
     } catch (error) {
-      if (marketValue !== '' && isNaN(Number(marketValue))) {
-      setToastMsg('Market Value must be a number (e.g. 5000000, not "44M")');
+      console.error('Error saving player:', error);
+      setToastMsg(`Error ${isEditMode ? 'updating' : 'adding'} player.`);
       setShowToast(true);
-      return;
-      }
-      else if (jerseyNumber !== '' && isNaN(Number(jerseyNumber))) {
-        setToastMsg('Jersey Number must be a number (e.g. 10)');
-        setShowToast(true);
-        return;
-      }
-      else if(preferredPosition === '') {
-        setToastMsg('Please select a Preferred Position');
-        setShowToast(true);
-        return;
-      }
-      else if(name.trim() === '') {
-        setToastMsg('Player Name cannot be empty');
-        setShowToast(true);
-        return;
-      }
-      else{
-        console.error('Error saving player:', error);
-        setToastMsg(`Error ${isEditMode ? 'updating' : 'adding'} player.`);
-        setShowToast(true);
-      }
     }
   };
 
@@ -244,8 +244,10 @@ const AddPlayerForm = () => {
                   <label htmlFor="marketValue">Market Value</label>
                   <input
                     id="marketValue"
+                    type="number"
+                    min={0}
                     className="form-control-dark"
-                    placeholder="e.g. 5M"
+                    placeholder="e.g. 5000000"
                     value={marketValue}
                     onChange={(e) => setMarketValue(e.target.value)}
                   />
