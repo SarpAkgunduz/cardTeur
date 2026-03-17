@@ -36,6 +36,11 @@
 .card h3 {
   font-size: 1.2em;
   margin: 4px 0 8px;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Stats at the bottom */

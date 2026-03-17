@@ -27,7 +27,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL: 'http://localhost:5173',
-    storageState: 'auth-state.json', // Reuse login session for all tests
+    storageState: './auth-state.json', // Reuse login session for all tests
     trace: 'on-first-retry',
   },
 

@@ -18,7 +18,7 @@ async function globalSetup(config: FullConfig) {
   await page.waitForURL(`${baseURL}/`);
 
   // Save storage state (localStorage + cookies) to file
-  await page.context().storageState({ path: 'auth-state.json' });
+  await page.context().storageState({ path: './auth-state.json' });
 
   await browser.close();
 }

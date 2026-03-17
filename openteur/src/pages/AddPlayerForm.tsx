@@ -183,7 +183,7 @@ const AddPlayerForm = () => {
       
       setShowToast(true);
       setTimeout(() => {
-        navigate('/edit');
+        navigate('/manage');
       }, 3000);
     } catch (error) {
       console.error('Error saving player:', error);
