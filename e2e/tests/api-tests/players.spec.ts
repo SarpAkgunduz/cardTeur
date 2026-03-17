@@ -32,7 +32,7 @@ const TEST_PLAYER = {
 
 test.describe('Player API', () => {
 
-  test('POST /api/players — oyuncu oluşturur ve doğru veriyi döner', async ({ request }) => {
+  test('POST /api/players — creates a player and returns correct data', async ({ request }) => {
     const response = await request.post(API_URL, {
       data: TEST_PLAYER,
     });
@@ -41,10 +41,10 @@ test.describe('Player API', () => {
 
     const body = await response.json();
 
-    // MongoDB _id atandı mı?
+    // Did MongoDB assign an _id?
     expect(body._id).toBeTruthy();
 
-    // Gönderilen veriler geri döndü mü?
+    // Were the sent fields returned correctly?
     expect(body.name).toBe(TEST_PLAYER.name);
     expect(body.jerseyNumber).toBe(TEST_PLAYER.jerseyNumber);
     expect(body.preferredPosition).toBe(TEST_PLAYER.preferredPosition);
@@ -53,12 +53,12 @@ test.describe('Player API', () => {
     expect(body.defensiveOverall).toBe(TEST_PLAYER.defensiveOverall);
     expect(body.athleticismOverall).toBe(TEST_PLAYER.athleticismOverall);
 
-    // Temizlik — oluşturulan oyuncuyu sil
+    // Cleanup — delete the created player
     const deleteResponse = await request.delete(`${API_URL}/${body._id}`);
     expect(deleteResponse.ok()).toBeTruthy();
   });
 
-  test('GET /api/players — tüm oyuncuları listeler', async ({ request }) => {
+  test('GET /api/players — lists all players', async ({ request }) => {
     const response = await request.get(API_URL);
     expect(response.ok()).toBeTruthy();
 
@@ -66,27 +66,28 @@ test.describe('Player API', () => {
     expect(Array.isArray(body)).toBe(true);
   });
 
-  test('POST → GET → DELETE — tam yaşam döngüsü', async ({ request }) => {
-    // Oluştur
+  test('POST → GET → DELETE — full lifecycle', async ({ request }) => {
+    // Create
     const createRes = await request.post(API_URL, { data: TEST_PLAYER });
     expect(createRes.ok()).toBeTruthy();
     const created = await createRes.json();
     const id = created._id;
     expect(id).toBeTruthy();
 
-    // ID ile getir
+    // Fetch by ID
     const getRes = await request.get(`${API_URL}/${id}`);
     expect(getRes.ok()).toBeTruthy();
     const fetched = await getRes.json();
     expect(fetched.name).toBe(TEST_PLAYER.name);
 
-    // Sil
+    // Delete
     const deleteRes = await request.delete(`${API_URL}/${id}`);
+
     expect(deleteRes.ok()).toBeTruthy();
 
-    // Silindiğini doğrula
+    // Verify deletion
     const afterDelete = await request.get(`${API_URL}/${id}`);
-    expect(afterDelete.status()).toBe(404); // 404 = not ok, ok() false döner
+    expect(afterDelete.status()).toBe(404); // 404 = not found, ok() returns false
   });
 
 });

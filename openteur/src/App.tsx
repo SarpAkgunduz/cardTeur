@@ -17,7 +17,7 @@ const App = () => {
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/" element={<HomePage />} />
         <Route
-          path="/edit"
+          path="/manage"
           element={
             <PrivateRoute>
               <PlayersPage />

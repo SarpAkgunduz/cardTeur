@@ -14,10 +14,10 @@ const HomePage = () => {
             <div className="col-sm d-grid mb-3">
               <button
                 className="btn btn-lg btn-homepage btn-home"
-                onClick={() => navigate('/edit')}
+                onClick={() => navigate('/manage')}
               >
                 <i className="bi bi-person-fill-gear btn-icon"></i>
-                <span className="btn-label">Edit Player</span>
+                <span className="btn-label">Manage Squad</span>
               </button>
             </div>
             <div className="col-sm d-grid mb-3">
@@ -34,7 +34,7 @@ const HomePage = () => {
                 className="btn btn-lg btn-homepage btn-home"
                 onClick={() => navigate('/match')}
               >
-                <i className="bi bi-trophy-fill btn-icon"></i>
+                <i className="bi bi-clipboard-x-fill btn-icon"></i>
                 <span className="btn-label">Prepare Match</span>
               </button>
             </div>
