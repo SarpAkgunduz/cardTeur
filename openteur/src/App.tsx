@@ -8,12 +8,13 @@ import AddPlayerForm from './pages/AddPlayerForm';
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import PrivateRoute from './components/routes/PrivateRoute';
+import PublicRoute from './components/routes/PublicRoute';
 
 const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/" element={<HomePage />} />
         <Route
           path="/edit"

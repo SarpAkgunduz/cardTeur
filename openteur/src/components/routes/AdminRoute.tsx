@@ -10,14 +10,14 @@ interface AdminRouteProps {
 const AdminRoute = ({ children }: AdminRouteProps) => {
   const session = getSession();
   
-  // Önce login kontrolü
+  // Redirect to login if not authenticated
   if (!isLoggedIn()) {
     return <Navigate to="/login" replace />;
   }
   
-  // Sonra admin kontrolü
+  // Redirect non-admin users to homepage
   if (session?.role !== 'admin') {
-    return <Navigate to="/" replace />; // Normal kullanıcıyı home'a gönder
+    return <Navigate to="/" replace />;
   }
   
   return children;

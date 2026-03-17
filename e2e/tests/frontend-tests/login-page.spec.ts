@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Login Page', () => {
 
   test.beforeEach(async ({ page }) => {
-    // Her testten önce localStorage'ı temizle (oturumu sıfırla)
+    // Before every test start from the login page and clear any existing session
     await page.goto('/login');
     await page.evaluate(() => localStorage.clear());
     await page.reload();
@@ -18,7 +18,7 @@ test.describe('Login Page', () => {
     await expect(page.locator('button[type="submit"]')).toHaveText('Login');
   });
 
-  // ── BAŞARILI GİRİŞLER ───────────────────────────────────────────────────
+  // ── SUCCESSFUL LOGINS ───────────────────────────────────────────────────
 
   test('admin login — redirects to homepage', async ({ page }) => {
     await page.locator('input[type="email"]').fill('admin@example.com');
