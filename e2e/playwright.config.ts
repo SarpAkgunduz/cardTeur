@@ -1,12 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
+import path from 'path';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+const AUTH_STATE = path.resolve(__dirname, 'auth-state.json');
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -27,7 +22,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL: 'http://localhost:5173',
-    storageState: './auth-state.json', // Reuse login session for all tests
+    storageState: AUTH_STATE, // Reuse login session for all tests
     trace: 'on-first-retry',
   },
 

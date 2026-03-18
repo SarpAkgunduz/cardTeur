@@ -1,4 +1,5 @@
 import { chromium, FullConfig } from '@playwright/test';
+import path from 'path';
 
 // Runs once before all tests
 // Logs in as admin and saves the browser storage state to a file
@@ -18,7 +19,7 @@ async function globalSetup(config: FullConfig) {
   await page.waitForURL(`${baseURL}/`);
 
   // Save storage state (localStorage + cookies) to file
-  await page.context().storageState({ path: './auth-state.json' });
+  await page.context().storageState({ path: path.join(__dirname, 'auth-state.json') });
 
   await browser.close();
 }
