@@ -1,83 +1,293 @@
-.card {
-  border: none !important;
-  width: 200px;
-  height: 300px !important; /* increased height */
-  padding: 16px;
-  background-color: white;
+/* =============================================
+   FIFA-STYLE PLAYER CARD
+   ============================================= */
+
+.fifa-card {
+  width: 220px;
+  height: 330px;
+  border-radius: 14px;
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  transition: all 0.3s ease;
+  overflow: auto;
   cursor: default;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  font-family: 'Segoe UI', 'Arial Narrow', Arial, sans-serif;
+  user-select: none;
+  clip-path: none;
 }
 
-.card.editable {
+/* Inner shine overlay */
+.fifa-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.06) 40%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 1;
+  border-radius: 14px;
+}
+
+/* Subtle inner border */
+.fifa-card::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  pointer-events: none;
+  z-index: 2;
+}
+
+@keyframes card-edit-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.05) translateY(-5px); }
+  100% { transform: scale(1); }
+}
+
+.fifa-card.editable {
   cursor: pointer;
+  animation: card-edit-pop 0.35s ease-out both;
 }
 
-.card.editable:hover {
-  transform: scale(1.05) translateY(-5px);
-  box-shadow: 0 10px 25px rgba(74, 124, 155, 0.4);
-  border: 2px solid #4A7C9B;
+.fifa-card.editable:hover {
+  transform: scale(1.06) translateY(-8px) rotate(-0.8deg);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55) !important;
 }
 
-.card img {
-  width: 120px;        /* fixed image width */
-  height: 120px;       /* fixed image height */
-  margin-bottom: 8px;
-  margin-top: 8px;     /* shift image slightly down */
-  object-fit: cover;   /* make sure it fits without distortion */
-  border-radius: 12px; /* rounded corners for the image */
-  image-rendering: optimizeQuality;
+/* ---- Bronze ---- */
+.fifa-card--bronze {
+  background:
+    radial-gradient(ellipse at 28% 25%, rgba(232, 151, 74, 0.6) 0%, transparent 55%),
+    linear-gradient(
+      162deg,
+      #2a1000 0%,
+      #7d4518 18%,
+      #c97b30 38%,
+      #e89840 52%,
+      #c97b30 66%,
+      #7d4518 83%,
+      #2a1000 100%
+    );
+  box-shadow:
+    0 10px 28px rgba(120, 60, 0, 0.65),
+    inset 0 1px 0 rgba(255, 200, 100, 0.35);
 }
 
-.card h3 {
-  font-size: 1.2em;
-  margin: 4px 0 8px;
-  width: 100%;
+/* ---- Silver ---- */
+.fifa-card--silver {
+  background:
+    radial-gradient(ellipse at 28% 25%, rgba(220, 220, 220, 0.5) 0%, transparent 55%),
+    linear-gradient(
+      162deg,
+      #1a1a1a 0%,
+      #555555 18%,
+      #a8a8a8 38%,
+      #d4d4d4 52%,
+      #a8a8a8 66%,
+      #555555 83%,
+      #1a1a1a 100%
+    );
+  box-shadow:
+    0 10px 28px rgba(80, 80, 80, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* ---- Gold ---- */
+.fifa-card--gold {
+  background:
+    radial-gradient(ellipse at 28% 25%, rgba(255, 210, 60, 0.55) 0%, transparent 55%),
+    linear-gradient(
+      162deg,
+      #2d1c00 0%,
+      #7a5200 18%,
+      #cc9200 38%,
+      #f5c200 52%,
+      #cc9200 66%,
+      #7a5200 83%,
+      #2d1c00 100%
+    );
+  box-shadow:
+    0 10px 28px rgba(180, 120, 0, 0.65),
+    inset 0 1px 0 rgba(255, 235, 100, 0.35);
+}
+
+/* ---- Platinum ---- */
+.fifa-card--platinum {
+  background:
+    radial-gradient(ellipse at 28% 25%, rgba(190, 195, 240, 0.5) 0%, transparent 55%),
+    linear-gradient(
+      162deg,
+      #12103a 0%,
+      #2e2a6e 18%,
+      #7878c8 38%,
+      #b2b2e8 52%,
+      #7878c8 66%,
+      #2e2a6e 83%,
+      #12103a 100%
+    );
+  box-shadow:
+    0 10px 28px rgba(80, 80, 200, 0.65),
+    inset 0 1px 0 rgba(200, 200, 255, 0.35);
+}
+
+/* =============================================
+   TOP SECTION: Rating + Position
+   ============================================= */
+.fifa-card__top {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 12px 14px 0;
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+}
+
+.fifa-card__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.fifa-card__overall {
+  font-size: 2.7rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 3px;
+}
+
+.fifa-card__pos {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.fifa-card--bronze .fifa-card__overall,
+.fifa-card--bronze .fifa-card__pos {
+  color: #fff0d0;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.65);
+}
+
+.fifa-card--silver .fifa-card__overall,
+.fifa-card--silver .fifa-card__pos {
+  color: #f4f4f4;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.65);
+}
+
+.fifa-card--gold .fifa-card__overall,
+.fifa-card--gold .fifa-card__pos {
+  color: #fff8d0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.fifa-card--platinum .fifa-card__overall,
+.fifa-card--platinum .fifa-card__pos {
+  color: #e8e8ff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* =============================================
+   PLAYER IMAGE
+   ============================================= */
+.fifa-card__image-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 3;
+  padding: 0 8px;
+  overflow: hidden;
+}
+
+.fifa-card__image-area img {
+  width: 148px;
+  height: 148px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.28);
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.65));
+  display: block;
+}
+
+/* =============================================
+   BOTTOM BAND: Name + Divider + Stats
+   ============================================= */
+.fifa-card__bottom {
+  background: rgba(0, 0, 0, 0.38);
+  padding: 8px 12px 11px;
   text-align: center;
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  border-radius: 0 0 14px 14px;
+  backdrop-filter: blur(3px);
+}
+
+.fifa-card__name {
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-bottom: 5px;
 }
 
-/* Stats at the bottom */
-.stat-bar {
-  position: absolute;
-  bottom: 48px;
-  left: 0;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr; /* evenly spaced */
-  text-align: center;
-  font-weight: bold;
-  font-size: 0.9rem;
-  padding: 0 8px;
+.fifa-card--bronze .fifa-card__name { color: #fff0d0; }
+.fifa-card--silver .fifa-card__name { color: #f4f4f4; }
+.fifa-card--gold   .fifa-card__name { color: #fff8d0; }
+.fifa-card--platinum .fifa-card__name { color: #e8e8ff; }
+
+.fifa-card__sep {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.32);
+  margin: 0 6px 7px;
 }
 
-.stat-bar span {
-  margin: 0;
-  padding: 0;
-  white-space: nowrap;
+.fifa-card__stats {
+  display: flex;
+  justify-content: space-around;
+  align-items: baseline;
 }
 
-.card-container {
-  background-image: url('/assets/cardBackground.png');
-  background-size: 120%;
-  background-repeat: no-repeat;
-  background-position: center;
-  padding: 1rem;
+.fifa-card__stat-item {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
 }
 
-.position-badge {
-  background-color: white;
-  border-radius: 8px;
-  padding: 1px 12px;
-  margin: 14px auto 8px;
-  width: fit-content;
-  color: #34495e;
-  font-weight: 600;
-  font-size: 14px;
+.fifa-card__stat-val {
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1;
 }
+
+.fifa-card__stat-lbl {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  opacity: 0.82;
+}
+
+.fifa-card--bronze .fifa-card__stat-val,
+.fifa-card--bronze .fifa-card__stat-lbl { color: #fff0d0; }
+
+.fifa-card--silver .fifa-card__stat-val,
+.fifa-card--silver .fifa-card__stat-lbl { color: #f4f4f4; }
+
+.fifa-card--gold .fifa-card__stat-val,
+.fifa-card--gold .fifa-card__stat-lbl { color: #fff8d0; }
+
+.fifa-card--platinum .fifa-card__stat-val,
+.fifa-card--platinum .fifa-card__stat-lbl { color: #e8e8ff; }

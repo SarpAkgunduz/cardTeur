@@ -114,6 +114,10 @@ const PlayersPage = () => {
                   offensiveOverall={player.offensiveOverall}
                   defensiveOverall={player.defensiveOverall}
                   athleticismOverall={player.athleticismOverall}
+                  gkOverall={player.gkOverall}
+                  reflexes={player.reflexes}
+                  handling={player.handling}
+                  diving={player.diving}
                   deleteMode={deleteMode}
                   onDelete={() => handleDelete(player._id)}
                   editMode={editMode}

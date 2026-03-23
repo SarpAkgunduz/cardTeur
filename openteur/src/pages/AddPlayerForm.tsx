@@ -3,6 +3,7 @@ import BackButton from '../components/BackButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import ToastNotification from '../components/ToastNotification';
 import { playerApi } from '../services';
+import { validatePlayer } from '../utils/validatePlayer';
 import './AddPlayerForm.css';
 
 const AddPlayerForm = () => {
@@ -17,6 +18,7 @@ const AddPlayerForm = () => {
   const [jerseyNumber, setjerseyNumber] = useState<number | string>('');
   const [marketValue, setMarketValue] = useState<number | string>('');
   const [preferredPosition, setpreferredPosition] = useState('');
+  const [activeStatTab, setActiveStatTab] = useState<'gk' | 'offensive' | 'defensive'>('offensive');
     // Sub-stats
     // Offensive stats
   const [dribbling, setDribbling] = useState(0);
@@ -38,10 +40,19 @@ const AddPlayerForm = () => {
   const [strength, setStrength] = useState(0);
   const [stamina, setStamina] = useState(0);
 
+  // GK stats
+  const [diving, setDiving] = useState(0);
+  const [handling, setHandling] = useState(0);
+  const [kicking, setKicking] = useState(0);
+  const [reflexes, setReflexes] = useState(0);
+  const [gkPositioning, setGkPositioning] = useState(0);
+  const [gkSpeed, setGkSpeed] = useState(0);
+
 
   const offensiveStats = [dribbling, shotAccuracy, shotSpeed, headers, ballControl, vision, positioning, longPass, shortPass];
   const defensiveStats = [tackling, interceptions, marking];
   const athleticismStats = [speed, strength, stamina];
+  const gkStats = [diving, handling, kicking, reflexes, gkPositioning, gkSpeed];
   
   // Load player data if in edit mode
   useEffect(() => {
@@ -53,22 +64,28 @@ const AddPlayerForm = () => {
           setjerseyNumber(player.jerseyNumber);
           setMarketValue(player.marketValue);
           setpreferredPosition(player.preferredPosition);
-          setDribbling(player.dribbling);
-          setShotAccuracy(player.shotAccuracy);
-          setShotSpeed(player.shotSpeed);
-          setHeader(player.headers);
-          setLongPass(player.longPass);
-          setShortPass(player.shortPass);
-          setBallControl(player.ballControl);
-          setPositioning(player.positioning);
-          setVision(player.vision);
-          setTackling(player.tackling);
-          setInterceptions(player.interceptions);
-          setMarking(player.marking);
-          setDefensiveIQ(player.defensiveIQ);
-          setSpeed(player.speed);
-          setStrength(player.strength);
-          setStamina(player.stamina);
+          setDribbling(player.dribbling ?? 0);
+          setShotAccuracy(player.shotAccuracy ?? 0);
+          setShotSpeed(player.shotSpeed ?? 0);
+          setHeader(player.headers ?? 0);
+          setLongPass(player.longPass ?? 0);
+          setShortPass(player.shortPass ?? 0);
+          setBallControl(player.ballControl ?? 0);
+          setPositioning(player.positioning ?? 0);
+          setVision(player.vision ?? 0);
+          setTackling(player.tackling ?? 0);
+          setInterceptions(player.interceptions ?? 0);
+          setMarking(player.marking ?? 0);
+          setDefensiveIQ(player.defensiveIQ ?? 0);
+          setSpeed(player.speed ?? 0);
+          setStrength(player.strength ?? 0);
+          setStamina(player.stamina ?? 0);
+          setDiving(player.diving ?? 0);
+          setHandling(player.handling ?? 0);
+          setKicking(player.kicking ?? 0);
+          setReflexes(player.reflexes ?? 0);
+          setGkPositioning(player.gkPositioning ?? 0);
+          setGkSpeed(player.gkSpeed ?? 0);
         })
         .catch((error) => {
           console.error('Failed to fetch player:', error);
@@ -85,19 +102,23 @@ const AddPlayerForm = () => {
     stats.length ? Math.round(stats.reduce((a, b) => a + b, 0) / stats.length) : 0;
     const offensiveOverall = calculateAverage(offensiveStats);
     const defensiveOverall = calculateAverage(defensiveStats);
-    const athleticismOverall = calculateAverage(athleticismStats);  
+    const athleticismOverall = calculateAverage(athleticismStats);
+    const gkOverall = calculateAverage(gkStats);
+
+    const isGK = preferredPosition === 'GK';
 
     // Card title selection
-    const defScore = (defensiveOverall + athleticismOverall) / 2;
-    const offScore = (offensiveOverall + athleticismOverall) / 2;
-
     let cardTitle: 'bronze' | 'silver' | 'gold' | 'platinum' = 'bronze';
-    if (defScore > 90 || offScore > 90) {
-        cardTitle = 'platinum';
-    } else if (defScore > 80 || offScore > 80) {
-        cardTitle = 'gold';
-    } else if (defScore > 60 || offScore > 60) {
-        cardTitle = 'silver';
+    if (isGK) {
+      if (gkOverall > 90) cardTitle = 'platinum';
+      else if (gkOverall > 80) cardTitle = 'gold';
+      else if (gkOverall > 60) cardTitle = 'silver';
+    } else {
+      const defScore = (defensiveOverall + athleticismOverall) / 2;
+      const offScore = (offensiveOverall + athleticismOverall) / 2;
+      if (defScore > 90 || offScore > 90) cardTitle = 'platinum';
+      else if (defScore > 80 || offScore > 80) cardTitle = 'gold';
+      else if (defScore > 60 || offScore > 60) cardTitle = 'silver';
     }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,39 +154,21 @@ const AddPlayerForm = () => {
         speed,
         strength,
         stamina,
+
+        // GK stats  
+        gkOverall,
+        diving,
+        handling,
+        kicking,
+        reflexes,
+        gkPositioning,
+        gkSpeed,
       };
     
-    // Check for missing required fields (excluding marketValue)
-    const isEmpty = (value: unknown) => value === "" || value === null || value === undefined;
-
-    const missing = Object.entries(newPlayer)
-    .filter(([key, value]) => key !== 'marketValue' && isEmpty(value))
-    .map(([key]) => key);
-
-    if (missing.length > 0) {
-      setToastMsg(`Please fill these fields: ${missing.join(", ")}`);
-      setShowToast(true);
-      return;
-    }
-
-    // Pre-submit validations
-    if (name.trim() === '') {
-      setToastMsg('Player Name cannot be empty');
-      setShowToast(true);
-      return;
-    }
-    if (preferredPosition === '') {
-      setToastMsg('Please select a Preferred Position');
-      setShowToast(true);
-      return;
-    }
-    if (jerseyNumber !== '' && isNaN(Number(jerseyNumber))) {
-      setToastMsg('Jersey Number must be a number (e.g. 10)');
-      setShowToast(true);
-      return;
-    }
-    if (marketValue !== '' && isNaN(Number(marketValue))) {
-      setToastMsg('Market Value must be a number (e.g. 5000000)');
+    // Frontend validation — check all rules before hitting the backend
+    const validationError = validatePlayer(newPlayer, isGK, jerseyNumber, marketValue);
+    if (validationError) {
+      setToastMsg(validationError);
       setShowToast(true);
       return;
     }
@@ -258,7 +261,10 @@ const AddPlayerForm = () => {
                     id="preferredPosition"
                     className="form-select-dark"
                     value={preferredPosition}
-                    onChange={(e) => setpreferredPosition(e.target.value)}
+                    onChange={(e) => {
+                      setpreferredPosition(e.target.value);
+                      setActiveStatTab(e.target.value === 'GK' ? 'gk' : 'offensive');
+                    }}
                   >
                     <option value="">-- Choose --</option>
                     <option value="ST">Striker (ST)</option>
@@ -306,103 +312,119 @@ const AddPlayerForm = () => {
               </div>
             </div>
 
-            {/* ── SECTION 2: OFFENSIVE STATS ── */}
+            {/* ── SECTION 2–4: STATS (tabbed) ── */}
             <div className="form-section">
-              <div className="form-section-header">
-                <i className="bi bi-lightning-fill"></i>
-                <span>Offensive Stats</span>
+              {/* Tab bar */}
+              <div className="stat-tabs">
+                {preferredPosition === 'GK' && (
+                  <button
+                    type="button"
+                    className={`stat-tab ${activeStatTab === 'gk' ? 'active' : ''}`}
+                    onClick={() => setActiveStatTab('gk')}
+                  >
+                    <i className="bi bi-shield-shaded me-1"></i>GK Stats
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className={`stat-tab ${activeStatTab === 'offensive' ? 'active' : ''}`}
+                  onClick={() => setActiveStatTab('offensive')}
+                >
+                  <i className="bi bi-lightning-fill me-1"></i>Offensive
+                </button>
+                <button
+                  type="button"
+                  className={`stat-tab ${activeStatTab === 'defensive' ? 'active' : ''}`}
+                  onClick={() => setActiveStatTab('defensive')}
+                >
+                  <i className="bi bi-shield-fill me-1"></i>Defensive &amp; Athleticism
+                </button>
               </div>
-              <div className="stat-grid">
-                {[
-                  { id: 'dribbling',    label: 'Dribbling',     value: dribbling,    setter: setDribbling },
-                  { id: 'shotAccuracy', label: 'Shot Accuracy', value: shotAccuracy, setter: setShotAccuracy },
-                  { id: 'shotSpeed',    label: 'Shot Speed',    value: shotSpeed,    setter: setShotSpeed },
-                  { id: 'headers',      label: 'Headers',       value: headers,      setter: setHeader },
-                  { id: 'longPass',     label: 'Long Pass',     value: longPass,     setter: setLongPass },
-                  { id: 'shortPass',    label: 'Short Pass',    value: shortPass,    setter: setShortPass },
-                  { id: 'ballControl',  label: 'Ball Control',  value: ballControl,  setter: setBallControl },
-                  { id: 'positioning',  label: 'Positioning',   value: positioning,  setter: setPositioning },
-                  { id: 'vision',       label: 'Vision',        value: vision,       setter: setVision },
-                ].map(({ id, label, value, setter }) => (
-                  <div className="stat-field" key={id}>
-                    <label htmlFor={id}>{label}</label>
-                    <input
-                      id={id}
-                      type="number"
-                      min={0}
-                      max={100}
-                      className="stat-input"
-                      value={value}
-                      onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))}
-                    />
-                    <div className="stat-bar-track">
-                      <div className="stat-bar-fill" style={{ width: `${value}%` }} />
+
+              {/* GK Stats tab */}
+              {activeStatTab === 'gk' && preferredPosition === 'GK' && (
+                <div className="stat-grid" style={{ marginTop: 16 }}>
+                  {[
+                    { id: 'diving',        label: 'Diving',      value: diving,        setter: setDiving },
+                    { id: 'handling',      label: 'Handling',    value: handling,      setter: setHandling },
+                    { id: 'kicking',       label: 'Kicking',     value: kicking,       setter: setKicking },
+                    { id: 'reflexes',      label: 'Reflexes',    value: reflexes,      setter: setReflexes },
+                    { id: 'gkPositioning', label: 'Positioning', value: gkPositioning, setter: setGkPositioning },
+                    { id: 'gkSpeed',       label: 'Speed',       value: gkSpeed,       setter: setGkSpeed },
+                  ].map(({ id, label, value, setter }) => (
+                    <div className="stat-field" key={id}>
+                      <label htmlFor={id}>{label}</label>
+                      <input id={id} type="number" min={0} max={100} className="stat-input"
+                        value={value} onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))} />
+                      <div className="stat-bar-track"><div className="stat-bar-fill" style={{ width: `${value}%` }} /></div>
                     </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Offensive Stats tab */}
+              {activeStatTab === 'offensive' && (
+                <div className="stat-grid" style={{ marginTop: 16 }}>
+                  {[
+                    { id: 'dribbling',    label: 'Dribbling',     value: dribbling,    setter: setDribbling },
+                    { id: 'shotAccuracy', label: 'Shot Accuracy', value: shotAccuracy, setter: setShotAccuracy },
+                    { id: 'shotSpeed',    label: 'Shot Speed',    value: shotSpeed,    setter: setShotSpeed },
+                    { id: 'headers',      label: 'Headers',       value: headers,      setter: setHeader },
+                    { id: 'longPass',     label: 'Long Pass',     value: longPass,     setter: setLongPass },
+                    { id: 'shortPass',    label: 'Short Pass',    value: shortPass,    setter: setShortPass },
+                    { id: 'ballControl',  label: 'Ball Control',  value: ballControl,  setter: setBallControl },
+                    { id: 'positioning',  label: 'Positioning',   value: positioning,  setter: setPositioning },
+                    { id: 'vision',       label: 'Vision',        value: vision,       setter: setVision },
+                  ].map(({ id, label, value, setter }) => (
+                    <div className="stat-field" key={id}>
+                      <label htmlFor={id}>{label}</label>
+                      <input id={id} type="number" min={0} max={100} className="stat-input"
+                        value={value} onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))} />
+                      <div className="stat-bar-track"><div className="stat-bar-fill" style={{ width: `${value}%` }} /></div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Defensive & Athleticism tab */}
+              {activeStatTab === 'defensive' && (
+                <>
+                  <p className="stat-subheader" style={{ marginTop: 16 }}>Defensive</p>
+                  <div className="stat-grid">
+                    {[
+                      { id: 'tackling',      label: 'Tackling',      value: tackling,      setter: setTackling },
+                      { id: 'interceptions', label: 'Interceptions', value: interceptions, setter: setInterceptions },
+                      { id: 'marking',       label: 'Marking',       value: marking,       setter: setMarking },
+                      { id: 'defensiveIQ',   label: 'Defensive IQ',  value: defensiveIQ,   setter: setDefensiveIQ },
+                    ].map(({ id, label, value, setter }) => (
+                      <div className="stat-field" key={id}>
+                        <label htmlFor={id}>{label}</label>
+                        <input id={id} type="number" min={0} max={100} className="stat-input"
+                          value={value} onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))} />
+                        <div className="stat-bar-track"><div className="stat-bar-fill" style={{ width: `${value}%` }} /></div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <p className="stat-subheader" style={{ marginTop: 24 }}>Athleticism</p>
+                  <div className="stat-grid">
+                    {[
+                      { id: 'speed',    label: 'Speed',    value: speed,    setter: setSpeed },
+                      { id: 'strength', label: 'Strength', value: strength, setter: setStrength },
+                      { id: 'stamina',  label: 'Stamina',  value: stamina,  setter: setStamina },
+                    ].map(({ id, label, value, setter }) => (
+                      <div className="stat-field" key={id}>
+                        <label htmlFor={id}>{label}</label>
+                        <input id={id} type="number" min={0} max={100} className="stat-input"
+                          value={value} onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))} />
+                        <div className="stat-bar-track"><div className="stat-bar-fill" style={{ width: `${value}%` }} /></div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
-            {/* ── SECTION 3: DEFENSIVE & ATHLETICISM ── */}
-            <div className="form-section">
-              <div className="form-section-header">
-                <i className="bi bi-shield-fill"></i>
-                <span>Defensive &amp; Athleticism</span>
-              </div>
-
-              <p className="stat-subheader">Defensive</p>
-              <div className="stat-grid">
-                {[
-                  { id: 'tackling',     label: 'Tackling',      value: tackling,     setter: setTackling },
-                  { id: 'interceptions',label: 'Interceptions', value: interceptions,setter: setInterceptions },
-                  { id: 'marking',      label: 'Marking',       value: marking,      setter: setMarking },
-                  { id: 'defensiveIQ',  label: 'Defensive IQ',  value: defensiveIQ,  setter: setDefensiveIQ },
-                ].map(({ id, label, value, setter }) => (
-                  <div className="stat-field" key={id}>
-                    <label htmlFor={id}>{label}</label>
-                    <input
-                      id={id}
-                      type="number"
-                      min={0}
-                      max={100}
-                      className="stat-input"
-                      value={value}
-                      onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))}
-                    />
-                    <div className="stat-bar-track">
-                      <div className="stat-bar-fill" style={{ width: `${value}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <p className="stat-subheader" style={{ marginTop: '24px' }}>Athleticism</p>
-              <div className="stat-grid">
-                {[
-                  { id: 'speed',    label: 'Speed',    value: speed,    setter: setSpeed },
-                  { id: 'strength', label: 'Strength', value: strength, setter: setStrength },
-                  { id: 'stamina',  label: 'Stamina',  value: stamina,  setter: setStamina },
-                ].map(({ id, label, value, setter }) => (
-                  <div className="stat-field" key={id}>
-                    <label htmlFor={id}>{label}</label>
-                    <input
-                      id={id}
-                      type="number"
-                      min={0}
-                      max={100}
-                      className="stat-input"
-                      value={value}
-                      onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))}
-                    />
-                    <div className="stat-bar-track">
-                      <div className="stat-bar-fill" style={{ width: `${value}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* ── SECTION 4: SUMMARY & SUBMIT ── */}
+            {/* ── SECTION 5: SUMMARY & SUBMIT ── */}
             <div className="form-section">
               <div className="form-section-header">
                 <i className="bi bi-clipboard-check-fill"></i>
@@ -410,21 +432,31 @@ const AddPlayerForm = () => {
               </div>
 
               <div className="overall-badges-row">
-                <div className="overall-badge">
-                  <span className="badge-title">Offensive</span>
-                  <span className="badge-value">{offensiveOverall}</span>
-                  <span className="badge-label">OVR</span>
-                </div>
-                <div className="overall-badge">
-                  <span className="badge-title">Defensive</span>
-                  <span className="badge-value">{defensiveOverall}</span>
-                  <span className="badge-label">OVR</span>
-                </div>
-                <div className="overall-badge">
-                  <span className="badge-title">Athleticism</span>
-                  <span className="badge-value">{athleticismOverall}</span>
-                  <span className="badge-label">OVR</span>
-                </div>
+                {preferredPosition === 'GK' ? (
+                  <div className="overall-badge">
+                    <span className="badge-title">Goalkeeper</span>
+                    <span className="badge-value">{gkOverall}</span>
+                    <span className="badge-label">OVR</span>
+                  </div>
+                ) : (
+                  <>
+                    <div className="overall-badge">
+                      <span className="badge-title">Offensive</span>
+                      <span className="badge-value">{offensiveOverall}</span>
+                      <span className="badge-label">OVR</span>
+                    </div>
+                    <div className="overall-badge">
+                      <span className="badge-title">Defensive</span>
+                      <span className="badge-value">{defensiveOverall}</span>
+                      <span className="badge-label">OVR</span>
+                    </div>
+                    <div className="overall-badge">
+                      <span className="badge-title">Athleticism</span>
+                      <span className="badge-value">{athleticismOverall}</span>
+                      <span className="badge-label">OVR</span>
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className="card-title-row">

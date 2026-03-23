@@ -28,6 +28,15 @@ export interface Player {
   speed: number;
   strength: number;
   stamina: number;
+  // GK Overall
+  gkOverall: number;
+  // GK stats
+  diving: number;
+  handling: number;
+  kicking: number;
+  reflexes: number;
+  gkPositioning: number;
+  gkSpeed: number;
 }
 
 export type CreatePlayerDto = Omit<Player, '_id'>;

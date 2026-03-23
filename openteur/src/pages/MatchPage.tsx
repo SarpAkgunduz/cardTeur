@@ -114,24 +114,19 @@ const MatchPage = () => {
     const n = count ?? 0;
     return Array.from({ length: n }).map((_, i) => {
       const p = assigned[i];
+      if (!p) return null;
       return (
         <div key={i} className={`player-slot ${slotsVisible ? 'slot-enter' : ''}`}>
-          {p ? (
-            <Card
-              _id={p._id ?? p.id ?? ''}
-              name={p.name ?? 'Unknown'}
-              preferredPosition={p.preferredPosition ?? p.position ?? '—'}
-              offensiveOverall={Number(p.offensiveOverall ?? p.offensive ?? 0)}
-              defensiveOverall={Number(p.defensiveOverall ?? p.defensive ?? 0)}
-              athleticismOverall={Number(p.athleticismOverall ?? p.athleticism ?? 0)}
-              cardImage={p.cardImage ?? p.image ?? ''}
-            />
-          ) : (
-            <>
-              <div className="slot-number">{i + 1}</div>
-              <div className="slot-placeholder">Empty</div>
-            </>
-          )}
+          <Card
+            _id={p._id ?? p.id ?? ''}
+            name={p.name ?? 'Unknown'}
+            preferredPosition={p.preferredPosition ?? p.position ?? '—'}
+            offensiveOverall={Number(p.offensiveOverall ?? p.offensive ?? 0)}
+            defensiveOverall={Number(p.defensiveOverall ?? p.defensive ?? 0)}
+            athleticismOverall={Number(p.athleticismOverall ?? p.athleticism ?? 0)}
+            gkOverall={p.gkOverall != null ? Number(p.gkOverall) : undefined}
+            cardImage={p.cardImage ?? p.image ?? ''}
+          />
         </div>
       );
     });

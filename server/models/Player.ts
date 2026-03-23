@@ -34,6 +34,17 @@ export interface IPlayer extends Document {
   speed?: number;
   strength?: number;
   stamina?: number;
+
+  // GK Overall
+  gkOverall?: number;
+
+  // Sub-stats (Goalkeeper)
+  diving?: number;
+  handling?: number;
+  kicking?: number;
+  reflexes?: number;
+  gkPositioning?: number;
+  gkSpeed?: number;
 }
 
 const PlayerSchema: Schema<IPlayer> = new Schema({
@@ -74,6 +85,17 @@ const PlayerSchema: Schema<IPlayer> = new Schema({
   speed: Number,
   strength: Number,
   stamina: Number,
+
+  // GK Overall
+  gkOverall: Number,
+
+  // Sub-stats (Goalkeeper)
+  diving: Number,
+  handling: Number,
+  kicking: Number,
+  reflexes: Number,
+  gkPositioning: Number,
+  gkSpeed: Number,
 });
 
 const Player: Model<IPlayer> = mongoose.model<IPlayer>('Player', PlayerSchema);

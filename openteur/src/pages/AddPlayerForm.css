@@ -213,6 +213,40 @@
   margin-top: 4px;
 }
 
+/* Stat tabs */
+.stat-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 2px solid rgba(74, 124, 155, 0.3);
+  padding-bottom: 0;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+}
+
+.stat-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  padding: 8px 18px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.stat-tab:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.stat-tab.active {
+  color: #64B5F6;
+  border-bottom-color: #64B5F6;
+}
+
 /* Card title pill in summary */
 .card-title-pill {
   display: inline-flex;
