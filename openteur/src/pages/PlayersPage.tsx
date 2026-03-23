@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Card from '../components/Card';
 import ComparePanel from '../components/ComparePanel';
+import ConfirmDialog from '../components/ConfirmDialog';
+import ToastNotification from '../components/ToastNotification';
 import { playerApi, Player } from '../services';
 import './PlayersPage.css';
 
@@ -12,6 +14,9 @@ const PlayersPage = () => {
   const [editMode, setEditMode] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
   const [compareSelection, setCompareSelection] = useState<Player[]>([]);
+  const [confirm, setConfirm] = useState<{ message: string; onConfirm: () => void } | null>(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,17 +25,22 @@ const PlayersPage = () => {
       .catch((error) => console.error('Failed to fetch players:', error));
   }, []);
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this player?')) return;
-
-    try {
-      await playerApi.delete(id);
-      setPlayers((prev) => prev.filter((p) => p._id !== id));
-    } catch (error) {
-      console.error('Delete error:', error);
-      alert('Failed to delete player.');
-    }
-  };
+  const handleDelete = (id: string) => setConfirm({
+    message: 'Are you sure you want to delete this player?',
+    onConfirm: async () => {
+      setConfirm(null);
+      try {
+        await playerApi.delete(id);
+        setPlayers((prev) => prev.filter((p) => p._id !== id));
+        setToastMsg('Player deleted successfully.');
+        setShowToast(true);
+      } catch (error) {
+        console.error('Delete error:', error);
+        setToastMsg('Failed to delete player.');
+        setShowToast(true);
+      }
+    },
+  });
 
   const handleEdit = (id: string) => {
     navigate(`/edit-player/${id}`);
@@ -141,6 +151,19 @@ const PlayersPage = () => {
           onRemovePlayer={handleRemoveFromCompare}
         />
       )}
+
+      <ConfirmDialog
+        show={confirm !== null}
+        message={confirm?.message ?? ''}
+        onConfirm={confirm?.onConfirm ?? (() => {})}
+        onCancel={() => setConfirm(null)}
+      />
+
+      <ToastNotification
+        show={showToast}
+        message={toastMsg}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 };
