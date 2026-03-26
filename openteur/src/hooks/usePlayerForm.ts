@@ -104,15 +104,15 @@ export function usePlayerForm() {
   // Card title
   let cardTitle: 'bronze' | 'silver' | 'gold' | 'platinum' = 'bronze';
   if (isGK) {
-    if (gkOverall > 90) cardTitle = 'platinum';
-    else if (gkOverall > 80) cardTitle = 'gold';
-    else if (gkOverall > 60) cardTitle = 'silver';
+    if (gkOverall >= 90) cardTitle = 'platinum';
+    else if (gkOverall >= 80) cardTitle = 'gold';
+    else if (gkOverall >= 60) cardTitle = 'silver';
   } else {
     const defScore = (defensiveOverall + athleticismOverall) / 2;
     const offScore = (offensiveOverall + athleticismOverall) / 2;
-    if (defScore > 90 || offScore > 90) cardTitle = 'platinum';
-    else if (defScore > 80 || offScore > 80) cardTitle = 'gold';
-    else if (defScore > 60 || offScore > 60) cardTitle = 'silver';
+    if (defScore >= 95 || offScore >= 95) cardTitle = 'platinum';
+    else if (defScore >= 85 || offScore>= 85) cardTitle = 'gold';
+    else if (defScore >= 60 || offScore>= 60) cardTitle = 'silver';
   }
 
   // Stat field groups
