@@ -6,7 +6,7 @@ export interface IPlayer extends Document {
   preferredPosition?: 'GK' | 'CB' | 'RB' | 'LB' | 'CDM' | 'CM' | 'CAM' | 'RW' | 'LW' | 'ST' | 'LM' | 'RM';
   marketValue?: number;
   cardImage?: string;
-  cardTitle?: 'gold' | 'silver' | 'bronze' | 'platinum';
+  // cardTitle is a virtual field — computed from stats, not stored in DB
 
   //!!!!!TO DO: Check the fields if it matches the database
 
@@ -56,10 +56,6 @@ const PlayerSchema: Schema<IPlayer> = new Schema({
   },
   marketValue: Number,
   cardImage: String,
-  cardTitle: {
-    type: String,
-    enum: ['gold', 'silver', 'bronze', 'platinum'],
-  },
 
   // Overalls
   offensiveOverall: Number,
@@ -96,6 +92,27 @@ const PlayerSchema: Schema<IPlayer> = new Schema({
   reflexes: Number,
   gkPositioning: Number,
   gkSpeed: Number,
+}, { toJSON: { virtuals: true }, toObject: { virtuals: true } });
+
+// cardTitle is derived from stats — never stored in DB
+PlayerSchema.virtual('cardTitle').get(function (this: IPlayer) {
+  const isGK = this.preferredPosition === 'GK';
+  if (isGK) {
+    const gkOvr = this.gkOverall ?? 0;
+    if (gkOvr >= 90) return 'platinum';
+    if (gkOvr >= 85) return 'gold';
+    if (gkOvr >= 60) return 'silver';
+    return 'bronze';
+  }
+  const off = this.offensiveOverall ?? 0;
+  const def = this.defensiveOverall ?? 0;
+  const ath = this.athleticismOverall ?? 0;
+  const offScore = (off + ath) / 2;
+  const defScore = (def + ath) / 2;
+  if (offScore >= 90 || defScore >= 90) return 'platinum';
+  if (offScore >= 85 || defScore >= 85) return 'gold';
+  if (offScore >= 60 || defScore >= 60) return 'silver';
+  return 'bronze';
 });
 
 const Player: Model<IPlayer> = mongoose.model<IPlayer>('Player', PlayerSchema);

@@ -156,7 +156,7 @@ export function usePlayerForm() {
       name,
       jerseyNumber: Number(jerseyNumber),
       preferredPosition,
-      cardTitle,
+      // cardTitle is not sent — backend computes it as a virtual
       marketValue: marketValue !== '' ? Number(marketValue) : 0,
       cardImage,
       offensiveOverall,

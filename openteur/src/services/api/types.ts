@@ -39,5 +39,6 @@ export interface Player {
   gkSpeed: number;
 }
 
-export type CreatePlayerDto = Omit<Player, '_id'>;
-export type UpdatePlayerDto = Partial<Omit<Player, '_id'>>;
+// cardTitle is computed by the backend — never sent in create/update requests
+export type CreatePlayerDto = Omit<Player, '_id' | 'cardTitle'>;
+export type UpdatePlayerDto = Partial<Omit<Player, '_id' | 'cardTitle'>>;
