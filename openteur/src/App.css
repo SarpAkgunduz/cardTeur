@@ -1,20 +1,39 @@
 #root {
-  margin: 0 auto;
-  text-align: center;
+  margin: 0;
+  text-align: left;
   min-height: 100%;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.ct-app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #1A2B42;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 40px,
+    rgba(143, 245, 255, 0.03) 40px,
+    rgba(143, 245, 255, 0.03) 41px
+  );
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.ct-app-content {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #00deec #1A2B42;
+}
+
+.ct-app-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.ct-app-content::-webkit-scrollbar-track {
+  background: #1A2B42;
+}
+
+.ct-app-content::-webkit-scrollbar-thumb {
+  background: #00deec;
 }

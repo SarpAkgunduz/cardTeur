@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { loginSuccess } from '../services/AuthService';
+import './LoginPage.css';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -30,32 +31,35 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2>Login</h2>
-      <form onSubmit={handleLogin} style={{ maxWidth: '400px', margin: '0 auto' }}>
-        {error && <div className="alert alert-danger">{error}</div>}
-        <div className="mb-3">
-          <label>Email:</label>
-          <input
-            type="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="admin@example.com"
-          />
-        </div>
-        <div className="mb-3">
-          <label>Password:</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="admin123"
-          />
-        </div>
-        <button className="btn btn-primary w-100" type="submit">Login</button>
-      </form>
+    <div className="ct-login-wrap">
+      <div className="ct-login-box">
+        <div className="ct-login-title">Commander's <span>Console</span></div>
+        <p className="ct-login-sub">Authenticate to proceed</p>
+        <form onSubmit={handleLogin}>
+          {error && <div className="ct-login-error">{error}</div>}
+          <div className="ct-login-field">
+            <label className="ct-login-label">Email</label>
+            <input
+              type="email"
+              className="ct-login-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="admin@example.com"
+            />
+          </div>
+          <div className="ct-login-field">
+            <label className="ct-login-label">Password</label>
+            <input
+              type="password"
+              className="ct-login-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+          </div>
+          <button className="ct-login-btn" type="submit">Access System</button>
+        </form>
+      </div>
     </div>
   );
 };

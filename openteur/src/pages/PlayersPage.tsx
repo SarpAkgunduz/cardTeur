@@ -110,11 +110,11 @@ const PlayersPage = () => {
 
         {/* Players Grid */}
         {players.length === 0 ? (
-          <p>No players found.</p>
+          <p className="empty-message">No players found.</p>
         ) : (
-          <div className="row" style={{ width: '100%', margin: 0 }}>
+          <div className="players-grid">
             {players.map((player) => (
-              <div key={player._id} className="col-md-4 col-lg-3 mb-4" style={{ display: 'flex', justifyContent: 'center' }}>
+            <div key={player._id} className="players-grid__item">
                 <Card
                   _id={player._id}
                   name={player.name}

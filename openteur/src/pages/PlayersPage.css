@@ -1,14 +1,22 @@
-/* Players Grid hover */
-.col-md-4 {
-  transition: transform 0.3s ease;
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+  width: 100%;
 }
 
-.col-md-4:hover {
-  transform: scale(1.02);
+.players-grid__item {
+  display: flex;
+  justify-content: center;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
+  .players-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
   .btn-ct {
     flex: 1 1 calc(50% - 10px);
     min-width: 140px;

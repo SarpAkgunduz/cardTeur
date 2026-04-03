@@ -5,16 +5,16 @@
 .fifa-card {
   width: 220px;
   height: 330px;
-  border-radius: 14px;
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  overflow: hidden;
   cursor: default;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  font-family: 'Segoe UI', 'Arial Narrow', Arial, sans-serif;
+  font-family: 'Space Grotesk', 'Segoe UI', 'Arial Narrow', Arial, sans-serif;
   user-select: none;
-  clip-path: none;
 }
 
 /* Inner shine overlay */
@@ -30,7 +30,7 @@
   );
   pointer-events: none;
   z-index: 1;
-  border-radius: 14px;
+  border-radius: 0;
 }
 
 /* Subtle inner border */
@@ -38,7 +38,7 @@
   content: '';
   position: absolute;
   inset: 2px;
-  border-radius: 12px;
+  border-radius: 0;
   border: 1px solid rgba(255, 255, 255, 0.22);
   pointer-events: none;
   z-index: 2;
@@ -50,9 +50,34 @@
   100% { transform: scale(1); }
 }
 
+@keyframes card-shimmer-sweep {
+  from { left: -100%; }
+  to   { left: 150%; }
+}
+
 .fifa-card.editable {
   cursor: pointer;
-  animation: card-edit-pop 0.35s ease-out both;
+  animation: card-edit-pop 0.35s ease-out; /* no fill-mode — allows hover transform to work */
+}
+
+/* In edit mode, convert ::before into a horizontal sweep shimmer */
+.fifa-card.editable::before {
+  top: 0;
+  left: -100%;
+  right: auto;
+  bottom: 0;
+  width: 60%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(0, 222, 236, 0.15) 50%,
+    transparent 100%
+  );
+  /* no transition — prevents the reverse sweep showing on the previously hovered card */
+}
+
+.fifa-card.editable:hover::before {
+  animation: card-shimmer-sweep 0.5s ease forwards;
 }
 
 .fifa-card.editable:hover {
@@ -63,77 +88,72 @@
 /* ---- Bronze ---- */
 .fifa-card--bronze {
   background:
-    radial-gradient(ellipse at 28% 25%, rgba(232, 151, 74, 0.6) 0%, transparent 55%),
+    radial-gradient(ellipse at 30% 20%, rgba(36, 59, 90, 0.8) 0%, transparent 60%),
     linear-gradient(
       162deg,
-      #2a1000 0%,
-      #7d4518 18%,
-      #c97b30 38%,
-      #e89840 52%,
-      #c97b30 66%,
-      #7d4518 83%,
-      #2a1000 100%
+      #0e1a25 0%,
+      #1A2B42 45%,
+      #1e3347 65%,
+      #1A2B42 100%
     );
+  border: 1px solid rgba(120, 160, 190, 0.18);
   box-shadow:
-    0 10px 28px rgba(120, 60, 0, 0.65),
-    inset 0 1px 0 rgba(255, 200, 100, 0.35);
+    0 8px 24px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 /* ---- Silver ---- */
 .fifa-card--silver {
   background:
-    radial-gradient(ellipse at 28% 25%, rgba(220, 220, 220, 0.5) 0%, transparent 55%),
+    radial-gradient(ellipse at 30% 20%, rgba(45, 75, 115, 0.7) 0%, transparent 60%),
     linear-gradient(
       162deg,
-      #1a1a1a 0%,
-      #555555 18%,
-      #a8a8a8 38%,
-      #d4d4d4 52%,
-      #a8a8a8 66%,
-      #555555 83%,
-      #1a1a1a 100%
+      #1A2B42 0%,
+      #243B5A 40%,
+      #2a4466 60%,
+      #243B5A 100%
     );
+  border: 1px solid rgba(150, 195, 225, 0.35);
   box-shadow:
-    0 10px 28px rgba(80, 80, 80, 0.65),
-    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    0 10px 28px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(200, 225, 245, 0.15),
+    0 0 0 1px rgba(120, 170, 200, 0.12);
 }
 
 /* ---- Gold ---- */
 .fifa-card--gold {
   background:
-    radial-gradient(ellipse at 28% 25%, rgba(255, 210, 60, 0.55) 0%, transparent 55%),
+    radial-gradient(ellipse at 30% 20%, rgba(80, 70, 20, 0.45) 0%, transparent 55%),
     linear-gradient(
       162deg,
-      #2d1c00 0%,
-      #7a5200 18%,
-      #cc9200 38%,
-      #f5c200 52%,
-      #cc9200 66%,
-      #7a5200 83%,
-      #2d1c00 100%
+      #1A2B42 0%,
+      #2D4B73 35%,
+      #2a4a6a 60%,
+      #243B5A 100%
     );
+  border: 1px solid rgba(200, 160, 30, 0.55);
   box-shadow:
-    0 10px 28px rgba(180, 120, 0, 0.65),
-    inset 0 1px 0 rgba(255, 235, 100, 0.35);
+    0 10px 30px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(210, 170, 40, 0.25),
+    0 0 18px rgba(170, 120, 0, 0.2);
 }
 
 /* ---- Platinum ---- */
 .fifa-card--platinum {
   background:
-    radial-gradient(ellipse at 28% 25%, rgba(190, 195, 240, 0.5) 0%, transparent 55%),
+    radial-gradient(ellipse at 30% 20%, rgba(0, 130, 150, 0.35) 0%, transparent 55%),
     linear-gradient(
       162deg,
-      #12103a 0%,
-      #2e2a6e 18%,
-      #7878c8 38%,
-      #b2b2e8 52%,
-      #7878c8 66%,
-      #2e2a6e 83%,
-      #12103a 100%
+      #1A2B42 0%,
+      #2D4B73 35%,
+      #1a3a4a 60%,
+      #1A2B42 100%
     );
+  border: 1px solid rgba(0, 222, 236, 0.65);
   box-shadow:
-    0 10px 28px rgba(80, 80, 200, 0.65),
-    inset 0 1px 0 rgba(200, 200, 255, 0.35);
+    0 10px 35px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(143, 245, 255, 0.2),
+    0 0 28px rgba(0, 222, 236, 0.28);
 }
 
 /* =============================================
@@ -172,26 +192,26 @@
 
 .fifa-card--bronze .fifa-card__overall,
 .fifa-card--bronze .fifa-card__pos {
-  color: #fff0d0;
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.65);
+  color: #8fb4cc;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
 }
 
 .fifa-card--silver .fifa-card__overall,
 .fifa-card--silver .fifa-card__pos {
-  color: #f4f4f4;
+  color: #c0d8ec;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.65);
 }
 
 .fifa-card--gold .fifa-card__overall,
 .fifa-card--gold .fifa-card__pos {
-  color: #fff8d0;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  color: #e8c060;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
 }
 
 .fifa-card--platinum .fifa-card__overall,
 .fifa-card--platinum .fifa-card__pos {
-  color: #e8e8ff;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+  color: #8ff5ff;
+  text-shadow: 0 2px 8px rgba(0, 222, 236, 0.4);
 }
 
 /* =============================================
@@ -212,10 +232,19 @@
   width: 148px;
   height: 148px;
   object-fit: cover;
-  border-radius: 50%;
-  border: 3px solid rgba(255, 255, 255, 0.28);
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.65));
+  border-radius: 0;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.65)) grayscale(20%);
   display: block;
+}
+
+.fifa-card--gold .fifa-card__image-area img {
+  border-color: rgba(200, 160, 30, 0.4);
+}
+
+.fifa-card--platinum .fifa-card__image-area img {
+  border-color: rgba(0, 222, 236, 0.45);
+  filter: drop-shadow(0 6px 14px rgba(0, 222, 236, 0.2)) grayscale(0%);
 }
 
 /* =============================================
@@ -228,7 +257,7 @@
   position: relative;
   z-index: 3;
   flex: 0 0 auto;
-  border-radius: 0 0 14px 14px;
+  border-radius: 0;
   backdrop-filter: blur(3px);
 }
 
@@ -243,10 +272,10 @@
   margin-bottom: 5px;
 }
 
-.fifa-card--bronze .fifa-card__name { color: #fff0d0; }
-.fifa-card--silver .fifa-card__name { color: #f4f4f4; }
-.fifa-card--gold   .fifa-card__name { color: #fff8d0; }
-.fifa-card--platinum .fifa-card__name { color: #e8e8ff; }
+.fifa-card--bronze .fifa-card__name { color: #8fb4cc; }
+.fifa-card--silver .fifa-card__name { color: #c0d8ec; }
+.fifa-card--gold   .fifa-card__name { color: #e8c060; }
+.fifa-card--platinum .fifa-card__name { color: #8ff5ff; }
 
 .fifa-card__sep {
   height: 1px;
@@ -281,13 +310,13 @@
 }
 
 .fifa-card--bronze .fifa-card__stat-val,
-.fifa-card--bronze .fifa-card__stat-lbl { color: #fff0d0; }
+.fifa-card--bronze .fifa-card__stat-lbl { color: #8fb4cc; }
 
 .fifa-card--silver .fifa-card__stat-val,
-.fifa-card--silver .fifa-card__stat-lbl { color: #f4f4f4; }
+.fifa-card--silver .fifa-card__stat-lbl { color: #c0d8ec; }
 
 .fifa-card--gold .fifa-card__stat-val,
-.fifa-card--gold .fifa-card__stat-lbl { color: #fff8d0; }
+.fifa-card--gold .fifa-card__stat-lbl { color: #e8c060; }
 
 .fifa-card--platinum .fifa-card__stat-val,
-.fifa-card--platinum .fifa-card__stat-lbl { color: #e8e8ff; }
+.fifa-card--platinum .fifa-card__stat-lbl { color: #8ff5ff; }

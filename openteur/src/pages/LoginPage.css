@@ -1,0 +1,108 @@
+.ct-login-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 64px);
+  padding: 2rem;
+}
+
+.ct-login-box {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(36, 59, 90, 0.7);
+  border: 1px solid rgba(0, 222, 236, 0.2);
+  padding: 2.5rem;
+  backdrop-filter: blur(8px);
+}
+
+.ct-login-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.ct-login-title span {
+  color: #00deec;
+}
+
+.ct-login-sub {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 2rem;
+}
+
+.ct-login-error {
+  background: rgba(220, 50, 50, 0.1);
+  border: 1px solid rgba(220, 50, 50, 0.4);
+  color: #ff6b6b;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  padding: 10px 14px;
+  margin-bottom: 1rem;
+}
+
+.ct-login-field {
+  margin-bottom: 1.25rem;
+}
+
+.ct-login-label {
+  display: block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(0, 222, 236, 0.8);
+  margin-bottom: 6px;
+}
+
+.ct-login-input {
+  width: 100%;
+  background: rgba(26, 43, 66, 0.8);
+  border: 1px solid rgba(0, 222, 236, 0.2);
+  color: #f7f5fd;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.ct-login-input::placeholder {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.ct-login-input:focus {
+  border-color: rgba(0, 222, 236, 0.6);
+  background: rgba(26, 43, 66, 1);
+}
+
+.ct-login-btn {
+  width: 100%;
+  background: #00deec;
+  color: #0a1628;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: none;
+  padding: 14px;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s ease;
+}
+
+.ct-login-btn:hover {
+  background: #8ff5ff;
+}

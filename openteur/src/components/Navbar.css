@@ -1,0 +1,86 @@
+.ct-nav {
+  height: 64px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  background: rgba(36, 59, 90, 0.85);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.ct-nav__left {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+.ct-nav__logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  color: #00deec;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ct-nav__links {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.ct-nav__link {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 4px 0;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.ct-nav__link:hover {
+  color: white;
+}
+
+.ct-nav__link--active {
+  color: #00deec;
+  border-bottom-color: #00deec;
+}
+
+.ct-nav__right {
+  display: flex;
+  align-items: center;
+}
+
+.ct-nav__logout {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ct-nav__logout:hover {
+  color: #00deec;
+  border-color: rgba(0, 222, 236, 0.4);
+}

@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pitch Pulse | Elite Management Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #020617; /* Explicitly requested dark slate */
+        }
+        .font-headline { font-family: 'Space Grotesk', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-container": "#62054e",
+                        "on-secondary-container": "#d2caff",
+                        "on-secondary-fixed-variant": "#503fa8",
+                        "outline": "#76709b",
+                        "surface": "#020617",
+                        "surface-container-highest": "#251d53",
+                        "surface-container": "#191240",
+                        "error-dim": "#d73357",
+                        "secondary-dim": "#9e8ffc",
+                        "surface-bright": "#2b235d",
+                        "background": "#020617",
+                        "surface-tint": "#a0a7ff",
+                        "secondary-fixed": "#d4cbff",
+                        "primary-container": "#8f97ff",
+                        "on-background": "#e8e2ff",
+                        "secondary-fixed-dim": "#c5bcff",
+                        "tertiary-fixed-dim": "#ed81c8",
+                        "on-tertiary": "#6f1459",
+                        "primary-dim": "#5561fe",
+                        "on-tertiary-fixed-variant": "#6d1357",
+                        "surface-container-low": "#130c36",
+                        "on-secondary-fixed": "#331e8a",
+                        "on-secondary": "#1e0070",
+                        "error-container": "#a70138",
+                        "error": "#ff6e84",
+                        "on-primary-fixed-variant": "#00069c",
+                        "inverse-surface": "#fdf8ff",
+                        "on-error": "#490013",
+                        "tertiary-container": "#fd8ed7",
+                        "tertiary-fixed": "#fd8ed7",
+                        "primary-fixed-dim": "#7e88ff",
+                        "secondary-container": "#46359d",
+                        "primary": "#a0a7ff",
+                        "on-primary-fixed": "#000000",
+                        "on-primary": "#0006a3",
+                        "on-surface-variant": "#ada6d4",
+                        "outline-variant": "#48436b",
+                        "secondary": "#9e8ffc",
+                        "surface-container-high": "#1f1749",
+                        "surface-variant": "#251d53",
+                        "on-surface": "#e8e2ff",
+                        "on-primary-container": "#000480",
+                        "inverse-on-surface": "#555079",
+                        "tertiary": "#ffa4dd",
+                        "on-tertiary-fixed": "#3a002d",
+                        "inverse-primary": "#3d48e7",
+                        "tertiary-dim": "#ed81c8",
+                        "primary-fixed": "#8f97ff",
+                        "surface-dim": "#0d072e",
+                        "on-error-container": "#ffb2b9",
+                        "surface-container-lowest": "#000000"
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Manrope"],
+                        "label": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="text-on-surface antialiased overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800 shadow-xl flex justify-between items-center h-16 px-6">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-bold italic text-[#5561fe] font-['Space_Grotesk'] tracking-tight">Pitch Pulse</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-[#5561fe] font-bold border-b-2 border-[#5561fe] h-16 flex items-center px-1 font-['Space_Grotesk'] tracking-tight" href="#">Dashboard</a>
+<a class="text-slate-400 font-medium hover:text-white hover:bg-slate-800/50 transition-colors px-3 py-1 rounded-lg font-['Space_Grotesk'] tracking-tight active:scale-95 duration-150" href="#">Market</a>
+<a class="text-slate-400 font-medium hover:text-white hover:bg-slate-800/50 transition-colors px-3 py-1 rounded-lg font-['Space_Grotesk'] tracking-tight active:scale-95 duration-150" href="#">Scouting</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden sm:flex items-center bg-slate-900 border border-slate-800 rounded-full px-4 py-1.5 focus-within:ring-1 focus-within:ring-[#5561fe] transition-all">
+<span class="material-symbols-outlined text-slate-400 text-lg">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm text-slate-200 placeholder-slate-500 w-48" placeholder="Search players..." type="text"/>
+</div>
+<button class="p-2 text-slate-400 hover:text-white transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-[#5561fe] rounded-full"></span>
+</button>
+<button class="p-2 text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-slate-700 bg-slate-800">
+<img alt="Manager Profile" data-alt="Close-up portrait of a professional football manager in a dark suit with stadium lights blurred in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJ5L7f9oZrAEsx6wlDKsLHPEHEdoBW4YjPU2PsNRDsz32VBcad4DUw_q-vyPX6BwByXdUPhNy1GcUN1PGf936Fc1XQ1eCc5nKZ9z64tj1cRZqFgBy-MbWtm2-s36A8YdahSMgD7ayDjWLvvUKfZVrq2RKEUFik56tEO82GNIPGRU_HwkXMiijuhYihr3fc6PtFMCBR8YzQY4IUXkbZIsqyrEcpMY_qzyjt1YKvJbLAAbV93TCHoey7GzIVJLszkX2hi5mY009ZMDA1"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-64 border-r border-slate-800 bg-slate-950 flex flex-col py-6 gap-2 hidden md:flex z-40 pt-20 shadow-2xl">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-[#5561fe]/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-[#5561fe]" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+</div>
+<div>
+<h2 class="text-xl font-black tracking-tighter text-white font-['Space_Grotesk']">Pitch Pulse</h2>
+<p class="text-[10px] uppercase tracking-widest text-[#5561fe] font-bold">Elite Management</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="group flex items-center gap-3 px-4 py-3 bg-[#5561fe]/10 text-[#5561fe] border-r-4 border-[#5561fe] font-semibold font-['Space_Grotesk'] text-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="group flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-slate-900 font-['Space_Grotesk'] text-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">groups</span>
+<span>Manage Squad</span>
+</a>
+<a class="group flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-slate-900 font-['Space_Grotesk'] text-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">person_search</span>
+<span>Player Preview</span>
+</a>
+<a class="group flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-slate-900 font-['Space_Grotesk'] text-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">sports_soccer</span>
+<span>Match Prep</span>
+</a>
+<a class="group flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-slate-900 font-['Space_Grotesk'] text-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">leaderboard</span>
+<span>League Table</span>
+</a>
+</nav>
+<div class="mt-auto px-4 space-y-1 border-t border-slate-900 pt-6">
+<div class="px-4 mb-4">
+<button class="w-full py-3 bg-[#5561fe] text-white rounded-xl font-bold font-['Space_Grotesk'] hover:brightness-110 active:scale-[0.98] transition-all">
+                    Upgrade Plan
+                </button>
+</div>
+<a class="group flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-slate-900 font-['Space_Grotesk'] text-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">help</span>
+<span>Support</span>
+</a>
+<a class="group flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-slate-900 font-['Space_Grotesk'] text-sm transition-all duration-200" href="#">
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="md:ml-64 pt-24 px-6 md:px-10 pb-12">
+<!-- Header Section -->
+<section class="mb-12">
+<h1 class="text-5xl md:text-7xl font-['Space_Grotesk'] font-bold italic uppercase tracking-tighter text-white leading-none">
+                YOUR ELITE <span class="text-[#5561fe]">LEAGUE</span>
+</h1>
+<div class="mt-4 flex items-center gap-4 text-slate-400 font-medium">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> Season 24/25 Active</span>
+<span class="w-1 h-1 rounded-full bg-slate-700"></span>
+<span>Manager: Alexander Thorne</span>
+</div>
+</section>
+<!-- Primary Action Cards (Asymmetric Grid) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+<!-- Manage Squad -->
+<div class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 p-8 transition-all hover:border-[#5561fe]/50 hover:bg-slate-900 cursor-pointer">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-4xl text-[#5561fe] mb-4" style="font-variation-settings: 'FILL' 1;">groups</span>
+<h3 class="text-2xl font-['Space_Grotesk'] font-bold text-white mb-2">Manage Squad</h3>
+<p class="text-slate-400 text-sm max-w-[200px]">Optimize your starting XI and manage player fitness.</p>
+</div>
+<div class="absolute -bottom-10 -right-10 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[160px]">groups</span>
+</div>
+</div>
+<!-- Preview Player -->
+<div class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 p-8 transition-all hover:border-[#5561fe]/50 hover:bg-slate-900 cursor-pointer">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-4xl text-[#5561fe] mb-4" style="font-variation-settings: 'FILL' 1;">person_search</span>
+<h3 class="text-2xl font-['Space_Grotesk'] font-bold text-white mb-2">Preview Player</h3>
+<p class="text-slate-400 text-sm max-w-[200px]">Deep dive into advanced metrics and performance projections.</p>
+</div>
+<div class="absolute -bottom-10 -right-10 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[160px]">person_search</span>
+</div>
+</div>
+<!-- Prepare Match -->
+<div class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 p-8 transition-all hover:border-[#5561fe]/50 hover:bg-slate-900 cursor-pointer">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-4xl text-[#5561fe] mb-4" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+<h3 class="text-2xl font-['Space_Grotesk'] font-bold text-white mb-2">Prepare Match</h3>
+<p class="text-slate-400 text-sm max-w-[200px]">Analyze opponent tactics and set piece strategies.</p>
+</div>
+<div class="absolute -bottom-10 -right-10 opacity-5 group-hover:opacity-10 transition-opacity">
+<span class="material-symbols-outlined text-[160px]">sports_soccer</span>
+</div>
+</div>
+</section>
+<!-- Secondary Content Area (Bento Layout) -->
+<section class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Next Fixture (Main Bento Piece) -->
+<div class="md:col-span-2 rounded-2xl border border-slate-800 bg-slate-900/40 overflow-hidden">
+<div class="p-6 border-b border-slate-800 flex justify-between items-center">
+<h4 class="font-['Space_Grotesk'] font-bold text-lg">Next Fixture</h4>
+<span class="text-xs font-bold text-[#5561fe] bg-[#5561fe]/10 px-3 py-1 rounded-full uppercase tracking-wider">Premier Cup</span>
+</div>
+<div class="p-8 flex items-center justify-between">
+<div class="text-center">
+<div class="w-16 h-16 mx-auto mb-3 bg-slate-800 rounded-full flex items-center justify-center p-3 border border-slate-700">
+<img alt="Team A Crest" class="w-full h-full object-contain" data-alt="Abstract minimalist football club crest with dark blue and silver colors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIsnkw7kwXzS_PPLrtDZg_8WVJcL8lVdlWcdbcBg6emCs0jA-zCH48ilHrGqTuOjomIrGYio1Bt4ZfuWjqAC2jk7Scuryhg5u7AL6NQQJi8JnKkgF90dt5J2OUgIVw-DoAb26mh2SmrtDdgFtWg7cMHZ74qRuIfWYcD_giThgKQ2NnoDtp6W7Ylhgy4hP5F5nOL0Ct5BnQQSs0TFqCRaBG0ciB743BN0KLdLiKalOl7eNievQLq3ACZv3ZH6SAQzwrvNnpRIK3LSCJ"/>
+</div>
+<span class="text-sm font-bold block uppercase tracking-tighter">Pulse City</span>
+</div>
+<div class="text-center">
+<span class="text-3xl font-black font-['Space_Grotesk'] text-slate-600 italic tracking-widest uppercase">VS</span>
+<div class="mt-2 py-1 px-3 bg-slate-800 rounded text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sat 15:00</div>
+</div>
+<div class="text-center">
+<div class="w-16 h-16 mx-auto mb-3 bg-slate-800 rounded-full flex items-center justify-center p-3 border border-slate-700">
+<img alt="Team B Crest" class="w-full h-full object-contain" data-alt="Abstract minimalist football club crest with deep red and black geometric shapes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEUHLGoDokB917NmmKsRdCv5irFbOOY8jiPMLmkSvnbAAa67g_7aHE4LbhEaDX7K4ZHmsYwfX4q7rNQu_94QsFI5tziwStb4hn42TM0kxjT3QKc6Uh810qKM5FE-C4RVLtpOouKTSi_8G92KZSE3mFlPuecDLli1aOuk26PHGWS46V2AXKe9eSgV5ng_tEMx2GDLJyJFojvtqoEUjRiOSjYLkBQv32OWjPCLTcemzixYbzJZHZpWc0PhP678R5hMMVnk-O6y73PGd-"/>
+</div>
+<span class="text-sm font-bold block uppercase tracking-tighter">United FC</span>
+</div>
+</div>
+<div class="px-8 pb-8">
+<div class="flex justify-between mb-2 text-xs font-bold text-slate-500 uppercase tracking-widest">
+<span>Win Prob.</span>
+<span>Draw</span>
+<span>Loss</span>
+</div>
+<div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden flex">
+<div class="h-full bg-[#5561fe]" style="width: 62%"></div>
+<div class="h-full bg-slate-600" style="width: 20%"></div>
+<div class="h-full bg-slate-700" style="width: 18%"></div>
+</div>
+</div>
+</div>
+<!-- Team Stats Mini -->
+<div class="md:col-span-1 rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+<h4 class="font-['Space_Grotesk'] font-bold text-lg mb-6">Team Health</h4>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-xs font-bold mb-1 uppercase tracking-widest">
+<span class="text-slate-400">Average Stamina</span>
+<span class="text-white">88%</span>
+</div>
+<div class="h-1 w-full bg-slate-800 rounded-full">
+<div class="h-full bg-[#5561fe] w-[88%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs font-bold mb-1 uppercase tracking-widest">
+<span class="text-slate-400">Squad Morale</span>
+<span class="text-white">94%</span>
+</div>
+<div class="h-1 w-full bg-slate-800 rounded-full">
+<div class="h-full bg-emerald-500 w-[94%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between text-xs font-bold mb-1 uppercase tracking-widest">
+<span class="text-slate-400">Tactical Familiarity</span>
+<span class="text-white">72%</span>
+</div>
+<div class="h-1 w-full bg-slate-800 rounded-full">
+<div class="h-full bg-amber-500 w-[72%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Notifications -->
+<div class="md:col-span-1 rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
+<h4 class="font-['Space_Grotesk'] font-bold text-lg mb-4">Feed</h4>
+<div class="space-y-4">
+<div class="flex gap-3">
+<div class="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></div>
+<div>
+<p class="text-xs text-slate-200">Striker J. Doe has returned from injury</p>
+<span class="text-[10px] text-slate-500 font-bold uppercase mt-1 block">2h ago</span>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-1.5 h-1.5 rounded-full bg-[#5561fe] mt-1.5 flex-shrink-0"></div>
+<div>
+<p class="text-xs text-slate-200">Tactical analysis of United FC ready</p>
+<span class="text-[10px] text-slate-500 font-bold uppercase mt-1 block">5h ago</span>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="w-1.5 h-1.5 rounded-full bg-error mt-1.5 flex-shrink-0"></div>
+<div>
+<p class="text-xs text-slate-200">Budget limit alert: Scout session failed</p>
+<span class="text-[10px] text-slate-500 font-bold uppercase mt-1 block">1d ago</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Mobile Bottom Navigation Shell -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-slate-950 border-t border-slate-800 px-6 py-3 flex justify-between items-center z-50">
+<button class="flex flex-col items-center gap-1 text-[#5561fe]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-[10px] font-bold font-['Space_Grotesk']">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-[10px] font-bold font-['Space_Grotesk']">Squad</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined">person_search</span>
+<span class="text-[10px] font-bold font-['Space_Grotesk']">Scout</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined">sports_soccer</span>
+<span class="text-[10px] font-bold font-['Space_Grotesk']">Match</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-500">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="text-[10px] font-bold font-['Space_Grotesk']">League</span>
+</button>
+</nav>
+</body></html>

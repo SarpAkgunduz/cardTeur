@@ -1,9 +1,9 @@
-/* Global Page Wrapper with Gradient Background */
+/* Global Page Wrapper — background transparent, shell handles bg */
 .page-wrapper {
-  min-height: 100vh;
-  background: linear-gradient(180deg, #1F3A4A 0%, #4A7C9B 100%);
-  transition: all 0.3s ease;
-  padding: 20px;
+  min-height: calc(100vh - 64px); /* minus nav */
+  padding: 24px;
+  color: #f7f5fd;
+  font-family: 'Manrope', sans-serif;
 }
 
 /* Page Container - Centers content */
@@ -19,17 +19,20 @@
   align-items: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 3px solid #4A7C9B;
+  border-bottom: 2px solid rgba(0, 222, 236, 0.35);
 }
 
 /* Page Title */
 .page-title {
   color: #ffffff;
   font-size: 2.5rem;
-  font-weight: bold;
+  font-weight: 900;
+  font-family: 'Space Grotesk', sans-serif;
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
   margin: 0;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  letter-spacing: 1px;
 }
 
 /* Back Button Container */
@@ -40,51 +43,55 @@
 
 /* CardTeur Button — shared style for all action buttons */
 .btn-ct {
-  background: linear-gradient(160deg, #1e3d52 0%, #2c5f7d 100%);
-  color: white;
-  border: 1px solid rgba(74, 124, 155, 0.45);
+  background: rgba(0, 222, 236, 0.08);
+  color: #00deec;
+  border: 1px solid rgba(0, 222, 236, 0.35);
   padding: 8px 20px;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  border-radius: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+  box-shadow: none;
   display: inline-flex;
   align-items: center;
 }
 
 .btn-ct:hover {
-  background: linear-gradient(160deg, #2c5f7d 0%, #3a7599 100%);
-  border-color: #5a94b8;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  background: rgba(0, 222, 236, 0.18);
+  border-color: #00deec;
+  color: #00deec;
+  transform: none;
+  box-shadow: 0 0 12px rgba(0, 222, 236, 0.2);
 }
 
 .btn-ct:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background: rgba(0, 222, 236, 0.28);
+  box-shadow: none;
 }
 
 /* Cancel / destructive toggle state */
 .btn-ct.active-mode {
-  background: linear-gradient(160deg, #4a2a2a 0%, #7a3a3a 100%);
-  border-color: rgba(180, 90, 90, 0.5);
+  background: rgba(220, 50, 50, 0.08);
+  color: #ff6b6b;
+  border-color: rgba(220, 50, 50, 0.4);
 }
 
 .btn-ct.active-mode:hover {
-  background: linear-gradient(160deg, #6a3030 0%, #9a4040 100%);
-  border-color: rgba(200, 100, 100, 0.6);
-  transform: translateY(-2px);
+  background: rgba(220, 50, 50, 0.18);
+  border-color: rgba(220, 50, 50, 0.7);
+  transform: none;
 }
 
 /* Content Card - For forms and centered content */
 .content-card {
-  background: rgba(31, 58, 74, 0.75);
+  background: rgba(36, 59, 90, 0.75);
   backdrop-filter: blur(6px);
-  border: 1px solid rgba(74, 124, 155, 0.25);
-  border-radius: 20px;
+  border: 1px solid rgba(0, 222, 236, 0.15);
+  border-radius: 0;
   padding: 40px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   width: 100%;
@@ -95,7 +102,10 @@
 .empty-message {
   text-align: center;
   font-size: 1.5rem;
-  color: #4A7C9B;
+  color: rgba(0, 222, 236, 0.5);
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   margin-top: 50px;
 }
 

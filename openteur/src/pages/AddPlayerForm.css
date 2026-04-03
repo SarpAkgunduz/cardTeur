@@ -1,12 +1,306 @@
 /* Form section card */
 .form-section {
-  background: rgba(19, 47, 76, 0.6);
-  border: 1px solid rgba(74, 124, 155, 0.2);
-  border-left: 3px solid #4A7C9B;
-  border-radius: 12px;
+  background: rgba(26, 43, 66, 0.6);
+  border: 1px solid rgba(0, 222, 236, 0.12);
+  border-left: 3px solid rgba(0, 222, 236, 0.5);
+  border-radius: 0;
   padding: 24px 28px;
   margin-bottom: 20px;
 }
+
+/* Section header */
+.form-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(0, 222, 236, 0.15);
+}
+
+.form-section-header i {
+  font-size: 1.3rem;
+  color: #00deec;
+}
+
+.form-section-header h4,
+.form-section-header span {
+  margin: 0;
+  color: white;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* 2-column stat grid */
+.stat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+}
+
+/* Single column override */
+.stat-grid.single {
+  grid-template-columns: 1fr;
+}
+
+/* Identity grid — 2 col for most, full-width for selects */
+.identity-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+}
+
+.identity-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+/* Stat input group */
+.stat-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-field label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: rgba(0, 222, 236, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+/* Dark themed inputs */
+.form-control-dark,
+.form-select-dark {
+  background: rgba(26, 43, 66, 0.8) !important;
+  border: 1px solid rgba(0, 222, 236, 0.2) !important;
+  border-radius: 0 !important;
+  color: #f7f5fd !important;
+  padding: 8px 12px !important;
+  font-size: 0.95rem !important;
+  font-family: 'Manrope', sans-serif !important;
+  transition: border-color 0.2s !important;
+}
+
+.form-control-dark:focus,
+.form-select-dark:focus {
+  border-color: rgba(0, 222, 236, 0.6) !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: rgba(26, 43, 66, 1) !important;
+}
+
+.form-control-dark::placeholder {
+  color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.form-select-dark option {
+  background: #1A2B42;
+  color: white;
+}
+
+/* Number stat input — compact */
+.stat-input {
+  width: 100%;
+  background: rgba(26, 43, 66, 0.8);
+  border: 1px solid rgba(0, 222, 236, 0.2);
+  border-radius: 0;
+  color: white;
+  padding: 7px 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.stat-input:focus {
+  outline: none;
+  border-color: rgba(0, 222, 236, 0.6);
+  background: rgba(26, 43, 66, 1);
+}
+
+/* Stat value bar under input */
+.stat-bar-track {
+  height: 3px;
+  background: rgba(0, 222, 236, 0.12);
+  border-radius: 0;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 222, 236, 0.5), #00deec);
+  transition: width 0.3s ease;
+}
+
+/* Player image preview */
+.image-preview,
+.player-preview-img {
+  width: 110px;
+  height: 110px;
+  border-radius: 0;
+  object-fit: cover;
+  border: 1px solid rgba(0, 222, 236, 0.3);
+  margin-top: 4px;
+}
+
+.image-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Stat sub-header label */
+.stat-subheader {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin: 0 0 10px 0;
+}
+
+/* Overall badges in summary section */
+.overall-badges-row,
+.overall-badges {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.overall-badge {
+  flex: 1;
+  min-width: 120px;
+  background: rgba(26, 43, 66, 0.8);
+  border: 1px solid rgba(0, 222, 236, 0.15);
+  border-radius: 0;
+  padding: 16px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.overall-badge .badge-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 4px;
+}
+
+.overall-badge .badge-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: #00deec;
+  line-height: 1;
+}
+
+.overall-badge .badge-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-top: 4px;
+}
+
+/* Stat tabs */
+.stat-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid rgba(0, 222, 236, 0.2);
+  padding-bottom: 0;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+}
+
+.stat-tab {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 8px 18px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.stat-tab:hover {
+  color: rgba(0, 222, 236, 0.7);
+}
+
+.stat-tab.active {
+  color: #00deec;
+  border-bottom-color: #00deec;
+}
+
+/* Card title pill in summary */
+.card-title-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.card-title-pill.bronze  { background: rgba(26, 43, 66, 0.8); border: 1px solid rgba(100, 160, 200, 0.3); color: #8fb4cc; }
+.card-title-pill.silver  { background: rgba(26, 43, 66, 0.8); border: 1px solid rgba(150, 195, 225, 0.35); color: #c0d8ec; }
+.card-title-pill.gold    { background: rgba(26, 43, 66, 0.8); border: 1px solid rgba(200, 160, 30, 0.55); color: #e8c060; }
+.card-title-pill.platinum { background: rgba(26, 43, 66, 0.8); border: 1px solid rgba(0, 222, 236, 0.65); color: #8ff5ff; }
+
+/* Card title row */
+.card-title-row {
+  margin-bottom: 20px;
+}
+
+/* Submit row */
+.form-submit-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .stat-grid,
+  .identity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .identity-grid .full-width {
+    grid-column: 1;
+  }
+
+  .overall-badges,
+  .overall-badges-row {
+    flex-direction: column;
+  }
+}
+
 
 /* Section header */
 .form-section-header {

@@ -9,13 +9,17 @@ import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import PrivateRoute from './components/routes/PrivateRoute';
 import PublicRoute from './components/routes/PublicRoute';
+import Navbar from './components/Navbar';
 
 const App = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
-        <Route path="/" element={<HomePage />} />
+      <div className="ct-app-shell">
+        <Navbar />
+        <div className="ct-app-content">
+          <Routes>
+            <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+            <Route path="/" element={<HomePage />} />
         <Route
           path="/manage"
           element={
@@ -56,7 +60,9 @@ const App = () => {
             </PrivateRoute>
           }
         />
-      </Routes>
+          </Routes>
+        </div>
+      </div>
     </Router>
   );
 };
