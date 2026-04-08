@@ -3,6 +3,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Card from '../components/Card';
 import ComparePanel from '../components/ComparePanel';
+<<<<<<< HEAD
+=======
+import ConfirmDialog from '../components/ConfirmDialog';
+>>>>>>> 6c60fe2182084a53dc85120eff16b0660253d209
 import ToastNotification from '../components/ToastNotification';
 import { playerApi, Player } from '../services';
 import './PlayersPage.css';
@@ -13,6 +17,10 @@ const PlayersPage = () => {
   const [editMode, setEditMode] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
   const [compareSelection, setCompareSelection] = useState<Player[]>([]);
+<<<<<<< HEAD
+=======
+  const [confirm, setConfirm] = useState<{ message: string; onConfirm: () => void } | null>(null);
+>>>>>>> 6c60fe2182084a53dc85120eff16b0660253d209
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
   const navigate = useNavigate();
@@ -24,6 +32,7 @@ const PlayersPage = () => {
       .catch((error) => console.error('Failed to fetch players:', error));
   }, []);
 
+<<<<<<< HEAD
   useEffect(() => {
     const msg = (location.state as { toast?: string })?.toast;
     if (msg) {
@@ -44,6 +53,24 @@ const PlayersPage = () => {
       alert('Failed to delete player.');
     }
   };
+=======
+  const handleDelete = (id: string) => setConfirm({
+    message: 'Are you sure you want to delete this player?',
+    onConfirm: async () => {
+      setConfirm(null);
+      try {
+        await playerApi.delete(id);
+        setPlayers((prev) => prev.filter((p) => p._id !== id));
+        setToastMsg('Player deleted successfully.');
+        setShowToast(true);
+      } catch (error) {
+        console.error('Delete error:', error);
+        setToastMsg('Failed to delete player.');
+        setShowToast(true);
+      }
+    },
+  });
+>>>>>>> 6c60fe2182084a53dc85120eff16b0660253d209
 
   const handleEdit = (id: string) => {
     navigate(`/edit-player/${id}`);
@@ -127,6 +154,10 @@ const PlayersPage = () => {
                   offensiveOverall={player.offensiveOverall}
                   defensiveOverall={player.defensiveOverall}
                   athleticismOverall={player.athleticismOverall}
+                  gkOverall={player.gkOverall}
+                  reflexes={player.reflexes}
+                  handling={player.handling}
+                  diving={player.diving}
                   deleteMode={deleteMode}
                   onDelete={() => handleDelete(player._id)}
                   editMode={editMode}
@@ -150,6 +181,17 @@ const PlayersPage = () => {
           onRemovePlayer={handleRemoveFromCompare}
         />
       )}
+<<<<<<< HEAD
+=======
+
+      <ConfirmDialog
+        show={confirm !== null}
+        message={confirm?.message ?? ''}
+        onConfirm={confirm?.onConfirm ?? (() => {})}
+        onCancel={() => setConfirm(null)}
+      />
+
+>>>>>>> 6c60fe2182084a53dc85120eff16b0660253d209
       <ToastNotification
         show={showToast}
         message={toastMsg}

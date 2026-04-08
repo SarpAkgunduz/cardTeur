@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
 import BackButton from '../components/BackButton';
-import { useNavigate, useParams } from 'react-router-dom';
 import ToastNotification from '../components/ToastNotification';
-import { playerApi } from '../services';
+import StatGrid from '../components/StatGrid';
+import { usePlayerForm } from '../hooks/usePlayerForm';
 import './AddPlayerForm.css';
 
 const AddPlayerForm = () => {
+<<<<<<< HEAD
   const { id } = useParams<{ id: string }>();
   const isEditMode = Boolean(id);
   const navigate = useNavigate();
@@ -186,6 +186,22 @@ const AddPlayerForm = () => {
       setShowToast(true);
     }
   };
+=======
+  const {
+    isEditMode,
+    name, setName,
+    cardImage, setCardImage,
+    jerseyNumber, setJerseyNumber,
+    marketValue, setMarketValue,
+    preferredPosition, setPreferredPosition,
+    activeStatTab, setActiveStatTab,
+    offensiveOverall, defensiveOverall, athleticismOverall, gkOverall,
+    cardTitle,
+    gkFields, offensiveFields, defensiveFields, athleticismFields,
+    showToast, setShowToast, toastMsg,
+    handleSubmit,
+  } = usePlayerForm();
+>>>>>>> 6c60fe2182084a53dc85120eff16b0660253d209
 
   return (
     <div className="page-wrapper">
@@ -232,7 +248,7 @@ const AddPlayerForm = () => {
                     placeholder="e.g. 10"
                     type="number"
                     value={jerseyNumber}
-                    onChange={(e) => setjerseyNumber(e.target.value)}
+                    onChange={(e) => setJerseyNumber(e.target.value)}
                   />
                 </div>
                 <div className="stat-field">
@@ -253,7 +269,10 @@ const AddPlayerForm = () => {
                     id="preferredPosition"
                     className="form-select-dark"
                     value={preferredPosition}
-                    onChange={(e) => setpreferredPosition(e.target.value)}
+                    onChange={(e) => {
+                      setPreferredPosition(e.target.value);
+                      setActiveStatTab(e.target.value === 'GK' ? 'gk' : 'offensive');
+                    }}
                   >
                     <option value="">-- Choose --</option>
                     <option value="ST">Striker (ST)</option>
@@ -301,103 +320,57 @@ const AddPlayerForm = () => {
               </div>
             </div>
 
-            {/* ── SECTION 2: OFFENSIVE STATS ── */}
+            {/* ── SECTION 2–4: STATS (tabbed) ── */}
             <div className="form-section">
-              <div className="form-section-header">
-                <i className="bi bi-lightning-fill"></i>
-                <span>Offensive Stats</span>
+              {/* Tab bar */}
+              <div className="stat-tabs">
+                {preferredPosition === 'GK' && (
+                  <button
+                    type="button"
+                    className={`stat-tab ${activeStatTab === 'gk' ? 'active' : ''}`}
+                    onClick={() => setActiveStatTab('gk')}
+                  >
+                    <i className="bi bi-shield-shaded me-1"></i>GK Stats
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className={`stat-tab ${activeStatTab === 'offensive' ? 'active' : ''}`}
+                  onClick={() => setActiveStatTab('offensive')}
+                >
+                  <i className="bi bi-lightning-fill me-1"></i>Offensive
+                </button>
+                <button
+                  type="button"
+                  className={`stat-tab ${activeStatTab === 'defensive' ? 'active' : ''}`}
+                  onClick={() => setActiveStatTab('defensive')}
+                >
+                  <i className="bi bi-shield-fill me-1"></i>Defensive &amp; Athleticism
+                </button>
               </div>
-              <div className="stat-grid">
-                {[
-                  { id: 'dribbling',    label: 'Dribbling',     value: dribbling,    setter: setDribbling },
-                  { id: 'shotAccuracy', label: 'Shot Accuracy', value: shotAccuracy, setter: setShotAccuracy },
-                  { id: 'shotSpeed',    label: 'Shot Speed',    value: shotSpeed,    setter: setShotSpeed },
-                  { id: 'headers',      label: 'Headers',       value: headers,      setter: setHeader },
-                  { id: 'longPass',     label: 'Long Pass',     value: longPass,     setter: setLongPass },
-                  { id: 'shortPass',    label: 'Short Pass',    value: shortPass,    setter: setShortPass },
-                  { id: 'ballControl',  label: 'Ball Control',  value: ballControl,  setter: setBallControl },
-                  { id: 'positioning',  label: 'Positioning',   value: positioning,  setter: setPositioning },
-                  { id: 'vision',       label: 'Vision',        value: vision,       setter: setVision },
-                ].map(({ id, label, value, setter }) => (
-                  <div className="stat-field" key={id}>
-                    <label htmlFor={id}>{label}</label>
-                    <input
-                      id={id}
-                      type="number"
-                      min={0}
-                      max={100}
-                      className="stat-input"
-                      value={value}
-                      onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))}
-                    />
-                    <div className="stat-bar-track">
-                      <div className="stat-bar-fill" style={{ width: `${value}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
+
+              {/* GK Stats tab */}
+              {activeStatTab === 'gk' && preferredPosition === 'GK' && (
+                <StatGrid fields={gkFields} style={{ marginTop: 16 }} />
+              )}
+
+              {/* Offensive Stats tab */}
+              {activeStatTab === 'offensive' && (
+                <StatGrid fields={offensiveFields} style={{ marginTop: 16 }} />
+              )}
+
+              {/* Defensive & Athleticism tab */}
+              {activeStatTab === 'defensive' && (
+                <>
+                  <p className="stat-subheader" style={{ marginTop: 16 }}>Defensive</p>
+                  <StatGrid fields={defensiveFields} />
+                  <p className="stat-subheader" style={{ marginTop: 24 }}>Athleticism</p>
+                  <StatGrid fields={athleticismFields} />
+                </>
+              )}
             </div>
 
-            {/* ── SECTION 3: DEFENSIVE & ATHLETICISM ── */}
-            <div className="form-section">
-              <div className="form-section-header">
-                <i className="bi bi-shield-fill"></i>
-                <span>Defensive &amp; Athleticism</span>
-              </div>
-
-              <p className="stat-subheader">Defensive</p>
-              <div className="stat-grid">
-                {[
-                  { id: 'tackling',     label: 'Tackling',      value: tackling,     setter: setTackling },
-                  { id: 'interceptions',label: 'Interceptions', value: interceptions,setter: setInterceptions },
-                  { id: 'marking',      label: 'Marking',       value: marking,      setter: setMarking },
-                  { id: 'defensiveIQ',  label: 'Defensive IQ',  value: defensiveIQ,  setter: setDefensiveIQ },
-                ].map(({ id, label, value, setter }) => (
-                  <div className="stat-field" key={id}>
-                    <label htmlFor={id}>{label}</label>
-                    <input
-                      id={id}
-                      type="number"
-                      min={0}
-                      max={100}
-                      className="stat-input"
-                      value={value}
-                      onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))}
-                    />
-                    <div className="stat-bar-track">
-                      <div className="stat-bar-fill" style={{ width: `${value}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <p className="stat-subheader" style={{ marginTop: '24px' }}>Athleticism</p>
-              <div className="stat-grid">
-                {[
-                  { id: 'speed',    label: 'Speed',    value: speed,    setter: setSpeed },
-                  { id: 'strength', label: 'Strength', value: strength, setter: setStrength },
-                  { id: 'stamina',  label: 'Stamina',  value: stamina,  setter: setStamina },
-                ].map(({ id, label, value, setter }) => (
-                  <div className="stat-field" key={id}>
-                    <label htmlFor={id}>{label}</label>
-                    <input
-                      id={id}
-                      type="number"
-                      min={0}
-                      max={100}
-                      className="stat-input"
-                      value={value}
-                      onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))}
-                    />
-                    <div className="stat-bar-track">
-                      <div className="stat-bar-fill" style={{ width: `${value}%` }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* ── SECTION 4: SUMMARY & SUBMIT ── */}
+            {/* ── SECTION 5: SUMMARY & SUBMIT ── */}
             <div className="form-section">
               <div className="form-section-header">
                 <i className="bi bi-clipboard-check-fill"></i>
@@ -405,21 +378,31 @@ const AddPlayerForm = () => {
               </div>
 
               <div className="overall-badges-row">
-                <div className="overall-badge">
-                  <span className="badge-title">Offensive</span>
-                  <span className="badge-value">{offensiveOverall}</span>
-                  <span className="badge-label">OVR</span>
-                </div>
-                <div className="overall-badge">
-                  <span className="badge-title">Defensive</span>
-                  <span className="badge-value">{defensiveOverall}</span>
-                  <span className="badge-label">OVR</span>
-                </div>
-                <div className="overall-badge">
-                  <span className="badge-title">Athleticism</span>
-                  <span className="badge-value">{athleticismOverall}</span>
-                  <span className="badge-label">OVR</span>
-                </div>
+                {preferredPosition === 'GK' ? (
+                  <div className="overall-badge">
+                    <span className="badge-title">Goalkeeper</span>
+                    <span className="badge-value">{gkOverall}</span>
+                    <span className="badge-label">OVR</span>
+                  </div>
+                ) : (
+                  <>
+                    <div className="overall-badge">
+                      <span className="badge-title">Offensive</span>
+                      <span className="badge-value">{offensiveOverall}</span>
+                      <span className="badge-label">OVR</span>
+                    </div>
+                    <div className="overall-badge">
+                      <span className="badge-title">Defensive</span>
+                      <span className="badge-value">{defensiveOverall}</span>
+                      <span className="badge-label">OVR</span>
+                    </div>
+                    <div className="overall-badge">
+                      <span className="badge-title">Athleticism</span>
+                      <span className="badge-value">{athleticismOverall}</span>
+                      <span className="badge-label">OVR</span>
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className="card-title-row">

@@ -1,14 +1,22 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 
+const PARENT_ROUTES: Record<string, string> = {
+  '/add': '/manage',
+  '/edit-player': '/manage',
+  '/preview': '/',
+  '/match': '/',
+  '/manage': '/',
+};
+
 const BackButton = ({
-  to,                 // optional target path (e.g. '/')
-  fallback = '/',     // fallback if history can't go back
+  parent,
+  fallback = '/',
   position = 'static',
   top = '20px',
   right = '20px',
   className = ''
 }: {
-  to?: string;
+  parent?: string;
   fallback?: string;
   position?: 'static' | 'absolute';
   top?: string;
@@ -18,10 +26,22 @@ const BackButton = ({
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Find the parent route based on the current pathname
+  // Example: '/edit-player/abc123' → '/manage'
+  const routeEntries = Object.entries(PARENT_ROUTES);
+  const matchedEntry = routeEntries.find(function(pair) {
+    const routeKey = pair[0];
+    return location.pathname.startsWith(routeKey);
+  });
+  const matchedParent = matchedEntry !== undefined ? matchedEntry[1] : undefined;
+
+  // If parent prop is provided use it, otherwise use the one found from the map
+  const resolvedParent = parent !== undefined ? parent : matchedParent;
+
   const handleClick = () => {
-    // 1) explicit target wins
-    if (to) {
-      navigate(to);
+    // 1) parent route takes priority
+    if (resolvedParent !== undefined) {
+      navigate(resolvedParent);
       return;
     }
 

@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node index.ts",
-    "dev": "nodemon --exec ts-node index.ts",
+    "dev": "nodemon --ext ts --exec ts-node index.ts",
     "build": "tsc",
     "start:dist": "node dist/index.js"
   },
