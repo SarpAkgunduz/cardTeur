@@ -174,17 +174,12 @@ const AddPlayerForm = () => {
       if (isEditMode && id) {
         // Update existing player
         await playerApi.update(id, newPlayer);
-        setToastMsg('Player updated successfully!');
+        navigate('/manage', { state: { toast: 'Player updated successfully!' } });
       } else {
         // Create new player
         await playerApi.create(newPlayer);
-        setToastMsg('Player added successfully!');
+        navigate('/manage', { state: { toast: 'Player added successfully!' } });
       }
-      
-      setShowToast(true);
-      setTimeout(() => {
-        navigate('/manage');
-      }, 3000);
     } catch (error) {
       console.error('Error saving player:', error);
       setToastMsg(`Error ${isEditMode ? 'updating' : 'adding'} player.`);

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Card from '../components/Card';
 import ComparePanel from '../components/ComparePanel';
+import ToastNotification from '../components/ToastNotification';
 import { playerApi, Player } from '../services';
 import './PlayersPage.css';
 
@@ -12,13 +13,25 @@ const PlayersPage = () => {
   const [editMode, setEditMode] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
   const [compareSelection, setCompareSelection] = useState<Player[]>([]);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     playerApi.getAll()
       .then((data) => setPlayers(data))
       .catch((error) => console.error('Failed to fetch players:', error));
   }, []);
+
+  useEffect(() => {
+    const msg = (location.state as { toast?: string })?.toast;
+    if (msg) {
+      setToastMsg(msg);
+      setShowToast(true);
+      window.history.replaceState({}, '');
+    }
+  }, [location.state]);
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this player?')) return;
@@ -137,6 +150,11 @@ const PlayersPage = () => {
           onRemovePlayer={handleRemoveFromCompare}
         />
       )}
+      <ToastNotification
+        show={showToast}
+        message={toastMsg}
+        onClose={() => setShowToast(false)}
+      />
     </div>
   );
 };
