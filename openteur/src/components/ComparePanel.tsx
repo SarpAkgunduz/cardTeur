@@ -33,7 +33,7 @@ const ComparePanel: React.FC<ComparePanelProps> = ({ show, onClose, players, onR
   });
 
   return (
-    <Offcanvas show={show} onHide={onClose} placement="end" backdrop={false} scroll={true} style={{ width: '500px' }}>
+    <Offcanvas show={show} onHide={onClose} placement="end" backdrop={false} scroll={true} style={{ width: '500px' }} className="compare-panel">
       <Offcanvas.Header closeButton>
         <Offcanvas.Title>Compare Players</Offcanvas.Title>
       </Offcanvas.Header>

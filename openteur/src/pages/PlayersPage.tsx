@@ -143,14 +143,12 @@ const PlayersPage = () => {
       </div>
 
       {/* Compare Panel */}
-      {compareSelection.length > 0 && (
-        <ComparePanel
-          show={true}
-          onClose={handleCloseCompare}
-          players={compareSelection}
-          onRemovePlayer={handleRemoveFromCompare}
-        />
-      )}
+      <ComparePanel
+        show={compareSelection.length > 0}
+        onClose={handleCloseCompare}
+        players={compareSelection}
+        onRemovePlayer={handleRemoveFromCompare}
+      />
 
       <ConfirmDialog
         show={confirm !== null}
