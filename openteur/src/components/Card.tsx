@@ -23,9 +23,9 @@ export interface CardProps {
   editMode?: boolean;
   onEdit?: () => void;
 
-  /*onCompareSelect is a function that will be called when the compare button is clicked*/
   compareMode?: boolean;
   onCompareSelect?: () => void;
+  isCompareSelected?: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -46,9 +46,9 @@ const Card: React.FC<CardProps> = ({
   /*editMode is a boolean that will be used to toggle the edit button*/
   editMode = false,
   onEdit,
-  /*onCompareSelect is a function that will be called when the compare button is clicked*/
   compareMode = false,
   onCompareSelect,
+  isCompareSelected = false,
 }) => {
   const isGK = preferredPosition?.toUpperCase() === 'GK';
 
@@ -72,8 +72,8 @@ const Card: React.FC<CardProps> = ({
 
   return (
     <div
-      className={`fifa-card fifa-card--${cardType} ${editMode ? 'editable' : ''}`}
-      onClick={editMode ? onEdit : undefined}
+      className={`fifa-card fifa-card--${cardType} ${editMode ? 'editable' : ''} ${compareMode ? 'comparable' : ''} ${isCompareSelected ? 'compare-selected' : ''}`}
+      onClick={editMode ? onEdit : compareMode ? onCompareSelect : undefined}
     >
       {/* Minus button in delete mode */}
       {deleteMode && (
@@ -86,18 +86,11 @@ const Card: React.FC<CardProps> = ({
         </button>
       )}
 
-      {/* Plus button in compare mode */}
-      {/* This button will be used to select the player for comparison */}
-      {/* It will be shown only if compareMode is true */}
-      {/* The button will call the onCompareSelect function when clicked */}
-      {compareMode && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onCompareSelect && onCompareSelect(); }}
-          className="btn btn-primary btn-sm position-absolute top-0 end-0 m-2"
-          style={{ zIndex: 10 }}
-        >
-          ➕
-        </button>
+      {/* Selected indicator in compare mode */}
+      {isCompareSelected && (
+        <div className="compare-selected-badge">
+          <i className="bi bi-check-lg"></i>
+        </div>
       )}
 
       {/* Top: Overall rating + Position */}

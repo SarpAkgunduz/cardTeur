@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Offcanvas } from 'react-bootstrap';
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Legend } from 'recharts';
 import './ComparePanel.css'; // Assuming you have some styles for the panel
@@ -20,6 +20,16 @@ interface ComparePanelProps {
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff6b6b', '#00bcd4'];
 
 const ComparePanel: React.FC<ComparePanelProps> = ({ show, onClose, players, onRemovePlayer }) => {
+  const [removingIds, setRemovingIds] = useState<Set<string>>(new Set());
+
+  const handleRemove = (id: string) => {
+    setRemovingIds(prev => new Set(prev).add(id));
+    setTimeout(() => {
+      onRemovePlayer(id);
+      setRemovingIds(prev => { const s = new Set(prev); s.delete(id); return s; });
+    }, 300);
+  };
+
   const radarData: Array<{ stat: string;[key: string]: number | string }> = [
     { stat: 'Offense' },
     { stat: 'Defense' },
@@ -67,15 +77,18 @@ const ComparePanel: React.FC<ComparePanelProps> = ({ show, onClose, players, onR
         )}
         <div className="d-flex flex-wrap mb-3">
           {players.map((player) => (
-            <span key={player._id} className="player-badge">
-            {player.name}
-            <button
-              className="remove-btn"
-              onClick={() => onRemovePlayer(player._id)}
+            <span
+              key={player._id}
+              className={`player-badge ${removingIds.has(player._id) ? 'player-badge--removing' : ''}`}
             >
-              ❌
-            </button>
-          </span>
+              {player.name}
+              <button
+                className="remove-btn"
+                onClick={() => handleRemove(player._id)}
+              >
+                ❌
+              </button>
+            </span>
           ))}
         </div>
       </Offcanvas.Body>

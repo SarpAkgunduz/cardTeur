@@ -134,6 +134,7 @@ const PlayersPage = () => {
                   onEdit={() => handleEdit(player._id)}
                   compareMode={compareMode}
                   onCompareSelect={() => handleCompareSelect(player)}
+                  isCompareSelected={compareSelection.some(p => p._id === player._id)}
                 />
               </div>
             ))}
