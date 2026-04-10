@@ -76,8 +76,13 @@ const PlayersPage = () => {
               <button
                 className={`btn btn-ct ${compareMode ? 'active-mode' : ''}`}
                 onClick={() => {
-                  setCompareMode(!compareMode);
+                  const next = !compareMode;
+                  setCompareMode(next);
                   setCompareSelection([]);
+                  if (next) {
+                    setEditMode(false);
+                    setDeleteMode(false);
+                  }
                 }}
               >
                 <i className={`bi ${compareMode ? 'bi-x-circle-fill' : 'bi-columns-gap'}`} style={{ marginRight: 8 }}></i>
@@ -85,14 +90,30 @@ const PlayersPage = () => {
               </button>
               <button
                 className={`btn btn-ct ${editMode ? 'active-mode' : ''}`}
-                onClick={() => setEditMode(!editMode)}
+                onClick={() => {
+                  const next = !editMode;
+                  setEditMode(next);
+                  if (next) {
+                    setCompareMode(false);
+                    setCompareSelection([]);
+                    setDeleteMode(false);
+                  }
+                }}
               >
                 <i className={`bi ${editMode ? 'bi-x-circle-fill' : 'bi-pencil-fill'}`} style={{ marginRight: 8 }}></i>
                 {editMode ? 'Cancel Edit' : 'Edit Player'}
               </button>
               <button
                 className={`btn btn-ct ${deleteMode ? 'active-mode' : ''}`}
-                onClick={() => setDeleteMode(!deleteMode)}
+                onClick={() => {
+                  const next = !deleteMode;
+                  setDeleteMode(next);
+                  if (next) {
+                    setCompareMode(false);
+                    setCompareSelection([]);
+                    setEditMode(false);
+                  }
+                }}
               >
                 <i className={`bi ${deleteMode ? 'bi-x-circle-fill' : 'bi-trash-fill'}`} style={{ marginRight: 8 }}></i>
                 {deleteMode ? 'Cancel' : 'Delete Player'}

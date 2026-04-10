@@ -10,15 +10,7 @@
   text-align: center;
 }
 
-.welcome-eyebrow {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(0, 222, 236, 0.6);
-  margin-bottom: 0.5rem;
-}
+
 
 .welcome-title {
   color: white;

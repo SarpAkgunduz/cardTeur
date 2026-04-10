@@ -9,7 +9,6 @@ const HomePage = () => {
         <div className="content-card">
           <div className="welcome">
             <div>
-              <p className="welcome-eyebrow">Commander's Console</p>
               <h1 className="welcome-title">Your <span>Cardteur</span> League</h1>
             </div>
           </div>
