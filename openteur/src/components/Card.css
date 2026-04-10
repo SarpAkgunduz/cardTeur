@@ -50,6 +50,18 @@
   100% { transform: scale(1); }
 }
 
+@keyframes card-compare-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.08) translateY(-6px); }
+  100% { transform: scale(1.04) translateY(-4px); }
+}
+
+@keyframes compare-badge-in {
+  0%   { transform: scale(0) rotate(-90deg); opacity: 0; }
+  60%  { transform: scale(1.2) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
 @keyframes card-shimmer-sweep {
   from { left: -100%; }
   to   { left: 150%; }
@@ -83,6 +95,42 @@
 .fifa-card.editable:hover {
   transform: scale(1.06) translateY(-8px) rotate(-0.8deg);
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.55) !important;
+}
+
+/* ---- Compare mode ---- */
+.fifa-card.comparable {
+  cursor: pointer;
+}
+
+.fifa-card.comparable:hover {
+  transform: scale(1.04) translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 16px rgba(0, 222, 236, 0.15) !important;
+}
+
+.fifa-card.compare-selected {
+  transform: scale(1.04) translateY(-4px);
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.6), 0 0 24px rgba(0, 222, 236, 0.45) !important;
+  animation: card-compare-pop 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  border-color: rgba(0, 222, 236, 0.7) !important;
+}
+
+.compare-selected-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  width: 26px;
+  height: 26px;
+  background: #00deec;
+  color: #1A2B42;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 900;
+  animation: compare-badge-in 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  box-shadow: 0 2px 8px rgba(0, 222, 236, 0.5);
 }
 
 /* ---- Bronze ---- */

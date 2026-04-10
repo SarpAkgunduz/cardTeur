@@ -164,6 +164,7 @@ const PlayersPage = () => {
                   onEdit={() => handleEdit(player._id)}
                   compareMode={compareMode}
                   onCompareSelect={() => handleCompareSelect(player)}
+                  isCompareSelected={compareSelection.some(p => p._id === player._id)}
                 />
               </div>
             ))}
@@ -173,16 +174,12 @@ const PlayersPage = () => {
       </div>
 
       {/* Compare Panel */}
-      {compareSelection.length > 0 && (
-        <ComparePanel
-          show={true}
-          onClose={handleCloseCompare}
-          players={compareSelection}
-          onRemovePlayer={handleRemoveFromCompare}
-        />
-      )}
-<<<<<<< HEAD
-=======
+      <ComparePanel
+        show={compareSelection.length > 0}
+        onClose={handleCloseCompare}
+        players={compareSelection}
+        onRemovePlayer={handleRemoveFromCompare}
+      />
 
       <ConfirmDialog
         show={confirm !== null}
