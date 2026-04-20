@@ -36,6 +36,23 @@ On both frontend and backend, make sure files are not bloated with another featu
 - Playwright has no package scripts in `e2e/package.json`; run tests from `e2e/` with `npx playwright test`.
 - Playwright config does not start the app for you (`webServer` is commented out), so start frontend and backend manually before running E2E.
 
+## Version control & project management
+- The project is managed with **Jira** (project key: `CARDTEUR`) and source code is hosted on **Bitbucket** (private repo: `SarpAkgunduz/cardteur`).
+- Remote is set to Bitbucket: `https://SarpAkgunduz@bitbucket.org/SarpAkgunduz/cardteur.git`
+- Jira is integrated with Bitbucket via the **GitHub for Atlassian** app; the Jira **Kod** tab shows branches, commits and PRs linked to stories.
+- Branch naming: always prefix with the Jira story key — `CARDTEUR-{n}-short-description` (e.g. `CARDTEUR-2-mail-ozellikleri`). Create branches from the story's **Create branch** button inside Jira.
+- Commit message format: `CARDTEUR-{n}: Short description of what was done`
+- Workflow per story: create branch from Jira → develop → commit/push → open PR on Bitbucket → merge to main → move story to Done.
+
+## Backend service architecture
+- Business logic that is not trivial CRUD must live in `server/services/` — keep routes thin (validation + service call only).
+- `server/services/emailService.ts` handles all SMTP logic via nodemailer. SMTP credentials are read from `server/.env` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`).
+- `POST /api/match/announce` sends match announcement emails to all players who have an email address; implemented in `server/routes/match.ts`.
+
+## Player entity notes
+- `email` is an optional field (`email?: string`) on both `server/models/Player.ts` and `openteur/src/services/api/types.ts`. It is never required — skip in validation checks.
+- `cardTitle` is a virtual computed by the backend — never store or send it in create/update requests.
+
 ## Testing and integration notes
 - `e2e/global-setup.ts` logs in with hard-coded credentials (`admin@example.com` / `admin123`) and stores browser state in `e2e/auth-state.json`. Most browser tests assume that saved localStorage session exists.
 - Login behavior is intentionally fake and local-only in `openteur/src/pages/LoginPage.tsx`; if you replace it with real auth, update route guards and Playwright setup together.
