@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import BackButton from '../components/BackButton';
 import Card from '../components/Card';
+import MatchDetailsModal from '../components/MatchDetailsModal';
+import ToastNotification from '../components/ToastNotification';
 import './MatchPage.css';
 
 const MatchPage = () => {
@@ -13,6 +15,9 @@ const MatchPage = () => {
   const [playersPool, setPlayersPool] = useState<any[]>([]);
   const [leftPlayers, setLeftPlayers] = useState<any[]>([]);
   const [rightPlayers, setRightPlayers] = useState<any[]>([]);
+  const [showMatchModal, setShowMatchModal] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const [showToast, setShowToast] = useState(false);
 
   // move these above the useEffect that calls distributePlayers
   const computeOverall = (p: any) => {
@@ -110,6 +115,33 @@ const MatchPage = () => {
     setSlotsVisible(true); // show slots immediately
   };
 
+  const handleAnnounce = async (details: { location: string; date: string; time: string }) => {
+    const toMatchPlayer = (p: any) => ({
+      name: p.name ?? 'Unknown',
+      email: p.email ?? undefined,
+      preferredPosition: p.preferredPosition ?? p.position ?? undefined,
+    });
+
+    try {
+      const res = await fetch('http://localhost:5001/api/match/announce', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...details,
+          leftTeam: leftPlayers.map(toMatchPlayer),
+          rightTeam: rightPlayers.map(toMatchPlayer),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? 'Unknown error');
+      setToastMsg(`Announced! Emails sent to ${data.sent.length} player(s).`);
+    } catch (err: any) {
+      setToastMsg(`Failed to send emails: ${err.message}`);
+    }
+    setShowMatchModal(false);
+    setShowToast(true);
+  };
+
   const renderColumnSlots = (assigned: any[], count: number | null) => {
     const n = count ?? 0;
     return Array.from({ length: n }).map((_, i) => {
@@ -135,6 +167,28 @@ const MatchPage = () => {
   return (
     <div className="page-wrapper">
       <div className="page-container">
+        <ToastNotification
+          show={showToast}
+          message={toastMsg}
+          onClose={() => setShowToast(false)}
+        />
+
+        {showMatchModal && (
+          <MatchDetailsModal
+            leftTeam={leftPlayers.map((p) => ({
+              name: p.name ?? 'Unknown',
+              email: p.email ?? undefined,
+              preferredPosition: p.preferredPosition ?? undefined,
+            }))}
+            rightTeam={rightPlayers.map((p) => ({
+              name: p.name ?? 'Unknown',
+              email: p.email ?? undefined,
+              preferredPosition: p.preferredPosition ?? undefined,
+            }))}
+            onSkip={() => setShowMatchModal(false)}
+            onAnnounce={handleAnnounce}
+          />
+        )}
         <div className="page-header">
           <div className="back-button-container">
             <BackButton position="static" />
@@ -198,10 +252,21 @@ const MatchPage = () => {
             </div>
 
             <div className="center-card">
-              {/* eski white panel veya center içerik burada yer alır */}
+              {/* center panel — match board + ready button */}
               <div className="card-white center-small">
                 <h4 style={{ margin: 6 }}>Match Board</h4>
                 <p className="muted" style={{ margin: 6 }}>Mode: {selectedMode ?? '—'}</p>
+
+                {slotsVisible && leftPlayers.length > 0 && rightPlayers.length > 0 && (
+                  <button
+                    className="btn btn-ct match-ready-btn"
+                    style={{ marginTop: 14, width: '100%' }}
+                    onClick={() => setShowMatchModal(true)}
+                  >
+                    <i className="bi bi-check2-circle me-1"></i>
+                    Ready
+                  </button>
+                )}
               </div>
             </div>
 

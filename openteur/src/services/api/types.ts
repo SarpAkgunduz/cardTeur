@@ -1,6 +1,7 @@
 export interface Player {
   _id: string;
   name: string;
+  email?: string;
   cardImage: string;
   jerseyNumber: number;
   marketValue: number;

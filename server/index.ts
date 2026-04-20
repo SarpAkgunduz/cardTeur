@@ -17,7 +17,9 @@ app.use(cors({
 app.use(express.json());
 
 import playerRoutes from './routes/players';
+import matchRoutes from './routes/match';
 app.use('/api/players', playerRoutes);
+app.use('/api/match', matchRoutes);
 
 const PORT = process.env.PORT || 5001;
 

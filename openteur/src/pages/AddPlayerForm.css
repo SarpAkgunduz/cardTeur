@@ -73,6 +73,15 @@
   letter-spacing: 0.2em;
 }
 
+.optional-label {
+  font-size: 0.55rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: none;
+  letter-spacing: 0.05em;
+  margin-left: 4px;
+}
+
 /* Dark themed inputs */
 .form-control-dark,
 .form-select-dark {
