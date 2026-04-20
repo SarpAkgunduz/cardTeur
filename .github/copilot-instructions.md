@@ -37,12 +37,12 @@ On both frontend and backend, make sure files are not bloated with another featu
 - Playwright config does not start the app for you (`webServer` is commented out), so start frontend and backend manually before running E2E.
 
 ## Version control & project management
-- The project is managed with **Jira** (project key: `CARDTEUR`) and source code is hosted on **Bitbucket** (private repo: `SarpAkgunduz/cardteur`).
-- Remote is set to Bitbucket: `https://SarpAkgunduz@bitbucket.org/SarpAkgunduz/cardteur.git`
-- Jira is integrated with Bitbucket via the **GitHub for Atlassian** app; the Jira **Kod** tab shows branches, commits and PRs linked to stories.
+- The project is managed with **Jira** (project key: `CARDTEUR`) and source code is hosted on **GitHub** (repo: `SarpAkgunduz/cardTeur`).
+- Remote is set to GitHub: `https://github.com/SarpAkgunduz/cardTeur.git`
+- Jira is integrated with GitHub via the **GitHub for Atlassian** app; the Jira **Kod** tab shows branches, commits and PRs linked to stories.
 - Branch naming: always prefix with the Jira story key — `CARDTEUR-{n}-short-description` (e.g. `CARDTEUR-2-mail-ozellikleri`). Create branches from the story's **Create branch** button inside Jira.
 - Commit message format: `CARDTEUR-{n}: Short description of what was done`
-- Workflow per story: create branch from Jira → develop → commit/push → open PR on Bitbucket → merge to main → move story to Done.
+- Workflow per story: create branch from Jira → develop → commit/push → open PR on GitHub → merge to main → move story to Done.
 
 ## Backend service architecture
 - Business logic that is not trivial CRUD must live in `server/services/` — keep routes thin (validation + service call only).
