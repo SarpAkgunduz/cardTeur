@@ -8,7 +8,6 @@ const AddPlayerForm = () => {
   const {
     isEditMode,
     name, setName,
-    email, setEmail,
     cardImage, setCardImage,
     jerseyNumber, setJerseyNumber,
     marketValue, setMarketValue,
@@ -56,17 +55,6 @@ const AddPlayerForm = () => {
                     placeholder="Full name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                  />
-                </div>
-                <div className="stat-field">
-                  <label htmlFor="email">Email <span className="optional-label">(optional)</span></label>
-                  <input
-                    id="email"
-                    type="email"
-                    className="form-control-dark"
-                    placeholder="player@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div className="stat-field">

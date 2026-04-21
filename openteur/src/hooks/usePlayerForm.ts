@@ -17,7 +17,6 @@ export function usePlayerForm() {
 
   // Identity
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
   const [cardImage, setCardImage] = useState('');
   const [jerseyNumber, setJerseyNumber] = useState<number | string>('');
   const [marketValue, setMarketValue] = useState<number | string>('');
@@ -60,7 +59,6 @@ export function usePlayerForm() {
     playerApi.getById(id)
       .then((player) => {
         setName(player.name);
-        setEmail(player.email ?? '');
         setCardImage(player.cardImage);
         setJerseyNumber(player.jerseyNumber);
         setMarketValue(player.marketValue);
@@ -156,7 +154,6 @@ export function usePlayerForm() {
     e.preventDefault();
     const newPlayer = {
       name,
-      email: email.trim() || undefined,
       jerseyNumber: Number(jerseyNumber),
       preferredPosition,
       // cardTitle is not sent — backend computes it as a virtual
@@ -199,7 +196,6 @@ export function usePlayerForm() {
   return {
     isEditMode,
     name, setName,
-    email, setEmail,
     cardImage, setCardImage,
     jerseyNumber, setJerseyNumber,
     marketValue, setMarketValue,

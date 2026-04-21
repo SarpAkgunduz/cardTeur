@@ -3,6 +3,7 @@ import './App.css';
 
 import PlayersPage from './pages/PlayersPage';
 import PreviewPage from './pages/PreviewPage';
+import CrewPage from './pages/CrewPage';
 import MatchPage from './pages/MatchPage';
 import AddPlayerForm from './pages/AddPlayerForm';
 import LoginPage from './pages/LoginPage';
@@ -33,6 +34,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <PreviewPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/crew"
+          element={
+            <PrivateRoute>
+              <CrewPage />
             </PrivateRoute>
           }
         />
