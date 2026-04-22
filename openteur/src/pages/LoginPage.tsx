@@ -57,7 +57,7 @@ const LoginPage = () => {
               placeholder="••••••••"
             />
           </div>
-          <button className="ct-login-btn" type="submit">Access System</button>
+          <button className="ct-login-btn" type="submit">Login</button>
         </form>
       </div>
     </div>
