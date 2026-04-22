@@ -1,3 +1,5 @@
+import { getCurrentUserToken } from '../AuthService';
+
 const API_BASE_URL = 'http://localhost:5001/api';
 
 export async function apiRequest<T>(
@@ -5,12 +7,14 @@ export async function apiRequest<T>(
   options?: RequestInit
 ): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+  const token = await getCurrentUserToken();
+
   try {
     const response = await fetch(url, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options?.headers,
       },
     });

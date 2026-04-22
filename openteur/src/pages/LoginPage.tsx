@@ -1,32 +1,33 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginSuccess } from '../services/AuthService';
+import { useAuth } from '../contexts/AuthContext';
 import './LoginPage.css';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { signIn } = useAuth();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Simple validation
+
     if (!email || !password) {
       setError('Please fill in all fields.');
       return;
     }
 
-    // Dummy auth (replace with real backend logic later)
-    if (email === 'admin@example.com' && password === 'admin123') {
-      loginSuccess('admin');  // ← Give admin role
+    setIsSubmitting(true);
+    setError('');
+    try {
+      await signIn(email, password);
       navigate('/');
-    } else if (email === 'user@example.com' && password === 'user123') {
-      loginSuccess('user');   // ← Give user role
-      navigate('/');
-    } else {
+    } catch {
       setError('Invalid email or password.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -57,7 +58,9 @@ const LoginPage = () => {
               placeholder="••••••••"
             />
           </div>
-          <button className="ct-login-btn" type="submit">Login</button>
+          <button className="ct-login-btn" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Authenticating...' : 'Access System'}
+          </button>
         </form>
       </div>
     </div>

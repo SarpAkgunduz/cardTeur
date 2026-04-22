@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 import './App.css';
 
 import PlayersPage from './pages/PlayersPage';
@@ -14,6 +15,7 @@ import Navbar from './components/Navbar';
 
 const App = () => {
   return (
+    <AuthProvider>
     <Router>
       <div className="ct-app-shell">
         <Navbar />
@@ -73,6 +75,7 @@ const App = () => {
         </div>
       </div>
     </Router>
+    </AuthProvider>
   );
 };
 

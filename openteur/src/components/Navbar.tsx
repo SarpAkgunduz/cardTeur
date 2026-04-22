@@ -1,11 +1,12 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { isLoggedIn, logout } from '../services/AuthService';
+import { useAuth } from '../contexts/AuthContext';
 import './Navbar.css';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const loggedIn = isLoggedIn();
+  const { currentUser, signOut } = useAuth();
+  const loggedIn = !!currentUser;
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -46,7 +47,7 @@ const Navbar = () => {
       </div>
       <div className="ct-nav__right">
         {loggedIn ? (
-          <button className="ct-nav__logout" onClick={() => { logout(); navigate('/login'); }}>
+          <button className="ct-nav__logout" onClick={() => { signOut(); navigate('/login'); }}>
             Logout
           </button>
         ) : (

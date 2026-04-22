@@ -1,7 +1,11 @@
 import { Router, Request, Response } from 'express';
 import Player from '../models/Player';
+import { requireAuth } from '../middleware/auth';
 
 const router: Router = Router();
+
+// All player routes require a valid Firebase token
+router.use(requireAuth);
 
 // Get all players
 router.get('/', async (req: Request, res: Response) => {
