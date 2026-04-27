@@ -35,3 +35,9 @@ applyTo: "**"
 - When adding a new Player field, update both sides together
 - `email` is optional (`email?: string`) — never required, never validated in forms
 - `cardTitle` is a backend virtual — never sent in create/update payloads
+
+## Authentication
+- Auth state lives in `openteur/src/contexts/AuthContext.tsx` via `<AuthProvider>`. Always use the `useAuth()` hook to access `currentUser`, `signIn`, and `signOut` — never read auth from localStorage directly.
+- `getCurrentUserToken()` in `AuthService.tsx` returns the Firebase ID token; use it when making raw `fetch` calls outside of `apiRequest()` (e.g. `MatchPage.tsx`).
+- Never hardcode Firebase config values in source files. They come from `openteur/.env` as `VITE_FIREBASE_*` variables.
+- `server/serviceAccountKey.json` contains private credentials — never commit it, never log it, never expose it to the frontend.
