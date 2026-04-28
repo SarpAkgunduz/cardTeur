@@ -3,6 +3,7 @@ import {
   User,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
 } from 'firebase/auth';
 import { auth } from '../firebase';
@@ -11,6 +12,7 @@ interface AuthContextType {
   currentUser: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<User>;
   signOut: () => Promise<void>;
 }
 
@@ -33,6 +35,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await signInWithEmailAndPassword(auth, email, password);
   };
 
+  const signUp = async (email: string, password: string): Promise<User> => {
+    const credential = await createUserWithEmailAndPassword(auth, email, password);
+    return credential.user;
+  };
+
   const signOut = async () => {
     await firebaseSignOut(auth);
   };
@@ -46,7 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   return (
-    <AuthContext.Provider value={{ currentUser, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ currentUser, loading, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );

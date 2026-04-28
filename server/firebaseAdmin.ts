@@ -2,7 +2,7 @@ import admin from 'firebase-admin';
 import path from 'path';
 import fs from 'fs';
 
-const serviceAccountPath = path.join(__dirname, '../serviceAccountKey.json');
+const serviceAccountPath = path.join(__dirname, 'serviceAccountKey.json');
 
 if (!admin.apps.length) {
   if (!fs.existsSync(serviceAccountPath)) {

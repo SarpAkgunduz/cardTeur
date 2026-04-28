@@ -18,8 +18,10 @@ app.use(express.json());
 
 import playerRoutes from './routes/players';
 import matchRoutes from './routes/match';
+import userRoutes from './routes/users';
 app.use('/api/players', playerRoutes);
 app.use('/api/match', matchRoutes);
+app.use('/api/users', userRoutes);
 
 const PORT = process.env.PORT || 5001;
 

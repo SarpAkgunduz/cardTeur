@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import './LoginPage.css';
-
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -59,9 +58,13 @@ const LoginPage = () => {
             />
           </div>
           <button className="ct-login-btn" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Authenticating...' : 'Access System'}
+            {isSubmitting ? 'Logging in...' : 'Login'}
           </button>
         </form>
+        <p className="ct-login-signup-link">
+          Don't have an account?{' '}
+          <span onClick={() => navigate('/signup')}>Sign Up</span>
+        </p>
       </div>
     </div>
   );

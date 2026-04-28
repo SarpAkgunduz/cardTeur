@@ -1,4 +1,4 @@
-.ct-login-wrap {
+.ct-signup-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -6,16 +6,28 @@
   padding: 2rem;
 }
 
-.ct-login-box {
+.ct-signup-box {
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   background: rgba(36, 59, 90, 0.7);
   border: 1px solid rgba(0, 222, 236, 0.2);
   padding: 2.5rem;
   backdrop-filter: blur(8px);
+  animation: signup-fade-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.ct-login-title {
+@keyframes signup-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ct-signup-title {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 1.6rem;
   font-weight: 900;
@@ -26,11 +38,11 @@
   margin-bottom: 0.25rem;
 }
 
-.ct-login-title span {
+.ct-signup-title span {
   color: #00deec;
 }
 
-.ct-login-sub {
+.ct-signup-sub {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.65rem;
   font-weight: 700;
@@ -40,7 +52,7 @@
   margin-bottom: 2rem;
 }
 
-.ct-login-error {
+.ct-signup-error {
   background: rgba(220, 50, 50, 0.1);
   border: 1px solid rgba(220, 50, 50, 0.4);
   color: #ff6b6b;
@@ -48,13 +60,20 @@
   font-size: 0.75rem;
   padding: 10px 14px;
   margin-bottom: 1rem;
+  animation: error-shake 0.3s cubic-bezier(0.36, 0.07, 0.19, 0.97);
 }
 
-.ct-login-field {
+@keyframes error-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+.ct-signup-field {
   margin-bottom: 1.25rem;
 }
 
-.ct-login-label {
+.ct-signup-label {
   display: block;
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.6rem;
@@ -65,7 +84,12 @@
   margin-bottom: 6px;
 }
 
-.ct-login-input {
+.ct-signup-required {
+  color: #ff6b6b;
+  margin-left: 2px;
+}
+
+.ct-signup-input {
   width: 100%;
   background: rgba(26, 43, 66, 0.8);
   border: 1px solid rgba(0, 222, 236, 0.2);
@@ -74,20 +98,20 @@
   font-size: 0.9rem;
   padding: 10px 14px;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, background 0.2s ease;
   box-sizing: border-box;
 }
 
-.ct-login-input::placeholder {
+.ct-signup-input::placeholder {
   color: rgba(255, 255, 255, 0.2);
 }
 
-.ct-login-input:focus {
+.ct-signup-input:focus {
   border-color: rgba(0, 222, 236, 0.6);
   background: rgba(26, 43, 66, 1);
 }
 
-.ct-login-btn {
+.ct-signup-btn {
   width: 100%;
   background: #00deec;
   color: #0a1628;
@@ -100,14 +124,20 @@
   padding: 14px;
   cursor: pointer;
   margin-top: 0.5rem;
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
-.ct-login-btn:hover {
+.ct-signup-btn:hover:not(:disabled) {
   background: #8ff5ff;
+  transform: translateY(-1px);
 }
 
-.ct-login-signup-link {
+.ct-signup-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ct-signup-login-link {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.4);
@@ -116,12 +146,12 @@
   margin-bottom: 0;
 }
 
-.ct-login-signup-link span {
+.ct-signup-login-link span {
   color: #00deec;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
-.ct-login-signup-link span:hover {
+.ct-signup-login-link span:hover {
   color: #8ff5ff;
 }

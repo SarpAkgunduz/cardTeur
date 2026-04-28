@@ -8,6 +8,7 @@ import CrewPage from './pages/CrewPage';
 import MatchPage from './pages/MatchPage';
 import AddPlayerForm from './pages/AddPlayerForm';
 import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 import HomePage from './pages/HomePage';
 import PrivateRoute from './components/routes/PrivateRoute';
 import PublicRoute from './components/routes/PublicRoute';
@@ -22,6 +23,7 @@ const App = () => {
         <div className="ct-app-content">
           <Routes>
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
+            <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
             <Route path="/" element={<HomePage />} />
         <Route
           path="/manage"
