@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import BackButton from '../components/BackButton';
 import type { Player } from '../services/api/types';
 import { playerApi } from '../services';
+import ToastNotification from '../components/ToastNotification';
 import './CrewPage.css';
 
 const CrewPage = () => {
@@ -10,6 +11,15 @@ const CrewPage = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingEmail, setEditingEmail] = useState('');
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [toastMsg, setToastMsg] = useState('');
+  const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
+  const [showToast, setShowToast] = useState(false);
+
+  const showMsg = (msg: string, variant: 'success' | 'danger' = 'success') => {
+    setToastMsg(msg);
+    setToastVariant(variant);
+    setShowToast(true);
+  };
 
   useEffect(() => {
     playerApi.getAll()
@@ -31,13 +41,16 @@ const CrewPage = () => {
   const saveEmail = async (id: string) => {
     setSavingId(id);
     try {
-      await playerApi.update(id, { email: editingEmail.trim() || undefined });
+      // Send empty string to trigger $unset on backend when clearing email
+      await playerApi.update(id, { email: editingEmail.trim() } as any);
       setPlayers(prev => prev.map(p =>
         p._id === id ? { ...p, email: editingEmail.trim() || undefined } : p
       ));
       setEditingId(null);
+      showMsg('Email saved.');
     } catch (err) {
       console.error('Failed to save email:', err);
+      showMsg('Failed to save email.', 'danger');
     } finally {
       setSavingId(null);
     }
@@ -124,39 +137,48 @@ const CrewPage = () => {
   };
 
   return (
-    <div className="page-wrapper">
-      <div className="page-container">
-        <div className="page-header">
-          <div className="back-button-container">
-            <BackButton position="static" />
-          </div>
-          <h2 className="page-title">My Crew</h2>
-        </div>
-
-        <div className="content-card">
-          {loading && <p className="empty-message">Loading crew...</p>}
-
-          {!loading && players.length === 0 && (
-            <p className="empty-message">No players found.</p>
-          )}
-
-          {!loading && players.length > 0 && (
-            <div className="crew-list">
-              {withEmail.map((player, idx) => renderRow(player, idx))}
-
-              {withoutEmail.length > 0 && (
-                <>
-                  <div className="crew-divider">
-                    <span>No email registered</span>
-                  </div>
-                  {withoutEmail.map((player, idx) => renderRow(player, idx, withEmail.length))}
-                </>
-              )}
+    <>
+      <div className="page-wrapper">
+        <div className="page-container">
+          <div className="page-header">
+            <div className="back-button-container">
+              <BackButton position="static" />
             </div>
-          )}
+            <h2 className="page-title">My Crew</h2>
+          </div>
+
+          <div className="content-card">
+            {loading && <p className="empty-message">Loading crew...</p>}
+
+            {!loading && players.length === 0 && (
+              <p className="empty-message">No players found.</p>
+            )}
+
+            {!loading && players.length > 0 && (
+              <div className="crew-list">
+                {withEmail.map((player, idx) => renderRow(player, idx))}
+
+                {withoutEmail.length > 0 && (
+                  <>
+                    <div className="crew-divider">
+                      <span>No email registered</span>
+                    </div>
+                    {withoutEmail.map((player, idx) => renderRow(player, idx, withEmail.length))}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      <ToastNotification
+        message={toastMsg}
+        show={showToast}
+        onClose={() => setShowToast(false)}
+        variant={toastVariant}
+      />
+    </>
   );
 };
 

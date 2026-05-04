@@ -76,6 +76,9 @@ const PreviewPage = () => {
                           defensiveOverall={player.defensiveOverall}
                           athleticismOverall={player.athleticismOverall}
                           gkOverall={player.gkOverall}
+                          reflexes={player.reflexes}
+                          handling={player.handling}
+                          diving={player.diving}
                           cardImage={player.cardImage}
                           cardTitle={player.cardTitle}
                         />
@@ -107,6 +110,9 @@ const PreviewPage = () => {
                           defensiveOverall={player.defensiveOverall}
                           athleticismOverall={player.athleticismOverall}
                           gkOverall={player.gkOverall}
+                          reflexes={player.reflexes}
+                          handling={player.handling}
+                          diving={player.diving}
                           cardImage={player.cardImage}
                           cardTitle={player.cardTitle}
                         />

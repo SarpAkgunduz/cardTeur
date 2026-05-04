@@ -50,9 +50,24 @@ router.put('/:id', async (req: Request, res: Response) => {
   try {
     const uid = (req as AuthenticatedRequest).uid;
     const { ownerUid, ...updateData } = req.body;
+
+    // Fields with empty string or null are unset (removed) from the document
+    const setData: Record<string, unknown> = {};
+    const unsetData: Record<string, string> = {};
+    for (const [key, val] of Object.entries(updateData)) {
+      if (val === '' || val === null) {
+        unsetData[key] = '';
+      } else {
+        setData[key] = val;
+      }
+    }
+    const mongoUpdate: Record<string, unknown> = {};
+    if (Object.keys(setData).length > 0) mongoUpdate.$set = setData;
+    if (Object.keys(unsetData).length > 0) mongoUpdate.$unset = unsetData;
+
     const updated = await Player.findOneAndUpdate(
       { _id: req.params.id, ownerUid: uid },
-      updateData,
+      mongoUpdate,
       { new: true, runValidators: true }
     );
     if (!updated) {

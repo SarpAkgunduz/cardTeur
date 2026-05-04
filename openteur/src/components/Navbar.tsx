@@ -47,9 +47,17 @@ const Navbar = () => {
       </div>
       <div className="ct-nav__right">
         {loggedIn ? (
-          <button className="ct-nav__logout" onClick={() => { signOut(); navigate('/login'); }}>
-            Logout
-          </button>
+          <div className="ct-nav__user-area">
+            <button
+              className={`ct-nav__user-chip ${isActive('/profile') ? 'ct-nav__user-chip--active' : ''}`}
+              onClick={() => navigate('/profile')}
+            >
+              {currentUser?.displayName || currentUser?.email?.split('@')[0]}
+            </button>
+            <button className="ct-nav__logout" onClick={() => { signOut(); navigate('/login'); }}>
+              Logout
+            </button>
+          </div>
         ) : (
           <div className="ct-nav__auth-btns">
             <button className="ct-nav__btn-login" onClick={() => navigate('/login')}>

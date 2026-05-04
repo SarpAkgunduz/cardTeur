@@ -10,6 +10,7 @@ import AddPlayerForm from './pages/AddPlayerForm';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import HomePage from './pages/HomePage';
+import ProfilePage from './pages/ProfilePage';
 import PrivateRoute from './components/routes/PrivateRoute';
 import PublicRoute from './components/routes/PublicRoute';
 import Navbar from './components/Navbar';
@@ -70,6 +71,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <AddPlayerForm />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
             </PrivateRoute>
           }
         />

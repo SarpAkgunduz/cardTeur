@@ -3,6 +3,7 @@ import BackButton from '../components/BackButton';
 import Card from '../components/Card';
 import MatchDetailsModal from '../components/MatchDetailsModal';
 import ToastNotification from '../components/ToastNotification';
+import { playerApi } from '../services';
 import './MatchPage.css';
 
 const MatchPage = () => {
@@ -63,9 +64,7 @@ const MatchPage = () => {
     // load players once
     const fetchPlayers = async () => {
       try {
-        const res = await fetch('http://localhost:5001/api/players');
-        if (!res.ok) throw new Error('Fetch failed ' + res.status);
-        const data = await res.json();
+        const data = await playerApi.getAll();
         console.log('playersPool fetched:', data.length, data[0] ? data[0] : null);
         setPlayersPool(data);
       } catch (err) {
