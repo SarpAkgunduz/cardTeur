@@ -42,5 +42,5 @@ export interface Player {
 }
 
 // cardTitle is computed by the backend — never sent in create/update requests
-export type CreatePlayerDto = Omit<Player, '_id' | 'cardTitle'>;
-export type UpdatePlayerDto = Partial<Omit<Player, '_id' | 'cardTitle'>>;
+export type CreatePlayerDto = Omit<Player, '_id' | 'cardTitle' | 'ownerUid'>;
+export type UpdatePlayerDto = Partial<Omit<Player, '_id' | 'cardTitle' | 'ownerUid'>>;

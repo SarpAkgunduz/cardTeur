@@ -57,6 +57,11 @@ On both frontend and backend, make sure files are not bloated with another featu
 ## Player entity notes
 - `email` is an optional field (`email?: string`) on both `server/models/Player.ts` and `openteur/src/services/api/types.ts`. It is never required — skip in validation checks.
 - `cardTitle` is a virtual computed by the backend — never store or send it in create/update requests.
+- `ownerUid` is a required field on `server/models/Player.ts` (`ownerUid: { type: String, required: true, index: true }`). It is set exclusively by the backend from the verified Firebase token — never sent by the frontend, never accepted from `req.body`.
+- `CreatePlayerDto` and `UpdatePlayerDto` in `openteur/src/services/api/types.ts` both `Omit` `ownerUid` (along with `_id` and `cardTitle`) — this is intentional. Do not add `ownerUid` back to these types.
+- All player queries are scoped to the authenticated user: `Player.find({ ownerUid: uid })`, `findOne({ _id, ownerUid: uid })`, `findOneAndUpdate({ _id, ownerUid: uid }, ...)`, `findOneAndDelete({ _id, ownerUid: uid })`. Never use `findById` alone on player routes — always include the `ownerUid` guard.
+- `server/scripts/migratePlayerOwners.ts` is a one-time migration script that assigned `ownerUid` to legacy players (created before the ownership system). It uses Firebase Admin SDK to look up the uid by email. It should not be run again unless a similar data migration is needed.
+- The system is multi-tenant: each authenticated user owns their own player roster. There is no global player list — a user can only see, edit, and delete their own players.
 
 ## Testing and integration notes
 - `e2e/global-setup.ts` previously used hardcoded fake credentials (`admin@example.com` / `admin123`) with a localStorage session. This is now **stale** — auth is real Firebase Auth. The global setup must be updated to sign in via Firebase before running E2E tests.
