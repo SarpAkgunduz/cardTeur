@@ -1,22 +1,24 @@
 import { Router, Request, Response } from 'express';
 import Player from '../models/Player';
-import { requireAuth } from '../middleware/auth';
+import { requireAuth, AuthenticatedRequest } from '../middleware/auth';
 
 const router: Router = Router();
 
 // All player routes require a valid Firebase token
 router.use(requireAuth);
 
-// Get all players
+// Get all players belonging to the authenticated user
 router.get('/', async (req: Request, res: Response) => {
-  const players = await Player.find();
+  const uid = (req as AuthenticatedRequest).uid;
+  const players = await Player.find({ ownerUid: uid });
   res.json(players);
 });
 
-// Get single player by ID
+// Get single player by ID (must belong to authenticated user)
 router.get('/:id', async (req: Request, res: Response) => {
   try {
-    const player = await Player.findById(req.params.id);
+    const uid = (req as AuthenticatedRequest).uid;
+    const player = await Player.findOne({ _id: req.params.id, ownerUid: uid });
     if (!player) {
       res.status(404).json({ error: 'Player not found' });
       return;
@@ -27,10 +29,11 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// Create a new player
+// Create a new player — ownerUid is set from the token, not the request body
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const newPlayer = new Player(req.body);
+    const uid = (req as AuthenticatedRequest).uid;
+    const newPlayer = new Player({ ...req.body, ownerUid: uid });
     await newPlayer.save();
     res.json(newPlayer);
   } catch (err: unknown) {
@@ -42,10 +45,16 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// Update player
+// Update player (must belong to authenticated user)
 router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const updated = await Player.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const uid = (req as AuthenticatedRequest).uid;
+    const { ownerUid, ...updateData } = req.body;
+    const updated = await Player.findOneAndUpdate(
+      { _id: req.params.id, ownerUid: uid },
+      updateData,
+      { new: true, runValidators: true }
+    );
     if (!updated) {
       res.status(404).json({ error: 'Player not found' });
       return;
@@ -60,9 +69,10 @@ router.put('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// Delete player
+// Delete player (must belong to authenticated user)
 router.delete('/:id', async (req: Request, res: Response) => {
-  await Player.findByIdAndDelete(req.params.id);
+  const uid = (req as AuthenticatedRequest).uid;
+  await Player.findOneAndDelete({ _id: req.params.id, ownerUid: uid });
   res.sendStatus(204);
 });
 

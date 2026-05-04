@@ -51,9 +51,14 @@ const Navbar = () => {
             Logout
           </button>
         ) : (
-          <button className="ct-nav__logout" onClick={() => navigate('/login')}>
-            Login
-          </button>
+          <div className="ct-nav__auth-btns">
+            <button className="ct-nav__btn-login" onClick={() => navigate('/login')}>
+              Login
+            </button>
+            <button className="ct-nav__btn-signup" onClick={() => navigate('/signup')}>
+              Sign Up
+            </button>
+          </div>
         )}
       </div>
     </nav>

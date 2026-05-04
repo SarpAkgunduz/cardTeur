@@ -1,5 +1,6 @@
 export interface Player {
   _id: string;
+  ownerUid: string;
   name: string;
   email?: string;
   cardImage: string;

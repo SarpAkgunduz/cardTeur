@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 import './LoginPage.css';
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -61,6 +62,8 @@ const LoginPage = () => {
             {isSubmitting ? 'Logging in...' : 'Login'}
           </button>
         </form>
+        <div className="ct-google-divider"><span>or</span></div>
+        <GoogleSignInButton />
         <p className="ct-login-signup-link">
           Don't have an account?{' '}
           <span onClick={() => navigate('/signup')}>Sign Up</span>

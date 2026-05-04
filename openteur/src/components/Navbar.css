@@ -72,15 +72,59 @@
   font-weight: 700;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
+  color: #00deec;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(0, 222, 236, 0.4);
   padding: 6px 14px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .ct-nav__logout:hover {
+  background: rgba(0, 222, 236, 0.08);
+  border-color: #00deec;
+}
+
+.ct-nav__auth-btns {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ct-nav__btn-login {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
   color: #00deec;
-  border-color: rgba(0, 222, 236, 0.4);
+  background: none;
+  border: 1px solid rgba(0, 222, 236, 0.4);
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ct-nav__btn-login:hover {
+  background: rgba(0, 222, 236, 0.08);
+  border-color: #00deec;
+}
+
+.ct-nav__btn-signup {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #0a1628;
+  background: #00deec;
+  border: 1px solid #00deec;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ct-nav__btn-signup:hover {
+  background: #8ff5ff;
+  border-color: #8ff5ff;
 }

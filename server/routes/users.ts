@@ -10,6 +10,7 @@ router.post('/register', requireAuth, async (req: Request, res: Response) => {
   const { displayName } = req.body;
   const uid = (req as any).uid as string;
   const email = (req as any).email as string;
+  const resolvedName = displayName || email.split('@')[0];
 
   try {
     const existing = await User.findOne({ uid });
@@ -18,7 +19,7 @@ router.post('/register', requireAuth, async (req: Request, res: Response) => {
       return;
     }
 
-    const user = await User.create({ uid, email, displayName });
+    const user = await User.create({ uid, email, displayName: resolvedName });
     res.status(201).json(user);
   } catch (err) {
     res.status(500).json({ error: 'Failed to register user' });

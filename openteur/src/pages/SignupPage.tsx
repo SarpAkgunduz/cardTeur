@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { apiRequest } from '../services/api/apiClient';
+import GoogleSignInButton from '../components/GoogleSignInButton';
 import './SignupPage.css';
 
 const SignupPage = () => {
@@ -113,6 +114,8 @@ const SignupPage = () => {
             {isSubmitting ? 'Creating Account...' : 'Sign Up'}
           </button>
         </form>
+        <div className="ct-google-divider"><span>or</span></div>
+        <GoogleSignInButton />
         <p className="ct-signup-login-link">
           Already have an account?{' '}
           <span onClick={() => navigate('/login')}>Login</span>
