@@ -10,6 +10,7 @@ import './PlayersPage.css';
 
 const PlayersPage = () => {
   const [players, setPlayers] = useState<Player[]>([]);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [deleteMode, setDeleteMode] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
@@ -22,7 +23,10 @@ const PlayersPage = () => {
   useEffect(() => {
     playerApi.getAll()
       .then((data) => setPlayers(data))
-      .catch((error) => console.error('Failed to fetch players:', error));
+      .catch((error) => {
+        console.error('Failed to fetch players:', error);
+        setFetchError(error?.message || 'Failed to load players. Check console for details.');
+      });
   }, []);
 
   const handleDelete = (id: string) => setConfirm({
@@ -130,7 +134,9 @@ const PlayersPage = () => {
         </div>
 
         {/* Players Grid */}
-        {players.length === 0 ? (
+        {fetchError ? (
+          <p className="empty-message" style={{ color: '#ff6b6b' }}>⚠️ {fetchError}</p>
+        ) : players.length === 0 ? (
           <p className="empty-message">No players found.</p>
         ) : (
           <div className="players-grid">

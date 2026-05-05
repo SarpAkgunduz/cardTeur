@@ -11,7 +11,7 @@ const app: Application = express();
 // CORS middleware must be FIRST
 app.use(cors({
   origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
 
@@ -24,7 +24,7 @@ app.use('/api/players', playerRoutes);
 app.use('/api/match', matchRoutes);
 app.use('/api/users', userRoutes);
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5002;
 
 mongoose.connect(process.env.MONGO_URI as string)
   .then(() => {

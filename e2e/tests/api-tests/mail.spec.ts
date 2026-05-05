@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const ANNOUNCE_URL = 'http://localhost:5001/api/match/announce';
+const ANNOUNCE_URL = 'http://localhost:5002/api/match/announce';
 
 const LEFT_TEAM_WITH_EMAIL = [
   { name: 'Sarp Akgündüz', email: 'test-recipient@example.com', preferredPosition: 'ST' },

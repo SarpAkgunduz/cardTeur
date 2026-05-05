@@ -11,6 +11,7 @@ applyTo: "**"
 | `react`, `react-dom` | UI framework | |
 | `react-router-dom` | Client-side routing | |
 | `bootstrap` | UI components | Mixed with custom CSS |
+| `bootstrap-icons` | Icon library | Imported in `src/main.tsx` as `bootstrap-icons/font/bootstrap-icons.css`; must be installed or Vite will throw an import-analysis error |
 | `firebase` | Auth (Email/Password) | Config via `VITE_FIREBASE_*` in `openteur/.env` |
 | `vite` | Dev server & bundler | Run with `npm run dev` |
 
@@ -66,6 +67,8 @@ If a key shows as `undefined` at runtime, `dotenv.config()` is probably running 
 
 | Error | Cause | Fix |
 |-------|-------|-----|
+| `Server running on port 5001` shown but frontend gets `Failed to fetch` / `connection refused` | macOS AirPlay Receiver (Control Center) occupies port 5001 — server binds but is immediately shadowed | Change default port to `5002` in `server/index.ts` (`const PORT = process.env.PORT \|\| 5002`) and update `API_BASE_URL` in `openteur/src/services/api/apiClient.ts` to `http://localhost:5002/api`. Alternatively disable AirPlay Receiver in System Settings → General → AirDrop & Handoff. |
+| Browser tab icon (favicon) not showing | `openteur/index.html` references `/pagelogo/logo.png` (lowercase) but the actual folder is `public/pageLogo/` (capital L) — Vite dev server is case-sensitive on macOS | Use `/pageLogo/logo.png` in the `<link rel="icon">` tag. |
 | `Missing API key. Pass it to the constructor new Resend("re_123")` | `RESEND_API_KEY` not loaded — dotenv ran from wrong directory | In `emailService.ts`: `dotenv.config({ path: path.resolve(__dirname, '../.env') })` |
 | `Unable to fetch data. The request could not be resolved.` | Network cannot reach `api.resend.com` — firewall/corporate network | Switch to hotspot or VPN; Resend requires outbound HTTPS to `api.resend.com` |
 | `connect ECONNREFUSED 127.0.0.1:587` | Old nodemailer code still running — server not restarted after Resend migration | Restart server with `npm run dev` |
