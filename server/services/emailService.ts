@@ -1,4 +1,7 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
+import dotenv from 'dotenv';
+import path from 'path';
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 export interface MatchPlayer {
   name: string;
@@ -157,24 +160,10 @@ function buildEmailHtml(payload: MatchEmailPayload, recipientName: string): stri
 </html>`;
 }
 
-// Create a reusable transporter from env variables
-function createTransporter() {
-  return nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT ?? 587),
-    secure: Number(process.env.SMTP_PORT) === 465,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-}
-
 // Main exported function — sends match announcement to all players who have an email
 export async function sendMatchAnnouncement(payload: MatchEmailPayload): Promise<SendResult> {
-  const transporter = createTransporter();
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const allPlayers = [...payload.leftTeam, ...payload.rightTeam];
-  const recipients = allPlayers.filter((p) => p.email && p.email.trim() !== '');
 
   const sent: string[] = [];
   const skipped: string[] = [];
@@ -187,12 +176,19 @@ export async function sendMatchAnnouncement(payload: MatchEmailPayload): Promise
 
     const html = buildEmailHtml(payload, player.name);
 
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM,
+    const { data, error } = await resend.emails.send({
+      from: process.env.SMTP_FROM!,
       to: player.email,
       subject: `⚽ Match on ${payload.date} at ${payload.time} — CardTeur`,
       html,
     });
+
+    if (error) {
+      console.error(`[emailService] Failed to send to ${player.email}:`, error);
+      throw new Error(JSON.stringify(error));
+    }
+
+    console.log(`[emailService] Sent to ${player.email}, id: ${data?.id}`);
 
     sent.push(player.email);
   }

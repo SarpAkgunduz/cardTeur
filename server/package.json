@@ -14,7 +14,8 @@
     "express": "^5.1.0",
     "firebase-admin": "^13.8.0",
     "mongoose": "^8.23.0",
-    "nodemailer": "^8.0.5"
+    "nodemailer": "^8.0.5",
+    "resend": "^6.12.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

@@ -51,7 +51,7 @@ On both frontend and backend, make sure files are not bloated with another featu
 
 ## Backend service architecture
 - Business logic that is not trivial CRUD must live in `server/services/` — keep routes thin (validation + service call only).
-- `server/services/emailService.ts` handles all SMTP logic via nodemailer. SMTP credentials are read from `server/.env` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`).
+- `server/services/emailService.ts` handles all email logic via the **Resend SDK** (`npm install resend` in `server/`). Credentials: `RESEND_API_KEY` and `SMTP_FROM` in `server/.env`. Do NOT use nodemailer — it has been removed. `SMTP_HOST/PORT/USER/PASS` vars are unused leftovers and can be deleted.
 - `POST /api/match/announce` sends match announcement emails to all players who have an email address; implemented in `server/routes/match.ts`.
 
 ## Player entity notes

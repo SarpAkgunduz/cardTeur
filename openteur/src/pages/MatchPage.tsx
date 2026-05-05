@@ -18,6 +18,7 @@ const MatchPage = () => {
   const [rightPlayers, setRightPlayers] = useState<any[]>([]);
   const [showMatchModal, setShowMatchModal] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
+  const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
   const [showToast, setShowToast] = useState(false);
 
   // move these above the useEffect that calls distributePlayers
@@ -134,8 +135,10 @@ const MatchPage = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Unknown error');
       setToastMsg(`Announced! Emails sent to ${data.sent.length} player(s).`);
+      setToastVariant('success');
     } catch (err: any) {
       setToastMsg(`Failed to send emails: ${err.message}`);
+      setToastVariant('danger');
     }
     setShowMatchModal(false);
     setShowToast(true);
@@ -170,6 +173,7 @@ const MatchPage = () => {
           show={showToast}
           message={toastMsg}
           onClose={() => setShowToast(false)}
+          variant={toastVariant}
         />
 
         {showMatchModal && (
