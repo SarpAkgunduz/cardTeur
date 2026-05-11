@@ -1,7 +1,9 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IPlayer extends Document {
+  ownerUid: string;
   name?: string;
+  email?: string;
   jerseyNumber?: number;
   preferredPosition?: 'GK' | 'CB' | 'RB' | 'LB' | 'CDM' | 'CM' | 'CAM' | 'RW' | 'LW' | 'ST' | 'LM' | 'RM';
   marketValue?: number;
@@ -48,7 +50,9 @@ export interface IPlayer extends Document {
 }
 
 const PlayerSchema: Schema<IPlayer> = new Schema({
+  ownerUid: { type: String, required: true, index: true },
   name: String,
+  email: { type: String, default: undefined },
   jerseyNumber: Number,
   preferredPosition: {
     type: String,

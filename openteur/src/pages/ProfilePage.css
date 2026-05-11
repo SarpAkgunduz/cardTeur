@@ -1,0 +1,137 @@
+.profile-page {
+  min-height: 100%;
+  padding: 3rem 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.profile-page__container {
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profile-page__header {
+  margin-bottom: 0.5rem;
+}
+
+.profile-page__title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 0.25rem;
+}
+
+.profile-page__subtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+.profile-page__card {
+  background: rgba(36, 59, 90, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.profile-page__card-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.75rem;
+}
+
+.profile-page__card-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #00deec;
+}
+
+.profile-page__row {
+  display: flex;
+  gap: 1rem;
+}
+
+.profile-page__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.profile-page__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  flex: 1;
+}
+
+.profile-page__field--email {
+  flex: 1;
+}
+
+.profile-page__field-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.profile-page__required {
+  color: #ff6b6b;
+}
+
+.profile-page__readonly-badge {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.profile-page__input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: 'Space Grotesk', sans-serif;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.profile-page__input:focus {
+  border-color: #00deec;
+  background: rgba(0, 222, 236, 0.05);
+}
+
+.profile-page__input--readonly {
+  color: rgba(255, 255, 255, 0.35);
+  cursor: default;
+}
+
+.profile-page__input--readonly:focus {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.profile-page__actions {
+  display: flex;
+  justify-content: flex-end;
+}

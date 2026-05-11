@@ -16,9 +16,12 @@ export function validatePlayer(
   rawMarketValue: number | string
 ): string | null {
   // Fields to skip in the "missing" check
+  // Fields excluded from the required check (optional fields)
+  const OPTIONAL_FIELDS = ['marketValue', 'email'];
+
   const missing = Object.entries(player)
     .filter(([key, value]) => {
-      if (key === 'marketValue') return false;
+      if (OPTIONAL_FIELDS.includes(key)) return false;
       if (!isGK && GK_ONLY_FIELDS.includes(key)) return false;
       return isEmpty(value);
     })

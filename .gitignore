@@ -15,6 +15,9 @@ pids
 # dotenv environment variables
 .env
 
+# Firebase service account key (contains private credentials - never commit)
+server/serviceAccountKey.json
+
 # IDEs and editors
 .vscode/
 .idea/

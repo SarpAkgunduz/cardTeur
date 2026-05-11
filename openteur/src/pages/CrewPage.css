@@ -1,0 +1,226 @@
+.crew-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.crew-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  background: rgba(36, 59, 90, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  animation: fadeInUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.crew-row:hover {
+  background: rgba(36, 59, 90, 0.85);
+  border-color: rgba(0, 222, 236, 0.2);
+  transform: translateX(4px);
+}
+
+.crew-row--no-email {
+  opacity: 0.5;
+}
+
+.crew-row__avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(0, 222, 236, 0.08);
+  border: 1px solid rgba(0, 222, 236, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.crew-row__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.crew-row__avatar span {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #00deec;
+}
+
+.crew-row__info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.crew-row__name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.crew-row__position {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #00deec;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.crew-row__email {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 222, 236, 0.08);
+  border: 1px solid rgba(0, 222, 236, 0.25);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  color: rgba(0, 222, 236, 0.9);
+  text-decoration: none;
+  transition: background 0.25s ease, border-color 0.25s ease;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crew-row__email:hover {
+  background: rgba(0, 222, 236, 0.18);
+  border-color: rgba(0, 222, 236, 0.5);
+  color: #00deec;
+}
+
+.crew-row__email i {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+}
+
+.crew-row__contact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.crew-row__edit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.crew-email-input {
+  background: rgba(0, 222, 236, 0.06);
+  border: 1px solid rgba(0, 222, 236, 0.4);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+  outline: none;
+  min-width: 220px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.crew-email-input:focus {
+  border-color: #00deec;
+  background: rgba(0, 222, 236, 0.1);
+}
+
+.crew-edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, color 0.2s ease;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.crew-edit-btn--pencil {
+  color: rgba(255, 255, 255, 0.25);
+  opacity: 0;
+  transition: opacity 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.crew-row:hover .crew-edit-btn--pencil {
+  opacity: 1;
+}
+
+.crew-edit-btn--pencil:hover {
+  background: rgba(0, 222, 236, 0.12);
+  color: #00deec;
+}
+
+.crew-edit-btn--save {
+  color: #00deec;
+}
+
+.crew-edit-btn--save:hover {
+  background: rgba(0, 222, 236, 0.15);
+}
+
+.crew-edit-btn--save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.crew-edit-btn--cancel {
+  color: rgba(255, 107, 107, 0.7);
+}
+
+.crew-edit-btn--cancel:hover {
+  background: rgba(255, 107, 107, 0.12);
+  color: #ff6b6b;
+}
+
+
+
+.crew-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 4px;
+  color: rgba(255, 255, 255, 0.25);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.crew-divider::before,
+.crew-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

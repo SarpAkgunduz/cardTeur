@@ -8,9 +8,8 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "moduleResolution": "node",
-    "ignoreDeprecations": "6.0",
     "types": ["node", "@playwright/test"]
   },
   "include": ["./**/*.ts"],
-  "exclude": ["bnode_modules"]
+  "exclude": ["node_modules"]
 }

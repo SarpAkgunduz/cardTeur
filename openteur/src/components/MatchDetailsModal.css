@@ -1,0 +1,139 @@
+.mdm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  animation: mdmFadeIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mdm-panel {
+  background: rgba(26, 43, 66, 0.97);
+  border: 1px solid rgba(0, 222, 236, 0.25);
+  border-radius: 14px;
+  padding: 36px 40px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  animation: mdmSlideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mdm-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.mdm-header i {
+  font-size: 1.4rem;
+  color: #00deec;
+}
+
+.mdm-header h3 {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.mdm-subtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.mdm-accent {
+  color: #00deec;
+}
+
+.mdm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 18px;
+}
+
+.mdm-field label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: rgba(0, 222, 236, 0.7);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.mdm-required {
+  color: #ff6b6b;
+}
+
+.mdm-input {
+  background: rgba(26, 43, 66, 0.8);
+  border: 1px solid rgba(0, 222, 236, 0.2);
+  border-radius: 6px;
+  color: #ffffff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mdm-input:focus {
+  outline: none;
+  border-color: rgba(0, 222, 236, 0.6);
+  box-shadow: 0 0 0 3px rgba(0, 222, 236, 0.1);
+}
+
+/* Date and time inputs — fix calendar icon color on dark bg */
+.mdm-input[type='date']::-webkit-calendar-picker-indicator,
+.mdm-input[type='time']::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(0.6);
+  cursor: pointer;
+}
+
+.mdm-error {
+  font-size: 0.8rem;
+  color: #ff6b6b;
+  margin-bottom: 14px;
+}
+
+.mdm-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+.mdm-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: mdmSpin 0.7s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes mdmFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes mdmSlideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes mdmSpin {
+  to { transform: rotate(360deg); }
+}

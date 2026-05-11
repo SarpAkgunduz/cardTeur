@@ -2,24 +2,29 @@ import express, { Application } from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const app: Application = express();
 
 // CORS middleware must be FIRST
 app.use(cors({
   origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
 
 app.use(express.json());
 
 import playerRoutes from './routes/players';
+import matchRoutes from './routes/match';
+import userRoutes from './routes/users';
 app.use('/api/players', playerRoutes);
+app.use('/api/match', matchRoutes);
+app.use('/api/users', userRoutes);
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5002;
 
 mongoose.connect(process.env.MONGO_URI as string)
   .then(() => {
