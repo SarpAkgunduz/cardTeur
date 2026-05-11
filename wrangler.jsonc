@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "cardteur",
+  "compatibility_date": "2026-05-11",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "openteur"
+  },
+  "compatibility_flags": [
+    "nodejs_compat"
+  ]
+}
