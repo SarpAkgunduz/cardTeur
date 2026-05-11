@@ -15,10 +15,21 @@ applyTo: "**"
 | `firebase` | Auth (Email/Password) | Config via `VITE_FIREBASE_*` in `openteur/.env` |
 | `vite` | Dev server & bundler | Run with `npm run dev` |
 
+## E2E (`e2e/`) — `npm install` in `e2e/`
+| Package | Purpose | Notes |
+|---------|---------|-------|
+| `@playwright/test` | E2E test runner | Install in `e2e/` only — do NOT install in `openteur/` or `server/` |
+
+After `npm install` in `e2e/`, also run:
+```bash
+npx playwright install
+```
+This downloads the browser binaries Playwright needs. Must be re-run on each new machine.
+
 ## Backend (`server/`) — `npm install` in `server/`
 | Package | Purpose | Notes |
 |---------|---------|-------|
-| `express` | HTTP server | Port 5001 |
+| `express` | HTTP server | Port 5002 (changed from 5001 — macOS AirPlay Receiver occupies 5001) |
 | `mongoose` | MongoDB ODM | `MONGO_URI` in `server/.env` |
 | `dotenv` | Env var loading | Must call `dotenv.config({ path: path.resolve(__dirname, '.env') })` with absolute path — plain `dotenv.config()` may miss `.env` when cwd differs |
 | `firebase-admin` | Token verification middleware | Reads `server/serviceAccountKey.json` — never commit this file |
@@ -29,7 +40,7 @@ applyTo: "**"
 ## Required `server/.env` keys
 ```
 MONGO_URI=...
-PORT=5001
+PORT=5002
 RESEND_API_KEY=re_...
 SMTP_FROM=onboarding@resend.dev
 ```
