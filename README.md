@@ -51,6 +51,7 @@ cardteur/
 │   ├── tests/
 │   ├── global-setup.ts
 │   └── package.json
+├── wrangler.jsonc         # Cloudflare Workers deployment config
 └── .gitignore
 ```
 

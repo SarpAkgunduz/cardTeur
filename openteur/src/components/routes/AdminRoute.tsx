@@ -1,26 +1,20 @@
-// AdminRoute.tsx
 import { Navigate } from 'react-router-dom';
-import { isLoggedIn, getSession } from '../../services/AuthService';
+import { useAuth } from '../../contexts/AuthContext';
 import { JSX } from 'react';
 
 interface AdminRouteProps {
-  children: JSX.Element;
+  children?: JSX.Element;
 }
 
-const AdminRoute = ({ children }: AdminRouteProps) => {
-  const session = getSession();
-  
-  // Redirect to login if not authenticated
-  if (!isLoggedIn()) {
+const AdminRoute = (_props: AdminRouteProps) => {
+  const { currentUser } = useAuth();
+
+  if (!currentUser) {
     return <Navigate to="/login" replace />;
   }
-  
-  // Redirect non-admin users to homepage
-  if (session?.role !== 'admin') {
-    return <Navigate to="/" replace />;
-  }
-  
-  return children;
+
+  // Role-based routing not yet implemented — redirect non-admin to home
+  return <Navigate to="/" replace />;
 };
 
 export default AdminRoute;

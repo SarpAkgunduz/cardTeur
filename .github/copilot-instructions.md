@@ -41,6 +41,14 @@ On both frontend and backend, make sure files are not bloated with another featu
 - Playwright has no package scripts in `e2e/package.json`; run tests from `e2e/` with `npx playwright test`.
 - Playwright config does not start the app for you (`webServer` is commented out), so start frontend and backend manually before running E2E.
 
+## Cloudflare deployment
+- The frontend is deployed via **Cloudflare Workers Assets**. Config lives in `wrangler.jsonc` at the repo root.
+- `wrangler.jsonc` points `assets.directory` at `openteur/` — Cloudflare serves the Vite build output from there.
+- To deploy: build the frontend first (`npm run build` in `openteur/`), then run `npx wrangler deploy` from the repo root.
+- Cloudflare integration is connected to the GitHub repo; merging a PR to `main` triggers an automatic deployment via the Cloudflare GitHub App.
+- `wrangler` CLI must be installed globally or as a dev dependency: `npm install -g wrangler` or `npm install --save-dev wrangler` in the root.
+- Never commit Cloudflare API tokens — use `wrangler login` locally or set `CLOUDFLARE_API_TOKEN` as a GitHub Secret for CI.
+
 ## Version control & project management
 - The project is managed with **Jira** (project key: `CARDTEUR`) and source code is hosted on **GitHub** (repo: `SarpAkgunduz/cardTeur`).
 - Remote is set to GitHub: `https://github.com/SarpAkgunduz/cardTeur.git`
