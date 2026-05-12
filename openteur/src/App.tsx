@@ -83,14 +83,6 @@ const App = () => {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/friends"
-          element={
-            <PrivateRoute>
-              <FriendsPage />
-            </PrivateRoute>
-          }
-        />
           </Routes>
         </div>
       </div>
