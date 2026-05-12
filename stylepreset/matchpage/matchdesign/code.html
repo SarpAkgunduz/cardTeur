@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Match Lineup &amp; Formation Builder</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Space Grotesk -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<style data-purpose="global-styles">
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: #0f172a;
+      color: #ffffff;
+      margin: 0;
+      overflow-x: hidden;
+    }
+    /* Custom Scrollbar for dark theme */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e293b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+  </style>
+<style data-purpose="pitch-layout">
+    .pitch-container {
+      position: relative;
+      width: 100%;
+      max-width: 1200px;
+      aspect-ratio: 16/9;
+      background: radial-gradient(circle at center, #2d5a27 0%, #1e3a1a 100%);
+      border: 4px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0 auto;
+      perspective: 1000px;
+    }
+    .pitch-lines {
+      position: absolute;
+      inset: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      pointer-events: none;
+    }
+    .pitch-center-line {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      bottom: 0;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.4);
+    }
+    .pitch-center-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px;
+      height: 120px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+    }
+    .pitch-penalty-box {
+      position: absolute;
+      height: 40%;
+      width: 15%;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      top: 30%;
+    }
+    .pitch-penalty-box-left { left: 0; border-left: 0; }
+    .pitch-penalty-box-right { right: 0; border-right: 0; }
+
+    /* Perspective Transformation for a 3D Pitch look */
+    .pitch-surface {
+      position: absolute;
+      inset: 0;
+      transform: rotateX(25deg);
+      transform-origin: bottom;
+      background-image: 
+        repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 100px, rgba(0,0,0,0) 100px, rgba(0,0,0,0) 200px);
+    }
+  </style>
+<style data-purpose="player-card">
+    .player-card {
+      width: 100px;
+      height: 140px;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid #334155;
+      border-radius: 6px;
+      position: absolute;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 4px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    }
+    .player-card:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+      border-color: #38bdf8;
+    }
+    .card-rating {
+      font-size: 1.2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .card-pos {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+    .card-photo {
+      width: 100%;
+      height: 60px;
+      object-fit: cover;
+      margin: 4px 0;
+      background: #334155;
+      border-radius: 2px;
+    }
+    .card-name {
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+    .card-stats {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+      font-size: 0.5rem;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- BEGIN: Navigation -->
+<header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex items-center justify-between z-50">
+<div class="flex items-center gap-8">
+<div class="text-2xl font-black italic tracking-tighter text-sky-500">CARDTEUR</div>
+<nav class="hidden md:flex gap-6">
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-bold uppercase tracking-widest" href="#">Roster</a>
+<a class="text-sky-500 border-b-2 border-sky-500 pb-1 text-sm font-bold uppercase tracking-widest" href="#">Match</a>
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-bold uppercase tracking-widest" href="#">Preview</a>
+<a class="text-slate-400 hover:text-white transition-colors text-sm font-bold uppercase tracking-widest" href="#">My Crew</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-3">
+<img alt="User Avatar" class="w-8 h-8 rounded-full border border-slate-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMZvwfanpehyKGcWGJ_F2omG7g5OC-V9iM2hSpwDWJlS6g78raF4n5jucfnYWVFIvpO1jhOnBbibG11Nvrjv2oAFPxkBx3Gj9CQW7z-iI7DzRR3pDfdSN6IeheXrUcKYqRNIS7zoYoqfr39M5UIr9iGqWm8cnWNUpJxJZgYykZ6osqqoJaMwkRT8y-7WRa8LUNkuxNajWUK2IGg7gwVCPm-YvxzMJ2T-pOT9Ue2BbK7ZBbR0Assn0EwqEts3HQ13Q_9A-LNEahRRGL"/>
+<span class="text-xs font-bold uppercase tracking-wider text-slate-300">Sarp Akgündüz</span>
+</div>
+<button class="bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded text-[10px] font-black uppercase tracking-widest transition-all">Logout</button>
+</div>
+</header>
+<!-- END: Navigation -->
+<!-- BEGIN: Main Content Container -->
+<main class="flex-1 flex flex-col md:flex-row p-6 gap-6 max-w-[1600px] mx-auto w-full">
+<!-- BEGIN: Left Sidebar (Settings) -->
+<aside class="w-full md:w-80 flex flex-col gap-6" data-purpose="match-settings-sidebar">
+<h1 class="text-4xl font-black italic uppercase tracking-tighter leading-none mb-2">Match Lineup &amp; <br/>Formation Builder</h1>
+<div class="bg-slate-900/50 border border-slate-800 p-6 rounded-xl backdrop-blur-sm shadow-xl" data-purpose="settings-card">
+<h2 class="text-xs font-black uppercase tracking-widest text-slate-400 mb-6 flex items-center gap-2">
+<span class="w-2 h-2 bg-sky-500 rounded-full"></span> Match Settings
+        </h2>
+<div class="space-y-6">
+<!-- Number of Players Select -->
+<div class="flex flex-col gap-2">
+<label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Number of Players</label>
+<select class="bg-slate-800 border-slate-700 text-white rounded focus:ring-sky-500 focus:border-sky-500 text-sm">
+<option>5v5</option>
+<option selected="">7v7</option>
+<option>11v11</option>
+</select>
+</div>
+<!-- Formation Select -->
+<div class="flex flex-col gap-2">
+<label class="text-[10px] font-black uppercase tracking-widest text-slate-500">Formation</label>
+<select class="bg-slate-800 border-slate-700 text-white rounded focus:ring-sky-500 focus:border-sky-500 text-sm">
+<option selected="">3-2-1 NARROW</option>
+<option>2-3-1</option>
+<option>3-1-2</option>
+<option>4-4-2 (Full Field)</option>
+</select>
+</div>
+<!-- Apply Button -->
+<button class="w-full bg-sky-900/40 hover:bg-sky-500/80 border border-sky-500/50 text-sky-400 hover:text-white font-black uppercase tracking-widest py-3 rounded transition-all mt-4 text-xs">
+            Apply Formation
+          </button>
+</div>
+</div>
+</aside>
+<!-- END: Left Sidebar -->
+<!-- BEGIN: Football Pitch Area -->
+<div class="flex-1 flex flex-col relative" data-purpose="pitch-viewer">
+<!-- Top Badges Row -->
+<div class="flex justify-end mb-4">
+<div class="relative group" data-purpose="team-ovr-badge">
+<div class="bg-[#c29b40] w-16 h-20 clip-path-badge flex flex-col items-center justify-center shadow-2xl border-2 border-[#e6c17a]">
+<span class="text-[10px] font-black text-black/60 uppercase leading-none">Team OVR</span>
+<span class="text-3xl font-black text-black leading-none mt-1">82</span>
+</div>
+<style>
+            .clip-path-badge {
+              clip-path: polygon(0% 0%, 100% 0%, 100% 80%, 50% 100%, 0% 80%);
+            }
+          </style>
+</div>
+</div>
+<!-- Pitch Visualization -->
+<div class="pitch-container shadow-2xl">
+<div class="pitch-surface">
+<!-- Pitch Markings -->
+<div class="pitch-lines">
+<div class="pitch-center-line"></div>
+<div class="pitch-center-circle"></div>
+<div class="pitch-penalty-box pitch-penalty-box-left"></div>
+<div class="pitch-penalty-box pitch-penalty-box-right"></div>
+</div>
+</div>
+<!-- Interactive Player Slots (Positioned for 7v7 / 3-2-1 Narrow) -->
+<!-- Logic: Using absolute positioning relative to container -->
+<!-- BEGIN: Players Container -->
+<div class="absolute inset-0 z-10" id="players-field">
+<!-- GK -->
+<div class="player-card" style="bottom: 5%; left: 46%;">
+<div class="flex justify-between w-full px-1">
+<span class="card-rating">75</span>
+<span class="card-pos">GK</span>
+</div>
+<img alt="Player" class="card-photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFDZaAG06lIDUNbel7x8-Ml-Ua8IbTyQpEy6lpJmJYAAur8kkFm5tqJ_dvTXqC0YtbTDaoud3X0yz-UYnz6prqI_Ctq1V6PP8Pie4wrNWVAy20wdBwkr3GacAPZ4xXheEQnGvIXkqYVLOS3yPHptG1YIEeAYRJMPoxV_mAAh-iPvW8_ZZ5SE3cSzD98JhiPMRhk43VEhDn_awBsparfm-CxYsabtXN92nB3JB2e6D9Z5APpdbrqb1PRLtLjg7uVTDbpYwzQO2-U5sP"/>
+<div class="card-name">Ruşen Sesen</div>
+<div class="card-stats">
+<span>85 REF</span><span>78 HAN</span><span>80 DIV</span>
+</div>
+</div>
+<!-- DF LEFT -->
+<div class="player-card" style="bottom: 25%; left: 15%;">
+<div class="flex justify-between w-full px-1">
+<span class="card-rating">LB</span>
+<span class="card-pos">LS</span>
+</div>
+<img alt="Player" class="card-photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBv1zLa3LEl-t-3MAUPPAG1g6mHIGQLVfumgPn6PNmL0FFpMklAK3jzM7ZJsmRmnmfLa6FHe2BeDVLKYn7UUO-YWsxNUJvm_WwrmxK01nlsTmyvlxv52tgBzEuLCACmFZC--a2erqdo_Iwm6cLqC0klXsAbsmr2WxMCky6N5BLTxOb_VYqCsSXQ5pzr3nFoce2AOg0_b0v_wdfgOHqY0MZ7n6e_w4QqBjlersGf-2ml4DgCReMmB5oNc-MhSEqecpy3EzHSpelEQizm"/>
+<div class="card-name">Relle Paça</div>
+<div class="card-stats">
+<span>80 DEF</span><span>77 PHY</span><span>54 DRI</span>
+</div>
+</div>
+<!-- DF CENTER -->
+<div class="player-card" style="bottom: 30%; left: 46%;">
+<div class="flex justify-between w-full px-1">
+<span class="card-rating">75</span>
+<span class="card-pos">CB</span>
+</div>
+<img alt="Player" class="card-photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9A_EDId7TgIs6IOPf_JKyzOhxRRktJU72HATQJ1fII4ttSQvRlS67tIBS8hK8jJH725ggCV8100tRHlb4VcQ_lHg0rLgrePe5oAYOlcS4v9DvqjPsZBQHVT3XkJ8UC47n_cQeZ7UFsBhkxjUHL9hgwyF-zSS3svTHCF04kzZmSz3XY9wyXwERsh6Cts7JprRgRsWj2x3SVc50PUMXR2Ie3CCbBL5wMXN13FvqX69CBJg0q0uJsW_1eqFRQKqsG1F9Yb_MmrLtwi2D"/>
+<div class="card-name">Doğa Başaroğlu</div>
+<div class="card-stats">
+<span>60 PAC</span><span>76 DEF</span><span>56 PHY</span>
+</div>
+</div>
+<!-- DF RIGHT -->
+<div class="player-card" style="bottom: 25%; right: 15%;">
+<div class="flex justify-between w-full px-1">
+<span class="card-rating">50</span>
+<span class="card-pos">RB</span>
+</div>
+<img alt="Player" class="card-photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEbbzlMqamCd_Lv8Gmnx33RrsE9bVQGq0BQVql3hHKLnJUSzFwzngnDCaUhS9BP9ij4GiS4bkAOoJt_jnrmFRfRs9dIk_JjTX_dgp0Rfle4KU1mi05OcmzGecb17BVA-HjJLoMAHJkIOwr7HvKO9PVs9rutGWY-lFiyC6a2DH-37gTnWNcXSmyFnbGcmDfZyaZ7fFLOX0U-fRLg8ZTWiVUpIQSyfO-SXOEWNwVKc1_8QqmEGB-KC05MRhQ7nGjk9gGuPbBf-InTF_a"/>
+<div class="card-name">Emre Rabaç</div>
+<div class="card-stats">
+<span>41 VIT</span><span>50 DEF</span><span>80 SHO</span>
+</div>
+</div>
+<!-- MID LEFT -->
+<div class="player-card" style="top: 35%; left: 38%;">
+<div class="flex justify-between w-full px-1">
+<span class="card-rating">72</span>
+<span class="card-pos">CM</span>
+</div>
+<img alt="Player" class="card-photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBF1_Z3t2EOFcb7zFh5gWhk0VWmuxxYPwXevZYu_2On7Ld4vMFtr8JieTz264K31SNwB_58qzLI0FTCdWWTViPmmlUzZwRk7dmyyuAGntLzs3rZgpDEZsM9ykLN17-VXjuf1KEZMATwOONC1oMe5KnVv8M37visM29dJqUPc9XhufYkh2KdpwSdTc4NiemZtarLvtvECC5jBYcVfh51QmpHbOlvVyytYP8ZzQH-G4rmsN9kvK0TkIdhD503g0Xfhrtn4TeEUyQQ2Up-"/>
+<div class="card-name">Playwright Test</div>
+<div class="card-stats">
+<span>82 CET</span><span>75 BYH</span><span>58 OET</span>
+</div>
+</div>
+<!-- MID RIGHT -->
+<div class="player-card" style="top: 35%; right: 30%;">
+<div class="flex justify-between w-full px-1">
+<span class="card-rating">78</span>
+<span class="card-pos">RM</span>
+</div>
+<img alt="Player" class="card-photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6EDi1qh4SUxsefvx7cGEV1ITFWxFOCQd5B4YKbVB_oZoQlcuC-VOOjv5Kz7mUeV26tYyeNGMhTbjzCqhEpzLftRovMBenO2D4vqF-tbCsvP17vFa5Ga2YlhFzJGuV7U11o-T-jl5uCPCljiqjxowUTmL4owHWOzLbIk28RXDPpuLOZGSYCspK7wP_1JONNh5uA3l-z6IFc-UZTRJWIJNfeLyiV0miQkvIMWQuIrGfdtkfLsghHBaOzETDGpDS5QZiG2gwuoOEDEgG"/>
+<div class="card-name">Yasin Getin</div>
+<div class="card-stats">
+<span>80 EFF</span><span>50 SPD</span><span>74 SHO</span>
+</div>
+</div>
+<!-- STRIKER LEFT -->
+<div class="player-card" style="top: 10%; left: 30%;">
+<div class="flex justify-between w-full px-1">
+<span class="card-rating">75</span>
+<span class="card-pos">LW</span>
+</div>
+<img alt="Player" class="card-photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4xj9zv5etfWFUWMIra42F4NjLZ-hyXOtYW3I-cqyxhRIxRLA5x5a3jHgSZ_KccWdW8BEsaaByVf1EHIBs2zjNClaK1PTQHvJF6ydLc4BjPLwGs3RmcAmi0YuRNe7KuchIUo9yzy2QnGrvWgx5-FucfiiIDOgqljO4rT6G93eyXamazsrVUlzT60wOOeHyEwIn58pT0WtWRe4jsAKsmcd1H8Icaj9a4Ax7mKBC2olH3HZ6p-dV6hw6u0oCgXN4ILQn2Rm7n5zLvD2a"/>
+<div class="card-name">Rıdvan Altunel</div>
+<div class="card-stats">
+<span>88 SPD</span><span>77 SHO</span><span>51 OFF</span>
+</div>
+</div>
+<!-- STRIKER CENTER (MAIN) -->
+<div class="player-card" style="top: 5%; left: 48%;">
+<div class="flex justify-between w-full px-1">
+<span class="card-rating">81</span>
+<span class="card-pos">ST</span>
+</div>
+<img alt="Player" class="card-photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsdQ6J5wFsaUYuXKJFj7FIFjJMuri4xDkUFSEmuGVsZZT_bsXdGZwJVVj4cflQ0-8wu7BZup0PYofiWyZp_Q6yy437r7Jk_nfQYd6hMDDmTOmW18gDb9Rg3DRRPmp4Hgj_IoIXoJ9EF0rliX4Cok6QC3E0KwAaPAoJP2B2k_BtPiKJtkiVecuZqGXSBhAxfMWiT_ygm4YpJkGHY26UzEQy0XtT5sZLZ-UQkTurZlgCGpN4tV0mcZ7Vi0xUcw_9asQd_ZhGBLF1jO6b"/>
+<div class="card-name">Sarp Akgündüz</div>
+<div class="card-stats">
+<span>77 SKY</span><span>80 STR</span><span>75 FIN</span>
+</div>
+</div>
+<!-- STRIKER RIGHT -->
+<div class="player-card" style="top: 10%; right: 20%;">
+<div class="flex justify-between w-full px-1">
+<span class="card-rating">78</span>
+<span class="card-pos">RW</span>
+</div>
+<img alt="Player" class="card-photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAonnbTzTveM_pY6rDrHFURvVdIVo3VgMRE-Hko9X_rs5-JnWPJZANBhX1nqvf-GJZVa93rmnBu977d7K7lFaF7F0MKrH4zBbOkyHQiGs98Ev24xPv6Eq7ywdoLzTQ5nFCq4uTBdIWMYupWKds1xLa-9Y3PYbIE0OKD5X0tmeAfE0NfrgJX8YZEGBfZ3cjwBj0GBuk-EZCBmfjH5noX2HBCQuynmUYVDLcLE6pnGqc6wIpHsS2viXL9QDcKgDUbm_WSanmx9rsm9Fua"/>
+<div class="card-name">Yasin Estin</div>
+<div class="card-stats">
+<span>80 DRI</span><span>80 STA</span><span>74 ACC</span>
+</div>
+</div>
+</div>
+<!-- END: Players Container -->
+</div>
+<!-- Footer Info -->
+<div class="mt-4 flex justify-between items-center px-2">
+<p class="text-xs text-slate-500 font-medium">Drag and drop players to swap positions. Click a card to edit details.</p>
+<div class="flex gap-4">
+<button class="text-xs font-bold text-slate-400 hover:text-white transition-colors">RESET ALL</button>
+<button class="text-xs font-bold text-sky-500 hover:text-sky-400 transition-colors uppercase tracking-widest">SAVE LINEUP</button>
+</div>
+</div>
+</div>
+<!-- END: Football Pitch Area -->
+</main>
+<!-- END: Main Content Container -->
+<script data-purpose="drag-drop-logic">
+    // Minimal interaction placeholder for future development
+    document.querySelectorAll('.player-card').forEach(card => {
+      card.addEventListener('mousedown', () => {
+        card.style.zIndex = "100";
+      });
+      card.addEventListener('mouseup', () => {
+        card.style.zIndex = "10";
+      });
+    });
+  </script>
+</body></html>

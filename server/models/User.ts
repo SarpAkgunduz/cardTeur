@@ -4,6 +4,8 @@ export interface IUser extends Document {
   uid: string;
   email: string;
   displayName: string;
+  photoURL?: string;
+  friends: string[];
   createdAt: Date;
 }
 
@@ -11,6 +13,8 @@ const UserSchema = new Schema<IUser>({
   uid: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   displayName: { type: String, required: true },
+  photoURL: { type: String },
+  friends: { type: [String], default: [] },
   createdAt: { type: Date, default: Date.now },
 });
 

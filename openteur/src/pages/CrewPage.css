@@ -38,6 +38,19 @@
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
+  position: relative;
+}
+
+.crew-row__registered-dot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #00deec;
+  border: 2px solid #1A2B42;
+  pointer-events: none;
 }
 
 .crew-row__avatar img {
