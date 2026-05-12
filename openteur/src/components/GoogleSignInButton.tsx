@@ -16,7 +16,7 @@ const GoogleSignInButton: React.FC = () => {
     try {
       const user = await signInWithGoogle();
       // Persist user in MongoDB — existing users are returned as-is
-      await apiRequest('/api/users/register', {
+      await apiRequest('/users/register', {
         method: 'POST',
         body: JSON.stringify({
           displayName: user.displayName || user.email?.split('@')[0] || 'User',

@@ -45,7 +45,7 @@ const SignupPage = () => {
     try {
       await signUp(email, password);
       // Persist user info in MongoDB after Firebase account creation
-      await apiRequest('/api/users/register', {
+      await apiRequest('/users/register', {
         method: 'POST',
         body: JSON.stringify({ displayName }),
       });
