@@ -9,8 +9,17 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 const app: Application = express();
 
 // CORS middleware must be FIRST
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://cardteur.com',
+  'https://www.cardteur.com',
+  'https://cardteur.sarpakg.workers.dev',
+];
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) callback(null, true);
+    else callback(new Error('CORS not allowed: ' + origin));
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
