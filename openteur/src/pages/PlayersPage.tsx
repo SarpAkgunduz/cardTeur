@@ -18,6 +18,7 @@ const PlayersPage = () => {
   const [confirm, setConfirm] = useState<{ message: string; onConfirm: () => void } | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
+  const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,10 +38,12 @@ const PlayersPage = () => {
         await playerApi.delete(id);
         setPlayers((prev) => prev.filter((p) => p._id !== id));
         setToastMsg('Player deleted successfully.');
+        setToastVariant('success');
         setShowToast(true);
       } catch (error) {
         console.error('Delete error:', error);
         setToastMsg('Failed to delete player.');
+        setToastVariant('danger');
         setShowToast(true);
       }
     },
@@ -189,6 +192,7 @@ const PlayersPage = () => {
         show={showToast}
         message={toastMsg}
         onClose={() => setShowToast(false)}
+        variant={toastVariant}
       />
     </div>
   );

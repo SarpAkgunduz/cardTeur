@@ -43,10 +43,10 @@ const Navbar = () => {
               My Crew
             </button>
             <button
-              className={`ct-nav__link ${isActive('/users') ? 'ct-nav__link--active' : ''}`}
-              onClick={() => navigate('/users')}
+              className={`ct-nav__link ${isActive('/friends') ? 'ct-nav__link--active' : ''}`}
+              onClick={() => navigate('/friends')}
             >
-              Users
+              Friends
             </button>
           </div>
         )}

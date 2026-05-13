@@ -2,11 +2,20 @@ import { useEffect, useState } from 'react';
 import BackButton from '../components/BackButton';
 import type { Player } from '../services/api/types';
 import { playerApi } from '../services';
+import { apiRequest } from '../services/api/apiClient';
 import ToastNotification from '../components/ToastNotification';
 import './CrewPage.css';
 
+interface RegisteredUser {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+}
+
 const CrewPage = () => {
   const [players, setPlayers] = useState<Player[]>([]);
+  const [registeredMap, setRegisteredMap] = useState<Record<string, RegisteredUser>>({});
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingEmail, setEditingEmail] = useState('');
@@ -16,40 +25,65 @@ const CrewPage = () => {
   const [showToast, setShowToast] = useState(false);
 
   const showMsg = (msg: string, variant: 'success' | 'danger' = 'success') => {
-    setToastMsg(msg);
-    setToastVariant(variant);
-    setShowToast(true);
+    setToastMsg(msg); setToastVariant(variant); setShowToast(true);
   };
 
   useEffect(() => {
     playerApi.getAll()
-      .then(setPlayers)
+      .then(async (data) => {
+        setPlayers(data);
+        const emails = data.map(p => p.email).filter(Boolean) as string[];
+        if (emails.length > 0) {
+          try {
+            const users = await apiRequest<RegisteredUser[]>('/users/lookup-by-emails', {
+              method: 'POST',
+              body: JSON.stringify({ emails }),
+            });
+            const map: Record<string, RegisteredUser> = {};
+            users.forEach(u => { map[u.email] = u; });
+            setRegisteredMap(map);
+          } catch {
+            // silently ignore — crew still works without user profiles
+          }
+        }
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
+
+  const refreshRegisteredMap = async (updatedPlayers: Player[]) => {
+    const emails = updatedPlayers.map(p => p.email).filter(Boolean) as string[];
+    if (emails.length === 0) { setRegisteredMap({}); return; }
+    try {
+      const users = await apiRequest<RegisteredUser[]>('/users/lookup-by-emails', {
+        method: 'POST',
+        body: JSON.stringify({ emails }),
+      });
+      const map: Record<string, RegisteredUser> = {};
+      users.forEach(u => { map[u.email] = u; });
+      setRegisteredMap(map);
+    } catch { /* ignore */ }
+  };
 
   const startEdit = (player: Player) => {
     setEditingId(player._id);
     setEditingEmail(player.email ?? '');
   };
 
-  const cancelEdit = () => {
-    setEditingId(null);
-    setEditingEmail('');
-  };
+  const cancelEdit = () => { setEditingId(null); setEditingEmail(''); };
 
   const saveEmail = async (id: string) => {
     setSavingId(id);
     try {
-      // Send empty string to trigger $unset on backend when clearing email
       await playerApi.update(id, { email: editingEmail.trim() } as any);
-      setPlayers(prev => prev.map(p =>
+      const updated = players.map(p =>
         p._id === id ? { ...p, email: editingEmail.trim() || undefined } : p
-      ));
+      );
+      setPlayers(updated);
+      await refreshRegisteredMap(updated);
       setEditingId(null);
       showMsg('Email saved.');
-    } catch (err) {
-      console.error('Failed to save email:', err);
+    } catch {
       showMsg('Failed to save email.', 'danger');
     } finally {
       setSavingId(null);
@@ -62,6 +96,7 @@ const CrewPage = () => {
   const renderRow = (player: Player, idx: number, delayBase = 0) => {
     const isEditing = editingId === player._id;
     const isSaving = savingId === player._id;
+    const registered = player.email ? registeredMap[player.email] : undefined;
 
     return (
       <div
@@ -70,13 +105,18 @@ const CrewPage = () => {
         style={{ animationDelay: `${(delayBase + idx) * 0.05}s` }}
       >
         <div className="crew-row__avatar">
-          {player.cardImage
-            ? <img src={player.cardImage} alt={player.name} />
-            : <span>{player.jerseyNumber}</span>
+          {registered?.photoURL
+            ? <img src={registered.photoURL} alt={registered.displayName} />
+            : player.cardImage
+              ? <img src={player.cardImage} alt={player.name} />
+              : <span>{player.jerseyNumber}</span>
           }
+          {registered && <div className="crew-row__registered-dot" title="Registered user" />}
         </div>
         <div className="crew-row__info">
-          <span className="crew-row__name">{player.name}</span>
+          <span className="crew-row__name">
+            {registered ? registered.displayName : player.name}
+          </span>
           <span className="crew-row__position">{player.preferredPosition}</span>
         </div>
 

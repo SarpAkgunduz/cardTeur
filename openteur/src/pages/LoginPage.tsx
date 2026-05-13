@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 import './LoginPage.css';
@@ -9,6 +9,7 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { signIn } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -23,7 +24,8 @@ const LoginPage = () => {
     setError('');
     try {
       await signIn(email, password);
-      navigate('/');
+      const redirect = searchParams.get('redirect');
+      navigate(redirect || '/');
     } catch {
       setError('Invalid email or password.');
     } finally {

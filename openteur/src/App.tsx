@@ -11,7 +11,8 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage';
-import UsersPage from './pages/UsersPage';
+import FriendsPage from './pages/FriendsPage';
+import InvitePage from './pages/InvitePage';
 import PrivateRoute from './components/routes/PrivateRoute';
 import PublicRoute from './components/routes/PublicRoute';
 import Navbar from './components/Navbar';
@@ -84,13 +85,14 @@ const App = () => {
           }
         />
         <Route
-          path="/users"
+          path="/friends"
           element={
             <PrivateRoute>
-              <UsersPage />
+              <FriendsPage />
             </PrivateRoute>
           }
         />
+        <Route path="/invite/:inviterUid" element={<InvitePage />} />
           </Routes>
         </div>
       </div>
