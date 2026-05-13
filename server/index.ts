@@ -14,6 +14,8 @@ const allowedOrigins = [
   'https://cardteur.com',
   'https://www.cardteur.com',
   'https://cardteur.sarpakg.workers.dev',
+  // Extra origins from env (comma-separated)
+  ...(process.env.EXTRA_CORS_ORIGINS ? process.env.EXTRA_CORS_ORIGINS.split(',') : []),
 ];
 app.use(cors({
   origin: (origin, callback) => {
