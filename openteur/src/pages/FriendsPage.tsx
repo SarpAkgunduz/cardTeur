@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { apiRequest } from '../services/api/apiClient';
+import { useAuth } from '../contexts/AuthContext';
 import ToastNotification from '../components/ToastNotification';
 import ConfirmDialog from '../components/ConfirmDialog';
 import './FriendsPage.css';
@@ -12,6 +13,9 @@ interface FriendUser {
 }
 
 const FriendsPage = () => {
+  const { currentUser } = useAuth();
+  const inviteLink = `${window.location.origin}/invite/${currentUser?.uid}`;
+  const [copied, setCopied] = useState(false);
   const [friends, setFriends] = useState<FriendUser[]>([]);
   const [searchResults, setSearchResults] = useState<FriendUser[]>([]);
   const [query, setQuery] = useState('');
@@ -27,6 +31,21 @@ const FriendsPage = () => {
 
   const showMsg = (msg: string, variant: 'success' | 'danger' = 'success') => {
     setToast(msg); setToastVariant(variant); setShowToast(true);
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      showMsg('Could not copy link.', 'danger');
+    }
+  };
+
+  const handleShareWhatsApp = () => {
+    const text = encodeURIComponent(`Join me on CardTeur! ${inviteLink}`);
+    window.open(`https://wa.me/?text=${text}`, '_blank');
   };
 
   useEffect(() => {
@@ -98,6 +117,23 @@ const FriendsPage = () => {
       <div className="friends-page__header">
         <h2 className="friends-page__title">Friends</h2>
         <span className="friends-page__count">{friends.length} friends</span>
+      </div>
+
+      {/* Invite section */}
+      <div className="friends-page__invite">
+        <div className="friends-page__invite-label">
+          <i className="bi bi-link-45deg" /> Your invite link
+        </div>
+        <div className="friends-page__invite-row">
+          <span className="friends-page__invite-url">{inviteLink}</span>
+          <button className="friends-page__invite-btn" onClick={handleCopyLink} title="Copy link">
+            <i className={`bi ${copied ? 'bi-check-lg' : 'bi-clipboard'}`} />
+            {copied ? 'Copied!' : 'Copy'}
+          </button>
+          <button className="friends-page__invite-btn friends-page__invite-btn--whatsapp" onClick={handleShareWhatsApp} title="Share on WhatsApp">
+            <i className="bi bi-whatsapp" /> WhatsApp
+          </button>
+        </div>
       </div>
 
       {/* Search */}

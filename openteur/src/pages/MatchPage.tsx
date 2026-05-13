@@ -4,6 +4,7 @@ import Card from '../components/Card';
 import MatchDetailsModal from '../components/MatchDetailsModal';
 import ToastNotification from '../components/ToastNotification';
 import { playerApi } from '../services';
+import { apiRequest } from '../services/api/apiClient';
 import './MatchPage.css';
 
 const MatchPage = () => {
@@ -14,6 +15,7 @@ const MatchPage = () => {
 
   // new states
   const [playersPool, setPlayersPool] = useState<any[]>([]);
+  const [selectedPlayerIds, setSelectedPlayerIds] = useState<Set<string>>(new Set());
   const [leftPlayers, setLeftPlayers] = useState<any[]>([]);
   const [rightPlayers, setRightPlayers] = useState<any[]>([]);
   const [showMatchModal, setShowMatchModal] = useState(false);
@@ -68,6 +70,7 @@ const MatchPage = () => {
         const data = await playerApi.getAll();
         console.log('playersPool fetched:', data.length, data[0] ? data[0] : null);
         setPlayersPool(data);
+        setSelectedPlayerIds(new Set(data.map((p: any) => p._id)));
       } catch (err) {
         console.error('Failed to load players pool', err);
       }
@@ -78,19 +81,20 @@ const MatchPage = () => {
   useEffect(() => {
     // when playerCount or pool changes, distribute automatically
     console.log('distribute triggered, playerCount=', playerCount, 'pool=', playersPool.length);
-    if (!playerCount || playerCount < 1 || playersPool.length === 0) {
+    const activePlayers = playersPool.filter((p: any) => selectedPlayerIds.has(p._id));
+    if (!playerCount || playerCount < 1 || activePlayers.length === 0) {
       setLeftPlayers([]);
       setRightPlayers([]);
       setSlotsVisible(false);
       return;
     }
-    const { left, right } = distributePlayers(playersPool, playerCount);
+    const { left, right } = distributePlayers(activePlayers, playerCount);
     console.log('distributed -> left:', left.length, ' right:', right.length, { left, right });
     setLeftPlayers(left);
     setRightPlayers(right);
     // auto-show slots after distribution
     setSlotsVisible(true);
-  }, [playersPool, playerCount]);
+  }, [playersPool, playerCount, selectedPlayerIds]);
 
   const handleModeSelect = (mode: 'advance' | 'standard') => {
     console.log('mode selected ->', mode);
@@ -123,17 +127,14 @@ const MatchPage = () => {
     });
 
     try {
-      const res = await fetch('http://localhost:5002/api/match/announce', {
+      const data = await apiRequest<{ sent: any[] }>('/match/announce', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...details,
           leftTeam: leftPlayers.map(toMatchPlayer),
           rightTeam: rightPlayers.map(toMatchPlayer),
         }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? 'Unknown error');
       setToastMsg(`Announced! Emails sent to ${data.sent.length} player(s).`);
       setToastVariant('success');
     } catch (err: any) {
@@ -148,7 +149,14 @@ const MatchPage = () => {
     const n = count ?? 0;
     return Array.from({ length: n }).map((_, i) => {
       const p = assigned[i];
-      if (!p) return null;
+      if (!p) return (
+        <div key={i} className="player-slot slot-empty">
+          <div className="empty-slot-placeholder">
+            <i className="bi bi-person-dash" style={{ fontSize: '2rem', color: 'rgba(255,255,255,0.25)' }}></i>
+            <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.8rem', marginTop: 6 }}>Not enough players</span>
+          </div>
+        </div>
+      );
       return (
         <div key={i} className={`player-slot ${slotsVisible ? 'slot-enter' : ''}`}>
           <Card
@@ -221,6 +229,59 @@ const MatchPage = () => {
               <p>Quick match with basic rules</p>
             </button>
           </div>
+
+          {/* Player selection — shown after mode is picked */}
+          {selectedMode && playersPool.length > 0 && (
+            <div className="crew-selection-panel">
+              <div className="crew-selection-header">
+                <i className="bi bi-people-fill me-2"></i>
+                Select players for this match
+                <span className="crew-count-badge">{selectedPlayerIds.size} / {playersPool.length}</span>
+                <div className="crew-selection-actions">
+                  <button
+                    type="button"
+                    className="btn btn-ct"
+                    style={{ padding: '4px 10px', fontSize: '0.78rem' }}
+                    onClick={() => setSelectedPlayerIds(new Set(playersPool.map((p: any) => p._id)))}
+                  >
+                    All
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-ct"
+                    style={{ padding: '4px 10px', fontSize: '0.78rem' }}
+                    onClick={() => setSelectedPlayerIds(new Set())}
+                  >
+                    None
+                  </button>
+                </div>
+              </div>
+              <div className="crew-chips">
+                {playersPool.map((p: any) => {
+                  const isSelected = selectedPlayerIds.has(p._id);
+                  return (
+                    <button
+                      key={p._id}
+                      type="button"
+                      className={`crew-chip ${isSelected ? 'crew-chip--selected' : ''}`}
+                      onClick={() => {
+                        setSelectedPlayerIds(prev => {
+                          const next = new Set(prev);
+                          if (next.has(p._id)) next.delete(p._id);
+                          else next.add(p._id);
+                          return next;
+                        });
+                      }}
+                    >
+                      {isSelected && <i className="bi bi-check-circle-fill me-1" style={{ fontSize: '0.75rem' }}></i>}
+                      {p.name}
+                      <span className="crew-chip__pos">{p.preferredPosition ?? '?'}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {showCountPanel && (
             <div className="count-panel-backdrop">

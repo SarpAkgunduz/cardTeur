@@ -659,3 +659,101 @@
   transform: translateY(-8px) scale(1.03);
   box-shadow: 0 22px 48px rgba(74,124,155,0.4), 0 0 0 2px rgba(90,148,184,0.6);
 }
+
+/* Crew / player selection panel */
+.crew-selection-panel {
+  margin: 20px 0 10px;
+  background: rgba(36, 59, 90, 0.75);
+  border-left: 3px solid #00deec;
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  animation: fadeInDown 0.3s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.crew-selection-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #00deec;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.crew-count-badge {
+  background: rgba(0, 222, 236, 0.15);
+  color: #00deec;
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 0.78rem;
+}
+
+.crew-selection-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.crew-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.crew-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.crew-chip:hover {
+  border-color: rgba(0, 222, 236, 0.5);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.crew-chip--selected {
+  background: rgba(0, 222, 236, 0.15);
+  border-color: #00deec;
+  color: #fff;
+}
+
+.crew-chip__pos {
+  font-size: 0.7rem;
+  opacity: 0.6;
+  margin-left: 4px;
+  background: rgba(255,255,255,0.08);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+/* Empty slot placeholder */
+.slot-empty {
+  opacity: 1;
+}
+
+.empty-slot-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 180px;
+  border: 2px dashed rgba(255, 107, 107, 0.35);
+  border-radius: 12px;
+  background: rgba(255, 107, 107, 0.05);
+  padding: 20px;
+  gap: 6px;
+}

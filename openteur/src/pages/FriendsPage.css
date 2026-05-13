@@ -219,3 +219,76 @@
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+.friends-page__invite {
+  background: rgba(36, 59, 90, 0.5);
+  border: 1px solid rgba(0, 222, 236, 0.15);
+  border-radius: 10px;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.friends-page__invite-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #00deec;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.friends-page__invite-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.friends-page__invite-url {
+  flex: 1;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 6px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.friends-page__invite-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(0, 222, 236, 0.35);
+  background: rgba(0, 222, 236, 0.1);
+  color: #00deec;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.friends-page__invite-btn:hover {
+  background: rgba(0, 222, 236, 0.2);
+}
+
+.friends-page__invite-btn--whatsapp {
+  border-color: rgba(37, 211, 102, 0.4);
+  background: rgba(37, 211, 102, 0.08);
+  color: #25d366;
+}
+
+.friends-page__invite-btn--whatsapp:hover {
+  background: rgba(37, 211, 102, 0.18);
+}

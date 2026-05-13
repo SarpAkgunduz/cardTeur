@@ -12,6 +12,7 @@ import SignupPage from './pages/SignupPage';
 import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage';
 import FriendsPage from './pages/FriendsPage';
+import InvitePage from './pages/InvitePage';
 import PrivateRoute from './components/routes/PrivateRoute';
 import PublicRoute from './components/routes/PublicRoute';
 import Navbar from './components/Navbar';
@@ -83,6 +84,15 @@ const App = () => {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/friends"
+          element={
+            <PrivateRoute>
+              <FriendsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route path="/invite/:inviterUid" element={<InvitePage />} />
           </Routes>
         </div>
       </div>
