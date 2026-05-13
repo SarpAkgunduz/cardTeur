@@ -164,6 +164,63 @@
   justify-content: center;
 }
 
+/* Visual photo picker grid */
+.photo-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.photo-picker-item {
+  position: relative;
+  background: rgba(36, 59, 90, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  transition: border-color 0.2s ease, transform 0.2s cubic-bezier(0.2, 0.9, 0.2, 1);
+  aspect-ratio: 1 / 1;
+}
+
+.photo-picker-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.2s ease;
+}
+
+.photo-picker-item:hover {
+  border-color: rgba(0, 222, 236, 0.6);
+  transform: translateY(-3px);
+}
+
+.photo-picker-item--selected {
+  border-color: #00deec;
+  box-shadow: 0 0 0 2px rgba(0, 222, 236, 0.35);
+}
+
+.photo-picker-item--selected img {
+  opacity: 0.75;
+}
+
+.photo-picker-check {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 222, 236, 0.2);
+}
+
+.photo-picker-check i {
+  font-size: 2rem;
+  color: #00deec;
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.6));
+}
+
 /* Stat sub-header label */
 .stat-subheader {
   font-family: 'Space Grotesk', sans-serif;

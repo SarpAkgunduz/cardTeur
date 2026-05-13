@@ -107,33 +107,30 @@ const AddPlayerForm = () => {
                   </select>
                 </div>
                 <div className="stat-field full-width">
-                  <label htmlFor="cardImage">Player Photo</label>
-                  <select
-                    id="cardImage"
-                    className="form-select-dark"
-                    value={cardImage}
-                    onChange={(e) => setCardImage(e.target.value)}
-                  >
-                    <option value="">-- Choose an image --</option>
-                    <option value="/assets/sakgunduz.png">Sarp Akgündüz</option>
-                    <option value="/assets/faksakal.png">Furkan Mert Aksakal</option>
-                    <option value="/assets/rbesen.png">Ruşen Besen</option>
-                    <option value="/assets/eakkoc.png">Emre Akkoç</option>
-                    <option value="/assets/celbir.png">Zekeriya Cengiz</option>
-                    <option value="/assets/fimaro.png">Furkan İmaro</option>
-                    <option value="/assets/raltunel.png">Rıdvan Altunel</option>
-                    <option value="/assets/eyildirim.png">Emre Yıldırım</option>
-                    <option value="/assets/ambostan.png">Ali Mert Bostan</option>
-                    <option value="/assets/dbekaroglu.png">Doğa Bekaroğlu</option>
-                    <option value="/assets/berdinc.png">Burak Erdinç</option>
-                    <option value="/assets/ycetin.png">Yasin Çetin</option>
-                  </select>
-                </div>
-                {cardImage && (
-                  <div className="stat-field full-width image-preview-row">
-                    <img src={cardImage} alt="preview" className="player-preview-img" />
+                  <label>Player Photo</label>
+                  <div className="photo-picker-grid">
+                    {[1,2,3,4,5,6,7,8,9].map((n) => {
+                      const src = `/assets/player${n}.png`;
+                      const selected = cardImage === src;
+                      return (
+                        <button
+                          key={n}
+                          type="button"
+                          className={`photo-picker-item ${selected ? 'photo-picker-item--selected' : ''}`}
+                          onClick={() => setCardImage(selected ? '' : src)}
+                          aria-label={`Player photo ${n}`}
+                        >
+                          <img src={src} alt={`player ${n}`} />
+                          {selected && (
+                            <div className="photo-picker-check">
+                              <i className="bi bi-check-circle-fill" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
-                )}
+                </div>
               </div>
             </div>
 
