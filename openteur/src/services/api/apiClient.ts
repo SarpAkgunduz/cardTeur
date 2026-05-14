@@ -1,6 +1,6 @@
 import { getCurrentUserToken } from '../AuthService';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:5002/api';
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) || 'https://cardteur-production.up.railway.app/api';
 
 export async function apiRequest<T>(
   endpoint: string,
