@@ -8,7 +8,7 @@
   "scripts": {
     "start": "ts-node index.ts",
     "dev": "nodemon --ext ts --exec ts-node index.ts",
-    "build": "npm ci --omit=dev && npm run build",
+    "build": "tsc",
     "start:dist": "node dist/index.js"
   },
   "dependencies": {
