@@ -2,6 +2,9 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "start": "ts-node index.ts",
     "dev": "nodemon --ext ts --exec ts-node index.ts",
