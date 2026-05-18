@@ -68,7 +68,7 @@ const LoginPage = () => {
         <GoogleSignInButton />
         <p className="ct-login-signup-link">
           Don't have an account?{' '}
-          <span onClick={() => navigate('/signup')}>Sign Up</span>
+          <span onClick={() => navigate(`/signup${searchParams.get('redirect') ? `?redirect=${encodeURIComponent(searchParams.get('redirect')!)}` : ''}`)}>Sign Up</span>
         </p>
       </div>
     </div>

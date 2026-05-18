@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { apiRequest } from '../services/api/apiClient';
 import GoogleSignInButton from '../components/GoogleSignInButton';
@@ -13,6 +13,7 @@ const SignupPage = () => {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { signUp } = useAuth();
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -49,7 +50,8 @@ const SignupPage = () => {
         method: 'POST',
         body: JSON.stringify({ displayName }),
       });
-      navigate('/');
+      const redirect = searchParams.get('redirect');
+      navigate(redirect || '/');
     } catch (err: any) {
       if (err?.code === 'auth/email-already-in-use') {
         setError('This email is already registered.');
