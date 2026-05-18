@@ -3,6 +3,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { playerApi } from '../services';
 import { validatePlayer } from '../utils/validatePlayer';
 import type { StatField } from '../components/StatGrid';
+import { apiRequest } from '../services/api/apiClient';
+import { useAuth } from '../contexts/AuthContext';
+
+export interface UserOption {
+  uid: string;
+  displayName: string;
+  photoURL?: string;
+}
 
 const calculateAverage = (stats: number[]) =>
   stats.length ? Math.round(stats.reduce((a, b) => a + b, 0) / stats.length) : 0;
@@ -12,8 +20,14 @@ export function usePlayerForm() {
   const isEditMode = Boolean(id);
   const navigate = useNavigate();
 
+  const { currentUser } = useAuth();
+
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
+
+  // User linking
+  const [linkedUserId, setLinkedUserId] = useState('');
+  const [friendOptions, setFriendOptions] = useState<UserOption[]>([]);
 
   // Identity
   const [name, setName] = useState('');
@@ -53,6 +67,25 @@ export function usePlayerForm() {
   const [gkPositioning, setGkPositioning] = useState(0);
   const [gkSpeed, setGkSpeed] = useState(0);
 
+  // Fetch friend list on mount
+  useEffect(() => {
+    apiRequest<UserOption[]>('/users/friends')
+      .then(setFriendOptions)
+      .catch(() => {});
+  }, []);
+
+  // Derived: self + friends as selectable user options
+  const userOptions: UserOption[] = [
+    ...(currentUser
+      ? [{
+          uid: currentUser.uid,
+          displayName: currentUser.displayName || currentUser.email || 'Me',
+          photoURL: currentUser.photoURL || '',
+        }]
+      : []),
+    ...friendOptions,
+  ];
+
   // Load player data if in edit mode
   useEffect(() => {
     if (!isEditMode || !id) return;
@@ -85,6 +118,7 @@ export function usePlayerForm() {
         setReflexes(player.reflexes ?? 0);
         setGkPositioning(player.gkPositioning ?? 0);
         setGkSpeed(player.gkSpeed ?? 0);
+        setLinkedUserId(player.linkedUserId ?? '');
       })
       .catch((error) => {
         console.error('Failed to fetch player:', error);
@@ -154,6 +188,7 @@ export function usePlayerForm() {
     e.preventDefault();
     const newPlayer = {
       name,
+      linkedUserId: linkedUserId || undefined,
       jerseyNumber: Number(jerseyNumber),
       preferredPosition,
       // cardTitle is not sent — backend computes it as a virtual
@@ -204,6 +239,8 @@ export function usePlayerForm() {
     offensiveOverall, defensiveOverall, athleticismOverall, gkOverall,
     isGK, cardTitle,
     gkFields, offensiveFields, defensiveFields, athleticismFields,
+    linkedUserId, setLinkedUserId,
+    userOptions,
     showToast, setShowToast, toastMsg,
     handleSubmit,
   };

@@ -1,6 +1,7 @@
 export interface Player {
   _id: string;
   ownerUid: string;
+  linkedUserId?: string;
   name: string;
   email?: string;
   cardImage: string;

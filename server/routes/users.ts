@@ -57,6 +57,18 @@ router.delete('/account', requireAuth, async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/users/me - get current user's profile
+router.get('/me', requireAuth, async (req: Request, res: Response) => {
+  const uid = (req as any).uid as string;
+  try {
+    const user = await User.findOne({ uid }).select('uid email displayName photoURL');
+    if (!user) { res.status(404).json({ error: 'User not found' }); return; }
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+});
+
 // GET /api/users/search?q= - search users by name or email (excludes self)
 router.get('/search', requireAuth, async (req: Request, res: Response) => {
   const uid = (req as any).uid as string;

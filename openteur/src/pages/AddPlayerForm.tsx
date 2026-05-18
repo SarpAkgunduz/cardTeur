@@ -15,6 +15,8 @@ const AddPlayerForm = () => {
     activeStatTab, setActiveStatTab,
     offensiveOverall, defensiveOverall, athleticismOverall, gkOverall,
     cardTitle,
+    linkedUserId, setLinkedUserId,
+    userOptions,
     gkFields, offensiveFields, defensiveFields, athleticismFields,
     showToast, setShowToast, toastMsg,
     handleSubmit,
@@ -107,8 +109,43 @@ const AddPlayerForm = () => {
                   </select>
                 </div>
                 <div className="stat-field full-width">
-                  <label>Player Photo</label>
-                  <div className="photo-picker-grid">
+                  <label>Link to User</label>
+                  <div className="user-picker-grid">
+                    {userOptions.map((u) => {
+                      const isLinked = linkedUserId === u.uid;
+                      return (
+                        <button
+                          key={u.uid}
+                          type="button"
+                          className={`user-picker-item ${isLinked ? 'user-picker-item--selected' : ''}`}
+                          onClick={() => {
+                            if (isLinked) {
+                              setLinkedUserId('');
+                            } else {
+                              setLinkedUserId(u.uid);
+                              if (u.photoURL) setCardImage(u.photoURL);
+                            }
+                          }}
+                          aria-label={u.displayName}
+                        >
+                          {u.photoURL ? (
+                            <img src={u.photoURL} alt={u.displayName} className="user-picker-avatar" />
+                          ) : (
+                            <div className="user-picker-avatar user-picker-avatar--placeholder">
+                              <i className="bi bi-person-fill" />
+                            </div>
+                          )}
+                          <span className="user-picker-name">{u.displayName}</span>
+                          {isLinked && <div className="user-picker-check"><i className="bi bi-check-circle-fill" /></div>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="stat-field full-width">
+                  <label>Player Photo {linkedUserId && <span className="photo-linked-note">(auto-set from linked user)</span>}</label>
+                  <div className={`photo-picker-grid ${linkedUserId ? 'photo-picker-grid--dimmed' : ''}`}>
                     {[1,2,3,4,5,6,7,8,9].map((n) => {
                       const src = `/assets/player${n}.png`;
                       const selected = cardImage === src;

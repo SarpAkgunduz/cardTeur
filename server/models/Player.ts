@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 export interface IPlayer extends Document {
   ownerUid: string;
+  linkedUserId?: string;
   name?: string;
   email?: string;
   jerseyNumber?: number;
@@ -51,6 +52,7 @@ export interface IPlayer extends Document {
 
 const PlayerSchema: Schema<IPlayer> = new Schema({
   ownerUid: { type: String, required: true, index: true },
+  linkedUserId: { type: String, default: undefined },
   name: String,
   email: { type: String, default: undefined },
   jerseyNumber: Number,
