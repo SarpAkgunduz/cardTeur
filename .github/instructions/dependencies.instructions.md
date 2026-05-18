@@ -45,6 +45,17 @@ RESEND_API_KEY=re_...
 SMTP_FROM=onboarding@resend.dev
 ```
 
+## Production environment (Railway)
+The backend is deployed on Railway at `https://cardteur-production.up.railway.app`.
+- Root directory is set to `/server` in the Railway dashboard.
+- Build command: `npm run build` (compiles TypeScript via `tsc`).
+- Start command: `node dist/index.js`.
+- Railway injects a `PORT` env var; the server reads it with `const PORT = process.env.PORT || 5002`.
+- The Railway networking port must be set to **8080** in the Railway dashboard (Railway proxies external traffic to 8080 regardless of `PORT`).
+- Required Railway service variables: `MONGO_URI`, `RESEND_API_KEY`, `SMTP_FROM`, `FIREBASE_SERVICE_ACCOUNT` (JSON string of the service account key — copy the full contents of `serviceAccountKey.json`).
+- `server/firebaseAdmin.ts` reads `FIREBASE_SERVICE_ACCOUNT` env var in production; falls back to `serviceAccountKey.json` locally.
+- Frontend `apiClient.ts` uses `VITE_API_BASE_URL || 'https://cardteur-production.up.railway.app/api'`. Local dev overrides this via `openteur/.env.development.local` (not committed): `VITE_API_BASE_URL=http://localhost:5002/api`.
+
 ## Required `openteur/.env` keys
 ```
 VITE_FIREBASE_API_KEY=...

@@ -26,8 +26,10 @@ applyTo: "**"
 ## Page & Feature Architecture
 - `PreviewPage` is a read-only roster grouped by position (GK → DEF → MID → ATT). No edit actions here.
 - `CrewPage` (`/crew`) handles contact info (email). Email is managed here, not in `AddPlayerForm`.
-- `AddPlayerForm` is strictly for player stats and identity (name, position, jersey, market value, image, stats). No contact fields.
+- `AddPlayerForm` handles player stats, identity (name, position, jersey, market value, image, stats), and user-linking (`linkedUserId`). The "Link to User" section shows avatar chips for self + friends; selecting one auto-sets `cardImage` from the user's `photoURL` and dims the manual photo picker. No contact fields here.
 - `PlayersPage` is the CRUD hub — manage, delete, compare modes.
+- `FriendsPage` (`/friends`) is the social hub — two tabs: "My Friends" (client-side filter) and "Add Friend" (exact UID/email lookup). Never add friend-search logic to other pages.
+- `ProfilePage` (`/profile`) is account settings — display name, photo, password, Account ID (copyable Firebase UID), danger zone.
 - When a feature clearly belongs to a different page's concern, move it there instead of adding it to the current page.
 
 ## TypeScript

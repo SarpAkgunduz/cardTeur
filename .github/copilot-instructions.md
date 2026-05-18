@@ -20,14 +20,37 @@ On both frontend and backend, make sure files are not bloated with another featu
 - Try to add fluent animations for users to feel page is more responsive and smooth, for example when opening the compare panel, or when hovering over a player card, or when toggling edit mode. Use CSS transitions or keyframe animations to enhance the user experience without overwhelming it. Keep animations subtle and consistent with the overall design language of the application, ensuring they enhance usability rather than distract from it. When implementing animations, consider the performance implications and test them across different devices to ensure they run smoothly without causing lag or jank in the user interface.
 
 ## Backend architecture
-- The API server boots from `server/index.ts`, enables JSON parsing, and mounts routers: `/api/players` and `/api/match`.
-- The backend assumes MongoDB is available through `server/.env` with `MONGO_URI`. Default API port is `5001`; CORS is hard-coded to `http://localhost:5173`.
+- The API server boots from `server/index.ts`, enables JSON parsing, and mounts routers: `/api/players`, `/api/match`, and `/api/users`.
+- The backend assumes MongoDB is available through `server/.env` with `MONGO_URI`. Default API port is `5002` (changed from 5001 — macOS AirPlay Receiver occupies 5001). In production the server runs on Railway and listens on whatever `PORT` env var Railway injects (configured to 8080 in the Railway dashboard).
+- CORS is configured via an `allowedOrigins` allowlist in `server/index.ts`: `https://cardteur.com`, `https://cardteur.sarpakg.workers.dev`, `http://localhost:5173`. Never use `cors({ origin: '*' })` — always add new origins to the list explicitly.
 - `server/routes/players.ts` is protected by `requireAuth` middleware (applied via `router.use(requireAuth)` at the top). All player CRUD endpoints require a valid Firebase ID token.
+- `server/routes/users.ts` handles user registration, profile updates, account deletion, friend management, and user lookups. All routes are protected by `requireAuth`.
 - `server/middleware/auth.ts` exports `requireAuth`: verifies the `Authorization: Bearer <token>` header using Firebase Admin SDK, attaches `uid` and `email` to the request object.
-- `server/firebaseAdmin.ts` initialises Firebase Admin SDK from `server/serviceAccountKey.json`. This file must NEVER be committed — it is listed in `.gitignore`.
+- `server/firebaseAdmin.ts` initialises Firebase Admin SDK. In production it reads the `FIREBASE_SERVICE_ACCOUNT` environment variable (a JSON string set as a Railway service variable). Locally it falls back to reading `server/serviceAccountKey.json`. This file must NEVER be committed — it is listed in `.gitignore`.
 - `server/serviceAccountKey.json` is the Firebase service account private key. Download from Firebase Console → Project Settings → Service Accounts → Generate new private key. Keep it local only.
 - On both frontend and backend, make sure files are not bloated with another feature, for example if we are on a view file, and there are too many component checks and conditions, we can extract some logic to a helper file or a custom hook. Avoid putting unrelated features in the same file to keep things modular and maintainable. Readability and structure are more important than saving a few lines of code by merging features into the same file. If you find yourself adding a new feature that doesn't fit the existing file's purpose, consider creating a new file for it and importing it where needed. This keeps the codebase organized and easier to navigate for future developers.
-## Project-specific coding patterns
+## User entity & social graph
+- `server/models/User.ts` stores `uid`, `email`, `displayName`, `photoURL?`, `friends: string[]` (array of uids), `createdAt`.
+- `server/routes/users.ts` exposes:
+  - `POST /api/users/register` — called after Firebase signup to persist user in MongoDB
+  - `GET /api/users/me` — returns own profile (`uid`, `email`, `displayName`, `photoURL`)
+  - `PUT /api/users/profile` — update `displayName` and/or `photoURL`
+  - `DELETE /api/users/account` — deletes Firebase account + MongoDB user + removes from all friends arrays
+  - `GET /api/users/search?q=` — **exact match only** on `uid` or `email` (both are `unique: true` indexed fields). Never uses regex or collection scan. Returns at most one result.
+  - `GET /api/users/friends` — returns full profiles of all friends
+  - `POST /api/users/friends/:friendUid` — adds friend bidirectionally (`$addToSet`)
+  - `DELETE /api/users/friends/:friendUid` — removes friend bidirectionally
+  - `POST /api/users/lookup-by-emails` — bulk lookup by email array (used by CrewPage)
+- `FriendsPage.tsx` (`/friends`) has two tabs:
+  - **My Friends** — friends list loaded once on mount, filtered client-side (zero DB queries per keystroke)
+  - **Add Friend** — user submits exact UID or email, one indexed DB lookup fires only on explicit Search button/Enter
+- `InvitePage.tsx` (`/invite/:inviterUid`) — auto-adds the inviter as a friend after login/signup. Requires auth; redirects to `/login?redirect=/invite/:uid` if not logged in.
+- Both `LoginPage.tsx` and `SignupPage.tsx` read the `?redirect=` search param and navigate to it after successful auth, so the invite flow survives the login/signup redirect.
+- `ProfilePage.tsx` displays the user's Firebase UID with a copy-to-clipboard button under "Account ID", so users can share it for friend lookup.
+
+## Social graph design constraints
+- `GET /api/users/search` must only match on indexed fields (`uid` exact, `email` exact). Never add regex or fuzzy search — at scale this causes a full collection scan.
+- Friend filtering on the frontend must always be client-side against the already-loaded `friends` array. Never fire a search request on each keystroke against the friends list.
 - Use the service barrel in `openteur/src/services/index.ts` when importing `playerApi`, `Player`, or auth helpers.
 - `apiRequest()` in `openteur/src/services/api/apiClient.ts` always sends JSON, automatically attaches a Firebase `Authorization: Bearer <token>` header via `getCurrentUserToken()`, and throws on non-2xx responses. Keep new API helpers consistent with that pattern.
 - Form feedback is commonly shown with `ToastNotification` or browser dialogs (`window.confirm`, `alert`) rather than a centralized error system.
@@ -64,6 +87,7 @@ On both frontend and backend, make sure files are not bloated with another featu
 
 ## Player entity notes
 - `email` is an optional field (`email?: string`) on both `server/models/Player.ts` and `openteur/src/services/api/types.ts`. It is never required — skip in validation checks.
+- `linkedUserId` is an optional field (`linkedUserId?: string`) that links a player card to a registered User's `uid`. When set in `AddPlayerForm`, the linked user's `photoURL` is automatically used as `cardImage`. Managed via `usePlayerForm` hook which fetches the friend list and exposes `userOptions` (self + friends) as selectable avatar chips.
 - `cardTitle` is a virtual computed by the backend — never store or send it in create/update requests.
 - `ownerUid` is a required field on `server/models/Player.ts` (`ownerUid: { type: String, required: true, index: true }`). It is set exclusively by the backend from the verified Firebase token — never sent by the frontend, never accepted from `req.body`.
 - `CreatePlayerDto` and `UpdatePlayerDto` in `openteur/src/services/api/types.ts` both `Omit` `ownerUid` (along with `_id` and `cardTitle`) — this is intentional. Do not add `ownerUid` back to these types.
