@@ -104,6 +104,51 @@
   text-transform: uppercase;
 }
 
+.profile-page__id-desc {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0 0 12px 0;
+}
+
+.profile-page__id-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.profile-page__id-value {
+  flex: 1;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.55);
+  word-break: break-all;
+  letter-spacing: 0.04em;
+}
+
+.profile-page__id-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(0, 222, 236, 0.35);
+  background: rgba(0, 222, 236, 0.08);
+  color: #00deec;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.profile-page__id-copy-btn:hover {
+  background: rgba(0, 222, 236, 0.18);
+}
+
 .profile-page__input {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);

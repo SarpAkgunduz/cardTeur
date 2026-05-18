@@ -25,6 +25,18 @@ const ProfilePage = () => {
 
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
+  const [uidCopied, setUidCopied] = useState(false);
+
+  const handleCopyUid = async () => {
+    if (!currentUser?.uid) return;
+    try {
+      await navigator.clipboard.writeText(currentUser.uid);
+      setUidCopied(true);
+      setTimeout(() => setUidCopied(false), 2000);
+    } catch {
+      showMsg('Could not copy ID.', 'danger');
+    }
+  };
 
   const [toast, setToast] = useState('');
   const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
@@ -180,6 +192,21 @@ const ProfilePage = () => {
           <div className="profile-page__actions">
             <button className="btn-ct" onClick={handleSaveName} disabled={savingName}>
               {savingName ? 'Saving...' : 'Save Username'}
+            </button>
+          </div>
+        </div>
+
+        {/* Account ID section */}
+        <div className="profile-page__card">
+          <div className="profile-page__card-header">
+            <span className="profile-page__card-label">Account ID</span>
+          </div>
+          <p className="profile-page__id-desc">Share this ID with friends so they can find and add you directly.</p>
+          <div className="profile-page__id-row">
+            <span className="profile-page__id-value">{currentUser?.uid}</span>
+            <button className="profile-page__id-copy-btn" onClick={handleCopyUid} title="Copy ID">
+              <i className={`bi ${uidCopied ? 'bi-check-lg' : 'bi-clipboard'}`} />
+              {uidCopied ? 'Copied!' : 'Copy'}
             </button>
           </div>
         </div>

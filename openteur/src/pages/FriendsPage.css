@@ -66,11 +66,116 @@
   color: #00deec;
 }
 
+.friends-page__tabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.friends-page__tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 7px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.friends-page__tab:hover {
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.friends-page__tab--active {
+  background: rgba(0, 222, 236, 0.12);
+  color: #00deec;
+  border: 1px solid rgba(0, 222, 236, 0.25);
+}
+
+.friends-page__add-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.friends-page__add-hint {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.friends-page__add-hint strong {
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 600;
+}
+
+.friends-page__add-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.friends-page__search-wrap--grow {
+  flex: 1;
+}
+
+.friends-page__add-search-btn {
+  padding: 0.7rem 20px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid rgba(0, 222, 236, 0.35);
+  background: rgba(0, 222, 236, 0.1);
+  color: #00deec;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+}
+
+.friends-page__add-search-btn:hover:not(:disabled) {
+  background: rgba(0, 222, 236, 0.2);
+}
+
+.friends-page__add-search-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.friends-page__add-notfound {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 107, 107, 0.85);
+  font-size: 0.85rem;
+  background: rgba(255, 107, 107, 0.07);
+  border: 1px solid rgba(255, 107, 107, 0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.friends-page__row--result {
+  animation: fadeInUp 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 .friends-page__section {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
+
 
 .friends-page__section-label {
   font-size: 0.65rem;

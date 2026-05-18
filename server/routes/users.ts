@@ -69,18 +69,17 @@ router.get('/me', requireAuth, async (req: Request, res: Response) => {
   }
 });
 
-// GET /api/users/search?q= - search users by name or email (excludes self)
+// GET /api/users/search?q= - exact uid or email match only (indexed fields, no collection scan)
 router.get('/search', requireAuth, async (req: Request, res: Response) => {
   const uid = (req as any).uid as string;
   const q = ((req.query.q as string) || '').trim();
-  if (!q || q.length < 2) { res.json([]); return; }
+  if (!q) { res.json([]); return; }
   try {
-    const regex = new RegExp(q, 'i');
-    const users = await User.find({
+    const user = await User.findOne({
       uid: { $ne: uid },
-      $or: [{ email: regex }, { displayName: regex }],
-    }).select('uid email displayName photoURL').limit(20);
-    res.json(users);
+      $or: [{ uid: q }, { email: q }],
+    }).select('uid email displayName photoURL');
+    res.json(user ? [user] : []);
   } catch (err) {
     res.status(500).json({ error: 'Search failed' });
   }
