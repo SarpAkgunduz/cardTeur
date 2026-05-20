@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Card from '../components/Card';
@@ -6,10 +6,11 @@ import ComparePanel from '../components/ComparePanel';
 import ConfirmDialog from '../components/ConfirmDialog';
 import ToastNotification from '../components/ToastNotification';
 import { playerApi, Player } from '../services';
+import { usePlayers } from '../contexts/PlayerContext';
 import './PlayersPage.css';
 
 const PlayersPage = () => {
-  const [players, setPlayers] = useState<Player[]>([]);
+  const { players, setPlayers, loading: playersLoading } = usePlayers();
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [deleteMode, setDeleteMode] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -21,14 +22,7 @@ const PlayersPage = () => {
   const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    playerApi.getAll()
-      .then((data) => setPlayers(data))
-      .catch((error) => {
-        console.error('Failed to fetch players:', error);
-        setFetchError(error?.message || 'Failed to load players. Check console for details.');
-      });
-  }, []);
+  const loading = playersLoading;
 
   const handleDelete = (id: string) => setConfirm({
     message: 'Are you sure you want to delete this player?',

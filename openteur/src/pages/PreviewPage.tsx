@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
 import BackButton from '../components/BackButton';
 import Card from '../components/Card';
-import type { Player } from '../services/api/types';
-import { playerApi } from '../services';
+import { usePlayers } from '../contexts/PlayerContext';
 import './PreviewPage.css';
 
 const POSITION_GROUPS = [
@@ -13,15 +11,7 @@ const POSITION_GROUPS = [
 ];
 
 const PreviewPage = () => {
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    playerApi.getAll()
-      .then(setPlayers)
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+  const { players, loading } = usePlayers();
 
   const sections = POSITION_GROUPS.map(group => ({
     ...group,

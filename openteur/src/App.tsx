@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import { PlayerProvider } from './contexts/PlayerContext';
 import './App.css';
 
 import PlayersPage from './pages/PlayersPage';
@@ -22,6 +23,7 @@ const App = () => {
   return (
     <AuthProvider>
     <Router>
+      <PlayerProvider>
       <div className="ct-app-shell">
         <Navbar />
         <div className="ct-app-content">
@@ -105,6 +107,7 @@ const App = () => {
           </Routes>
         </div>
       </div>
+      </PlayerProvider>
     </Router>
     </AuthProvider>
   );
