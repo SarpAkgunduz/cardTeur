@@ -31,10 +31,10 @@ const Navbar = () => {
               Match
             </button>
             <button
-              className={`ct-nav__link ${isActive('/matches') ? 'ct-nav__link--active' : ''}`}
-              onClick={() => navigate('/matches')}
+              className={`ct-nav__link ${isActive('/schedule') ? 'ct-nav__link--active' : ''}`}
+              onClick={() => navigate('/schedule')}
             >
-              Matches
+              Schedule
             </button>
             <button
               className={`ct-nav__link ${isActive('/preview') ? 'ct-nav__link--active' : ''}`}

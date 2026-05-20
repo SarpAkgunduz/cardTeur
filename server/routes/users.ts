@@ -137,4 +137,16 @@ router.post('/lookup-by-emails', requireAuth, async (req: Request, res: Response
   }
 });
 
+// POST /api/users/lookup-by-uids - returns user profiles for given uids (linked player auto-email)
+router.post('/lookup-by-uids', requireAuth, async (req: Request, res: Response) => {
+  const { uids } = req.body as { uids: string[] };
+  if (!Array.isArray(uids) || uids.length === 0) { res.json([]); return; }
+  try {
+    const users = await User.find({ uid: { $in: uids } }).select('uid email displayName photoURL');
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: 'Lookup failed' });
+  }
+});
+
 export default router;
