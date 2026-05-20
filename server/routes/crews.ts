@@ -5,11 +5,11 @@ import Crew from '../models/Crew';
 const router = Router();
 router.use(requireAuth);
 
-// GET /api/crews — list all crews for the authenticated user
+// GET /api/crews — list owned crews + crews the user has been added to
 router.get('/', async (req: Request, res: Response) => {
   const uid = (req as any).uid;
   try {
-    const crews = await Crew.find({ ownerUid: uid }).sort({ createdAt: 1 });
+    const crews = await Crew.find({ $or: [{ ownerUid: uid }, { memberUids: uid }] }).sort({ createdAt: 1 });
     res.json(crews);
   } catch {
     res.status(500).json({ error: 'Failed to fetch crews' });

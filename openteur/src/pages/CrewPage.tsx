@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import BackButton from '../components/BackButton';
 import type { Player } from '../services/api/types';
 import { playerApi } from '../services';
@@ -8,8 +9,10 @@ import './CrewPage.css';
 
 interface Crew {
   _id: string;
+  ownerUid: string;
   name: string;
   playerIds: string[];
+  memberUids: string[];
 }
 
 interface LinkedUser {
@@ -20,6 +23,7 @@ interface LinkedUser {
 }
 
 const CrewPage = () => {
+  const { currentUser } = useAuth();
   const [players, setPlayers] = useState<Player[]>([]);
   const [crews, setCrews] = useState<Crew[]>([]);
   const [linkedUserMap, setLinkedUserMap] = useState<Record<string, LinkedUser>>({});
@@ -321,84 +325,104 @@ const CrewPage = () => {
 
           {!loading && (
             <div className="crew-card-list">
-              {crews.map(crew => (
-                <div key={crew._id} className="crew-card">
-                  <div className="crew-card__header">
-                    {editingCrewId === crew._id ? (
-                      <>
-                        <input className="crew-email-input crew-card__rename-input" value={editingCrewName}
-                          onChange={e => setEditingCrewName(e.target.value)}
-                          onKeyDown={e => { if (e.key === 'Enter') handleRenameCrew(crew._id); if (e.key === 'Escape') setEditingCrewId(null); }}
-                          autoFocus
-                        />
-                        <button className="crew-edit-btn crew-edit-btn--save" onClick={() => handleRenameCrew(crew._id)}>
-                          <i className="bi bi-check-lg"></i>
-                        </button>
-                        <button className="crew-edit-btn crew-edit-btn--cancel" onClick={() => setEditingCrewId(null)}>
-                          <i className="bi bi-x-lg"></i>
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <span className={`crew-card__name${renameShimmer ? ' crew-card__name--shimmer' : ''}`}>
-                          {crew.name}
-                        </span>
-                        <div className="crew-card__actions">
-                          <button className="crew-edit-btn" title="Rename"
-                            onClick={() => { setEditingCrewId(crew._id); setEditingCrewName(crew.name); }}>
-                            <i className="bi bi-pencil-fill"></i>
-                          </button>
-                          <button className="crew-edit-btn crew-edit-btn--cancel" title="Delete crew"
-                            onClick={() => handleDeleteCrew(crew._id)}>
-                            <i className="bi bi-trash3-fill"></i>
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
+              {(() => {
+                const ownedCrews = crews.filter(c => c.ownerUid === currentUser?.uid);
+                const memberCrews = crews.filter(c => c.ownerUid !== currentUser?.uid);
 
-                  <div className="crew-card__members">
-                    {playersInCrew(crew).length === 0 && <p className="crew-card__empty">No players yet.</p>}
-                    {playersInCrew(crew).map(p => renderPlayerRowLeft(p, crew._id))}
-                  </div>
-
-                  <div className="crew-card__add-player">
-                    {addingPlayerToCrewId === crew._id ? (
-                      <div className="crew-card__player-select">
-                        <select className="crew-email-input" defaultValue=""
-                          onChange={e => { if (e.target.value) handleAddPlayerToCrew(crew._id, e.target.value); }}>
-                          <option value="" disabled>Select a player\u2026</option>
-                          {availableForCrew(crew).map(p => (
-                            <option key={p._id} value={p._id}>{p.name} ({p.preferredPosition})</option>
-                          ))}
-                        </select>
-                        <button className="crew-edit-btn crew-edit-btn--cancel" onClick={() => setAddingPlayerToCrewId(null)}>
-                          <i className="bi bi-x-lg"></i>
-                        </button>
+                const renderCrewCard = (crew: Crew, readonly: boolean) => {
+                  const isOwned = !readonly;
+                  return (
+                    <div key={crew._id} className="crew-card">
+                      <div className="crew-card__header">
+                        {isOwned && editingCrewId === crew._id ? (
+                          <>
+                            <input className="crew-email-input crew-card__rename-input" value={editingCrewName}
+                              onChange={e => setEditingCrewName(e.target.value)}
+                              onKeyDown={e => { if (e.key === 'Enter') handleRenameCrew(crew._id); if (e.key === 'Escape') setEditingCrewId(null); }}
+                              autoFocus
+                            />
+                            <button className="crew-edit-btn crew-edit-btn--save" onClick={() => handleRenameCrew(crew._id)}>
+                              <i className="bi bi-check-lg"></i>
+                            </button>
+                            <button className="crew-edit-btn crew-edit-btn--cancel" onClick={() => setEditingCrewId(null)}>
+                              <i className="bi bi-x-lg"></i>
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            <span className={`crew-card__name${renameShimmer && isOwned ? ' crew-card__name--shimmer' : ''}`}>
+                              {crew.name}
+                            </span>
+                            {isOwned && (
+                              <div className="crew-card__actions">
+                                <button className="crew-edit-btn" title="Rename"
+                                  onClick={() => { setEditingCrewId(crew._id); setEditingCrewName(crew.name); }}>
+                                  <i className="bi bi-pencil-fill"></i>
+                                </button>
+                                <button className="crew-edit-btn crew-edit-btn--cancel" title="Delete crew"
+                                  onClick={() => handleDeleteCrew(crew._id)}>
+                                  <i className="bi bi-trash3-fill"></i>
+                                </button>
+                              </div>
+                            )}
+                          </>
+                        )}
                       </div>
-                    ) : (
-                      <button className="crew-card__add-player-btn"
-                        onClick={() => setAddingPlayerToCrewId(crew._id)}
-                        disabled={availableForCrew(crew).length === 0}>
-                        <i className="bi bi-person-plus-fill"></i> Add Player
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
 
-              {crews.length === 0 && players.length > 0 && !creatingCrew && (
-                <p className="crew-empty">Create a crew to start organising your players.</p>
-              )}
-              {players.length === 0 && <p className="crew-empty">No players found.</p>}
+                      <div className="crew-card__members">
+                        {playersInCrew(crew).length === 0 && <p className="crew-card__empty">No players yet.</p>}
+                        {playersInCrew(crew).map(p => renderPlayerRowLeft(p, crew._id))}
+                      </div>
+
+                      {isOwned && (
+                        <div className="crew-card__add-player">
+                          {addingPlayerToCrewId === crew._id ? (
+                            <div className="crew-card__player-select">
+                              <select className="crew-email-input" defaultValue=""
+                                onChange={e => { if (e.target.value) handleAddPlayerToCrew(crew._id, e.target.value); }}>
+                                <option value="" disabled>Select a player…</option>
+                                {availableForCrew(crew).map(p => (
+                                  <option key={p._id} value={p._id}>{p.name} ({p.preferredPosition})</option>
+                                ))}
+                              </select>
+                              <button className="crew-edit-btn crew-edit-btn--cancel" onClick={() => setAddingPlayerToCrewId(null)}>
+                                <i className="bi bi-x-lg"></i>
+                              </button>
+                            </div>
+                          ) : (
+                            <button className="crew-card__add-player-btn"
+                              onClick={() => setAddingPlayerToCrewId(crew._id)}
+                              disabled={availableForCrew(crew).length === 0}>
+                              <i className="bi bi-person-plus-fill"></i> Add Player
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                };
+
+                return (
+                  <>
+                    {ownedCrews.length > 0 && <p className="crew-section-label">MY CREWS</p>}
+                    {ownedCrews.map(c => renderCrewCard(c, false))}
+                    {memberCrews.length > 0 && <p className="crew-section-label crew-section-label--member">ADDED TO</p>}
+                    {memberCrews.map(c => renderCrewCard(c, true))}
+                    {crews.length === 0 && players.length > 0 && !creatingCrew && (
+                      <p className="crew-empty">Create a crew to start organising your players.</p>
+                    )}
+                    {players.length === 0 && <p className="crew-empty">No players found.</p>}
+                  </>
+                );
+              })()}
             </div>
           )}
         </div>
 
         <div className="crew-right">
           <div className="crew-right__header">
-            <h2 className="crew-right__title">MY CREW</h2>
-            <p className="crew-right__hint">Click a player to assign them to a crew</p>
+            <h2 className="crew-right__title">ALL PLAYERS</h2>
+            <p className="crew-right__hint">Click a player to assign to a crew</p>
           </div>
           <div className="crew-email-list">
             {players.map((p, idx) => renderEmailRow(p, idx))}
