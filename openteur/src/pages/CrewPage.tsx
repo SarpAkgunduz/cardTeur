@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import BackButton from '../components/BackButton';
 import type { Player } from '../services/api/types';
 import { playerApi } from '../services';
@@ -6,7 +6,13 @@ import { apiRequest } from '../services/api/apiClient';
 import ToastNotification from '../components/ToastNotification';
 import './CrewPage.css';
 
-interface RegisteredUser {
+interface Crew {
+  _id: string;
+  name: string;
+  playerIds: string[];
+}
+
+interface LinkedUser {
   uid: string;
   email: string;
   displayName: string;
@@ -15,161 +21,263 @@ interface RegisteredUser {
 
 const CrewPage = () => {
   const [players, setPlayers] = useState<Player[]>([]);
-  const [registeredMap, setRegisteredMap] = useState<Record<string, RegisteredUser>>({});
+  const [crews, setCrews] = useState<Crew[]>([]);
+  const [linkedUserMap, setLinkedUserMap] = useState<Record<string, LinkedUser>>({});
   const [loading, setLoading] = useState(true);
-  const [editingId, setEditingId] = useState<string | null>(null);
+
+  const [creatingCrew, setCreatingCrew] = useState(false);
+  const [newCrewName, setNewCrewName] = useState('');
+  const [editingCrewId, setEditingCrewId] = useState<string | null>(null);
+  const [editingCrewName, setEditingCrewName] = useState('');
+  const [addingPlayerToCrewId, setAddingPlayerToCrewId] = useState<string | null>(null);
+
+  const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
+  const [addedAnimation, setAddedAnimation] = useState<Record<string, boolean>>({});
+  const [renameShimmer, setRenameShimmer] = useState(false);
+
+  const [editingEmailId, setEditingEmailId] = useState<string | null>(null);
   const [editingEmail, setEditingEmail] = useState('');
-  const [savingId, setSavingId] = useState<string | null>(null);
+  const [savingEmailId, setSavingEmailId] = useState<string | null>(null);
+
   const [toastMsg, setToastMsg] = useState('');
   const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
   const [showToast, setShowToast] = useState(false);
+
+  const newCrewInputRef = useRef<HTMLInputElement>(null);
 
   const showMsg = (msg: string, variant: 'success' | 'danger' = 'success') => {
     setToastMsg(msg); setToastVariant(variant); setShowToast(true);
   };
 
   useEffect(() => {
-    playerApi.getAll()
-      .then(async (data) => {
-        setPlayers(data);
-        const emails = data.map(p => p.email).filter(Boolean) as string[];
-        if (emails.length > 0) {
+    Promise.all([playerApi.getAll(), apiRequest<Crew[]>('/crews')])
+      .then(async ([loadedPlayers, loadedCrews]) => {
+        setPlayers(loadedPlayers);
+        setCrews(loadedCrews);
+        const linkedUids = [...new Set(
+          loadedPlayers.map(p => p.linkedUserId).filter(Boolean) as string[]
+        )];
+        if (linkedUids.length > 0) {
           try {
-            const users = await apiRequest<RegisteredUser[]>('/users/lookup-by-emails', {
+            const users = await apiRequest<LinkedUser[]>('/users/lookup-by-uids', {
               method: 'POST',
-              body: JSON.stringify({ emails }),
+              body: JSON.stringify({ uids: linkedUids }),
             });
-            const map: Record<string, RegisteredUser> = {};
-            users.forEach(u => { map[u.email] = u; });
-            setRegisteredMap(map);
-          } catch {
-            // silently ignore — crew still works without user profiles
-          }
+            const map: Record<string, LinkedUser> = {};
+            users.forEach(u => { map[u.uid] = u; });
+            setLinkedUserMap(map);
+            for (const player of loadedPlayers) {
+              if (player.linkedUserId && !player.email && map[player.linkedUserId]?.email) {
+                const autoEmail = map[player.linkedUserId].email;
+                try {
+                  await playerApi.update(player._id, { email: autoEmail } as any);
+                  setPlayers(prev => prev.map(p =>
+                    p._id === player._id ? { ...p, email: autoEmail } : p
+                  ));
+                } catch { /* non-fatal */ }
+              }
+            }
+          } catch { /* silently ignore */ }
         }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
 
-  const refreshRegisteredMap = async (updatedPlayers: Player[]) => {
-    const emails = updatedPlayers.map(p => p.email).filter(Boolean) as string[];
-    if (emails.length === 0) { setRegisteredMap({}); return; }
+  const handleCreateCrew = async () => {
+    if (!newCrewName.trim()) return;
     try {
-      const users = await apiRequest<RegisteredUser[]>('/users/lookup-by-emails', {
+      const crew = await apiRequest<Crew>('/crews', {
         method: 'POST',
-        body: JSON.stringify({ emails }),
+        body: JSON.stringify({ name: newCrewName.trim() }),
       });
-      const map: Record<string, RegisteredUser> = {};
-      users.forEach(u => { map[u.email] = u; });
-      setRegisteredMap(map);
-    } catch { /* ignore */ }
+      setCrews(prev => [...prev, crew]);
+      setNewCrewName('');
+      setCreatingCrew(false);
+    } catch { showMsg('Failed to create crew.', 'danger'); }
   };
 
-  const startEdit = (player: Player) => {
-    setEditingId(player._id);
-    setEditingEmail(player.email ?? '');
+  const handleRenameCrew = async (id: string) => {
+    if (!editingCrewName.trim()) return;
+    try {
+      const updated = await apiRequest<Crew>(`/crews/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ name: editingCrewName.trim() }),
+      });
+      setCrews(prev => prev.map(c => c._id === id ? updated : c));
+      setEditingCrewId(null);
+    } catch { showMsg('Failed to rename crew.', 'danger'); }
   };
 
-  const cancelEdit = () => { setEditingId(null); setEditingEmail(''); };
+  const handleDeleteCrew = async (id: string) => {
+    try {
+      await apiRequest(`/crews/${id}`, { method: 'DELETE' });
+      setCrews(prev => prev.filter(c => c._id !== id));
+    } catch { showMsg('Failed to delete crew.', 'danger'); }
+  };
+
+  const handleAddPlayerToCrew = async (crewId: string, playerId: string) => {
+    try {
+      const updated = await apiRequest<Crew>(`/crews/${crewId}/players/${playerId}`, { method: 'POST' });
+      setCrews(prev => prev.map(c => c._id === crewId ? updated : c));
+      setAddingPlayerToCrewId(null);
+      const animKey = `${crewId}-${playerId}`;
+      setAddedAnimation(prev => ({ ...prev, [animKey]: true }));
+      setTimeout(() => setAddedAnimation(prev => { const n = { ...prev }; delete n[animKey]; return n; }), 900);
+      setSelectedPlayerId(null);
+    } catch { showMsg('Failed to add player.', 'danger'); }
+  };
+
+  const handleRemovePlayerFromCrew = async (crewId: string, playerId: string) => {
+    try {
+      const updated = await apiRequest<Crew>(`/crews/${crewId}/players/${playerId}`, { method: 'DELETE' });
+      setCrews(prev => prev.map(c => c._id === crewId ? updated : c));
+    } catch { showMsg('Failed to remove player.', 'danger'); }
+  };
+
+  const handleShimmerRename = () => {
+    setRenameShimmer(true);
+    setTimeout(() => setRenameShimmer(false), 1800);
+  };
+
+  const startEmailEdit = (player: Player) => {
+    const linkedEmail = player.linkedUserId ? linkedUserMap[player.linkedUserId]?.email : undefined;
+    setEditingEmailId(player._id);
+    setEditingEmail(player.email ?? linkedEmail ?? '');
+  };
+
+  const cancelEmailEdit = () => { setEditingEmailId(null); setEditingEmail(''); };
 
   const saveEmail = async (id: string) => {
-    setSavingId(id);
+    setSavingEmailId(id);
     try {
       await playerApi.update(id, { email: editingEmail.trim() } as any);
-      const updated = players.map(p =>
+      setPlayers(prev => prev.map(p =>
         p._id === id ? { ...p, email: editingEmail.trim() || undefined } : p
-      );
-      setPlayers(updated);
-      await refreshRegisteredMap(updated);
-      setEditingId(null);
+      ));
+      setEditingEmailId(null);
       showMsg('Email saved.');
-    } catch {
-      showMsg('Failed to save email.', 'danger');
-    } finally {
-      setSavingId(null);
-    }
+    } catch { showMsg('Failed to save email.', 'danger'); }
+    finally { setSavingEmailId(null); }
   };
 
-  const withEmail = players.filter(p => p.email);
-  const withoutEmail = players.filter(p => !p.email);
+  const playersInCrew = (crew: Crew) =>
+    crew.playerIds.map(id => players.find(p => p._id === id)).filter(Boolean) as Player[];
 
-  const renderRow = (player: Player, idx: number, delayBase = 0) => {
-    const isEditing = editingId === player._id;
-    const isSaving = savingId === player._id;
-    const registered = player.email ? registeredMap[player.email] : undefined;
+  const getPlayerAvatar = (player: Player): string | null => {
+    const linkedUser = player.linkedUserId ? linkedUserMap[player.linkedUserId] : undefined;
+    return linkedUser?.photoURL || player.cardImage || null;
+  };
+
+  const getEffectiveEmail = (player: Player): string | undefined => {
+    if (player.email) return player.email;
+    if (player.linkedUserId) return linkedUserMap[player.linkedUserId]?.email;
+    return undefined;
+  };
+
+  const availableForCrew = (crew: Crew) =>
+    players.filter(p => !crew.playerIds.includes(p._id));
+
+  const renderPlayerRowLeft = (player: Player, crewId: string) => {
+    const animKey = `${crewId}-${player._id}`;
+    const isNew = !!addedAnimation[animKey];
+    return (
+      <div key={player._id} className={`crew-member-row${isNew ? ' crew-member-row--added' : ''}`}>
+        <div className="crew-member-row__avatar">
+          {getPlayerAvatar(player)
+            ? <img src={getPlayerAvatar(player)!} alt={player.name} />
+            : <span>{player.jerseyNumber}</span>
+          }
+        </div>
+        <div className="crew-member-row__info">
+          <span className="crew-member-row__name">{player.name}</span>
+          <span className="crew-member-row__pos">{player.preferredPosition}</span>
+        </div>
+        <button className="crew-member-row__remove" title="Remove from crew"
+          onClick={() => handleRemovePlayerFromCrew(crewId, player._id)}>
+          <i className="bi bi-x-lg"></i>
+        </button>
+      </div>
+    );
+  };
+
+  const renderEmailRow = (player: Player, idx: number) => {
+    const isEditing = editingEmailId === player._id;
+    const isSaving = savingEmailId === player._id;
+    const effectiveEmail = getEffectiveEmail(player);
+    const isAutoLinked = !player.email && !!player.linkedUserId && !!effectiveEmail;
+    const isSelected = selectedPlayerId === player._id;
 
     return (
-      <div
-        key={player._id}
-        className={`crew-row${!player.email ? ' crew-row--no-email' : ''}`}
-        style={{ animationDelay: `${(delayBase + idx) * 0.05}s` }}
-      >
-        <div className="crew-row__avatar">
-          {registered?.photoURL
-            ? <img src={registered.photoURL} alt={registered.displayName} />
-            : player.cardImage
-              ? <img src={player.cardImage} alt={player.name} />
+      <div key={player._id} className="crew-email-section">
+        <div
+          className={`crew-email-row${!effectiveEmail ? ' crew-email-row--no-email' : ''}${isSelected ? ' crew-email-row--selected' : ''}`}
+          style={{ animationDelay: `${idx * 0.04}s` }}
+          onClick={() => setSelectedPlayerId(prev => prev === player._id ? null : player._id)}
+        >
+          <div className="crew-email-row__avatar">
+            {getPlayerAvatar(player)
+              ? <img src={getPlayerAvatar(player)!} alt={player.name} />
               : <span>{player.jerseyNumber}</span>
-          }
-          {registered && <div className="crew-row__registered-dot" title="Registered user" />}
-        </div>
-        <div className="crew-row__info">
-          <span className="crew-row__name">
-            {registered ? registered.displayName : player.name}
-          </span>
-          <span className="crew-row__position">{player.preferredPosition}</span>
+            }
+          </div>
+          <div className="crew-email-row__name">{player.name}</div>
+
+          {isEditing ? (
+            <div className="crew-email-row__edit" onClick={e => e.stopPropagation()}>
+              <input
+                className="crew-email-input" type="email" value={editingEmail}
+                onChange={e => setEditingEmail(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') saveEmail(player._id); if (e.key === 'Escape') cancelEmailEdit(); }}
+                autoFocus placeholder="player@example.com"
+              />
+              <button className="crew-edit-btn crew-edit-btn--save" onClick={() => saveEmail(player._id)} disabled={isSaving}>
+                <i className={`bi ${isSaving ? 'bi-hourglass-split' : 'bi-check-lg'}`}></i>
+              </button>
+              <button className="crew-edit-btn crew-edit-btn--cancel" onClick={cancelEmailEdit}>
+                <i className="bi bi-x-lg"></i>
+              </button>
+            </div>
+          ) : (
+            <div className="crew-email-row__contact" onClick={e => e.stopPropagation()}>
+              {effectiveEmail ? (
+                <a href={`mailto:${effectiveEmail}`}
+                  className={`crew-email-row__email-pill${isAutoLinked ? ' crew-email-row__email-pill--auto' : ''}`}
+                  title={isAutoLinked ? 'Auto-filled from linked account' : effectiveEmail}>
+                  <i className="bi bi-envelope-fill"></i>
+                  <span>{effectiveEmail}</span>
+                  {isAutoLinked && <i className="bi bi-link-45deg" style={{ marginLeft: 4, opacity: 0.6 }}></i>}
+                </a>
+              ) : (
+                <span className="crew-email-row__no-email">
+                  <i className="bi bi-envelope-slash"></i> Not registered
+                </span>
+              )}
+              <button className="crew-edit-btn crew-edit-btn--pencil" onClick={() => startEmailEdit(player)} title="Edit email">
+                <i className="bi bi-pencil-fill"></i>
+              </button>
+            </div>
+          )}
         </div>
 
-        {isEditing ? (
-          <div className="crew-row__edit">
-            <input
-              className="crew-email-input"
-              type="email"
-              value={editingEmail}
-              onChange={e => setEditingEmail(e.target.value)}
-              onKeyDown={e => {
-                if (e.key === 'Enter') saveEmail(player._id);
-                if (e.key === 'Escape') cancelEdit();
-              }}
-              autoFocus
-              placeholder="player@example.com"
-            />
-            <button
-              className="crew-edit-btn crew-edit-btn--save"
-              onClick={() => saveEmail(player._id)}
-              disabled={isSaving}
-              title="Save"
-            >
-              <i className={`bi ${isSaving ? 'bi-hourglass-split' : 'bi-check-lg'}`}></i>
-            </button>
-            <button
-              className="crew-edit-btn crew-edit-btn--cancel"
-              onClick={cancelEdit}
-              title="Cancel"
-            >
-              <i className="bi bi-x-lg"></i>
-            </button>
-          </div>
-        ) : (
-          <div className="crew-row__contact">
-            {player.email ? (
-              <a href={`mailto:${player.email}`} className="crew-row__email" title={player.email}>
-                <i className="bi bi-envelope-fill"></i>
-                <span>{player.email}</span>
-              </a>
-            ) : (
-              <span className="crew-row__no-email">
-                <i className="bi bi-envelope-slash"></i>
-                Not registered
-              </span>
-            )}
-            <button
-              className="crew-edit-btn crew-edit-btn--pencil"
-              onClick={() => startEdit(player)}
-              title="Edit email"
-            >
-              <i className="bi bi-pencil-fill"></i>
-            </button>
+        {isSelected && (
+          <div className="crew-picker">
+            {crews.length === 0 && <span className="crew-picker__empty">No crews yet.</span>}
+            {crews.map((crew, ci) => {
+              const alreadyIn = crew.playerIds.includes(player._id);
+              return (
+                <button
+                  key={crew._id}
+                  className={`crew-picker__item${alreadyIn ? ' crew-picker__item--in' : ''}`}
+                  style={{ animationDelay: `${ci * 0.06}s` }}
+                  onClick={() => !alreadyIn && handleAddPlayerToCrew(crew._id, player._id)}
+                  disabled={alreadyIn}
+                >
+                  <i className={`bi ${alreadyIn ? 'bi-check-circle-fill' : 'bi-person-plus'}`}></i>
+                  <span>{crew.name}</span>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
@@ -178,46 +286,127 @@ const CrewPage = () => {
 
   return (
     <>
-      <div className="page-wrapper">
-        <div className="page-container">
-          <div className="page-header">
-            <div className="back-button-container">
-              <BackButton position="static" />
+      <div className="crew-page">
+        <div className="crew-left">
+          <div className="crew-left__header">
+            <BackButton position="static" />
+            <h2 className="crew-left__title">Crews</h2>
+            <div className="crew-left__header-btns">
+              <button className="btn-ct crew-left__shimmer-btn" onClick={handleShimmerRename}>
+                <i className="bi bi-pencil-square"></i> Rename Crew
+              </button>
+              <button className="btn-ct crew-left__add-crew-btn"
+                onClick={() => { setCreatingCrew(true); setTimeout(() => newCrewInputRef.current?.focus(), 50); }}>
+                <i className="bi bi-plus-lg"></i> New Crew
+              </button>
             </div>
-            <h2 className="page-title">My Crew</h2>
           </div>
 
-          <div className="content-card">
-            {loading && <p className="empty-message">Loading crew...</p>}
+          {creatingCrew && (
+            <div className="crew-create-bar">
+              <input ref={newCrewInputRef} className="crew-email-input" placeholder="Crew name\u2026"
+                value={newCrewName} onChange={e => setNewCrewName(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') handleCreateCrew(); if (e.key === 'Escape') { setCreatingCrew(false); setNewCrewName(''); } }}
+              />
+              <button className="crew-edit-btn crew-edit-btn--save" onClick={handleCreateCrew}>
+                <i className="bi bi-check-lg"></i>
+              </button>
+              <button className="crew-edit-btn crew-edit-btn--cancel" onClick={() => { setCreatingCrew(false); setNewCrewName(''); }}>
+                <i className="bi bi-x-lg"></i>
+              </button>
+            </div>
+          )}
 
-            {!loading && players.length === 0 && (
-              <p className="empty-message">No players found.</p>
-            )}
+          {loading && <p className="crew-empty">Loading...</p>}
 
-            {!loading && players.length > 0 && (
-              <div className="crew-list">
-                {withEmail.map((player, idx) => renderRow(player, idx))}
+          {!loading && (
+            <div className="crew-card-list">
+              {crews.map(crew => (
+                <div key={crew._id} className="crew-card">
+                  <div className="crew-card__header">
+                    {editingCrewId === crew._id ? (
+                      <>
+                        <input className="crew-email-input crew-card__rename-input" value={editingCrewName}
+                          onChange={e => setEditingCrewName(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter') handleRenameCrew(crew._id); if (e.key === 'Escape') setEditingCrewId(null); }}
+                          autoFocus
+                        />
+                        <button className="crew-edit-btn crew-edit-btn--save" onClick={() => handleRenameCrew(crew._id)}>
+                          <i className="bi bi-check-lg"></i>
+                        </button>
+                        <button className="crew-edit-btn crew-edit-btn--cancel" onClick={() => setEditingCrewId(null)}>
+                          <i className="bi bi-x-lg"></i>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <span className={`crew-card__name${renameShimmer ? ' crew-card__name--shimmer' : ''}`}>
+                          {crew.name}
+                        </span>
+                        <div className="crew-card__actions">
+                          <button className="crew-edit-btn" title="Rename"
+                            onClick={() => { setEditingCrewId(crew._id); setEditingCrewName(crew.name); }}>
+                            <i className="bi bi-pencil-fill"></i>
+                          </button>
+                          <button className="crew-edit-btn crew-edit-btn--cancel" title="Delete crew"
+                            onClick={() => handleDeleteCrew(crew._id)}>
+                            <i className="bi bi-trash3-fill"></i>
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
 
-                {withoutEmail.length > 0 && (
-                  <>
-                    <div className="crew-divider">
-                      <span>No email registered</span>
-                    </div>
-                    {withoutEmail.map((player, idx) => renderRow(player, idx, withEmail.length))}
-                  </>
-                )}
-              </div>
-            )}
+                  <div className="crew-card__members">
+                    {playersInCrew(crew).length === 0 && <p className="crew-card__empty">No players yet.</p>}
+                    {playersInCrew(crew).map(p => renderPlayerRowLeft(p, crew._id))}
+                  </div>
+
+                  <div className="crew-card__add-player">
+                    {addingPlayerToCrewId === crew._id ? (
+                      <div className="crew-card__player-select">
+                        <select className="crew-email-input" defaultValue=""
+                          onChange={e => { if (e.target.value) handleAddPlayerToCrew(crew._id, e.target.value); }}>
+                          <option value="" disabled>Select a player\u2026</option>
+                          {availableForCrew(crew).map(p => (
+                            <option key={p._id} value={p._id}>{p.name} ({p.preferredPosition})</option>
+                          ))}
+                        </select>
+                        <button className="crew-edit-btn crew-edit-btn--cancel" onClick={() => setAddingPlayerToCrewId(null)}>
+                          <i className="bi bi-x-lg"></i>
+                        </button>
+                      </div>
+                    ) : (
+                      <button className="crew-card__add-player-btn"
+                        onClick={() => setAddingPlayerToCrewId(crew._id)}
+                        disabled={availableForCrew(crew).length === 0}>
+                        <i className="bi bi-person-plus-fill"></i> Add Player
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {crews.length === 0 && players.length > 0 && !creatingCrew && (
+                <p className="crew-empty">Create a crew to start organising your players.</p>
+              )}
+              {players.length === 0 && <p className="crew-empty">No players found.</p>}
+            </div>
+          )}
+        </div>
+
+        <div className="crew-right">
+          <div className="crew-right__header">
+            <h2 className="crew-right__title">MY CREW</h2>
+            <p className="crew-right__hint">Click a player to assign them to a crew</p>
+          </div>
+          <div className="crew-email-list">
+            {players.map((p, idx) => renderEmailRow(p, idx))}
           </div>
         </div>
       </div>
 
-      <ToastNotification
-        message={toastMsg}
-        show={showToast}
-        onClose={() => setShowToast(false)}
-        variant={toastVariant}
-      />
+      <ToastNotification message={toastMsg} show={showToast} onClose={() => setShowToast(false)} variant={toastVariant} />
     </>
   );
 };

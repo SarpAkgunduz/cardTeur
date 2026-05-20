@@ -4,7 +4,7 @@ import FootballPitch, { PitchPlayer } from '../components/FootballPitch';
 import MatchDetailsModal from '../components/MatchDetailsModal';
 import ToastNotification from '../components/ToastNotification';
 import { apiRequest } from '../services/api/apiClient';
-import './MatchesPage.css';
+import './SchedulePage.css';
 
 interface SavedPlayer {
   name: string;

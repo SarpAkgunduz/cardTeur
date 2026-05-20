@@ -6,7 +6,7 @@ import PlayersPage from './pages/PlayersPage';
 import PreviewPage from './pages/PreviewPage';
 import CrewPage from './pages/CrewPage';
 import MatchPage from './pages/MatchPage';
-import MatchesPage from './pages/MatchesPage';
+import SchedulePage from './pages/SchedulePage';
 import AddPlayerForm from './pages/AddPlayerForm';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
@@ -94,10 +94,10 @@ const App = () => {
           }
         />
         <Route
-          path="/matches"
+          path="/schedule"
           element={
             <PrivateRoute>
-              <MatchesPage />
+              <SchedulePage />
             </PrivateRoute>
           }
         />
