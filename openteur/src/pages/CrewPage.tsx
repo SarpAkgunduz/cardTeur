@@ -46,11 +46,19 @@ const CrewPage = () => {
   const [toastMsg, setToastMsg] = useState('');
   const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
   const [showToast, setShowToast] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
 
   const newCrewInputRef = useRef<HTMLInputElement>(null);
+  const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showMsg = (msg: string, variant: 'success' | 'danger' = 'success') => {
     setToastMsg(msg); setToastVariant(variant); setShowToast(true);
+  };
+
+  const flashSaved = () => {
+    setSavedFlash(true);
+    if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+    savedTimerRef.current = setTimeout(() => setSavedFlash(false), 2000);
   };
 
   useEffect(() => {
@@ -98,6 +106,7 @@ const CrewPage = () => {
       setCrews(prev => [...prev, crew]);
       setNewCrewName('');
       setCreatingCrew(false);
+      flashSaved();
     } catch { showMsg('Failed to create crew.', 'danger'); }
   };
 
@@ -110,6 +119,7 @@ const CrewPage = () => {
       });
       setCrews(prev => prev.map(c => c._id === id ? updated : c));
       setEditingCrewId(null);
+      flashSaved();
     } catch { showMsg('Failed to rename crew.', 'danger'); }
   };
 
@@ -117,6 +127,7 @@ const CrewPage = () => {
     try {
       await apiRequest(`/crews/${id}`, { method: 'DELETE' });
       setCrews(prev => prev.filter(c => c._id !== id));
+      flashSaved();
     } catch { showMsg('Failed to delete crew.', 'danger'); }
   };
 
@@ -129,6 +140,7 @@ const CrewPage = () => {
       setAddedAnimation(prev => ({ ...prev, [animKey]: true }));
       setTimeout(() => setAddedAnimation(prev => { const n = { ...prev }; delete n[animKey]; return n; }), 900);
       setSelectedPlayerId(null);
+      flashSaved();
     } catch { showMsg('Failed to add player.', 'danger'); }
   };
 
@@ -136,6 +148,7 @@ const CrewPage = () => {
     try {
       const updated = await apiRequest<Crew>(`/crews/${crewId}/players/${playerId}`, { method: 'DELETE' });
       setCrews(prev => prev.map(c => c._id === crewId ? updated : c));
+      flashSaved();
     } catch { showMsg('Failed to remove player.', 'danger'); }
   };
 
@@ -161,6 +174,7 @@ const CrewPage = () => {
       ));
       setEditingEmailId(null);
       showMsg('Email saved.');
+      flashSaved();
     } catch { showMsg('Failed to save email.', 'danger'); }
     finally { setSavingEmailId(null); }
   };
@@ -295,6 +309,11 @@ const CrewPage = () => {
           <div className="crew-left__header">
             <BackButton position="static" />
             <h2 className="crew-left__title">Crews</h2>
+            {savedFlash && (
+              <span className="crew-saved-badge">
+                <i className="bi bi-check-circle-fill"></i> Kaydedildi
+              </span>
+            )}
             <div className="crew-left__header-btns">
               <button className="btn-ct crew-left__shimmer-btn" onClick={handleShimmerRename}>
                 <i className="bi bi-pencil-square"></i> Rename Crew
