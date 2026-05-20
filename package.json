@@ -1,0 +1,8 @@
+{
+  "name": "cardteur-root",
+  "private": true,
+  "scripts": {
+    "build": "cd openteur && npm install && npm run build",
+    "deploy": "npm run build && npx wrangler deploy"
+  }
+}
