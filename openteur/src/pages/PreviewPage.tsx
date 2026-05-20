@@ -28,14 +28,15 @@ const PreviewPage = () => {
   return (
     <div className="page-wrapper">
       <div className="page-container">
-        <div className="page-header">
-          <div className="back-button-container">
-            <BackButton position="static" />
-          </div>
-          <h2 className="page-title">Player Roster</h2>
-        </div>
-
         <div className="content-card">
+          <div className="page-header preview-page__header">
+            <div className="back-button-container">
+              <BackButton position="static" />
+            </div>
+            <h2 className="page-title">Player Roster</h2>
+            <div className="page-header-spacer" />
+          </div>
+
           {loading && <p className="empty-message">Loading players...</p>}
 
           {!loading && players.length === 0 && (

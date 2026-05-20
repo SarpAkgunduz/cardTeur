@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import FootballPitch, { PitchPlayer } from '../components/FootballPitch';
 import MatchDetailsModal from '../components/MatchDetailsModal';
 import ToastNotification from '../components/ToastNotification';
+import BackButton from '../components/BackButton';
 import { apiRequest } from '../services/api/apiClient';
 import './SchedulePage.css';
 
@@ -104,6 +105,8 @@ const MatchesPage = () => {
 
   return (
     <div className="page-wrapper">
+      <div className="page-container">
+        <div className="content-card">
       <ToastNotification show={showToast} message={toastMsg} onClose={() => setShowToast(false)} variant={toastVariant} />
 
       {announceTarget && (
@@ -116,10 +119,12 @@ const MatchesPage = () => {
       )}
 
       <div className="matches-page">
-        <div className="matches-page__header">
-          <div>
-            <h1 className="matches-page__title">Saved Matches</h1>
-            <p className="matches-page__subtitle">{matches.length} match{matches.length !== 1 ? 'es' : ''} saved</p>
+        <div className="page-header matches-page__header">
+          <div className="back-button-container">
+            <BackButton position="static" />
+          </div>
+          <div className="matches-page__title-wrap">
+            <h1 className="page-title matches-page__title">Saved Matches</h1>
           </div>
           <button className="matches-page__new-btn" onClick={() => navigate('/match')}>
             <i className="bi bi-plus-lg me-1" />
@@ -249,6 +254,8 @@ const MatchesPage = () => {
               </div>
             </div>
           ))}
+        </div>
+      </div>
         </div>
       </div>
     </div>

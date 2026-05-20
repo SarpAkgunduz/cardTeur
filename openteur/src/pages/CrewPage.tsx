@@ -290,22 +290,27 @@ const CrewPage = () => {
 
   return (
     <>
+      <div className="page-wrapper">
+        <div className="page-container">
+          <div className="content-card">
+            <div className="page-header crew-page__header">
+              <div className="back-button-container">
+                <BackButton position="static" />
+              </div>
+              <h2 className="page-title crew-page__title">Crews</h2>
+              <div className="crew-left__header-btns">
+                <button className="btn-ct crew-left__shimmer-btn" onClick={handleShimmerRename}>
+                  <i className="bi bi-pencil-square"></i> Rename Crew
+                </button>
+                <button className="btn-ct crew-left__add-crew-btn"
+                  onClick={() => { setCreatingCrew(true); setTimeout(() => newCrewInputRef.current?.focus(), 50); }}>
+                  <i className="bi bi-plus-lg"></i> New Crew
+                </button>
+              </div>
+            </div>
+
       <div className="crew-page">
         <div className="crew-left">
-          <div className="crew-left__header">
-            <BackButton position="static" />
-            <h2 className="crew-left__title">Crews</h2>
-            <div className="crew-left__header-btns">
-              <button className="btn-ct crew-left__shimmer-btn" onClick={handleShimmerRename}>
-                <i className="bi bi-pencil-square"></i> Rename Crew
-              </button>
-              <button className="btn-ct crew-left__add-crew-btn"
-                onClick={() => { setCreatingCrew(true); setTimeout(() => newCrewInputRef.current?.focus(), 50); }}>
-                <i className="bi bi-plus-lg"></i> New Crew
-              </button>
-            </div>
-          </div>
-
           {creatingCrew && (
             <div className="crew-create-bar">
               <input ref={newCrewInputRef} className="crew-email-input" placeholder="Crew name\u2026"
@@ -426,6 +431,9 @@ const CrewPage = () => {
           </div>
           <div className="crew-email-list">
             {players.map((p, idx) => renderEmailRow(p, idx))}
+          </div>
+        </div>
+      </div>
           </div>
         </div>
       </div>

@@ -25,6 +25,18 @@ const HomePage = () => {
               <i className="bi bi-clipboard-x-fill btn-icon"></i>
               <span className="btn-label">Prepare Match</span>
             </button>
+            <button className="btn-homepage" onClick={() => navigate('/schedule')}>
+              <i className="bi bi-calendar-event-fill btn-icon"></i>
+              <span className="btn-label">Schedule</span>
+            </button>
+            <button className="btn-homepage" onClick={() => navigate('/crew')}>
+              <i className="bi bi-people-fill btn-icon"></i>
+              <span className="btn-label">My Crew</span>
+            </button>
+            <button className="btn-homepage" onClick={() => navigate('/friends')}>
+              <i className="bi bi-person-heart btn-icon"></i>
+              <span className="btn-label">Friends</span>
+            </button>
           </div>
         </div>
       </div>

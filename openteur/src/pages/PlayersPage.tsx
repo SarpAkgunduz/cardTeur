@@ -64,12 +64,12 @@ const PlayersPage = () => {
       <div className="page-container">
         <div className="content-card">
           {/* Header and Buttons */}
-                    <div className="page-header" style={{ borderBottom: 'none', width: '100%', justifyContent: 'space-between' }}>
+          <div className="page-header players-page__header">
             <div className="back-button-container">
               <BackButton position="static" />
             </div>
-            <h2 className="page-title" style={{ flex: 1, textAlign: 'center' }}>Players</h2>
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <h2 className="page-title players-page__title">Players</h2>
+            <div className="players-page__actions">
               <button
                 className={`btn btn-ct ${compareMode ? 'active-mode' : ''}`}
                 onClick={() => {

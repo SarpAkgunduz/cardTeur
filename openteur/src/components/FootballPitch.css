@@ -72,7 +72,7 @@
 .fp-pitch {
   position: relative;
   width: 100%;
-  aspect-ratio: 9 / 16;
+  aspect-ratio: 12 / 16;
   background: radial-gradient(ellipse at center, #2d5a27 0%, #1e3a1a 100%);
   border: 4px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;

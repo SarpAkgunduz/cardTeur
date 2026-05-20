@@ -1,3 +1,19 @@
+@font-face {
+  font-family: 'Cyberform';
+  src: url('/cyberform-font/CyberformDemo.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Cyberform';
+  src: url('/cyberform-font/CyberformDemo-Oblique.otf') format('opentype');
+  font-weight: 400;
+  font-style: oblique;
+  font-display: swap;
+}
+
 /* Global Page Wrapper — background transparent, shell handles bg */
 .page-wrapper {
   min-height: calc(100vh - 64px); /* minus nav */
@@ -14,24 +30,36 @@
 
 /* Page Header */
 .page-header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
+  gap: 12px;
   margin-bottom: 30px;
   padding-bottom: 20px;
   border-bottom: 2px solid rgba(0, 222, 236, 0.35);
 }
 
+.page-header > :first-child {
+  justify-self: start;
+}
+
+.page-header > :last-child {
+  justify-self: end;
+}
+
 /* Page Title */
 .page-title {
-  color: #ffffff;
-  font-size: 2.5rem;
-  font-weight: 900;
-  font-family: 'Space Grotesk', sans-serif;
-  font-style: italic;
+  color: #00deec;
+  font-size: var(--page-title-size, 1.8rem);
+  font-weight: 400;
+  font-family: 'Cyberform', 'Space Grotesk', sans-serif;
+  font-style: normal;
   text-transform: uppercase;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.16em;
+  line-height: 1;
   margin: 0;
+  text-align: center;
+  justify-self: center;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
@@ -39,6 +67,11 @@
 .back-button-container {
   display: flex;
   align-items: center;
+}
+
+.page-header-spacer {
+  width: 100%;
+  min-width: 0;
 }
 
 /* CardTeur Button — shared style for all action buttons */
@@ -113,10 +146,6 @@
 @media (max-width: 768px) {
   .page-wrapper {
     padding: 15px;
-  }
-
-  .page-title {
-    font-size: 2rem;
   }
 
   .content-card {

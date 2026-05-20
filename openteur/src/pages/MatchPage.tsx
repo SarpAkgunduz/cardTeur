@@ -72,6 +72,7 @@ const MatchPage = () => {
   }, [players]);
 
   useEffect(() => {
+    if (pitchMode) return;
     const active = playersPool.filter(p => selectedPlayerIds.has(p._id));
     if (active.length === 0) { setLeftPlayers([]); setRightPlayers([]); return; }
     const { left, right } = distributePlayers(active, playerCount);
@@ -79,7 +80,7 @@ const MatchPage = () => {
     setRightPlayers(right);
     setPitchMode(false);
     setSavedMatchId(null);
-  }, [playersPool, playerCount, selectedPlayerIds]);
+  }, [playersPool, playerCount, selectedPlayerIds, pitchMode]);
 
   const computeTeamOvr = (players: any[]) => {
     if (!players.length) return 0;
@@ -249,9 +250,91 @@ const MatchPage = () => {
     setShowMatchModal(false);
   };
 
+  const renderFormationBuilder = () => (
+    <div className="match-settings-card match-settings-card--builder">
+      <h2 className="match-settings-card__header">
+        <span className="match-settings-card__dot" />
+        Formation Builder
+      </h2>
+
+      <div className="match-setting-group">
+        <label className="match-setting-label">Number of Players</label>
+        <select className="match-setting-select" value={playerCount} onChange={e => setPlayerCount(Number(e.target.value))} disabled={pitchMode}>
+          {PLAYER_COUNT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+      </div>
+
+      <div className="match-setting-group">
+        <label className="match-setting-label">Team A Formation</label>
+        <select className="match-setting-select" value={formationA} onChange={e => setFormationA(e.target.value)}>
+          {formationSet.map(f => <option key={f.name} value={f.name}>{f.name.toUpperCase()}</option>)}
+        </select>
+      </div>
+
+      <div className="match-setting-group">
+        <label className="match-setting-label">Team B Formation</label>
+        <select className="match-setting-select" value={formationB} onChange={e => setFormationB(e.target.value)}>
+          {formationSet.map(f => <option key={f.name} value={f.name}>{f.name.toUpperCase()}</option>)}
+        </select>
+      </div>
+
+      <button className="match-apply-btn" onClick={applyFormation} disabled={leftPlayers.length === 0}>
+        Apply Formation
+      </button>
+    </div>
+  );
+
+  const renderTeamRoster = (
+    team: 'A' | 'B',
+    teamPlayers: any[],
+    slotRoles: string[],
+    roleOverrides: Record<string, string>,
+    roles: string[],
+  ) => (
+    <div className={`match-team-roster match-team-roster--${team.toLowerCase()}`}>
+      <div className="match-team-roster__header">
+        <span>Team {team} List</span>
+        <span>{teamPlayers.length}</span>
+      </div>
+      <div className="match-team-roster__list">
+        {teamPlayers.map((player, index) => {
+          const id = player._id ?? player.id;
+          const role = roleOverrides[id] ?? slotRoles[index] ?? player.preferredPosition ?? '?';
+          return (
+            <div key={id} className="match-team-roster__row">
+              <div className="match-team-roster__player">
+                <span className="match-team-roster__name">{player.name ?? 'Unknown'}</span>
+                <span className="match-team-roster__pos">{player.preferredPosition ?? '?'}</span>
+              </div>
+              <select
+                className="match-team-roster__role"
+                value={role}
+                onChange={e => handleChangeRole(id, e.target.value, team)}
+                aria-label={`Change ${player.name ?? 'player'} role`}
+              >
+                {[...new Set([role, ...roles])].map(option => (
+                  <option key={option} value={option}>{option}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                className="match-team-roster__swap"
+                onClick={() => handleChangeTeam(id, team)}
+                title={`Move to Team ${team === 'A' ? 'B' : 'A'}`}
+              >
+                <i className="bi bi-arrow-left-right" />
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   return (
     <div className="page-wrapper">
-      <div className="match-page-container">
+      <div className="page-container match-page-container">
+        <div className="content-card match-content-card">
         <ToastNotification show={showToast} message={toastMsg} onClose={() => setShowToast(false)} variant={toastVariant} />
 
         {showMatchModal && (
@@ -263,45 +346,28 @@ const MatchPage = () => {
           />
         )}
 
-        <div className="match-layout">
-          {/* ── Sidebar ── */}
+        <div className="page-header match-page-header">
+          <div className="back-button-container">
+            <BackButton position="static" />
+          </div>
+          <h2 className="page-title match-page-title">Match Lineup</h2>
+          <div className="match-page-actions">
+            {pitchMode && (
+              <>
+                <button className="fp-btn fp-btn--save" onClick={handleSave}>
+                  {savedMatchId ? <><i className="bi bi-check2 me-1" />Saved</> : <><i className="bi bi-floppy me-1" />Save</>}
+                </button>
+                <button className="fp-btn fp-btn--accent" onClick={() => setShowMatchModal(true)}>
+                  ANNOUNCE MATCH
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className={`match-layout ${pitchMode ? 'match-layout--pitch' : 'match-layout--setup'}`}>
+          {!pitchMode && (
           <aside className="match-sidebar">
-            <div className="match-sidebar__back">
-              <BackButton position="static" />
-            </div>
-            <h1 className="match-title">Match Lineup &<br />Formation Builder</h1>
-
-            <div className="match-settings-card">
-              <h2 className="match-settings-card__header">
-                <span className="match-settings-card__dot" />
-                Match Settings
-              </h2>
-
-              <div className="match-setting-group">
-                <label className="match-setting-label">Number of Players</label>
-                <select className="match-setting-select" value={playerCount} onChange={e => setPlayerCount(Number(e.target.value))}>
-                  {PLAYER_COUNT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-                </select>
-              </div>
-
-              <div className="match-setting-group">
-                <label className="match-setting-label">Team A Formation</label>
-                <select className="match-setting-select" value={formationA} onChange={e => setFormationA(e.target.value)}>
-                  {formationSet.map(f => <option key={f.name} value={f.name}>{f.name.toUpperCase()}</option>)}
-                </select>
-              </div>
-
-              <div className="match-setting-group">
-                <label className="match-setting-label">Team B Formation</label>
-                <select className="match-setting-select" value={formationB} onChange={e => setFormationB(e.target.value)}>
-                  {formationSet.map(f => <option key={f.name} value={f.name}>{f.name.toUpperCase()}</option>)}
-                </select>
-              </div>
-
-              <button className="match-apply-btn" onClick={applyFormation} disabled={leftPlayers.length === 0}>
-                Apply Formation
-              </button>
-            </div>
 
             {playersPool.length > 0 && (
               <div className="match-crew-panel">
@@ -332,56 +398,55 @@ const MatchPage = () => {
               </div>
             )}
           </aside>
+          )}
 
           {/* ── Main area ── */}
           <div className="match-main">
             {pitchMode ? (
               <>
-                <div className="match-pitches-row">
-                  <FootballPitch
-                    players={toPitchPlayers(leftPlayers, positionsA, rolesA, roleOverridesA)}
-                    teamLabel="A"
-                    teamOvr={computeTeamOvr(leftPlayers)}
-                    teamStaminaOvr={computeTeamStaminaOvr(leftPlayers)}
-                    formationRoles={allRolesA}
-                    onMove={handleMoveA}
-                    onChangeTeam={id => handleChangeTeam(id, 'A')}
-                    onChangeRole={(id, role) => handleChangeRole(id, role, 'A')}
-                  />
-                  <FootballPitch
-                    players={toPitchPlayers(rightPlayers, positionsB, rolesB, roleOverridesB)}
-                    teamLabel="B"
-                    teamOvr={computeTeamOvr(rightPlayers)}
-                    teamStaminaOvr={computeTeamStaminaOvr(rightPlayers)}
-                    isTeamB
-                    formationRoles={allRolesB}
-                    onMove={handleMoveB}
-                    onChangeTeam={id => handleChangeTeam(id, 'B')}
-                    onChangeRole={(id, role) => handleChangeRole(id, role, 'B')}
-                  />
-                </div>
-
-                <div className="match-pitch-footer">
-                  <p className="match-pitch-footer__hint">
-                    Drag players to reposition. Right-click a card to change team or role.
-                  </p>
-                  <div className="match-pitch-footer__actions">
-                    <button className="fp-btn fp-btn--save" onClick={handleSave}>
-                      {savedMatchId ? <><i className="bi bi-check2 me-1" />Saved</> : <><i className="bi bi-floppy me-1" />Save</>}
-                    </button>
-                    <button className="fp-btn fp-btn--accent" onClick={() => setShowMatchModal(true)}>
-                      ANNOUNCE MATCH
-                    </button>
+                <div className="match-builder-stage">
+                  <div className="match-team-panel">
+                    <FootballPitch
+                      players={toPitchPlayers(leftPlayers, positionsA, rolesA, roleOverridesA)}
+                      teamLabel="A"
+                      teamOvr={computeTeamOvr(leftPlayers)}
+                      teamStaminaOvr={computeTeamStaminaOvr(leftPlayers)}
+                      formationRoles={allRolesA}
+                      onMove={handleMoveA}
+                      onChangeTeam={id => handleChangeTeam(id, 'A')}
+                      onChangeRole={(id, role) => handleChangeRole(id, role, 'A')}
+                    />
+                    {renderTeamRoster('A', leftPlayers, rolesA, roleOverridesA, allRolesA)}
+                  </div>
+                  {renderFormationBuilder()}
+                  <div className="match-team-panel">
+                    <FootballPitch
+                      players={toPitchPlayers(rightPlayers, positionsB, rolesB, roleOverridesB)}
+                      teamLabel="B"
+                      teamOvr={computeTeamOvr(rightPlayers)}
+                      teamStaminaOvr={computeTeamStaminaOvr(rightPlayers)}
+                      isTeamB
+                      formationRoles={allRolesB}
+                      onMove={handleMoveB}
+                      onChangeTeam={id => handleChangeTeam(id, 'B')}
+                      onChangeRole={(id, role) => handleChangeRole(id, role, 'B')}
+                    />
+                    {renderTeamRoster('B', rightPlayers, rolesB, roleOverridesB, allRolesB)}
                   </div>
                 </div>
+                <p className="match-pitch-hint">Drag players to reposition. Use the team lists or right-click a card to adjust teams and roles.</p>
               </>
             ) : (
-              <div className="match-pitch-placeholder">
-                <i className="bi bi-diagram-3" />
-                <p>Pick formations and click <strong>Apply Formation</strong> to see the lineup on the pitch.</p>
+              <div className="match-setup-stage">
+                {renderFormationBuilder()}
+                <div className="match-pitch-placeholder">
+                  <i className="bi bi-diagram-3" />
+                  <p>Pick formations and click <strong>Apply Formation</strong> to see the lineup on the pitch.</p>
+                </div>
               </div>
             )}
           </div>
+        </div>
         </div>
       </div>
     </div>

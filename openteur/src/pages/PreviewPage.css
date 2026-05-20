@@ -1,3 +1,8 @@
+.preview-page__header {
+  border-bottom: none;
+  width: 100%;
+}
+
 .preview-sections {
   display: flex;
   flex-direction: column;
@@ -74,4 +79,3 @@
     transform: translateY(0);
   }
 }
-

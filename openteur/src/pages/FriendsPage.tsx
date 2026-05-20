@@ -3,6 +3,7 @@ import { apiRequest } from '../services/api/apiClient';
 import { useAuth } from '../contexts/AuthContext';
 import ToastNotification from '../components/ToastNotification';
 import ConfirmDialog from '../components/ConfirmDialog';
+import BackButton from '../components/BackButton';
 import './FriendsPage.css';
 
 interface FriendUser {
@@ -134,9 +135,15 @@ const FriendsPage = () => {
   );
 
   return (
+    <div className="page-wrapper">
+      <div className="page-container">
+        <div className="content-card">
     <div className="friends-page">
-      <div className="friends-page__header">
-        <h2 className="friends-page__title">Friends</h2>
+      <div className="page-header friends-page__header">
+        <div className="back-button-container">
+          <BackButton position="static" />
+        </div>
+        <h2 className="page-title friends-page__title">Friends</h2>
         <span className="friends-page__count">{friends.length} friends</span>
       </div>
 
@@ -292,6 +299,9 @@ const FriendsPage = () => {
       />
 
       <ToastNotification show={showToast} message={toast} variant={toastVariant} onClose={() => setShowToast(false)} />
+    </div>
+        </div>
+      </div>
     </div>
   );
 };
