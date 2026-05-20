@@ -5,6 +5,7 @@ import { apiRequest } from '../services/api/apiClient';
 import ToastNotification from '../components/ToastNotification';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { useNavigate } from 'react-router-dom';
+import { compressImageFile } from '../utils/imageCompression';
 import './ProfilePage.css';
 
 const ProfilePage = () => {
@@ -65,15 +66,15 @@ const ProfilePage = () => {
     }
   };
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const dataUrl = ev.target?.result as string;
+    try {
+      const dataUrl = await compressImageFile(file);
       setPhotoPreview(dataUrl);
-    };
-    reader.readAsDataURL(file);
+    } catch {
+      showMsg('Could not process photo.', 'danger');
+    }
   };
 
   const handleSavePhoto = async () => {

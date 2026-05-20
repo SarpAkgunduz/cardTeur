@@ -3,7 +3,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { usePlayers } from '../contexts/PlayerContext';
 import BackButton from '../components/BackButton';
 import type { Player } from '../services/api/types';
-import { playerApi } from '../services';
 import { apiRequest } from '../services/api/apiClient';
 import ToastNotification from '../components/ToastNotification';
 import './CrewPage.css';
@@ -25,7 +24,7 @@ interface LinkedUser {
 
 const CrewPage = () => {
   const { currentUser } = useAuth();
-  const { players, setPlayers } = usePlayers();
+  const { players, loading: playersLoading, updatePlayer } = usePlayers();
   const [crews, setCrews] = useState<Crew[]>([]);
   const [linkedUserMap, setLinkedUserMap] = useState<Record<string, LinkedUser>>({});
   const [loading, setLoading] = useState(true);
@@ -56,37 +55,41 @@ const CrewPage = () => {
 
   useEffect(() => {
     apiRequest<Crew[]>('/crews')
-      .then(setCrews)
+      .then((loadedCrews) => {
+        setCrews(loadedCrews);
+      })
       .catch(() => showMsg('Failed to load crews.', 'danger'))
       .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
-    if (players.length === 0) return;
     const linkedUids = [...new Set(
       players.map(p => p.linkedUserId).filter(Boolean) as string[]
     )];
-    if (linkedUids.length === 0) return;
+    if (linkedUids.length === 0) {
+      setLinkedUserMap({});
+      return;
+    }
+
     apiRequest<LinkedUser[]>('/users/lookup-by-uids', {
       method: 'POST',
       body: JSON.stringify({ uids: linkedUids }),
-    }).then(async (users) => {
-      const map: Record<string, LinkedUser> = {};
-      users.forEach(u => { map[u.uid] = u; });
-      setLinkedUserMap(map);
-      for (const player of players) {
-        if (player.linkedUserId && !player.email && map[player.linkedUserId]?.email) {
-          const autoEmail = map[player.linkedUserId].email;
-          try {
-            await playerApi.update(player._id, { email: autoEmail } as any);
-            setPlayers(prev => prev.map(p =>
-              p._id === player._id ? { ...p, email: autoEmail } : p
-            ));
-          } catch { /* non-fatal */ }
+    })
+      .then(async (users) => {
+        const map: Record<string, LinkedUser> = {};
+        users.forEach(u => { map[u.uid] = u; });
+        setLinkedUserMap(map);
+
+        for (const player of players) {
+          if (player.linkedUserId && !player.email && map[player.linkedUserId]?.email) {
+            try {
+              await updatePlayer(player._id, { email: map[player.linkedUserId].email });
+            } catch { /* non-fatal */ }
+          }
         }
-      }
-    }).catch(() => { /* silently ignore */ });
-  }, [players.length]);
+      })
+      .catch(() => {});
+  }, [players, updatePlayer]);
 
   const handleCreateCrew = async () => {
     if (!newCrewName.trim()) return;
@@ -155,10 +158,7 @@ const CrewPage = () => {
   const saveEmail = async (id: string) => {
     setSavingEmailId(id);
     try {
-      await playerApi.update(id, { email: editingEmail.trim() } as any);
-      setPlayers(prev => prev.map(p =>
-        p._id === id ? { ...p, email: editingEmail.trim() || undefined } : p
-      ));
+      await updatePlayer(id, { email: editingEmail.trim() });
       setEditingEmailId(null);
       showMsg('Email saved.');
     } catch { showMsg('Failed to save email.', 'danger'); }
@@ -321,9 +321,9 @@ const CrewPage = () => {
             </div>
           )}
 
-          {loading && <p className="crew-empty">Loading...</p>}
+          {(loading || playersLoading) && <p className="crew-empty">Loading...</p>}
 
-          {!loading && (
+          {!loading && !playersLoading && (
             <div className="crew-card-list">
               {(() => {
                 const ownedCrews = crews.filter(c => c.ownerUid === currentUser?.uid);

@@ -5,6 +5,7 @@ import { validatePlayer } from '../utils/validatePlayer';
 import type { StatField } from '../components/StatGrid';
 import { apiRequest } from '../services/api/apiClient';
 import { useAuth } from '../contexts/AuthContext';
+import { usePlayers } from '../contexts/PlayerContext';
 
 export interface UserOption {
   uid: string;
@@ -21,6 +22,7 @@ export function usePlayerForm() {
   const navigate = useNavigate();
 
   const { currentUser } = useAuth();
+  const { players, createPlayer, updatePlayer } = usePlayers();
 
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
@@ -89,7 +91,10 @@ export function usePlayerForm() {
   // Load player data if in edit mode
   useEffect(() => {
     if (!isEditMode || !id) return;
-    playerApi.getById(id)
+    const cachedPlayer = players.find(player => player._id === id);
+    const loadPlayer = cachedPlayer ? Promise.resolve(cachedPlayer) : playerApi.getById(id);
+
+    loadPlayer
       .then((player) => {
         setName(player.name);
         setCardImage(player.cardImage);
@@ -125,7 +130,7 @@ export function usePlayerForm() {
         setToastMsg('Failed to load player data');
         setShowToast(true);
       });
-  }, [id, isEditMode]);
+  }, [id, isEditMode, players]);
 
   // Calculated overalls
   const offensiveOverall = calculateAverage([dribbling, shotAccuracy, shotSpeed, headers, ballControl, vision, positioning, longPass, shortPass]);
@@ -213,10 +218,10 @@ export function usePlayerForm() {
 
     try {
       if (isEditMode && id) {
-        await playerApi.update(id, newPlayer);
+        await updatePlayer(id, newPlayer);
         setToastMsg('Player updated successfully!');
       } else {
-        await playerApi.create(newPlayer);
+        await createPlayer(newPlayer);
         setToastMsg('Player added successfully!');
       }
       setShowToast(true);

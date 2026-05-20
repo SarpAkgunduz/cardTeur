@@ -5,13 +5,12 @@ import Card from '../components/Card';
 import ComparePanel from '../components/ComparePanel';
 import ConfirmDialog from '../components/ConfirmDialog';
 import ToastNotification from '../components/ToastNotification';
-import { playerApi, Player } from '../services';
+import { Player } from '../services';
 import { usePlayers } from '../contexts/PlayerContext';
 import './PlayersPage.css';
 
 const PlayersPage = () => {
-  const { players, setPlayers } = usePlayers();
-  const [fetchError] = useState<string | null>(null);
+  const { players, error: fetchError, deletePlayer } = usePlayers();
   const [deleteMode, setDeleteMode] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
@@ -27,8 +26,7 @@ const PlayersPage = () => {
     onConfirm: async () => {
       setConfirm(null);
       try {
-        await playerApi.delete(id);
-        setPlayers((prev) => prev.filter((p) => p._id !== id));
+        await deletePlayer(id);
         setToastMsg('Player deleted successfully.');
         setToastVariant('success');
         setShowToast(true);

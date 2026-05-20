@@ -3,7 +3,7 @@ import BackButton from '../components/BackButton';
 import FootballPitch, { PitchPlayer } from '../components/FootballPitch';
 import MatchDetailsModal from '../components/MatchDetailsModal';
 import ToastNotification from '../components/ToastNotification';
-import { playerApi } from '../services';
+import { usePlayers } from '../contexts/PlayerContext';
 import { apiRequest } from '../services/api/apiClient';
 import './MatchPage.css';
 import { PLAYER_COUNT_OPTIONS, getFormationSet, smartAssign } from '../data/formations';
@@ -11,6 +11,7 @@ import { PLAYER_COUNT_OPTIONS, getFormationSet, smartAssign } from '../data/form
 
 
 const MatchPage = () => {
+  const { players } = usePlayers();
   const [playersPool, setPlayersPool]    = useState<any[]>([]);
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<Set<string>>(new Set());
   const [leftPlayers, setLeftPlayers]    = useState<any[]>([]);
@@ -66,11 +67,9 @@ const MatchPage = () => {
   };
 
   useEffect(() => {
-    playerApi.getAll().then(data => {
-      setPlayersPool(data);
-      setSelectedPlayerIds(new Set(data.map((p: any) => p._id)));
-    }).catch(err => console.error('Failed to load players', err));
-  }, []);
+    setPlayersPool(players);
+    setSelectedPlayerIds(new Set(players.map(p => p._id)));
+  }, [players]);
 
   useEffect(() => {
     const active = playersPool.filter(p => selectedPlayerIds.has(p._id));

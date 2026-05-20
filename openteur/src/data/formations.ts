@@ -248,7 +248,7 @@ export function smartAssign(players: any[], slots: FormationSlot[]): any[] {
     return (n(p.offensiveOverall) + n(p.defensiveOverall)) / 2;
   };
 
-  const remaining = players.map((p, i) => ({ p, i }));
+  const remaining = players.filter(Boolean).map((p, i) => ({ p, i }));
   const assigned: (any | null)[] = new Array(slots.length).fill(null);
 
   for (const cat of ['gk', 'att', 'def', 'mid'] as RoleCat[]) {
@@ -266,5 +266,5 @@ export function smartAssign(players: any[], slots: FormationSlot[]): any[] {
       assigned[i] = remaining[ri++].p;
     }
   }
-  return assigned;
+  return assigned.filter(Boolean);
 }
