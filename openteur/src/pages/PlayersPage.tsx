@@ -10,8 +10,8 @@ import { usePlayers } from '../contexts/PlayerContext';
 import './PlayersPage.css';
 
 const PlayersPage = () => {
-  const { players, setPlayers, loading: playersLoading } = usePlayers();
-  const [fetchError, setFetchError] = useState<string | null>(null);
+  const { players, setPlayers } = usePlayers();
+  const [fetchError] = useState<string | null>(null);
   const [deleteMode, setDeleteMode] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
@@ -21,8 +21,6 @@ const PlayersPage = () => {
   const [toastMsg, setToastMsg] = useState('');
   const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
   const navigate = useNavigate();
-
-  const loading = playersLoading;
 
   const handleDelete = (id: string) => setConfirm({
     message: 'Are you sure you want to delete this player?',
