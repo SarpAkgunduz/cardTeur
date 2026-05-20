@@ -138,9 +138,6 @@ const MatchesPage = () => {
           <div className="matches-page__empty">
             <i className="bi bi-collection" />
             <p>No saved matches yet.</p>
-            <button className="matches-page__new-btn" onClick={() => navigate('/match')}>
-              Build your first lineup
-            </button>
           </div>
         )}
 
