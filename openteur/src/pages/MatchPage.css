@@ -757,3 +757,313 @@
   padding: 20px;
   gap: 6px;
 }
+
+/* ── Match layout: sidebar + main ── */
+.match-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.match-sidebar {
+  flex: 0 0 260px;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.match-sidebar__modes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.match-sidebar .mode-button {
+  height: 90px;
+  font-size: 0.9rem;
+}
+
+.match-sidebar .mode-button h2 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.match-sidebar .mode-button p {
+  font-size: 0.72rem;
+  margin: 0;
+}
+
+.match-main {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Formation panel */
+.formation-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  background: rgba(26, 43, 66, 0.5);
+  border: 1px solid rgba(0, 222, 236, 0.15);
+  border-radius: 10px;
+}
+
+.formation-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formation-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.formation-select {
+  background: rgba(36, 59, 90, 0.9);
+  border: 1px solid rgba(0, 222, 236, 0.3);
+  border-radius: 6px;
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.formation-select:focus {
+  outline: none;
+  border-color: #00deec;
+}
+
+.formation-select option {
+  background: #1a2b42;
+}
+
+/* ═══════════════════════════════════════════
+   NEW MATCH PAGE LAYOUT (redesigned sidebar)
+   ═══════════════════════════════════════════ */
+
+.match-page-container {
+  width: 100%;
+  padding: 24px 32px;
+  color: #f7f5fd;
+  box-sizing: border-box;
+}
+
+.match-sidebar__back {
+  margin-bottom: 4px;
+}
+
+.match-settings-card {
+  background: rgba(36, 59, 90, 0.85);
+  border: 1px solid rgba(0, 222, 236, 0.18);
+  border-radius: 12px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.match-settings-card__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.match-settings-card__dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00deec;
+  flex-shrink: 0;
+}
+
+.match-setting-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.match-setting-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.match-setting-select {
+  background: rgba(26, 43, 66, 0.9);
+  border: 1px solid rgba(0, 222, 236, 0.25);
+  border-radius: 7px;
+  color: #fff;
+  padding: 7px 11px;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(0,222,236,0.6)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+}
+
+.match-setting-select:focus {
+  outline: none;
+  border-color: #00deec;
+}
+
+.match-setting-select option {
+  background: #1a2b42;
+}
+
+.match-apply-btn {
+  width: 100%;
+  padding: 10px 0;
+  background: transparent;
+  border: 1px solid rgba(0, 222, 236, 0.5);
+  border-radius: 8px;
+  color: #00deec;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.match-apply-btn:hover:not(:disabled) {
+  background: rgba(0, 222, 236, 0.1);
+  box-shadow: 0 0 12px rgba(0, 222, 236, 0.25);
+}
+
+.match-apply-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.match-announce-sidebar-btn {
+  width: 100%;
+  padding: 10px 0;
+  background: rgba(0, 222, 236, 0.15);
+  border: 1px solid #00deec;
+  border-radius: 8px;
+  color: #00deec;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.match-announce-sidebar-btn:hover {
+  background: rgba(0, 222, 236, 0.25);
+}
+
+.match-crew-panel {
+  background: rgba(36, 59, 90, 0.75);
+  border: 1px solid rgba(0, 222, 236, 0.13);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.match-crew-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.55);
+  flex-wrap: wrap;
+}
+
+.match-crew-count {
+  margin-left: auto;
+  background: rgba(0, 222, 236, 0.12);
+  color: #00deec;
+  border-radius: 20px;
+  padding: 1px 8px;
+  font-size: 0.7rem;
+}
+
+.match-crew-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.match-crew-actions button {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 5px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.match-crew-actions button:hover {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.match-pitch-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 420px;
+  gap: 16px;
+  color: rgba(255, 255, 255, 0.25);
+  text-align: center;
+}
+
+.match-pitch-placeholder i {
+  font-size: 4rem;
+}
+
+.match-pitch-placeholder p {
+  font-size: 0.95rem;
+  max-width: 320px;
+  line-height: 1.6;
+}
+
+.match-pitch-placeholder strong {
+  color: rgba(0, 222, 236, 0.7);
+}
+
+@media (max-width: 768px) {
+  .match-layout {
+    flex-direction: column;
+  }
+  .match-sidebar {
+    flex: unset;
+    width: 100%;
+  }
+  .match-sidebar__modes {
+    flex-direction: row;
+  }
+  .match-page-container {
+    padding: 16px;
+  }
+}

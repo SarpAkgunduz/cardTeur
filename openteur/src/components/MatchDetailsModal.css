@@ -137,3 +137,20 @@
 @keyframes mdmSpin {
   to { transform: rotate(360deg); }
 }
+
+.mdm-autosave-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 222, 236, 0.07);
+  border: 1px solid rgba(0, 222, 236, 0.2);
+  border-radius: 8px;
+  padding: 9px 14px;
+  margin-bottom: 16px;
+  font-size: 0.8rem;
+  color: rgba(0, 222, 236, 0.85);
+}
+.mdm-autosave-note i {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}

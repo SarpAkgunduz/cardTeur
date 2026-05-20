@@ -1,0 +1,274 @@
+.matches-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+  color: #f0f4ff;
+}
+
+/* ── Page header ── */
+.matches-page__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  gap: 16px;
+}
+
+.matches-page__title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 900;
+  font-style: italic;
+  font-size: 2.2rem;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 0 0 4px;
+}
+
+.matches-page__subtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+
+.matches-page__new-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  background: #00deec;
+  color: #0d1b2d;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+  white-space: nowrap;
+}
+.matches-page__new-btn:hover { opacity: 0.88; }
+.matches-page__new-btn:active { transform: scale(0.97); }
+
+/* ── Loading / empty ── */
+.matches-page__loading,
+.matches-page__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 80px 20px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 1rem;
+}
+
+.matches-page__empty i {
+  font-size: 3rem;
+  color: rgba(0, 222, 236, 0.25);
+}
+
+.matches-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(0, 222, 236, 0.15);
+  border-top-color: #00deec;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Match list ── */
+.matches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── Single match card ── */
+.match-card {
+  background: rgba(36, 59, 90, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  animation: cardSlideIn 0.3s ease;
+}
+@keyframes cardSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Meta row */
+.match-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.match-card__meta-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+.match-card__meta-left i { color: #00deec; }
+
+.match-card__meta-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.match-card__badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.match-card__badge--announced {
+  background: rgba(0, 222, 236, 0.12);
+  color: #00deec;
+  border: 1px solid rgba(0, 222, 236, 0.3);
+}
+
+.match-card__action {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.match-card__action:active { transform: scale(0.96); }
+
+.match-card__action--announce {
+  background: rgba(0, 222, 236, 0.15);
+  color: #00deec;
+  border: 1px solid rgba(0, 222, 236, 0.35);
+}
+.match-card__action--announce:hover { background: rgba(0, 222, 236, 0.28); }
+
+.match-card__action--delete {
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.25);
+  padding: 6px 10px;
+}
+.match-card__action--delete:hover { background: rgba(255, 107, 107, 0.22); }
+
+/* Formation strip */
+.match-card__formations {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px 20px;
+  background: rgba(0, 0, 0, 0.15);
+  font-size: 0.82rem;
+}
+
+.match-card__team-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+.match-card__team-label--a { color: #00deec; }
+.match-card__team-label--b { color: #ff9f43; }
+
+.match-card__ovr-chip {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.match-card__vs {
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* Pitch previews */
+.match-card__pitches {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.match-card__pitches > * {
+  pointer-events: none;    /* fully read-only — no drag */
+}
+
+/* Player rosters */
+.match-card__rosters {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.match-card__roster {
+  list-style: none;
+  margin: 0;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.match-card__roster:first-child {
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.match-card__roster-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.match-card__roster-role {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 222, 236, 0.1);
+  color: #00deec;
+  min-width: 32px;
+  text-align: center;
+}
+
+.match-card__roster:last-child .match-card__roster-role {
+  background: rgba(255, 159, 67, 0.12);
+  color: #ff9f43;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .match-card__pitches,
+  .match-card__rosters {
+    grid-template-columns: 1fr;
+  }
+  .match-card__roster:first-child {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .matches-page__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

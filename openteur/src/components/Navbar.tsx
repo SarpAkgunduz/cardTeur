@@ -31,6 +31,12 @@ const Navbar = () => {
               Match
             </button>
             <button
+              className={`ct-nav__link ${isActive('/matches') ? 'ct-nav__link--active' : ''}`}
+              onClick={() => navigate('/matches')}
+            >
+              Matches
+            </button>
+            <button
               className={`ct-nav__link ${isActive('/preview') ? 'ct-nav__link--active' : ''}`}
               onClick={() => navigate('/preview')}
             >

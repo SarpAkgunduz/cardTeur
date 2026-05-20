@@ -7,6 +7,9 @@ export interface MatchPlayer {
   name: string;
   email?: string;
   preferredPosition?: string;
+  role?: string;   // formation role (GK, CB, ST …)
+  x?: number;      // pitch x position 0–100
+  y?: number;      // pitch y position 0–100
 }
 
 export interface MatchEmailPayload {
@@ -22,63 +25,60 @@ export interface SendResult {
   skipped: string[];
 }
 
-// Build a simple HTML pitch visualization showing both teams side by side
-function buildPitchHtml(leftTeam: MatchPlayer[], rightTeam: MatchPlayer[]): string {
-  const renderTeam = (players: MatchPlayer[], side: 'left' | 'right') => {
-    const color = side === 'left' ? '#00deec' : '#ff6b6b';
-    const items = players
-      .map(
-        (p) => `
-        <div style="
-          background: rgba(255,255,255,0.08);
-          border: 1px solid ${color};
-          border-radius: 6px;
-          padding: 8px 14px;
-          margin-bottom: 8px;
-          font-family: 'Segoe UI', Arial, sans-serif;
-          font-size: 13px;
-          color: #ffffff;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 12px;
-        ">
-          <span style="font-weight: 700;">${p.name}</span>
-          <span style="color: ${color}; font-size: 11px; font-weight: 600;">${p.preferredPosition ?? '—'}</span>
-        </div>`,
-      )
-      .join('');
+type RoleGroup = 'GK' | 'DEF' | 'MID' | 'ATT';
 
-    const label = side === 'left' ? 'Team A' : 'Team B';
+function roleGroup(role: string = ''): RoleGroup {
+  const r = role.toUpperCase();
+  if (/GK/.test(r)) return 'GK';
+  if (/ST|LS|RS|CF|LF|RF|LW|RW/.test(r)) return 'ATT';
+  if (/LB|RB|CB|LCB|RCB|CDM|SW|LWB|RWB/.test(r)) return 'DEF';
+  return 'MID';
+}
+
+const GROUP_LABELS: Record<RoleGroup, string> = {
+  GK: 'Goalkeeper',
+  DEF: 'Defenders',
+  MID: 'Midfielders',
+  ATT: 'Attackers',
+};
+
+// Build a formation-organized HTML roster for both teams
+function buildPitchHtml(leftTeam: MatchPlayer[], rightTeam: MatchPlayer[]): string {
+  const renderTeam = (players: MatchPlayer[], label: string, color: string) => {
+    // Sort by y position (GK at bottom = high y → rendered last)
+    const sorted = [...players].sort((a, b) => (a.y ?? 50) - (b.y ?? 50));
+    const groups: Partial<Record<RoleGroup, MatchPlayer[]>> = {};
+    for (const p of sorted) {
+      const g = roleGroup(p.role ?? p.preferredPosition);
+      if (!groups[g]) groups[g] = [];
+      groups[g]!.push(p);
+    }
+
+    const sections: string[] = [];
+    for (const g of (['ATT', 'MID', 'DEF', 'GK'] as RoleGroup[])) {
+      if (!groups[g]?.length) continue;
+      const rows = groups[g]!.map(p => `
+        <tr>
+          <td style="padding:5px 8px; color:#ffffff; font-size:12px; font-weight:700;">${p.name}</td>
+          <td style="padding:5px 8px; color:${color}; font-size:11px; font-weight:600; text-align:right;">${p.role ?? p.preferredPosition ?? '—'}</td>
+        </tr>`).join('');
+      sections.push(`
+        <tr><td colspan="2" style="padding:6px 8px 2px; font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.35);">${GROUP_LABELS[g]}</td></tr>
+        ${rows}`);
+    }
+
     return `
-      <div style="flex: 1; padding: 16px;">
-        <div style="
-          text-align: center;
-          font-size: 14px;
-          font-weight: 900;
-          color: ${color};
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          margin-bottom: 14px;
-          border-bottom: 1px solid ${color}44;
-          padding-bottom: 8px;
-        ">${label}</div>
-        ${items}
+      <div style="flex:1; min-width:0;">
+        <div style="text-align:center; font-size:13px; font-weight:900; color:${color}; letter-spacing:0.15em; text-transform:uppercase; padding:12px 8px 8px; border-bottom:1px solid ${color}44;">${label}</div>
+        <table style="width:100%; border-collapse:collapse;">${sections.join('')}</table>
       </div>`;
   };
 
   return `
-    <div style="
-      background: linear-gradient(135deg, #1a2b42 0%, #0d1f33 100%);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      overflow: hidden;
-      display: flex;
-      gap: 0;
-    ">
-      ${renderTeam(leftTeam, 'left')}
-      <div style="width: 1px; background: rgba(255,255,255,0.12);"></div>
-      ${renderTeam(rightTeam, 'right')}
+    <div style="background:linear-gradient(135deg,#1a2b42 0%,#0d1f33 100%); border:1px solid rgba(255,255,255,0.1); border-radius:12px; overflow:hidden; display:flex; gap:0;">
+      ${renderTeam(leftTeam, 'Team A', '#00deec')}
+      <div style="width:1px; background:rgba(255,255,255,0.12);"></div>
+      ${renderTeam(rightTeam, 'Team B', '#ff9f43')}
     </div>`;
 }
 

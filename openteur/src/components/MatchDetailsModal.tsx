@@ -55,6 +55,11 @@ const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
           <h3 id="mdm-title">Match Details</h3>
         </div>
 
+        <div className="mdm-autosave-note">
+          <i className="bi bi-floppy-fill" />
+          This match will be automatically saved when you announce it.
+        </div>
+
         <p className="mdm-subtitle">
           Fill in the match info. Emails will be sent to{' '}
           <strong className="mdm-accent">{emailCount}</strong> player
