@@ -8,10 +8,17 @@ import { apiRequest } from '../services/api/apiClient';
 import './MatchPage.css';
 import { PLAYER_COUNT_OPTIONS, getFormationSet, smartAssign } from '../data/formations';
 
-
+interface CrewOption {
+  _id: string;
+  name: string;
+  playerIds: string[];
+  players?: any[];
+}
 
 const MatchPage = () => {
   const { players } = usePlayers();
+  const [crews, setCrews] = useState<CrewOption[]>([]);
+  const [selectedCrewId, setSelectedCrewId] = useState('');
   const [playersPool, setPlayersPool]    = useState<any[]>([]);
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<Set<string>>(new Set());
   const [leftPlayers, setLeftPlayers]    = useState<any[]>([]);
@@ -43,7 +50,13 @@ const MatchPage = () => {
     return Number.isFinite(n) ? n : 0;
   };
 
-  const computeOverall = (p: any): number => {
+  const isGoalkeeper = (p: any, role?: string): boolean =>
+    String(role ?? p.preferredPosition ?? '').toUpperCase().includes('GK');
+
+  const computeOverall = (p: any, role?: string): number => {
+    const gkOverall = toNum(p.gkOverall);
+    if (isGoalkeeper(p, role) && gkOverall > 0) return gkOverall;
+
     const v1 = toNum(p.offensiveOverall ?? p.offensive);
     const v2 = toNum(p.defensiveOverall ?? p.defensive);
     const v3 = toNum(p.athleticismOverall ?? p.athleticism);
@@ -66,10 +79,36 @@ const MatchPage = () => {
     return { left, right };
   };
 
+  const mergePlayers = (items: any[]): any[] => {
+    const map = new Map<string, any>();
+    items.forEach(player => {
+      const id = player?._id ?? player?.id;
+      if (id) map.set(id, player);
+    });
+    return [...map.values()];
+  };
+
+  const getCrewPlayers = (crew: CrewOption): any[] => {
+    const embeddedPlayers = crew.players ?? [];
+    const localCrewPlayers = players.filter(player => crew.playerIds.includes(player._id));
+    return mergePlayers([...embeddedPlayers, ...localCrewPlayers]);
+  };
+
   useEffect(() => {
-    setPlayersPool(players);
-    setSelectedPlayerIds(new Set(players.map(p => p._id)));
-  }, [players]);
+    apiRequest<CrewOption[]>('/crews')
+      .then(setCrews)
+      .catch(() => showToastMsg('Failed to load crews.', 'danger'));
+  }, []);
+
+  useEffect(() => {
+    const crewPlayers = crews.flatMap(crew => crew.players ?? []);
+    const allPlayers = mergePlayers([...players, ...crewPlayers]);
+    const selectedCrew = crews.find(crew => crew._id === selectedCrewId);
+    const nextPool = selectedCrew ? getCrewPlayers(selectedCrew) : allPlayers;
+
+    setPlayersPool(nextPool);
+    setSelectedPlayerIds(new Set(nextPool.map(p => p._id ?? p.id).filter(Boolean)));
+  }, [players, crews, selectedCrewId]);
 
   useEffect(() => {
     if (pitchMode) return;
@@ -96,19 +135,23 @@ const MatchPage = () => {
     slotRoles: string[],
     roleOverrides: Record<string, string>,
   ): PitchPlayer[] =>
-    players.map((p, i) => ({
-      id: p._id ?? p.id ?? '',
-      name: p.name ?? 'Unknown',
-      role: roleOverrides[p._id ?? p.id] ?? slotRoles[i] ?? p.preferredPosition ?? '?',
-      overall: computeOverall(p),
-      cardImage: p.cardImage ?? p.image ?? '',
-      x: positions[p._id ?? p.id]?.x ?? 50,
-      y: positions[p._id ?? p.id]?.y ?? 50,
-      offOvr: toNum(p.offensiveOverall ?? p.offensive),
-      defOvr: toNum(p.defensiveOverall ?? p.defensive),
-      athOvr: toNum(p.athleticismOverall ?? p.athleticism),
-      stamOvr: toNum(p.stamina),
-    }));
+    players.map((p, i) => {
+      const id = p._id ?? p.id ?? '';
+      const role = roleOverrides[id] ?? slotRoles[i] ?? p.preferredPosition ?? '?';
+      return {
+        id,
+        name: p.name ?? 'Unknown',
+        role,
+        overall: computeOverall(p, role),
+        cardImage: p.cardImage ?? p.image ?? '',
+        x: positions[id]?.x ?? 50,
+        y: positions[id]?.y ?? 50,
+        offOvr: toNum(p.offensiveOverall ?? p.offensive),
+        defOvr: toNum(p.defensiveOverall ?? p.defensive),
+        athOvr: toNum(p.athleticismOverall ?? p.athleticism),
+        stamOvr: toNum(p.stamina),
+      };
+    });
 
   const applyFormation = () => {
     const set = getFormationSet(playerCount);
@@ -256,6 +299,23 @@ const MatchPage = () => {
         <span className="match-settings-card__dot" />
         Formation Builder
       </h2>
+
+      <div className="match-setting-group">
+        <label className="match-setting-label">Crew</label>
+        <select
+          className="match-setting-select"
+          value={selectedCrewId}
+          onChange={e => setSelectedCrewId(e.target.value)}
+          disabled={pitchMode}
+        >
+          <option value="">All Players</option>
+          {crews.map(crew => (
+            <option key={crew._id} value={crew._id}>
+              {crew.name.toUpperCase()}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <div className="match-setting-group">
         <label className="match-setting-label">Number of Players</label>

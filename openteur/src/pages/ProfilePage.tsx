@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, deleteUser } from 'firebase/auth';
 import { useAuth } from '../contexts/AuthContext';
 import { apiRequest } from '../services/api/apiClient';
@@ -8,6 +8,13 @@ import { useNavigate } from 'react-router-dom';
 import { compressImageFile } from '../utils/imageCompression';
 import './ProfilePage.css';
 
+interface UserProfile {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+}
+
 const ProfilePage = () => {
   const { currentUser, signOut } = useAuth();
   const navigate = useNavigate();
@@ -16,6 +23,7 @@ const ProfilePage = () => {
   const [savingName, setSavingName] = useState(false);
 
   const [photoPreview, setPhotoPreview] = useState<string>(currentUser?.photoURL || '');
+  const [savedPhotoURL, setSavedPhotoURL] = useState<string>(currentUser?.photoURL || '');
   const [savingPhoto, setSavingPhoto] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -49,6 +57,23 @@ const ProfilePage = () => {
     setShowToast(true);
   };
 
+  useEffect(() => {
+    if (!currentUser) return;
+
+    apiRequest<UserProfile>('/users/me')
+      .then((profile) => {
+        const profilePhoto = profile.photoURL || '';
+        setDisplayName(profile.displayName || currentUser.displayName || '');
+        setSavedPhotoURL(profilePhoto);
+        setPhotoPreview(profilePhoto);
+      })
+      .catch(() => {
+        const fallbackPhoto = currentUser.photoURL || '';
+        setSavedPhotoURL(fallbackPhoto);
+        setPhotoPreview(fallbackPhoto);
+      });
+  }, [currentUser]);
+
   const handleSaveName = async () => {
     if (!currentUser) return;
     if (!displayName.trim()) { showMsg('Username cannot be empty.', 'danger'); return; }
@@ -81,10 +106,13 @@ const ProfilePage = () => {
     if (!photoPreview) return;
     setSavingPhoto(true);
     try {
-      await apiRequest('/users/profile', {
+      const profile = await apiRequest<UserProfile>('/users/profile', {
         method: 'PUT',
         body: JSON.stringify({ photoURL: photoPreview }),
       });
+      const profilePhoto = profile.photoURL || photoPreview;
+      setSavedPhotoURL(profilePhoto);
+      setPhotoPreview(profilePhoto);
       showMsg('Profile photo updated.');
     } catch {
       showMsg('Failed to update photo.', 'danger');
@@ -159,7 +187,7 @@ const ProfilePage = () => {
             <div className="profile-page__photo-actions">
               <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoChange} />
               <button className="btn-ct" onClick={() => fileInputRef.current?.click()}>Choose Photo</button>
-              {photoPreview && photoPreview !== (currentUser?.photoURL || '') && (
+              {photoPreview && photoPreview !== savedPhotoURL && (
                 <button className="btn-ct" onClick={handleSavePhoto} disabled={savingPhoto}>
                   {savingPhoto ? 'Saving...' : 'Save Photo'}
                 </button>

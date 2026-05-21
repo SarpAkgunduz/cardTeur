@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { requireAuth } from '../middleware/auth';
 import Crew from '../models/Crew';
+import Player from '../models/Player';
 
 const router = Router();
 router.use(requireAuth);
@@ -9,8 +10,26 @@ router.use(requireAuth);
 router.get('/', async (req: Request, res: Response) => {
   const uid = (req as any).uid;
   try {
-    const crews = await Crew.find({ $or: [{ ownerUid: uid }, { memberUids: uid }] }).sort({ createdAt: 1 });
-    res.json(crews);
+    const linkedPlayers = await Player.find({ linkedUserId: uid }).select('_id').lean();
+    const linkedPlayerIds = linkedPlayers.map(p => String(p._id));
+    const crews = await Crew.find({
+      $or: [
+        { ownerUid: uid },
+        { memberUids: uid },
+        { playerIds: { $in: linkedPlayerIds } },
+      ],
+    }).sort({ createdAt: 1 });
+
+    const visiblePlayerIds = [...new Set(crews.flatMap(crew => crew.playerIds))];
+    const visiblePlayers = visiblePlayerIds.length > 0
+      ? await Player.find({ _id: { $in: visiblePlayerIds } }).lean()
+      : [];
+    const playersById = new Map(visiblePlayers.map(player => [String(player._id), player]));
+
+    res.json(crews.map(crew => ({
+      ...crew.toObject(),
+      players: crew.playerIds.map(id => playersById.get(String(id))).filter(Boolean),
+    })));
   } catch {
     res.status(500).json({ error: 'Failed to fetch crews' });
   }
@@ -62,10 +81,17 @@ router.delete('/:id', async (req: Request, res: Response) => {
 // POST /api/crews/:id/players/:playerId — add player to crew
 router.post('/:id/players/:playerId', async (req: Request, res: Response) => {
   const uid = (req as any).uid;
+  const playerId = String(req.params.playerId);
   try {
+    const player = await Player.findOne({ _id: playerId, ownerUid: uid }).select('linkedUserId');
+    if (!player) return res.status(404).json({ error: 'Player not found' });
+
+    const addToSet: { playerIds: string; memberUids?: string } = { playerIds: playerId };
+    if (player.linkedUserId) addToSet.memberUids = player.linkedUserId;
+
     const crew = await Crew.findOneAndUpdate(
       { _id: req.params.id, ownerUid: uid },
-      { $addToSet: { playerIds: req.params.playerId } },
+      { $addToSet: addToSet },
       { new: true }
     );
     if (!crew) return res.status(404).json({ error: 'Crew not found' });
@@ -78,13 +104,32 @@ router.post('/:id/players/:playerId', async (req: Request, res: Response) => {
 // DELETE /api/crews/:id/players/:playerId — remove player from crew
 router.delete('/:id/players/:playerId', async (req: Request, res: Response) => {
   const uid = (req as any).uid;
+  const playerId = String(req.params.playerId);
   try {
+    const player = await Player.findOne({ _id: playerId, ownerUid: uid }).select('linkedUserId');
     const crew = await Crew.findOneAndUpdate(
       { _id: req.params.id, ownerUid: uid },
-      { $pull: { playerIds: req.params.playerId } },
+      { $pull: { playerIds: playerId } },
       { new: true }
     );
     if (!crew) return res.status(404).json({ error: 'Crew not found' });
+
+    if (player?.linkedUserId) {
+      const stillLinkedCount = await Player.countDocuments({
+        _id: { $in: crew.playerIds },
+        linkedUserId: player.linkedUserId,
+      });
+
+      if (stillLinkedCount === 0) {
+        const updatedCrew = await Crew.findOneAndUpdate(
+          { _id: req.params.id, ownerUid: uid },
+          { $pull: { memberUids: player.linkedUserId } },
+          { new: true }
+        );
+        return res.json(updatedCrew ?? crew);
+      }
+    }
+
     res.json(crew);
   } catch {
     res.status(500).json({ error: 'Failed to remove player' });

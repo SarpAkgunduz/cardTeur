@@ -13,6 +13,7 @@ interface Crew {
   name: string;
   playerIds: string[];
   memberUids: string[];
+  players?: Player[];
 }
 
 interface LinkedUser {
@@ -179,9 +180,6 @@ const CrewPage = () => {
     finally { setSavingEmailId(null); }
   };
 
-  const playersInCrew = (crew: Crew) =>
-    crew.playerIds.map(id => players.find(p => p._id === id)).filter(Boolean) as Player[];
-
   const getPlayerAvatar = (player: Player): string | null => {
     const linkedUser = player.linkedUserId ? linkedUserMap[player.linkedUserId] : undefined;
     return linkedUser?.photoURL || player.cardImage || null;
@@ -192,6 +190,16 @@ const CrewPage = () => {
     if (player.linkedUserId) return linkedUserMap[player.linkedUserId]?.email;
     return undefined;
   };
+
+  const crewVisiblePlayers = crews.flatMap(crew => crew.players ?? []);
+  const visiblePlayerMap = new Map<string, Player>();
+  [...players, ...crewVisiblePlayers].forEach(player => {
+    if (player?._id) visiblePlayerMap.set(player._id, player);
+  });
+  const visiblePlayers = [...visiblePlayerMap.values()];
+
+  const playersInCrew = (crew: Crew) =>
+    crew.playerIds.map(id => visiblePlayerMap.get(id)).filter(Boolean) as Player[];
 
   const availableForCrew = (crew: Crew) =>
     players.filter(p => !crew.playerIds.includes(p._id));
@@ -225,6 +233,7 @@ const CrewPage = () => {
     const effectiveEmail = getEffectiveEmail(player);
     const isAutoLinked = !player.email && !!player.linkedUserId && !!effectiveEmail;
     const isSelected = selectedPlayerId === player._id;
+    const assignableCrews = crews.filter(crew => crew.ownerUid === currentUser?.uid);
 
     return (
       <div key={player._id} className="crew-email-section">
@@ -280,8 +289,8 @@ const CrewPage = () => {
 
         {isSelected && (
           <div className="crew-picker">
-            {crews.length === 0 && <span className="crew-picker__empty">No crews yet.</span>}
-            {crews.map((crew, ci) => {
+            {assignableCrews.length === 0 && <span className="crew-picker__empty">No crews yet.</span>}
+            {assignableCrews.map((crew, ci) => {
               const alreadyIn = crew.playerIds.includes(player._id);
               return (
                 <button
@@ -435,7 +444,7 @@ const CrewPage = () => {
                     {crews.length === 0 && players.length > 0 && !creatingCrew && (
                       <p className="crew-empty">Create a crew to start organising your players.</p>
                     )}
-                    {players.length === 0 && <p className="crew-empty">No players found.</p>}
+                    {visiblePlayers.length === 0 && <p className="crew-empty">No players found.</p>}
                   </>
                 );
               })()}
