@@ -136,36 +136,37 @@
 /* ---- Bronze ---- */
 .fifa-card--bronze {
   background:
-    radial-gradient(ellipse at 30% 20%, rgba(36, 59, 90, 0.8) 0%, transparent 60%),
+    radial-gradient(ellipse at 30% 20%, rgba(105, 68, 35, 0.42) 0%, transparent 55%),
     linear-gradient(
       162deg,
-      #0e1a25 0%,
-      #1A2B42 45%,
-      #1e3347 65%,
-      #1A2B42 100%
+      #1A2B42 0%,
+      #2D4B73 35%,
+      #3b352f 60%,
+      #243B5A 100%
     );
-  border: 1px solid rgba(120, 160, 190, 0.18);
+  border: 1px solid rgba(160, 105, 62, 0.48);
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    inset 0 1px 0 rgba(190, 130, 78, 0.18),
+    0 0 14px rgba(120, 70, 28, 0.14);
 }
 
 /* ---- Silver ---- */
 .fifa-card--silver {
   background:
-    radial-gradient(ellipse at 30% 20%, rgba(45, 75, 115, 0.7) 0%, transparent 60%),
+    radial-gradient(ellipse at 30% 20%, rgba(185, 205, 220, 0.22) 0%, transparent 58%),
     linear-gradient(
       162deg,
       #1A2B42 0%,
-      #243B5A 40%,
-      #2a4466 60%,
+      #2d4867 40%,
+      #3e5872 60%,
       #243B5A 100%
     );
-  border: 1px solid rgba(150, 195, 225, 0.35);
+  border: 1px solid rgba(205, 225, 238, 0.46);
   box-shadow:
     0 10px 28px rgba(0, 0, 0, 0.65),
-    inset 0 1px 0 rgba(200, 225, 245, 0.15),
-    0 0 0 1px rgba(120, 170, 200, 0.12);
+    inset 0 1px 0 rgba(235, 245, 252, 0.2),
+    0 0 0 1px rgba(180, 210, 230, 0.16);
 }
 
 /* ---- Gold ---- */
@@ -240,13 +241,13 @@
 
 .fifa-card--bronze .fifa-card__overall,
 .fifa-card--bronze .fifa-card__pos {
-  color: #8fb4cc;
+  color: #c48b5b;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.7);
 }
 
 .fifa-card--silver .fifa-card__overall,
 .fifa-card--silver .fifa-card__pos {
-  color: #c0d8ec;
+  color: #d7e6f2;
   text-shadow: 0 2px 5px rgba(0, 0, 0, 0.65);
 }
 
@@ -320,8 +321,8 @@
   margin-bottom: 5px;
 }
 
-.fifa-card--bronze .fifa-card__name { color: #8fb4cc; }
-.fifa-card--silver .fifa-card__name { color: #c0d8ec; }
+.fifa-card--bronze .fifa-card__name { color: #c48b5b; }
+.fifa-card--silver .fifa-card__name { color: #d7e6f2; }
 .fifa-card--gold   .fifa-card__name { color: #e8c060; }
 .fifa-card--platinum .fifa-card__name { color: #8ff5ff; }
 
@@ -358,10 +359,10 @@
 }
 
 .fifa-card--bronze .fifa-card__stat-val,
-.fifa-card--bronze .fifa-card__stat-lbl { color: #8fb4cc; }
+.fifa-card--bronze .fifa-card__stat-lbl { color: #c48b5b; }
 
 .fifa-card--silver .fifa-card__stat-val,
-.fifa-card--silver .fifa-card__stat-lbl { color: #c0d8ec; }
+.fifa-card--silver .fifa-card__stat-lbl { color: #d7e6f2; }
 
 .fifa-card--gold .fifa-card__stat-val,
 .fifa-card--gold .fifa-card__stat-lbl { color: #e8c060; }

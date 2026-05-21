@@ -9,11 +9,29 @@ import { Player } from '../services';
 import { usePlayers } from '../contexts/PlayerContext';
 import './PlayersPage.css';
 
+type RandomTier = 'bronze' | 'silver' | 'gold';
+
+const RANDOM_TIERS: Array<{ id: RandomTier; label: string; range: [number, number] }> = [
+  { id: 'bronze', label: 'Bronze', range: [41, 59] },
+  { id: 'silver', label: 'Silver', range: [60, 84] },
+  { id: 'gold', label: 'Gold', range: [85, 89] },
+];
+
+const RANDOM_POSITIONS = ['CB', 'RB', 'LB', 'CDM', 'CM', 'CAM', 'RW', 'LW', 'ST', 'LM', 'RM'];
+const RANDOM_IMAGES = Array.from({ length: 42 }, (_, index) => `/assets/player${index + 1}.png`);
+
+const randomInt = (min: number, max: number) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
+const randomFrom = <T,>(items: T[]) => items[randomInt(0, items.length - 1)];
+
 const PlayersPage = () => {
-  const { players, error: fetchError, deletePlayer } = usePlayers();
+  const { players, error: fetchError, deletePlayer, createPlayer } = usePlayers();
   const [deleteMode, setDeleteMode] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
+  const [randomPickerOpen, setRandomPickerOpen] = useState(false);
+  const [generatingTier, setGeneratingTier] = useState<RandomTier | null>(null);
   const [compareSelection, setCompareSelection] = useState<Player[]>([]);
   const [confirm, setConfirm] = useState<{ message: string; onConfirm: () => void } | null>(null);
   const [showToast, setShowToast] = useState(false);
@@ -57,6 +75,69 @@ const PlayersPage = () => {
   const handleCloseCompare = () => {
     setCompareSelection([]);
     setCompareMode(false);
+  };
+
+  const buildRandomPlayer = (tier: RandomTier) => {
+    const option = RANDOM_TIERS.find(item => item.id === tier) ?? RANDOM_TIERS[0];
+    const [min, max] = option.range;
+    const target = randomInt(min, max);
+    const position = randomFrom(RANDOM_POSITIONS);
+    const variance = tier === 'gold' ? 4 : tier === 'silver' ? 7 : 9;
+    const stat = () => Math.max(min, Math.min(max, target + randomInt(-variance, variance)));
+    const sequence = players.filter(player => player.name?.startsWith(`${option.label} Player`)).length + 1;
+
+    return {
+      name: `${option.label} Player ${sequence}`,
+      email: '',
+      cardImage: randomFrom(RANDOM_IMAGES),
+      jerseyNumber: randomInt(1, 99),
+      marketValue: target * 100000,
+      preferredPosition: position,
+      offensiveOverall: stat(),
+      defensiveOverall: stat(),
+      athleticismOverall: stat(),
+      dribbling: stat(),
+      shotAccuracy: stat(),
+      shotSpeed: stat(),
+      headers: stat(),
+      longPass: stat(),
+      shortPass: stat(),
+      ballControl: stat(),
+      positioning: stat(),
+      vision: stat(),
+      tackling: stat(),
+      interceptions: stat(),
+      marking: stat(),
+      defensiveIQ: stat(),
+      speed: stat(),
+      strength: stat(),
+      stamina: stat(),
+      gkOverall: 0,
+      diving: 0,
+      handling: 0,
+      kicking: 0,
+      reflexes: 0,
+      gkPositioning: 0,
+      gkSpeed: 0,
+    };
+  };
+
+  const handleGenerateRandomPlayer = async (tier: RandomTier) => {
+    setGeneratingTier(tier);
+    try {
+      const player = await createPlayer(buildRandomPlayer(tier));
+      setToastMsg(`${player.name} generated.`);
+      setToastVariant('success');
+      setShowToast(true);
+      setRandomPickerOpen(false);
+    } catch (error) {
+      console.error('Generate random player error:', error);
+      setToastMsg('Failed to generate player.');
+      setToastVariant('danger');
+      setShowToast(true);
+    } finally {
+      setGeneratingTier(null);
+    }
   };
 
   return (
@@ -129,10 +210,20 @@ const PlayersPage = () => {
         {/* Players Grid */}
         {fetchError ? (
           <p className="empty-message" style={{ color: '#ff6b6b' }}>⚠️ {fetchError}</p>
-        ) : players.length === 0 ? (
-          <p className="empty-message">No players found.</p>
         ) : (
           <div className="players-grid">
+            <div className="players-grid__item">
+              <button
+                type="button"
+                className="random-player-card"
+                onClick={() => setRandomPickerOpen(true)}
+                aria-label="Generate random player"
+              >
+                <span className="random-player-card__question">?</span>
+                <span className="random-player-card__title">Generate Random Player</span>
+                <span className="random-player-card__subtitle">Unlock a new card</span>
+              </button>
+            </div>
             {players.map((player) => (
             <div key={player._id} className="players-grid__item">
                 <Card
@@ -162,6 +253,45 @@ const PlayersPage = () => {
         )}
         </div>
       </div>
+
+      {randomPickerOpen && (
+        <div className="random-player-modal" role="dialog" aria-modal="true" aria-label="Generate random player">
+          <button
+            type="button"
+            className="random-player-modal__backdrop"
+            aria-label="Close random player generator"
+            onClick={() => setRandomPickerOpen(false)}
+          />
+          <div className="random-player-modal__content">
+            <div className="random-player-modal__hero">
+              <div className="random-player-card random-player-card--modal">
+                <span className="random-player-card__question">?</span>
+                <span className="random-player-card__title">Generate Random Player</span>
+                <span className="random-player-card__subtitle">Choose a card tier</span>
+              </div>
+            </div>
+            <div className="random-player-modal__choices">
+              {RANDOM_TIERS.map((tier) => (
+                <button
+                  key={tier.id}
+                  type="button"
+                  className={`random-tier-card random-tier-card--${tier.id}`}
+                  onClick={() => handleGenerateRandomPlayer(tier.id)}
+                  disabled={generatingTier !== null}
+                >
+                  <span className="random-tier-card__overall">?</span>
+                  <span className="random-tier-card__mark">?</span>
+                  <span className="random-tier-card__name">{tier.label}</span>
+                  <span className="random-tier-card__range">{tier.range[0]}-{tier.range[1]} OVR</span>
+                  <span className="random-tier-card__action">
+                    {generatingTier === tier.id ? 'Generating...' : 'Unlock'}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Compare Panel */}
       <ComparePanel
