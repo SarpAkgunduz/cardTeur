@@ -1,75 +1,4 @@
-.crew-page {
-  display: flex;
-  min-height: 560px;
-  max-height: calc(100vh - 220px);
-  overflow: hidden;
-  width: 100%;
-  gap: 0;
-}
-
-.crew-page__header {
-  width: 100%;
-  border-bottom: none;
-}
-
-.crew-page__title {
-  text-align: center;
-  color: #00deec;
-}
-
-/* ── Left panel ── */
-.crew-left {
-  width: 55%;
-  overflow-y: auto;
-  padding: 0 24px 0 0;
-  position: relative;
-}
-
-.crew-left::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 20px;
-  bottom: 20px;
-  width: 1px;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    rgba(0, 222, 236, 0.18) 20%,
-    rgba(0, 222, 236, 0.18) 80%,
-    transparent
-  );
-}
-
-.crew-left__header-btns {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  flex: 0 0 auto;
-  flex-wrap: nowrap;
-  align-items: center;
-  white-space: nowrap;
-}
-
-.crew-left__shimmer-btn {
-  background: transparent;
-  border: 1px solid rgba(0, 222, 236, 0.3);
-  color: rgba(255, 255, 255, 0.7);
-  padding: 6px 12px;
-  font-size: 0.82rem;
-}
-
-.crew-left__shimmer-btn:hover {
-  border-color: #00deec;
-  color: #00deec;
-}
-
-.crew-left__add-crew-btn {
-  padding: 6px 12px;
-  font-size: 0.82rem;
-}
-
-.crew-create-bar {
+.crew-list {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -228,51 +157,10 @@
   font-size: 0.72rem;
   color: rgba(255, 255, 255, 0.4);
   text-transform: uppercase;
+  letter-spacing: 0.07em;
 }
 
-.crew-member-row__remove {
-  background: transparent;
-  border: none;
-  color: rgba(255, 107, 107, 0.5);
-  padding: 4px;
-  cursor: pointer;
-  font-size: 0.8rem;
-  opacity: 0;
-  transition: opacity 0.2s, color 0.2s;
-}
-
-.crew-member-row:hover .crew-member-row__remove { opacity: 1; }
-.crew-member-row__remove:hover { color: #ff6b6b; }
-
-/* ── Right panel ── */
-.crew-right {
-  width: 45%;
-  overflow-y: auto;
-  padding: 0 0 0 24px;
-}
-
-.crew-right__header { margin-bottom: 16px; }
-
-.crew-right__title {
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  margin: 0 0 4px 0;
-}
-
-.crew-right__hint {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.35);
-  margin: 0;
-}
-
-/* ── Email list ── */
-.crew-email-list { display: flex; flex-direction: column; }
-
-.crew-email-section { display: flex; flex-direction: column; }
-
-.crew-email-row {
+.crew-row__email {
   display: flex;
   align-items: center;
   gap: 12px;

@@ -1,6 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+<<<<<<< HEAD
 import { usePlayers } from '../contexts/PlayerContext';
+=======
+>>>>>>> main
 import BackButton from '../components/BackButton';
 import type { Player } from '../services/api/types';
 import { apiRequest } from '../services/api/apiClient';
@@ -24,7 +27,11 @@ interface LinkedUser {
 
 const CrewPage = () => {
   const { currentUser } = useAuth();
+<<<<<<< HEAD
   const { players, loading: playersLoading, updatePlayer } = usePlayers();
+=======
+  const [players, setPlayers] = useState<Player[]>([]);
+>>>>>>> main
   const [crews, setCrews] = useState<Crew[]>([]);
   const [linkedUserMap, setLinkedUserMap] = useState<Record<string, LinkedUser>>({});
   const [loading, setLoading] = useState(true);
@@ -46,6 +53,10 @@ const CrewPage = () => {
   const [toastMsg, setToastMsg] = useState('');
   const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
   const [showToast, setShowToast] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
+
+  const newCrewInputRef = useRef<HTMLInputElement>(null);
+  const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const newCrewInputRef = useRef<HTMLInputElement>(null);
 
@@ -53,15 +64,54 @@ const CrewPage = () => {
     setToastMsg(msg); setToastVariant(variant); setShowToast(true);
   };
 
+  const flashSaved = () => {
+    setSavedFlash(true);
+    if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
+    savedTimerRef.current = setTimeout(() => setSavedFlash(false), 2000);
+  };
+
   useEffect(() => {
+<<<<<<< HEAD
     apiRequest<Crew[]>('/crews')
       .then((loadedCrews) => {
         setCrews(loadedCrews);
+=======
+    Promise.all([playerApi.getAll(), apiRequest<Crew[]>('/crews')])
+      .then(async ([loadedPlayers, loadedCrews]) => {
+        setPlayers(loadedPlayers);
+        setCrews(loadedCrews);
+        const linkedUids = [...new Set(
+          loadedPlayers.map(p => p.linkedUserId).filter(Boolean) as string[]
+        )];
+        if (linkedUids.length > 0) {
+          try {
+            const users = await apiRequest<LinkedUser[]>('/users/lookup-by-uids', {
+              method: 'POST',
+              body: JSON.stringify({ uids: linkedUids }),
+            });
+            const map: Record<string, LinkedUser> = {};
+            users.forEach(u => { map[u.uid] = u; });
+            setLinkedUserMap(map);
+            for (const player of loadedPlayers) {
+              if (player.linkedUserId && !player.email && map[player.linkedUserId]?.email) {
+                const autoEmail = map[player.linkedUserId].email;
+                try {
+                  await playerApi.update(player._id, { email: autoEmail } as any);
+                  setPlayers(prev => prev.map(p =>
+                    p._id === player._id ? { ...p, email: autoEmail } : p
+                  ));
+                } catch { /* non-fatal */ }
+              }
+            }
+          } catch { /* silently ignore */ }
+        }
+>>>>>>> main
       })
       .catch(() => showMsg('Failed to load crews.', 'danger'))
       .finally(() => setLoading(false));
   }, []);
 
+<<<<<<< HEAD
   useEffect(() => {
     const linkedUids = [...new Set(
       players.map(p => p.linkedUserId).filter(Boolean) as string[]
@@ -91,6 +141,8 @@ const CrewPage = () => {
       .catch(() => {});
   }, [players, updatePlayer]);
 
+=======
+>>>>>>> main
   const handleCreateCrew = async () => {
     if (!newCrewName.trim()) return;
     try {
@@ -101,6 +153,10 @@ const CrewPage = () => {
       setCrews(prev => [...prev, crew]);
       setNewCrewName('');
       setCreatingCrew(false);
+<<<<<<< HEAD
+=======
+      flashSaved();
+>>>>>>> main
     } catch { showMsg('Failed to create crew.', 'danger'); }
   };
 
@@ -113,6 +169,10 @@ const CrewPage = () => {
       });
       setCrews(prev => prev.map(c => c._id === id ? updated : c));
       setEditingCrewId(null);
+<<<<<<< HEAD
+=======
+      flashSaved();
+>>>>>>> main
     } catch { showMsg('Failed to rename crew.', 'danger'); }
   };
 
@@ -120,6 +180,10 @@ const CrewPage = () => {
     try {
       await apiRequest(`/crews/${id}`, { method: 'DELETE' });
       setCrews(prev => prev.filter(c => c._id !== id));
+<<<<<<< HEAD
+=======
+      flashSaved();
+>>>>>>> main
     } catch { showMsg('Failed to delete crew.', 'danger'); }
   };
 
@@ -132,6 +196,10 @@ const CrewPage = () => {
       setAddedAnimation(prev => ({ ...prev, [animKey]: true }));
       setTimeout(() => setAddedAnimation(prev => { const n = { ...prev }; delete n[animKey]; return n; }), 900);
       setSelectedPlayerId(null);
+<<<<<<< HEAD
+=======
+      flashSaved();
+>>>>>>> main
     } catch { showMsg('Failed to add player.', 'danger'); }
   };
 
@@ -139,6 +207,10 @@ const CrewPage = () => {
     try {
       const updated = await apiRequest<Crew>(`/crews/${crewId}/players/${playerId}`, { method: 'DELETE' });
       setCrews(prev => prev.map(c => c._id === crewId ? updated : c));
+<<<<<<< HEAD
+=======
+      flashSaved();
+>>>>>>> main
     } catch { showMsg('Failed to remove player.', 'danger'); }
   };
 
@@ -158,9 +230,19 @@ const CrewPage = () => {
   const saveEmail = async (id: string) => {
     setSavingEmailId(id);
     try {
+<<<<<<< HEAD
       await updatePlayer(id, { email: editingEmail.trim() });
       setEditingEmailId(null);
       showMsg('Email saved.');
+=======
+      await playerApi.update(id, { email: editingEmail.trim() } as any);
+      setPlayers(prev => prev.map(p =>
+        p._id === id ? { ...p, email: editingEmail.trim() || undefined } : p
+      ));
+      setEditingEmailId(null);
+      showMsg('Email saved.');
+      flashSaved();
+>>>>>>> main
     } catch { showMsg('Failed to save email.', 'danger'); }
     finally { setSavingEmailId(null); }
   };
@@ -290,6 +372,7 @@ const CrewPage = () => {
 
   return (
     <>
+<<<<<<< HEAD
       <div className="page-wrapper">
         <div className="page-container">
           <div className="content-card">
@@ -311,6 +394,29 @@ const CrewPage = () => {
 
       <div className="crew-page">
         <div className="crew-left">
+=======
+      <div className="crew-page">
+        <div className="crew-left">
+          <div className="crew-left__header">
+            <BackButton position="static" />
+            <h2 className="crew-left__title">Crews</h2>
+            {savedFlash && (
+              <span className="crew-saved-badge">
+                <i className="bi bi-check-circle-fill"></i> Kaydedildi
+              </span>
+            )}
+            <div className="crew-left__header-btns">
+              <button className="btn-ct crew-left__shimmer-btn" onClick={handleShimmerRename}>
+                <i className="bi bi-pencil-square"></i> Rename Crew
+              </button>
+              <button className="btn-ct crew-left__add-crew-btn"
+                onClick={() => { setCreatingCrew(true); setTimeout(() => newCrewInputRef.current?.focus(), 50); }}>
+                <i className="bi bi-plus-lg"></i> New Crew
+              </button>
+            </div>
+          </div>
+
+>>>>>>> main
           {creatingCrew && (
             <div className="crew-create-bar">
               <input ref={newCrewInputRef} className="crew-email-input" placeholder="Crew name\u2026"
@@ -326,9 +432,15 @@ const CrewPage = () => {
             </div>
           )}
 
+<<<<<<< HEAD
           {(loading || playersLoading) && <p className="crew-empty">Loading...</p>}
 
           {!loading && !playersLoading && (
+=======
+          {loading && <p className="crew-empty">Loading...</p>}
+
+          {!loading && (
+>>>>>>> main
             <div className="crew-card-list">
               {(() => {
                 const ownedCrews = crews.filter(c => c.ownerUid === currentUser?.uid);
@@ -431,9 +543,12 @@ const CrewPage = () => {
           </div>
           <div className="crew-email-list">
             {players.map((p, idx) => renderEmailRow(p, idx))}
+<<<<<<< HEAD
           </div>
         </div>
       </div>
+=======
+>>>>>>> main
           </div>
         </div>
       </div>
