@@ -61,7 +61,10 @@ router.delete('/account', requireAuth, async (req: Request, res: Response) => {
       { $pull: { friends: uid, friendRequests: uid } } as any
     );
     await Player.updateMany({ linkedUserId: uid }, { $unset: { linkedUserId: '' } });
-    await Crew.updateMany({ memberUids: uid }, { $pull: { memberUids: uid } } as any);
+    await Crew.updateMany(
+      { $or: [{ memberUids: uid }, { editorUids: uid }] } as any,
+      { $pull: { memberUids: uid, editorUids: uid } } as any
+    );
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete account' });

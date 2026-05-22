@@ -93,6 +93,35 @@
   font-size: 0.82rem;
 }
 
+.crew-tabs {
+  display: flex;
+  gap: 6px;
+  margin: 0 0 18px;
+  padding: 4px;
+  background: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(0, 222, 236, 0.12);
+}
+
+.crew-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.crew-tab--active {
+  border-color: rgba(0, 222, 236, 0.35);
+  background: rgba(0, 222, 236, 0.12);
+  color: #00deec;
+}
+
 .crew-create-bar {
   display: flex;
   align-items: center;
@@ -517,6 +546,105 @@
 
 .crew-section-label--member {
   color: rgba(0, 222, 236, 0.4);
+}
+
+.crew-permissions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.crew-permission-card {
+  background: rgba(26, 43, 66, 0.72);
+  border: 1px solid rgba(0, 222, 236, 0.16);
+  border-left: 3px solid rgba(0, 222, 236, 0.48);
+  padding: 16px;
+}
+
+.crew-permission-card__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+  color: #fff;
+  font-weight: 800;
+}
+
+.crew-permission-card__header small {
+  color: rgba(255, 255, 255, 0.42);
+  font-weight: 600;
+}
+
+.crew-permission-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.crew-permission-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: rgba(36, 59, 90, 0.48);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.crew-permission-row__avatar {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: rgba(0, 222, 236, 0.12);
+  border: 1px solid rgba(0, 222, 236, 0.25);
+  color: #00deec;
+  overflow: hidden;
+}
+
+.crew-permission-row__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.crew-permission-row__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.crew-permission-row__info span {
+  color: #fff;
+  font-weight: 700;
+}
+
+.crew-permission-row__info small {
+  color: rgba(255, 255, 255, 0.42);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.crew-permission-toggle {
+  min-width: 136px;
+  min-height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.crew-permission-toggle--on {
+  border-color: rgba(0, 222, 236, 0.38);
+  background: rgba(0, 222, 236, 0.12);
+  color: #00deec;
 }
 
 /* -- Misc -- */

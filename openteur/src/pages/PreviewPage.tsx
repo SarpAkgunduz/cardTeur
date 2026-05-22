@@ -1,7 +1,12 @@
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BackButton from '../components/BackButton';
 import Card from '../components/Card';
 import { usePlayers } from '../contexts/PlayerContext';
+import { useAuth } from '../contexts/AuthContext';
 import { usePlayerDisplay } from '../hooks/usePlayerDisplay';
+import { apiRequest } from '../services/api/apiClient';
+import type { Player } from '../services/api/types';
 import './PreviewPage.css';
 
 const POSITION_GROUPS = [
@@ -11,18 +16,76 @@ const POSITION_GROUPS = [
   { key: 'att', label: 'Attackers',   icon: 'bi-lightning-fill',   positions: ['ST', 'CF', 'LW', 'RW', 'SS', 'FW', 'LS', 'RS'] },
 ];
 
+interface VisibleCrew {
+  _id: string;
+  name: string;
+  ownerUid: string;
+  playerIds: string[];
+  editorUids?: string[];
+  players?: Player[];
+}
+
 const PreviewPage = () => {
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const { players, loading } = usePlayers();
   const { getPlayerCardImage } = usePlayerDisplay();
+  const [crews, setCrews] = useState<VisibleCrew[]>([]);
+  const [crewsLoading, setCrewsLoading] = useState(true);
+  const [selectedCrewId, setSelectedCrewId] = useState('');
+
+  useEffect(() => {
+    apiRequest<VisibleCrew[]>('/crews')
+      .then(setCrews)
+      .catch(() => setCrews([]))
+      .finally(() => setCrewsLoading(false));
+  }, []);
+
+  const ownedCrews = useMemo(
+    () => crews.filter(crew => crew.ownerUid === currentUser?.uid),
+    [crews, currentUser]
+  );
+
+  const sharedCrews = useMemo(
+    () => crews.filter(crew => crew.ownerUid !== currentUser?.uid),
+    [crews, currentUser]
+  );
+
+  const visiblePlayers = useMemo(() => {
+    const selectedCrew = crews.find(crew => crew._id === selectedCrewId);
+    if (selectedCrew) return selectedCrew.players ?? [];
+
+    const map = new Map<string, Player>();
+    players.forEach(player => map.set(player._id, player));
+
+    if (ownedCrews.length === 0) {
+      sharedCrews.flatMap(crew => crew.players ?? []).forEach(player => {
+        if (player?._id && !map.has(player._id)) map.set(player._id, player);
+      });
+    }
+
+    return [...map.values()];
+  }, [players, crews, ownedCrews.length, sharedCrews, selectedCrewId]);
+
+  const editablePlayerIds = useMemo(() => {
+    const ids = new Set(players.map(player => player._id));
+    crews.forEach(crew => {
+      const canEditCrew = crew.ownerUid === currentUser?.uid || (crew.editorUids ?? []).includes(currentUser?.uid ?? '');
+      if (canEditCrew) crew.playerIds.forEach(id => ids.add(id));
+    });
+    return ids;
+  }, [players, crews, currentUser]);
+
+  const isLoading = loading || crewsLoading;
 
   const sections = POSITION_GROUPS.map(group => ({
     ...group,
-    players: players.filter(p =>
+    players: visiblePlayers.filter(p =>
       group.positions.includes((p.preferredPosition ?? '').toUpperCase())
     ),
   })).filter(s => s.players.length > 0);
 
-  const ungrouped = players.filter(p => {
+  const ungrouped = visiblePlayers.filter(p => {
     const pos = (p.preferredPosition ?? '').toUpperCase();
     return !POSITION_GROUPS.some(g => g.positions.includes(pos));
   });
@@ -39,13 +102,32 @@ const PreviewPage = () => {
             <div className="page-header-spacer" />
           </div>
 
-          {loading && <p className="empty-message">Loading players...</p>}
+          {ownedCrews.length > 0 && (
+            <div className="preview-filter">
+              <label className="preview-filter__label" htmlFor="previewCrewFilter">Roster Scope</label>
+              <select
+                id="previewCrewFilter"
+                className="preview-filter__select"
+                value={selectedCrewId}
+                onChange={event => setSelectedCrewId(event.target.value)}
+              >
+                <option value="">All Players ({players.length})</option>
+                {ownedCrews.map(crew => (
+                  <option key={crew._id} value={crew._id}>
+                    {crew.name} ({crew.players?.length ?? 0})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
-          {!loading && players.length === 0 && (
+          {isLoading && <p className="empty-message">Loading players...</p>}
+
+          {!isLoading && visiblePlayers.length === 0 && (
             <p className="empty-message">No players found.</p>
           )}
 
-          {!loading && players.length > 0 && (
+          {!isLoading && visiblePlayers.length > 0 && (
             <div className="preview-sections">
               {sections.map(section => (
                 <div key={section.key} className="preview-section">
@@ -74,6 +156,8 @@ const PreviewPage = () => {
                           diving={player.diving}
                           cardImage={getPlayerCardImage(player)}
                           cardTitle={player.cardTitle}
+                          editMode={editablePlayerIds.has(player._id)}
+                          onEdit={() => navigate(`/edit-player/${player._id}`)}
                         />
                       </div>
                     ))}
@@ -108,6 +192,8 @@ const PreviewPage = () => {
                           diving={player.diving}
                           cardImage={getPlayerCardImage(player)}
                           cardTitle={player.cardTitle}
+                          editMode={editablePlayerIds.has(player._id)}
+                          onEdit={() => navigate(`/edit-player/${player._id}`)}
                         />
                       </div>
                     ))}

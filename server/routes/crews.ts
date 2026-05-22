@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { requireAuth } from '../middleware/auth';
 import Crew from '../models/Crew';
 import Player from '../models/Player';
+import User from '../models/User';
 
 const router = Router();
 router.use(requireAuth);
@@ -16,6 +17,7 @@ router.get('/', async (req: Request, res: Response) => {
       $or: [
         { ownerUid: uid },
         { memberUids: uid },
+        { editorUids: uid },
         { playerIds: { $in: linkedPlayerIds } },
       ],
     }).sort({ createdAt: 1 });
@@ -24,7 +26,18 @@ router.get('/', async (req: Request, res: Response) => {
     const visiblePlayers = visiblePlayerIds.length > 0
       ? await Player.find({ _id: { $in: visiblePlayerIds } }).lean()
       : [];
-    const playersById = new Map(visiblePlayers.map(player => [String(player._id), player]));
+    const linkedUids = [...new Set(visiblePlayers.map(player => player.linkedUserId).filter(Boolean) as string[])];
+    const linkedUsers = linkedUids.length > 0
+      ? await User.find({ uid: { $in: linkedUids } }).select('uid photoURL').lean()
+      : [];
+    const photoByUid = new Map(linkedUsers.map(user => [user.uid, user.photoURL]));
+    const playersById = new Map(visiblePlayers.map(player => [
+      String(player._id),
+      {
+        ...player,
+        linkedUserPhotoURL: player.linkedUserId ? photoByUid.get(player.linkedUserId) : undefined,
+      },
+    ]));
 
     res.json(crews.map(crew => ({
       ...crew.toObject(),
@@ -41,10 +54,50 @@ router.post('/', async (req: Request, res: Response) => {
   const { name } = req.body;
   if (!name?.trim()) return res.status(400).json({ error: 'Name is required' });
   try {
-    const crew = await Crew.create({ ownerUid: uid, name: name.trim(), playerIds: [] });
+    const crew = await Crew.create({ ownerUid: uid, name: name.trim(), playerIds: [], memberUids: [], editorUids: [] });
     res.status(201).json(crew);
   } catch {
     res.status(500).json({ error: 'Failed to create crew' });
+  }
+});
+
+// POST /api/crews/:id/editors/:editorUid — grant roster edit permission to a crew member
+router.post('/:id/editors/:editorUid', async (req: Request, res: Response) => {
+  const uid = (req as any).uid;
+  const editorUid = String(req.params.editorUid);
+  try {
+    const crew = await Crew.findOne({ _id: req.params.id, ownerUid: uid });
+    if (!crew) return res.status(404).json({ error: 'Crew not found' });
+    if (editorUid === uid) return res.status(400).json({ error: 'Owner already has full access' });
+    if (!crew.memberUids.includes(editorUid)) {
+      return res.status(400).json({ error: 'Editor must be a crew member' });
+    }
+
+    const updated = await Crew.findOneAndUpdate(
+      { _id: req.params.id, ownerUid: uid },
+      { $addToSet: { editorUids: editorUid } },
+      { new: true }
+    );
+    res.json(updated);
+  } catch {
+    res.status(500).json({ error: 'Failed to add editor' });
+  }
+});
+
+// DELETE /api/crews/:id/editors/:editorUid — revoke roster edit permission
+router.delete('/:id/editors/:editorUid', async (req: Request, res: Response) => {
+  const uid = (req as any).uid;
+  const editorUid = String(req.params.editorUid);
+  try {
+    const updated = await Crew.findOneAndUpdate(
+      { _id: req.params.id, ownerUid: uid },
+      { $pull: { editorUids: editorUid } },
+      { new: true }
+    );
+    if (!updated) return res.status(404).json({ error: 'Crew not found' });
+    res.json(updated);
+  } catch {
+    res.status(500).json({ error: 'Failed to remove editor' });
   }
 });
 

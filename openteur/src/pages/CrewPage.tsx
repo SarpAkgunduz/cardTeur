@@ -14,6 +14,7 @@ interface Crew {
   name: string;
   playerIds: string[];
   memberUids: string[];
+  editorUids: string[];
   players?: Player[];
 }
 
@@ -31,6 +32,7 @@ const CrewPage = () => {
   const [crews, setCrews] = useState<Crew[]>([]);
   const [linkedUserMap, setLinkedUserMap] = useState<Record<string, LinkedUser>>({});
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'crews' | 'permissions'>('crews');
 
   const [creatingCrew, setCreatingCrew] = useState(false);
   const [newCrewName, setNewCrewName] = useState('');
@@ -45,6 +47,7 @@ const CrewPage = () => {
   const [editingEmailId, setEditingEmailId] = useState<string | null>(null);
   const [editingEmail, setEditingEmail] = useState('');
   const [savingEmailId, setSavingEmailId] = useState<string | null>(null);
+  const [savingPermission, setSavingPermission] = useState<string | null>(null);
 
   const [toastMsg, setToastMsg] = useState('');
   const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
@@ -74,9 +77,10 @@ const CrewPage = () => {
   }, []);
 
   useEffect(() => {
-    const linkedUids = [...new Set(
-      players.map(p => p.linkedUserId).filter(Boolean) as string[]
-    )];
+    const linkedUids = [...new Set([
+      ...(players.map(p => p.linkedUserId).filter(Boolean) as string[]),
+      ...crews.flatMap(crew => [...(crew.memberUids ?? []), ...(crew.editorUids ?? [])]),
+    ])];
     if (linkedUids.length === 0) {
       setLinkedUserMap({});
       return;
@@ -100,7 +104,7 @@ const CrewPage = () => {
         }
       })
       .catch(() => {});
-  }, [players, updatePlayer]);
+  }, [players, crews, updatePlayer]);
 
   const handleCreateCrew = async () => {
     if (!newCrewName.trim()) return;
@@ -158,6 +162,22 @@ const CrewPage = () => {
     } catch { showMsg('Failed to remove player.', 'danger'); }
   };
 
+  const handleToggleEditor = async (crew: Crew, editorUid: string, enabled: boolean) => {
+    const key = `${crew._id}-${editorUid}`;
+    setSavingPermission(key);
+    try {
+      const updated = await apiRequest<Crew>(`/crews/${crew._id}/editors/${editorUid}`, {
+        method: enabled ? 'DELETE' : 'POST',
+      });
+      setCrews(prev => prev.map(c => c._id === crew._id ? updated : c));
+      flashSaved();
+    } catch {
+      showMsg('Failed to update permissions.', 'danger');
+    } finally {
+      setSavingPermission(null);
+    }
+  };
+
   const handleShimmerRename = () => {
     setRenameShimmer(true);
     setTimeout(() => setRenameShimmer(false), 1800);
@@ -205,6 +225,8 @@ const CrewPage = () => {
 
   const availableForCrew = (crew: Crew) =>
     players.filter(p => !crew.playerIds.includes(p._id));
+
+  const ownedCrewsForPermissions = crews.filter(crew => crew.ownerUid === currentUser?.uid);
 
   const renderPlayerRowLeft = (player: Player, crewId: string) => {
     const animKey = `${crewId}-${player._id}`;
@@ -339,6 +361,24 @@ const CrewPage = () => {
               </div>
             </div>
 
+            <div className="crew-tabs">
+              <button
+                type="button"
+                className={`crew-tab ${activeTab === 'crews' ? 'crew-tab--active' : ''}`}
+                onClick={() => setActiveTab('crews')}
+              >
+                <i className="bi bi-people-fill"></i> Crews
+              </button>
+              <button
+                type="button"
+                className={`crew-tab ${activeTab === 'permissions' ? 'crew-tab--active' : ''}`}
+                onClick={() => setActiveTab('permissions')}
+              >
+                <i className="bi bi-shield-lock-fill"></i> Permissions
+              </button>
+            </div>
+
+      {activeTab === 'crews' ? (
       <div className="crew-page">
         <div className="crew-left">
           {creatingCrew && (
@@ -464,6 +504,56 @@ const CrewPage = () => {
           </div>
         </div>
       </div>
+      ) : (
+        <div className="crew-permissions">
+          {ownedCrewsForPermissions.length === 0 && (
+            <p className="crew-empty">Create a crew before assigning roster permissions.</p>
+          )}
+          {ownedCrewsForPermissions.map(crew => {
+            const memberUids = [...new Set(crew.memberUids ?? [])];
+            return (
+              <div key={crew._id} className="crew-permission-card">
+                <div className="crew-permission-card__header">
+                  <span>{crew.name}</span>
+                  <small>{memberUids.length} linked member{memberUids.length === 1 ? '' : 's'}</small>
+                </div>
+                {memberUids.length === 0 ? (
+                  <p className="crew-card__empty">No linked members in this crew yet.</p>
+                ) : (
+                  <div className="crew-permission-list">
+                    {memberUids.map(memberUid => {
+                      const user = linkedUserMap[memberUid];
+                      const isEditor = (crew.editorUids ?? []).includes(memberUid);
+                      const key = `${crew._id}-${memberUid}`;
+                      return (
+                        <div key={memberUid} className="crew-permission-row">
+                          <div className="crew-permission-row__avatar">
+                            {user?.photoURL ? <img src={user.photoURL} alt={user.displayName} /> : <i className="bi bi-person-fill"></i>}
+                          </div>
+                          <div className="crew-permission-row__info">
+                            <span>{user?.displayName ?? memberUid}</span>
+                            <small>{user?.email ?? 'Linked crew member'}</small>
+                          </div>
+                          <button
+                            type="button"
+                            className={`crew-permission-toggle ${isEditor ? 'crew-permission-toggle--on' : ''}`}
+                            onClick={() => handleToggleEditor(crew, memberUid, isEditor)}
+                            disabled={savingPermission === key}
+                          >
+                            {savingPermission === key
+                              ? <span className="spinner-border spinner-border-sm" />
+                              : isEditor ? 'Can edit roster' : 'View only'}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
           </div>
         </div>
       </div>

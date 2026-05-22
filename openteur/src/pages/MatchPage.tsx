@@ -114,7 +114,7 @@ const MatchPage = () => {
 
   useEffect(() => {
     if (pitchMode) return;
-    const active = playersPool.filter(p => selectedPlayerIds.has(p._id));
+    const active = playersPool.filter(p => selectedPlayerIds.has(p._id ?? p.id));
     if (active.length === 0) { setLeftPlayers([]); setRightPlayers([]); return; }
     const { left, right } = distributePlayers(active, playerCount);
     setLeftPlayers(left);
@@ -313,7 +313,7 @@ const MatchPage = () => {
           <option value="">All Players</option>
           {crews.map(crew => (
             <option key={crew._id} value={crew._id}>
-              {crew.name.toUpperCase()}
+              {crew.name.toUpperCase()} ({getCrewPlayers(crew).length})
             </option>
           ))}
         </select>
@@ -437,19 +437,20 @@ const MatchPage = () => {
                   <span><i className="bi bi-people-fill me-1" />Players</span>
                   <span className="match-crew-count">{selectedPlayerIds.size} / {playersPool.length}</span>
                   <div className="match-crew-actions">
-                    <button type="button" onClick={() => setSelectedPlayerIds(new Set(playersPool.map((p: any) => p._id)))}>All</button>
+                    <button type="button" onClick={() => setSelectedPlayerIds(new Set(playersPool.map((p: any) => p._id ?? p.id).filter(Boolean)))}>All</button>
                     <button type="button" onClick={() => setSelectedPlayerIds(new Set())}>None</button>
                   </div>
                 </div>
                 <div className="crew-chips">
                   {playersPool.map((p: any) => {
-                    const sel = selectedPlayerIds.has(p._id);
+                    const id = p._id ?? p.id;
+                    const sel = selectedPlayerIds.has(id);
                     return (
                       <button
-                        key={p._id}
+                        key={id}
                         type="button"
                         className={'crew-chip ' + (sel ? 'crew-chip--selected' : '')}
-                        onClick={() => setSelectedPlayerIds(prev => { const next = new Set(prev); sel ? next.delete(p._id) : next.add(p._id); return next; })}
+                        onClick={() => setSelectedPlayerIds(prev => { const next = new Set(prev); sel ? next.delete(id) : next.add(id); return next; })}
                       >
                         {sel && <i className="bi bi-check-circle-fill me-1" style={{ fontSize: '0.75rem' }} />}
                         {p.name}<span className="crew-chip__pos">{p.preferredPosition ?? '?'}</span>

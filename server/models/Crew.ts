@@ -5,6 +5,7 @@ export interface ICrew extends Document {
   name: string;
   playerIds: string[];
   memberUids: string[];
+  editorUids: string[];
   createdAt: Date;
 }
 
@@ -13,6 +14,7 @@ const CrewSchema = new Schema<ICrew>({
   name: { type: String, required: true },
   playerIds: { type: [String], default: [] },
   memberUids: { type: [String], default: [] },
+  editorUids: { type: [String], default: [] },
   createdAt: { type: Date, default: Date.now },
 });
 
