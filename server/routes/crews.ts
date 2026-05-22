@@ -39,10 +39,19 @@ router.get('/', async (req: Request, res: Response) => {
       },
     ]));
 
-    res.json(crews.map(crew => ({
-      ...crew.toObject(),
-      players: crew.playerIds.map(id => playersById.get(String(id))).filter(Boolean),
-    })));
+    res.json(crews.map(crew => {
+      const crewPlayers = crew.playerIds
+        .map(id => playersById.get(String(id)))
+        .filter((player): player is NonNullable<typeof player> => Boolean(player));
+      const linkedMemberUids = crewPlayers
+        .map(player => player.linkedUserId)
+        .filter(Boolean) as string[];
+      return {
+        ...crew.toObject(),
+        memberUids: [...new Set([...(crew.memberUids ?? []), ...linkedMemberUids])],
+        players: crewPlayers,
+      };
+    }));
   } catch {
     res.status(500).json({ error: 'Failed to fetch crews' });
   }
@@ -69,7 +78,11 @@ router.post('/:id/editors/:editorUid', async (req: Request, res: Response) => {
     const crew = await Crew.findOne({ _id: req.params.id, ownerUid: uid });
     if (!crew) return res.status(404).json({ error: 'Crew not found' });
     if (editorUid === uid) return res.status(400).json({ error: 'Owner already has full access' });
-    if (!crew.memberUids.includes(editorUid)) {
+    const linkedMember = await Player.exists({
+      _id: { $in: crew.playerIds },
+      linkedUserId: editorUid,
+    });
+    if (!crew.memberUids.includes(editorUid) && !linkedMember) {
       return res.status(400).json({ error: 'Editor must be a crew member' });
     }
 

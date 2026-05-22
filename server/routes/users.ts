@@ -18,7 +18,7 @@ router.post('/register', requireAuth, async (req: Request, res: Response) => {
   try {
     const existing = await User.findOne({ uid });
     if (existing) {
-      if (photoURL && existing.photoURL !== photoURL) {
+      if (!existing.photoURL && photoURL) {
         existing.photoURL = photoURL;
         await existing.save();
       }

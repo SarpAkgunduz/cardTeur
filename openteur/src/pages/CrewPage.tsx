@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { usePlayers } from '../contexts/PlayerContext';
 import BackButton from '../components/BackButton';
@@ -6,6 +6,7 @@ import type { Player } from '../services/api/types';
 import { apiRequest } from '../services/api/apiClient';
 import ToastNotification from '../components/ToastNotification';
 import { usePlayerDisplay } from '../hooks/usePlayerDisplay';
+import { useCrewMembers } from '../hooks/useCrewMembers';
 import './CrewPage.css';
 
 interface Crew {
@@ -18,19 +19,11 @@ interface Crew {
   players?: Player[];
 }
 
-interface LinkedUser {
-  uid: string;
-  email: string;
-  displayName: string;
-  photoURL?: string;
-}
-
 const CrewPage = () => {
   const { currentUser } = useAuth();
   const { players, loading: playersLoading, updatePlayer } = usePlayers();
   const { getPlayerCardImage } = usePlayerDisplay();
   const [crews, setCrews] = useState<Crew[]>([]);
-  const [linkedUserMap, setLinkedUserMap] = useState<Record<string, LinkedUser>>({});
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'crews' | 'permissions'>('crews');
 
@@ -61,6 +54,18 @@ const CrewPage = () => {
     setToastMsg(msg); setToastVariant(variant); setShowToast(true);
   };
 
+  const linkedPlayerUids = useMemo(
+    () => [...new Set([
+      ...(players.map(player => player.linkedUserId).filter(Boolean) as string[]),
+      ...(crews
+        .flatMap(crew => crew.players ?? [])
+        .map(player => player.linkedUserId)
+        .filter(Boolean) as string[]),
+    ])],
+    [players, crews]
+  );
+  const { memberMap: linkedUserMap } = useCrewMembers(crews, linkedPlayerUids);
+
   const flashSaved = () => {
     setSavedFlash(true);
     if (savedTimerRef.current) clearTimeout(savedTimerRef.current);
@@ -77,34 +82,17 @@ const CrewPage = () => {
   }, []);
 
   useEffect(() => {
-    const linkedUids = [...new Set([
-      ...(players.map(p => p.linkedUserId).filter(Boolean) as string[]),
-      ...crews.flatMap(crew => [...(crew.memberUids ?? []), ...(crew.editorUids ?? [])]),
-    ])];
-    if (linkedUids.length === 0) {
-      setLinkedUserMap({});
-      return;
-    }
-
-    apiRequest<LinkedUser[]>('/users/lookup-by-uids', {
-      method: 'POST',
-      body: JSON.stringify({ uids: linkedUids }),
-    })
-      .then(async (users) => {
-        const map: Record<string, LinkedUser> = {};
-        users.forEach(u => { map[u.uid] = u; });
-        setLinkedUserMap(map);
-
-        for (const player of players) {
-          if (player.linkedUserId && !player.email && map[player.linkedUserId]?.email) {
-            try {
-              await updatePlayer(player._id, { email: map[player.linkedUserId].email });
-            } catch { /* non-fatal */ }
-          }
+    const syncLinkedEmails = async () => {
+      for (const player of players) {
+        if (player.linkedUserId && !player.email && linkedUserMap[player.linkedUserId]?.email) {
+          try {
+            await updatePlayer(player._id, { email: linkedUserMap[player.linkedUserId].email });
+          } catch { /* non-fatal */ }
         }
-      })
-      .catch(() => {});
-  }, [players, crews, updatePlayer]);
+      }
+    };
+    syncLinkedEmails();
+  }, [players, linkedUserMap, updatePlayer]);
 
   const handleCreateCrew = async () => {
     if (!newCrewName.trim()) return;
@@ -221,14 +209,23 @@ const CrewPage = () => {
   const visiblePlayers = [...visiblePlayerMap.values()];
 
   const playersInCrew = (crew: Crew) =>
-    crew.playerIds.map(id => visiblePlayerMap.get(id)).filter(Boolean) as Player[];
+    crew.playerIds
+      .map(id => visiblePlayerMap.get(id) ?? (crew.players ?? []).find(player => String(player._id) === String(id)))
+      .filter(Boolean) as Player[];
 
   const availableForCrew = (crew: Crew) =>
     players.filter(p => !crew.playerIds.includes(p._id));
 
   const ownedCrewsForPermissions = crews.filter(crew => crew.ownerUid === currentUser?.uid);
 
-  const renderPlayerRowLeft = (player: Player, crewId: string) => {
+  const getCrewPermissionMemberUids = (crew: Crew): string[] => {
+    const playerLinkedUids = playersInCrew(crew)
+      .map(player => player.linkedUserId)
+      .filter(Boolean) as string[];
+    return [...new Set([...(crew.memberUids ?? []), ...playerLinkedUids])];
+  };
+
+  const renderPlayerRowLeft = (player: Player, crewId: string, canRemove: boolean) => {
     const animKey = `${crewId}-${player._id}`;
     const isNew = !!addedAnimation[animKey];
     return (
@@ -243,10 +240,12 @@ const CrewPage = () => {
           <span className="crew-member-row__name">{player.name}</span>
           <span className="crew-member-row__pos">{player.preferredPosition}</span>
         </div>
-        <button className="crew-member-row__remove" title="Remove from crew"
-          onClick={() => handleRemovePlayerFromCrew(crewId, player._id)}>
-          <i className="bi bi-x-lg"></i>
-        </button>
+        {canRemove && (
+          <button className="crew-member-row__remove" title="Remove from crew"
+            onClick={() => handleRemovePlayerFromCrew(crewId, player._id)}>
+            <i className="bi bi-x-lg"></i>
+          </button>
+        )}
       </div>
     );
   };
@@ -446,7 +445,7 @@ const CrewPage = () => {
 
                       <div className="crew-card__members">
                         {playersInCrew(crew).length === 0 && <p className="crew-card__empty">No players yet.</p>}
-                        {playersInCrew(crew).map(p => renderPlayerRowLeft(p, crew._id))}
+                        {playersInCrew(crew).map(p => renderPlayerRowLeft(p, crew._id, isOwned))}
                       </div>
 
                       {isOwned && (
@@ -510,7 +509,7 @@ const CrewPage = () => {
             <p className="crew-empty">Create a crew before assigning roster permissions.</p>
           )}
           {ownedCrewsForPermissions.map(crew => {
-            const memberUids = [...new Set(crew.memberUids ?? [])];
+            const memberUids = getCrewPermissionMemberUids(crew);
             return (
               <div key={crew._id} className="crew-permission-card">
                 <div className="crew-permission-card__header">

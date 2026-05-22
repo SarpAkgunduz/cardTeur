@@ -41,11 +41,6 @@ const PreviewPage = () => {
       .finally(() => setCrewsLoading(false));
   }, []);
 
-  const ownedCrews = useMemo(
-    () => crews.filter(crew => crew.ownerUid === currentUser?.uid),
-    [crews, currentUser]
-  );
-
   const sharedCrews = useMemo(
     () => crews.filter(crew => crew.ownerUid !== currentUser?.uid),
     [crews, currentUser]
@@ -58,14 +53,12 @@ const PreviewPage = () => {
     const map = new Map<string, Player>();
     players.forEach(player => map.set(player._id, player));
 
-    if (ownedCrews.length === 0) {
-      sharedCrews.flatMap(crew => crew.players ?? []).forEach(player => {
-        if (player?._id && !map.has(player._id)) map.set(player._id, player);
-      });
-    }
+    sharedCrews.flatMap(crew => crew.players ?? []).forEach(player => {
+      if (player?._id && !map.has(player._id)) map.set(player._id, player);
+    });
 
     return [...map.values()];
-  }, [players, crews, ownedCrews.length, sharedCrews, selectedCrewId]);
+  }, [players, crews, sharedCrews, selectedCrewId]);
 
   const editablePlayerIds = useMemo(() => {
     const ids = new Set(players.map(player => player._id));
@@ -102,24 +95,25 @@ const PreviewPage = () => {
             <div className="page-header-spacer" />
           </div>
 
-          {ownedCrews.length > 0 && (
-            <div className="preview-filter">
-              <label className="preview-filter__label" htmlFor="previewCrewFilter">Roster Scope</label>
-              <select
-                id="previewCrewFilter"
-                className="preview-filter__select"
-                value={selectedCrewId}
-                onChange={event => setSelectedCrewId(event.target.value)}
-              >
-                <option value="">All Players ({players.length})</option>
-                {ownedCrews.map(crew => (
-                  <option key={crew._id} value={crew._id}>
-                    {crew.name} ({crew.players?.length ?? 0})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+          <div className="preview-filter">
+            <label className="preview-filter__label" htmlFor="previewCrewFilter">Roster Scope</label>
+            <select
+              id="previewCrewFilter"
+              className="preview-filter__select"
+              value={selectedCrewId}
+              onChange={event => setSelectedCrewId(event.target.value)}
+              disabled={crews.length === 0}
+            >
+              <option value="">
+                {crews.length === 0 ? 'No Crew' : `All Players (${visiblePlayers.length})`}
+              </option>
+              {crews.map(crew => (
+                <option key={crew._id} value={crew._id}>
+                  {crew.name} ({crew.players?.length ?? 0})
+                </option>
+              ))}
+            </select>
+          </div>
 
           {isLoading && <p className="empty-message">Loading players...</p>}
 
