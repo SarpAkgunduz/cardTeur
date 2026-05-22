@@ -13,11 +13,16 @@ interface FriendUser {
   photoURL?: string;
 }
 
+interface FriendRequestsResponse {
+  incoming: FriendUser[];
+  outgoing: FriendUser[];
+}
+
 const FriendsPage = () => {
   const { currentUser } = useAuth();
   const inviteLink = `${window.location.origin}/invite/${currentUser?.uid}`;
 
-  const [activeTab, setActiveTab] = useState<'friends' | 'add'>('friends');
+  const [activeTab, setActiveTab] = useState<'friends' | 'requests' | 'add'>('friends');
   const [copied, setCopied] = useState(false);
 
   // My Friends tab
@@ -26,6 +31,12 @@ const FriendsPage = () => {
   const [loadingFriends, setLoadingFriends] = useState(true);
   const [removingUid, setRemovingUid] = useState<string | null>(null);
   const [confirmRemoveUid, setConfirmRemoveUid] = useState<string | null>(null);
+
+  // Friend requests tab
+  const [incomingRequests, setIncomingRequests] = useState<FriendUser[]>([]);
+  const [outgoingRequests, setOutgoingRequests] = useState<FriendUser[]>([]);
+  const [loadingRequests, setLoadingRequests] = useState(true);
+  const [requestActionUid, setRequestActionUid] = useState<string | null>(null);
 
   // Add Friend tab — exact match only, no DB scan
   const [addQuery, setAddQuery] = useState('');
@@ -42,11 +53,28 @@ const FriendsPage = () => {
     setToast(msg); setToastVariant(variant); setShowToast(true);
   };
 
-  useEffect(() => {
-    apiRequest<FriendUser[]>('/users/friends')
+  const loadFriends = () => {
+    setLoadingFriends(true);
+    return apiRequest<FriendUser[]>('/users/friends')
       .then(setFriends)
       .catch(() => showMsg('Failed to load friends.', 'danger'))
       .finally(() => setLoadingFriends(false));
+  };
+
+  const loadRequests = () => {
+    setLoadingRequests(true);
+    return apiRequest<FriendRequestsResponse>('/users/friend-requests')
+      .then((data) => {
+        setIncomingRequests(data.incoming);
+        setOutgoingRequests(data.outgoing);
+      })
+      .catch(() => showMsg('Failed to load friend requests.', 'danger'))
+      .finally(() => setLoadingRequests(false));
+  };
+
+  useEffect(() => {
+    loadFriends();
+    loadRequests();
   }, []);
 
   const handleCopyLink = async () => {
@@ -97,14 +125,42 @@ const FriendsPage = () => {
     setAddingUid(user.uid);
     try {
       await apiRequest(`/users/friends/${user.uid}`, { method: 'POST' });
-      setFriends(prev => [...prev, user]);
+      setOutgoingRequests(prev => prev.some(request => request.uid === user.uid) ? prev : [...prev, user]);
       setAddResult(null);
       setAddQuery('');
-      showMsg(`${user.displayName} added as friend.`);
+      showMsg(`Friend request sent to ${user.displayName}.`);
     } catch {
-      showMsg('Failed to add friend.', 'danger');
+      showMsg('Failed to send friend request.', 'danger');
     } finally {
       setAddingUid(null);
+    }
+  };
+
+  const handleAcceptRequest = async (user: FriendUser) => {
+    setRequestActionUid(user.uid);
+    try {
+      await apiRequest(`/users/friend-requests/${user.uid}/accept`, { method: 'POST' });
+      setIncomingRequests(prev => prev.filter(request => request.uid !== user.uid));
+      setOutgoingRequests(prev => prev.filter(request => request.uid !== user.uid));
+      setFriends(prev => prev.some(friend => friend.uid === user.uid) ? prev : [...prev, user]);
+      showMsg(`${user.displayName} added as friend.`);
+    } catch {
+      showMsg('Failed to accept friend request.', 'danger');
+    } finally {
+      setRequestActionUid(null);
+    }
+  };
+
+  const handleRejectRequest = async (user: FriendUser) => {
+    setRequestActionUid(user.uid);
+    try {
+      await apiRequest(`/users/friend-requests/${user.uid}`, { method: 'DELETE' });
+      setIncomingRequests(prev => prev.filter(request => request.uid !== user.uid));
+      showMsg('Friend request declined.');
+    } catch {
+      showMsg('Failed to decline friend request.', 'danger');
+    } finally {
+      setRequestActionUid(null);
     }
   };
 
@@ -124,6 +180,7 @@ const FriendsPage = () => {
   };
 
   const friendUids = new Set(friends.map(f => f.uid));
+  const outgoingUids = new Set(outgoingRequests.map(f => f.uid));
 
   const renderAvatar = (user: FriendUser, size = 40) => (
     <div className="friends-page__avatar" style={{ width: size, height: size, fontSize: size * 0.4 }}>
@@ -171,6 +228,13 @@ const FriendsPage = () => {
           onClick={() => setActiveTab('friends')}
         >
           <i className="bi bi-people-fill" /> My Friends
+        </button>
+        <button
+          className={`friends-page__tab ${activeTab === 'requests' ? 'friends-page__tab--active' : ''}`}
+          onClick={() => setActiveTab('requests')}
+        >
+          <i className="bi bi-inbox-fill" /> Requests
+          {incomingRequests.length > 0 && <span className="friends-page__tab-badge">{incomingRequests.length}</span>}
         </button>
         <button
           className={`friends-page__tab ${activeTab === 'add' ? 'friends-page__tab--active' : ''}`}
@@ -231,6 +295,69 @@ const FriendsPage = () => {
         </>
       )}
 
+      {/* ── Tab: Requests ── */}
+      {activeTab === 'requests' && (
+        <div className="friends-page__section">
+          <div className="friends-page__section-label">Incoming requests</div>
+          {loadingRequests ? (
+            <div className="friends-page__loading"><div className="spinner-border text-info" role="status" /></div>
+          ) : incomingRequests.length === 0 ? (
+            <div className="friends-page__empty">No incoming friend requests.</div>
+          ) : (
+            <div className="friends-page__list">
+              {incomingRequests.map((request, i) => (
+                <div className="friends-page__row" key={request.uid} style={{ animationDelay: `${i * 0.04}s` }}>
+                  {renderAvatar(request)}
+                  <div className="friends-page__info">
+                    <span className="friends-page__name">{request.displayName}</span>
+                    <span className="friends-page__email">{request.email}</span>
+                  </div>
+                  <div className="friends-page__request-actions">
+                    <button
+                      className="friends-page__action-btn friends-page__action-btn--add"
+                      onClick={() => handleAcceptRequest(request)}
+                      disabled={requestActionUid === request.uid}
+                      title="Accept request"
+                    >
+                      {requestActionUid === request.uid
+                        ? <span className="spinner-border spinner-border-sm" />
+                        : <><i className="bi bi-check-lg" /> Accept</>
+                      }
+                    </button>
+                    <button
+                      className="friends-page__action-btn friends-page__action-btn--remove"
+                      onClick={() => handleRejectRequest(request)}
+                      disabled={requestActionUid === request.uid}
+                      title="Decline request"
+                    >
+                      <i className="bi bi-x-lg" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="friends-page__section-label friends-page__section-label--spaced">Sent requests</div>
+          {loadingRequests ? null : outgoingRequests.length === 0 ? (
+            <div className="friends-page__empty friends-page__empty--compact">No sent requests.</div>
+          ) : (
+            <div className="friends-page__list">
+              {outgoingRequests.map((request, i) => (
+                <div className="friends-page__row" key={request.uid} style={{ animationDelay: `${i * 0.04}s` }}>
+                  {renderAvatar(request)}
+                  <div className="friends-page__info">
+                    <span className="friends-page__name">{request.displayName}</span>
+                    <span className="friends-page__email">{request.email}</span>
+                  </div>
+                  <span className="friends-page__already-badge">Pending</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ── Tab: Add Friend ── */}
       {activeTab === 'add' && (
         <div className="friends-page__add-panel">
@@ -274,6 +401,8 @@ const FriendsPage = () => {
               </div>
               {friendUids.has(addResult.uid) ? (
                 <span className="friends-page__already-badge">Already friends</span>
+              ) : outgoingUids.has(addResult.uid) ? (
+                <span className="friends-page__already-badge">Request sent</span>
               ) : (
                 <button
                   className="friends-page__action-btn friends-page__action-btn--add"

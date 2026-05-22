@@ -6,7 +6,7 @@ export interface Player {
   email?: string;
   cardImage: string;
   jerseyNumber: number;
-  marketValue: number;
+  marketValue?: number;
   preferredPosition: string;
   cardTitle: 'gold' | 'silver' | 'bronze' | 'platinum';
   offensiveOverall: number;

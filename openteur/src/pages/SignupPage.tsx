@@ -51,14 +51,14 @@ const SignupPage = () => {
         body: JSON.stringify({ displayName }),
       });
       const redirect = searchParams.get('redirect');
-      // If the redirect is an invite link, add the friend now while the token is fresh
+      // If the redirect is an invite link, send the friend request while the token is fresh
       const inviteMatch = redirect?.match(/^\/invite\/(.+)$/);
       if (inviteMatch) {
         const inviterUid = inviteMatch[1];
         try {
           await apiRequest(`/users/friends/${inviterUid}`, { method: 'POST' });
         } catch {
-          // Already friends or user not found — non-fatal
+          // Already friends/requested or user not found — non-fatal
         }
         navigate('/friends');
       } else {
@@ -132,7 +132,7 @@ const SignupPage = () => {
         <GoogleSignInButton />
         <p className="ct-signup-login-link">
           Already have an account?{' '}
-          <span onClick={() => navigate('/login')}>Login</span>
+          <span onClick={() => navigate(`/login${searchParams.get('redirect') ? `?redirect=${encodeURIComponent(searchParams.get('redirect')!)}` : ''}`)}>Login</span>
         </p>
       </div>
     </div>

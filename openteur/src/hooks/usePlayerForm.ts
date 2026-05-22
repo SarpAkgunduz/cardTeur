@@ -99,7 +99,7 @@ export function usePlayerForm() {
         setName(player.name);
         setCardImage(player.cardImage);
         setJerseyNumber(player.jerseyNumber);
-        setMarketValue(player.marketValue);
+        setMarketValue(player.marketValue ?? '');
         setPreferredPosition(player.preferredPosition);
         setDribbling(player.dribbling ?? 0);
         setShotAccuracy(player.shotAccuracy ?? 0);
@@ -197,7 +197,7 @@ export function usePlayerForm() {
       jerseyNumber: Number(jerseyNumber),
       preferredPosition,
       // cardTitle is not sent — backend computes it as a virtual
-      marketValue: marketValue !== '' ? Number(marketValue) : 0,
+      marketValue: marketValue !== '' ? Number(marketValue) : undefined,
       cardImage,
       offensiveOverall,
       defensiveOverall,

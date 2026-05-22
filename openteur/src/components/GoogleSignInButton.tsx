@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { apiRequest } from '../services/api/apiClient';
 import './GoogleSignInButton.css';
@@ -9,6 +9,7 @@ const GoogleSignInButton: React.FC = () => {
   const [error, setError] = useState('');
   const { signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
@@ -22,7 +23,19 @@ const GoogleSignInButton: React.FC = () => {
           displayName: user.displayName || user.email?.split('@')[0] || 'User',
         }),
       });
-      navigate('/');
+      const redirect = searchParams.get('redirect');
+      const inviteMatch = redirect?.match(/^\/invite\/(.+)$/);
+      if (inviteMatch) {
+        const inviterUid = inviteMatch[1];
+        try {
+          await apiRequest(`/users/friends/${inviterUid}`, { method: 'POST' });
+        } catch {
+          // Already friends/requested or user not found — non-fatal
+        }
+        navigate('/friends');
+      } else {
+        navigate(redirect || '/');
+      }
     } catch (err: any) {
       if (err?.code === 'auth/popup-closed-by-user') {
         // User closed the popup — no error shown

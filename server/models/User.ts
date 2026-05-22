@@ -6,6 +6,7 @@ export interface IUser extends Document {
   displayName: string;
   photoURL?: string;
   friends: string[];
+  friendRequests: string[];
   createdAt: Date;
 }
 
@@ -15,6 +16,7 @@ const UserSchema = new Schema<IUser>({
   displayName: { type: String, required: true },
   photoURL: { type: String },
   friends: { type: [String], default: [] },
+  friendRequests: { type: [String], default: [] },
   createdAt: { type: Date, default: Date.now },
 });
 

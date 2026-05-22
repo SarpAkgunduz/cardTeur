@@ -44,7 +44,7 @@ const InvitePage = () => {
       {status === 'done' && (
         <>
           <i className="bi bi-person-check-fill" style={{ fontSize: '3rem', color: '#00deec' }} />
-          <p style={{ color: 'rgba(255,255,255,0.7)' }}>Friend added! Redirecting...</p>
+          <p style={{ color: 'rgba(255,255,255,0.7)' }}>Friend request sent! Redirecting...</p>
         </>
       )}
       {status === 'error' && (

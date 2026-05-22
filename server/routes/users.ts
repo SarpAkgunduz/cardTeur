@@ -50,7 +50,10 @@ router.delete('/account', requireAuth, async (req: Request, res: Response) => {
   try {
     await admin.auth().deleteUser(uid);
     await User.deleteOne({ uid });
-    await User.updateMany({ friends: uid } as any, { $pull: { friends: uid } } as any);
+    await User.updateMany(
+      { $or: [{ friends: uid }, { friendRequests: uid }] } as any,
+      { $pull: { friends: uid, friendRequests: uid } } as any
+    );
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete account' });
@@ -91,24 +94,89 @@ router.get('/friends', requireAuth, async (req: Request, res: Response) => {
   try {
     const me = await User.findOne({ uid });
     if (!me) { res.json([]); return; }
-    const friends = await User.find({ uid: { $in: me.friends } }).select('uid email displayName photoURL');
+    const friends = await User.find({ uid: { $in: me.friends ?? [] } }).select('uid email displayName photoURL');
     res.json(friends);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch friends' });
   }
 });
 
-// POST /api/users/friends/:friendUid - add friend (bidirectional)
+// GET /api/users/friend-requests - get incoming and outgoing pending requests
+router.get('/friend-requests', requireAuth, async (req: Request, res: Response) => {
+  const uid = (req as any).uid as string;
+  try {
+    const me = await User.findOne({ uid });
+    if (!me) { res.json({ incoming: [], outgoing: [] }); return; }
+
+    const incoming = await User.find({ uid: { $in: me.friendRequests ?? [] } }).select('uid email displayName photoURL');
+    const outgoing = await User.find({ friendRequests: uid }).select('uid email displayName photoURL');
+
+    res.json({ incoming, outgoing });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch friend requests' });
+  }
+});
+
+// POST /api/users/friends/:friendUid - send a friend request
 router.post('/friends/:friendUid', requireAuth, async (req: Request, res: Response) => {
   const uid = (req as any).uid as string;
-  const { friendUid } = req.params;
+  const friendUid = String(req.params.friendUid);
   if (uid === friendUid) { res.status(400).json({ error: 'Cannot add yourself' }); return; }
   try {
-    await User.findOneAndUpdate({ uid }, { $addToSet: { friends: friendUid } } as any);
-    await User.findOneAndUpdate({ uid: friendUid }, { $addToSet: { friends: uid } } as any);
+    const [me, friend] = await Promise.all([
+      User.findOne({ uid }),
+      User.findOne({ uid: friendUid }),
+    ]);
+    if (!me || !friend) { res.status(404).json({ error: 'User not found' }); return; }
+    if ((me.friends ?? []).includes(friendUid)) { res.json({ success: true, status: 'friends' }); return; }
+
+    if ((me.friendRequests ?? []).includes(friendUid)) {
+      await User.findOneAndUpdate({ uid }, { $pull: { friendRequests: friendUid }, $addToSet: { friends: friendUid } } as any);
+      await User.findOneAndUpdate({ uid: friendUid }, { $addToSet: { friends: uid } } as any);
+      res.json({ success: true, status: 'accepted' });
+      return;
+    }
+
+    await User.findOneAndUpdate({ uid: friendUid }, { $addToSet: { friendRequests: uid } } as any);
+    res.json({ success: true, status: 'requested' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to send friend request' });
+  }
+});
+
+// POST /api/users/friend-requests/:requesterUid/accept - accept an incoming request
+router.post('/friend-requests/:requesterUid/accept', requireAuth, async (req: Request, res: Response) => {
+  const uid = (req as any).uid as string;
+  const requesterUid = String(req.params.requesterUid);
+  try {
+    const me = await User.findOne({ uid });
+    if (!me) { res.status(404).json({ error: 'User not found' }); return; }
+    if (!(me.friendRequests ?? []).includes(requesterUid)) {
+      res.status(404).json({ error: 'Friend request not found' });
+      return;
+    }
+
+    await User.findOneAndUpdate(
+      { uid },
+      { $pull: { friendRequests: requesterUid }, $addToSet: { friends: requesterUid } } as any
+    );
+    await User.findOneAndUpdate({ uid: requesterUid }, { $addToSet: { friends: uid } } as any);
     res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to add friend' });
+    res.status(500).json({ error: 'Failed to accept friend request' });
+  }
+});
+
+// DELETE /api/users/friend-requests/:requesterUid - reject/cancel a pending request
+router.delete('/friend-requests/:requesterUid', requireAuth, async (req: Request, res: Response) => {
+  const uid = (req as any).uid as string;
+  const requesterUid = String(req.params.requesterUid);
+  try {
+    await User.findOneAndUpdate({ uid }, { $pull: { friendRequests: requesterUid } } as any);
+    await User.findOneAndUpdate({ uid: requesterUid }, { $pull: { friendRequests: uid } } as any);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update friend request' });
   }
 });
 
