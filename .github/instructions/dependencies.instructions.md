@@ -26,6 +26,19 @@ npx playwright install
 ```
 This downloads the browser binaries Playwright needs. Must be re-run on each new machine.
 
+Available scripts:
+```bash
+npm test
+```
+
+`npm test` runs the Playwright suite with the shared Playwright config. Full E2E auth uses `global-setup.ts`; E2E auth reads `E2E_EMAIL` and `E2E_PASSWORD` when present, otherwise falls back to the legacy local test account.
+
+## Root scripts
+
+- `npm start` runs backend and frontend together; dependencies still need to be installed inside `server/` and `openteur/`.
+- `npm run build` runs the backend build first, then the frontend build.
+- Do not put `npm install` inside build/test scripts. Dependency installation belongs in setup/CI steps, not inside package scripts that are expected to compile or test.
+
 ## Backend (`server/`) — `npm install` in `server/`
 | Package | Purpose | Notes |
 |---------|---------|-------|

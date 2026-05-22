@@ -178,7 +178,7 @@
   background: rgba(255, 255, 255, 0.03);
 }
 
-/* ── FIFA-style player card on the pitch ── */
+/* ── Football player card on the pitch ── */
 .pitch-card {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -377,4 +377,3 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
 }
 .fp-btn--ghost:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
-

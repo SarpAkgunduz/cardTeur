@@ -72,7 +72,7 @@ const Card: React.FC<CardProps> = ({
 
   return (
     <div
-      className={`fifa-card fifa-card--${cardType} ${editMode ? 'editable' : ''} ${compareMode ? 'comparable' : ''} ${isCompareSelected ? 'compare-selected' : ''}`}
+      className={`ct-player-card ct-player-card--${cardType} ${editMode ? 'editable' : ''} ${compareMode ? 'comparable' : ''} ${isCompareSelected ? 'compare-selected' : ''}`}
       onClick={editMode ? onEdit : compareMode ? onCompareSelect : undefined}
     >
       {/* Minus button in delete mode */}
@@ -94,27 +94,27 @@ const Card: React.FC<CardProps> = ({
       )}
 
       {/* Top: Overall rating + Position */}
-      <div className="fifa-card__top">
-        <div className="fifa-card__meta">
-          <span className="fifa-card__overall">{overallRating}</span>
-          <span className="fifa-card__pos">{preferredPosition}</span>
+      <div className="ct-player-card__top">
+        <div className="ct-player-card__meta">
+          <span className="ct-player-card__overall">{overallRating}</span>
+          <span className="ct-player-card__pos">{preferredPosition}</span>
         </div>
       </div>
 
       {/* Player image */}
-      <div className="fifa-card__image-area">
+      <div className="ct-player-card__image-area">
         <img src={cardImage} alt={name} />
       </div>
 
       {/* Bottom: Name + Divider + Stats */}
-      <div className="fifa-card__bottom">
-        <div className="fifa-card__name">{name}</div>
-        <div className="fifa-card__sep" />
-        <div className="fifa-card__stats">
+      <div className="ct-player-card__bottom">
+        <div className="ct-player-card__name">{name}</div>
+        <div className="ct-player-card__sep" />
+        <div className="ct-player-card__stats">
           {displayStats.map(({ val, lbl }) => (
-            <div className="fifa-card__stat-item" key={lbl}>
-              <span className="fifa-card__stat-val">{val}</span>
-              <span className="fifa-card__stat-lbl">{lbl}</span>
+            <div className="ct-player-card__stat-item" key={lbl}>
+              <span className="ct-player-card__stat-val">{val}</span>
+              <span className="ct-player-card__stat-lbl">{lbl}</span>
             </div>
           ))}
         </div>

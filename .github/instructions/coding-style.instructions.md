@@ -10,6 +10,7 @@ applyTo: "**"
 - Headers matching the navbar style: `background: rgba(36, 59, 90, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.1); height: 64px`
 - Section headers (e.g. PreviewPage position groups): `background: rgba(36, 59, 90, 0.75); border-left: 3px solid #00deec; border-radius: 0 8px 8px 0`
 - All buttons use the `.btn-ct` class, active/cancel state is toggled with `.active-mode`
+- FIFA-style player card tiers live in `Card.css`: keep the blue CardTeur metal base intact. Bronze, silver, and gold should read primarily through accent/highlight colors, not through completely different palettes.
 - CSS class naming: BEM-like, `component-name__element` format (e.g. `players-grid__item`)
 - Each page/component has its own CSS file, shared global styles live in `global.css`
 - Prefer `cubic-bezier` for animations, `transition` durations between 0.3–0.5s
@@ -28,6 +29,7 @@ applyTo: "**"
 - `CrewPage` (`/crew`) handles contact info (email). Email is managed here, not in `AddPlayerForm`.
 - `AddPlayerForm` handles player stats, identity (name, position, jersey, market value, image, stats), and user-linking (`linkedUserId`). The "Link to User" section shows avatar chips for self + friends; selecting one auto-sets `cardImage` from the user's `photoURL` and dims the manual photo picker. No contact fields here.
 - `PlayersPage` is the CRUD hub — manage, delete, compare modes.
+- `PlayersPage` also owns the random player generator. Preserve the locked-question-card interaction, the tier modal, and tier naming format (`Bronze/Silver/Gold Player N`) when changing roster UI.
 - `FriendsPage` (`/friends`) is the social hub — two tabs: "My Friends" (client-side filter) and "Add Friend" (exact UID/email lookup). Never add friend-search logic to other pages.
 - `ProfilePage` (`/profile`) is account settings — display name, photo, password, Account ID (copyable Firebase UID), danger zone.
 - When a feature clearly belongs to a different page's concern, move it there instead of adding it to the current page.

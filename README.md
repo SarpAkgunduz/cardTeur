@@ -1,10 +1,10 @@
 # CardTeur
 
-CardTeur is a full-stack web application that allows users to create, view, and manage custom football player cards, similar to those seen in FIFA or football manager games.
+CardTeur is a full-stack web application that allows users to create, view, and manage custom football player cards, similar to those seen in football card and manager games.
 
-The app lets users assign abilities, upload images, and categorize player cards. Future plans include implementing team-matching features to automatically form balanced teams.
+The app lets users assign abilities, upload images, generate random roster cards, organize crews, and build match lineups from all players or from a selected crew.
 
-Users can assign stats, upload images, compare players, and send match announcements via email. Authentication is handled via Firebase Auth (Email/Password + Google).
+Users can assign stats, upload images, compare players, manage friends/crews, and send match announcements via email. Authentication is handled via Firebase Auth (Email/Password + Google).
 
 ---
 
@@ -125,7 +125,19 @@ npm run dev
 # → http://localhost:5173
 ```
 
-### 4. Setup E2E Tests
+### 4. Run Both Apps From The Root
+
+After installing dependencies in `server/` and `openteur/`, you can start the backend and frontend together from the repo root:
+
+```bash
+npm start
+```
+
+This runs `server npm run dev` and `openteur npm run dev` in parallel. The backend serves port `5002`; the frontend serves port `5173`.
+
+Root scripts do not install dependencies automatically. Run `npm install` inside `server/`, `openteur/`, and `e2e/` during setup or CI before running build/test commands.
+
+### 5. Setup E2E Tests
 
 ```bash
 cd e2e
@@ -133,12 +145,27 @@ npm install
 npx playwright install
 ```
 
-> Start both frontend and backend before running tests — Playwright does not auto-start the app.
-> Update `e2e/global-setup.ts` with a valid Firebase account before running.
+Start both frontend and backend before running tests. Authenticated tests sign in through the real Firebase login form. Set these env vars when the fallback test account is not valid:
+
+```bash
+E2E_EMAIL=...
+E2E_PASSWORD=...
+```
 
 ```bash
 npx playwright test
+npm test
 ```
+
+`npx playwright test` and `npm test` both run the full Playwright suite from `e2e/`.
+
+The root build compiles the backend and builds the frontend:
+
+```bash
+npm run build
+```
+
+From `openteur/`, `npm run build` only runs the frontend build.
 
 ---
 
@@ -146,10 +173,15 @@ npx playwright test
 
 * Firebase Auth (Email/Password + Google Sign-In)
 * Create custom player cards with detailed stats
+* Generate random Bronze, Silver, or Gold players from the roster screen
 * Upload player images
 * Assign offensive, defensive, and athleticism overalls
+* Goalkeeper cards and match lineups use `gkOverall` for GK roles
 * Delete or compare player cards with a sliding compare panel
 * Preview squad grouped by position (GK → DEF → MID → ATT)
+* Manage friends and crews; linked crew members can see crews they were added to
+* Build match lineups from all players or from a selected crew
+* Profile photos are stored in the app profile (`/users/me` / `/users/profile`) and are visible to friends/linked crew contexts only
 * Match announcement emails via Resend
 * Multi-tenant: each user owns their own player roster
 

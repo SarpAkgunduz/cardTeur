@@ -25,6 +25,15 @@ const randomInt = (min: number, max: number) =>
 
 const randomFrom = <T,>(items: T[]) => items[randomInt(0, items.length - 1)];
 
+const getNextRandomPlayerNumber = (players: Player[], label: string) => {
+  const pattern = new RegExp(`^${label} Player (\\d+)$`, 'i');
+  const highest = players.reduce((max, player) => {
+    const match = player.name?.match(pattern);
+    return match ? Math.max(max, Number(match[1])) : max;
+  }, 0);
+  return highest + 1;
+};
+
 const PlayersPage = () => {
   const { players, error: fetchError, deletePlayer, createPlayer } = usePlayers();
   const [deleteMode, setDeleteMode] = useState(false);
@@ -84,7 +93,7 @@ const PlayersPage = () => {
     const position = randomFrom(RANDOM_POSITIONS);
     const variance = tier === 'gold' ? 4 : tier === 'silver' ? 7 : 9;
     const stat = () => Math.max(min, Math.min(max, target + randomInt(-variance, variance)));
-    const sequence = players.filter(player => player.name?.startsWith(`${option.label} Player`)).length + 1;
+    const sequence = getNextRandomPlayerNumber(players, option.label);
 
     return {
       name: `${option.label} Player ${sequence}`,

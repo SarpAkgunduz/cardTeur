@@ -2,7 +2,8 @@
   "name": "cardteur-root",
   "private": true,
   "scripts": {
-    "build": "cd openteur && npm install && npm run build",
+    "start": "trap 'kill 0' EXIT; npm --prefix server run dev & npm --prefix openteur run dev & wait",
+    "build": "npm --prefix server run build && npm --prefix openteur run build",
     "deploy": "npm run build && npx wrangler deploy"
   }
 }

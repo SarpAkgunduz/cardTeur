@@ -8,11 +8,14 @@ applyTo: "**"
 ## Frontend → cardteur.com (Cloudflare Workers)
 
 ```bash
-cd /Users/sarpakgunduz/Desktop/cardTeur/openteur
+cd /Users/sarpakgunduz/Desktop/cardTeur
 npm run build
-cd ..
 npx wrangler deploy
 ```
+
+Root `npm run build` builds the backend first, then runs the frontend build.
+
+Build scripts assume dependencies are already installed. In CI/deploy environments, install dependencies in `server/`, `openteur/`, and `e2e/` before running the root build.
 
 ## Backend → cardteur-production.up.railway.app (Railway)
 

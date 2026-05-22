@@ -9,10 +9,12 @@ async function globalSetup(config: FullConfig) {
 
   const browser = await chromium.launch();
   const page = await browser.newPage();
+  const email = process.env.E2E_EMAIL || 'admin@example.com';
+  const password = process.env.E2E_PASSWORD || 'admin123';
 
   await page.goto(`${baseURL}/login`);
-  await page.locator('input[type="email"]').fill('admin@example.com');
-  await page.locator('input[type="password"]').fill('admin123');
+  await page.locator('input[type="email"]').fill(email);
+  await page.locator('input[type="password"]').fill(password);
   await page.locator('button[type="submit"]').click();
 
   // Wait until redirected to homepage after login
