@@ -4,6 +4,7 @@ import FootballPitch, { PitchPlayer } from '../components/FootballPitch';
 import MatchDetailsModal from '../components/MatchDetailsModal';
 import ToastNotification from '../components/ToastNotification';
 import { usePlayers } from '../contexts/PlayerContext';
+import { usePlayerDisplay } from '../hooks/usePlayerDisplay';
 import { apiRequest } from '../services/api/apiClient';
 import './MatchPage.css';
 import { PLAYER_COUNT_OPTIONS, getFormationSet, smartAssign } from '../data/formations';
@@ -17,6 +18,7 @@ interface CrewOption {
 
 const MatchPage = () => {
   const { players } = usePlayers();
+  const { getPlayerCardImage } = usePlayerDisplay();
   const [crews, setCrews] = useState<CrewOption[]>([]);
   const [selectedCrewId, setSelectedCrewId] = useState('');
   const [playersPool, setPlayersPool]    = useState<any[]>([]);
@@ -143,7 +145,7 @@ const MatchPage = () => {
         name: p.name ?? 'Unknown',
         role,
         overall: computeOverall(p, role),
-        cardImage: p.cardImage ?? p.image ?? '',
+        cardImage: getPlayerCardImage(p),
         x: positions[id]?.x ?? 50,
         y: positions[id]?.y ?? 50,
         offOvr: toNum(p.offensiveOverall ?? p.offensive),

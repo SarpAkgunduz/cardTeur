@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useRef, useState, useCallback } from 'react';
 import type { Player } from '../services/api/types';
 import { playerApi } from '../services';
+import { apiRequest } from '../services/api/apiClient';
 import type { CreatePlayerDto, UpdatePlayerDto } from '../services/api/types';
 import { useAuth } from './AuthContext';
 
@@ -16,12 +17,37 @@ interface PlayerContextType {
 
 const PlayerContext = createContext<PlayerContextType | null>(null);
 
+interface LinkedUser {
+  uid: string;
+  photoURL?: string;
+}
+
 export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser } = useAuth();
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inFlightRef = useRef<Promise<Player[]> | null>(null);
+
+  const enrichPlayers = useCallback(async (data: Player[]): Promise<Player[]> => {
+    const linkedUids = [...new Set(data.map(player => player.linkedUserId).filter(Boolean) as string[])];
+    if (linkedUids.length === 0) return data;
+
+    try {
+      const users = await apiRequest<LinkedUser[]>('/users/lookup-by-uids', {
+        method: 'POST',
+        body: JSON.stringify({ uids: linkedUids }),
+      });
+      const photoByUid = new Map(users.map(user => [user.uid, user.photoURL]));
+      return data.map(player => ({
+        ...player,
+        linkedUserPhotoURL: player.linkedUserId ? photoByUid.get(player.linkedUserId) || undefined : undefined,
+      }));
+    } catch (err) {
+      console.error('Failed to load linked user photos:', err);
+      return data;
+    }
+  }, []);
 
   const fetchPlayers = useCallback(async () => {
     if (!currentUser) {
@@ -36,9 +62,10 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     setError(null);
 
     const request = playerApi.getAll()
-      .then((data) => {
-        setPlayers(data);
-        return data;
+      .then(async (data) => {
+        const enriched = await enrichPlayers(data);
+        setPlayers(enriched);
+        return enriched;
       })
       .catch((err) => {
         const message = err?.message || 'Failed to load players.';
@@ -53,7 +80,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     inFlightRef.current = request;
     return request;
-  }, [currentUser]);
+  }, [currentUser, enrichPlayers]);
 
   useEffect(() => {
     if (currentUser) {
@@ -68,15 +95,17 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const createPlayer = useCallback(async (data: CreatePlayerDto) => {
     const created = await playerApi.create(data);
-    setPlayers(prev => [...prev, created]);
-    return created;
-  }, []);
+    const [enriched] = await enrichPlayers([created]);
+    setPlayers(prev => [...prev, enriched]);
+    return enriched;
+  }, [enrichPlayers]);
 
   const updatePlayer = useCallback(async (id: string, data: UpdatePlayerDto) => {
     const updated = await playerApi.update(id, data);
-    setPlayers(prev => prev.map(player => player._id === id ? updated : player));
-    return updated;
-  }, []);
+    const [enriched] = await enrichPlayers([updated]);
+    setPlayers(prev => prev.map(player => player._id === id ? enriched : player));
+    return enriched;
+  }, [enrichPlayers]);
 
   const deletePlayer = useCallback(async (id: string) => {
     await playerApi.delete(id);

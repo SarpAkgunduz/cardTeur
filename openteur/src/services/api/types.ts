@@ -2,6 +2,7 @@ export interface Player {
   _id: string;
   ownerUid: string;
   linkedUserId?: string;
+  linkedUserPhotoURL?: string;
   name: string;
   email?: string;
   cardImage: string;
@@ -43,5 +44,5 @@ export interface Player {
 }
 
 // cardTitle is computed by the backend — never sent in create/update requests
-export type CreatePlayerDto = Omit<Player, '_id' | 'cardTitle' | 'ownerUid'>;
-export type UpdatePlayerDto = Partial<Omit<Player, '_id' | 'cardTitle' | 'ownerUid'>>;
+export type CreatePlayerDto = Omit<Player, '_id' | 'cardTitle' | 'ownerUid' | 'linkedUserPhotoURL'>;
+export type UpdatePlayerDto = Partial<Omit<Player, '_id' | 'cardTitle' | 'ownerUid' | 'linkedUserPhotoURL'>>;

@@ -1,6 +1,7 @@
 import BackButton from '../components/BackButton';
 import Card from '../components/Card';
 import { usePlayers } from '../contexts/PlayerContext';
+import { usePlayerDisplay } from '../hooks/usePlayerDisplay';
 import './PreviewPage.css';
 
 const POSITION_GROUPS = [
@@ -12,6 +13,7 @@ const POSITION_GROUPS = [
 
 const PreviewPage = () => {
   const { players, loading } = usePlayers();
+  const { getPlayerCardImage } = usePlayerDisplay();
 
   const sections = POSITION_GROUPS.map(group => ({
     ...group,
@@ -70,7 +72,7 @@ const PreviewPage = () => {
                           reflexes={player.reflexes}
                           handling={player.handling}
                           diving={player.diving}
-                          cardImage={player.cardImage}
+                          cardImage={getPlayerCardImage(player)}
                           cardTitle={player.cardTitle}
                         />
                       </div>
@@ -104,7 +106,7 @@ const PreviewPage = () => {
                           reflexes={player.reflexes}
                           handling={player.handling}
                           diving={player.diving}
-                          cardImage={player.cardImage}
+                          cardImage={getPlayerCardImage(player)}
                           cardTitle={player.cardTitle}
                         />
                       </div>

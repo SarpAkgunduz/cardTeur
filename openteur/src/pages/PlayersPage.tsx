@@ -7,6 +7,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import ToastNotification from '../components/ToastNotification';
 import { Player } from '../services';
 import { usePlayers } from '../contexts/PlayerContext';
+import { usePlayerDisplay } from '../hooks/usePlayerDisplay';
 import './PlayersPage.css';
 
 type RandomTier = 'bronze' | 'silver' | 'gold';
@@ -18,7 +19,6 @@ const RANDOM_TIERS: Array<{ id: RandomTier; label: string; range: [number, numbe
 ];
 
 const RANDOM_POSITIONS = ['CB', 'RB', 'LB', 'CDM', 'CM', 'CAM', 'RW', 'LW', 'ST', 'LM', 'RM'];
-const RANDOM_IMAGES = Array.from({ length: 42 }, (_, index) => `/assets/player${index + 1}.png`);
 
 const randomInt = (min: number, max: number) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -36,6 +36,7 @@ const getNextRandomPlayerNumber = (players: Player[], label: string) => {
 
 const PlayersPage = () => {
   const { players, error: fetchError, deletePlayer, createPlayer } = usePlayers();
+  const { getPlayerCardImage, playerPhotoOptions } = usePlayerDisplay();
   const [deleteMode, setDeleteMode] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
@@ -98,7 +99,7 @@ const PlayersPage = () => {
     return {
       name: `${option.label} Player ${sequence}`,
       email: '',
-      cardImage: randomFrom(RANDOM_IMAGES),
+      cardImage: randomFrom(playerPhotoOptions),
       jerseyNumber: randomInt(1, 99),
       marketValue: target * 100000,
       preferredPosition: position,
@@ -238,7 +239,7 @@ const PlayersPage = () => {
                 <Card
                   _id={player._id}
                   name={player.name}
-                  cardImage={player.cardImage}
+                  cardImage={getPlayerCardImage(player)}
                   preferredPosition={player.preferredPosition}
                   cardTitle={player.cardTitle}
                   offensiveOverall={player.offensiveOverall}

@@ -5,6 +5,7 @@ import BackButton from '../components/BackButton';
 import type { Player } from '../services/api/types';
 import { apiRequest } from '../services/api/apiClient';
 import ToastNotification from '../components/ToastNotification';
+import { usePlayerDisplay } from '../hooks/usePlayerDisplay';
 import './CrewPage.css';
 
 interface Crew {
@@ -26,6 +27,7 @@ interface LinkedUser {
 const CrewPage = () => {
   const { currentUser } = useAuth();
   const { players, loading: playersLoading, updatePlayer } = usePlayers();
+  const { getPlayerCardImage } = usePlayerDisplay();
   const [crews, setCrews] = useState<Crew[]>([]);
   const [linkedUserMap, setLinkedUserMap] = useState<Record<string, LinkedUser>>({});
   const [loading, setLoading] = useState(true);
@@ -182,7 +184,7 @@ const CrewPage = () => {
 
   const getPlayerAvatar = (player: Player): string | null => {
     const linkedUser = player.linkedUserId ? linkedUserMap[player.linkedUserId] : undefined;
-    return linkedUser?.photoURL || player.cardImage || null;
+    return getPlayerCardImage({ ...player, linkedUserPhotoURL: linkedUser?.photoURL }) || null;
   };
 
   const getEffectiveEmail = (player: Player): string | undefined => {

@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 import User from '../models/User';
+import Player from '../models/Player';
+import Crew from '../models/Crew';
 import { requireAuth } from '../middleware/auth';
 import admin from '../firebaseAdmin';
 
@@ -8,7 +10,7 @@ const router: Router = Router();
 // POST /api/users/register
 // Called after Firebase account creation to persist user info in MongoDB
 router.post('/register', requireAuth, async (req: Request, res: Response) => {
-  const { displayName } = req.body;
+  const { displayName, photoURL } = req.body;
   const uid = (req as any).uid as string;
   const email = (req as any).email as string;
   const resolvedName = displayName || email.split('@')[0];
@@ -16,11 +18,15 @@ router.post('/register', requireAuth, async (req: Request, res: Response) => {
   try {
     const existing = await User.findOne({ uid });
     if (existing) {
+      if (photoURL && existing.photoURL !== photoURL) {
+        existing.photoURL = photoURL;
+        await existing.save();
+      }
       res.json(existing);
       return;
     }
 
-    const user = await User.create({ uid, email, displayName: resolvedName });
+    const user = await User.create({ uid, email, displayName: resolvedName, photoURL });
     res.status(201).json(user);
   } catch (err) {
     res.status(500).json({ error: 'Failed to register user' });
@@ -54,6 +60,8 @@ router.delete('/account', requireAuth, async (req: Request, res: Response) => {
       { $or: [{ friends: uid }, { friendRequests: uid }] } as any,
       { $pull: { friends: uid, friendRequests: uid } } as any
     );
+    await Player.updateMany({ linkedUserId: uid }, { $unset: { linkedUserId: '' } });
+    await Crew.updateMany({ memberUids: uid }, { $pull: { memberUids: uid } } as any);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete account' });

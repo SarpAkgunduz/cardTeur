@@ -29,6 +29,7 @@ export function usePlayerForm() {
 
   // User linking
   const [linkedUserId, setLinkedUserId] = useState('');
+  const [selfOption, setSelfOption] = useState<UserOption | null>(null);
   const [friendOptions, setFriendOptions] = useState<UserOption[]>([]);
 
   // Identity
@@ -69,22 +70,28 @@ export function usePlayerForm() {
   const [gkPositioning, setGkPositioning] = useState(0);
   const [gkSpeed, setGkSpeed] = useState(0);
 
-  // Fetch friend list on mount
+  // Fetch current user profile and friend list on mount
   useEffect(() => {
-    apiRequest<UserOption[]>('/users/friends')
-      .then(setFriendOptions)
-      .catch(() => {});
-  }, []);
+    if (!currentUser) return;
 
-  // Derived: self + friends as selectable user options
-  const userOptions: UserOption[] = [
-    ...(currentUser
-      ? [{
+    apiRequest<UserOption>('/users/me')
+      .then(setSelfOption)
+      .catch(() => {
+        setSelfOption({
           uid: currentUser.uid,
           displayName: currentUser.displayName || currentUser.email || 'Me',
           photoURL: currentUser.photoURL || '',
-        }]
-      : []),
+        });
+      });
+
+    apiRequest<UserOption[]>('/users/friends')
+      .then(setFriendOptions)
+      .catch(() => {});
+  }, [currentUser]);
+
+  // Derived: self + friends as selectable user options
+  const userOptions: UserOption[] = [
+    ...(selfOption ? [selfOption] : []),
     ...friendOptions,
   ];
 

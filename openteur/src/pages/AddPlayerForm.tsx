@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import BackButton from '../components/BackButton';
 import ToastNotification from '../components/ToastNotification';
 import StatGrid from '../components/StatGrid';
 import { usePlayerForm } from '../hooks/usePlayerForm';
+import { usePlayerDisplay } from '../hooks/usePlayerDisplay';
 import './AddPlayerForm.css';
 
 const AddPlayerForm = () => {
@@ -21,6 +23,33 @@ const AddPlayerForm = () => {
     showToast, setShowToast, toastMsg,
     handleSubmit,
   } = usePlayerForm();
+  const {
+    playerPhotoOptions,
+    getLinkedUser,
+    getLinkedUserPhoto,
+    isLinkedPlayer,
+  } = usePlayerDisplay();
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState(false);
+  const [draftPhoto, setDraftPhoto] = useState('');
+
+  const linkedUser = getLinkedUser(linkedUserId, userOptions);
+  const linkedUserPhoto = getLinkedUserPhoto(linkedUserId, userOptions);
+  const isLinkedToUser = isLinkedPlayer(linkedUserId);
+
+  const openPhotoModal = () => {
+    if (isLinkedToUser) return;
+    setDraftPhoto(cardImage);
+    setIsPhotoModalOpen(true);
+  };
+
+  const closePhotoModal = () => {
+    setIsPhotoModalOpen(false);
+  };
+
+  const selectDraftPhoto = () => {
+    setCardImage(draftPhoto);
+    setIsPhotoModalOpen(false);
+  };
 
   return (
     <div className="page-wrapper">
@@ -123,7 +152,6 @@ const AddPlayerForm = () => {
                               setLinkedUserId('');
                             } else {
                               setLinkedUserId(u.uid);
-                              if (u.photoURL) setCardImage(u.photoURL);
                             }
                           }}
                           aria-label={u.displayName}
@@ -144,28 +172,55 @@ const AddPlayerForm = () => {
                 </div>
 
                 <div className="stat-field full-width">
-                  <label>Player Photo {linkedUserId && <span className="photo-linked-note">(auto-set from linked user)</span>}</label>
-                  <div className={`photo-picker-grid ${linkedUserId ? 'photo-picker-grid--dimmed' : ''}`}>
-                    {[1,2,3,4,5,6,7,8,9].map((n) => {
-                      const src = `/assets/player${n}.png`;
-                      const selected = cardImage === src;
-                      return (
-                        <button
-                          key={n}
-                          type="button"
-                          className={`photo-picker-item ${selected ? 'photo-picker-item--selected' : ''}`}
-                          onClick={() => setCardImage(selected ? '' : src)}
-                          aria-label={`Player photo ${n}`}
-                        >
-                          <img src={src} alt={`player ${n}`} />
-                          {selected && (
-                            <div className="photo-picker-check">
-                              <i className="bi bi-check-circle-fill" />
-                            </div>
+                  <label>Player Photo {linkedUserId && <span className="photo-linked-note">(managed from linked account)</span>}</label>
+                  <div className={`photo-selector ${isLinkedToUser ? 'photo-selector--locked' : ''}`}>
+                    <div className="photo-selector__preview">
+                      {isLinkedToUser && linkedUserPhoto ? (
+                        <img src={linkedUserPhoto} alt={`${linkedUser?.displayName ?? 'Linked account'} profile`} />
+                      ) : cardImage ? (
+                        <img src={cardImage} alt="Selected player" />
+                      ) : (
+                        <i className={isLinkedToUser ? 'bi bi-person-circle' : 'bi bi-person-bounding-box'} />
+                      )}
+                    </div>
+                    <div className="photo-selector__meta">
+                      <span className="photo-selector__title">
+                        {isLinkedToUser && linkedUserPhoto
+                          ? 'Linked account photo'
+                          : cardImage
+                            ? 'Photo selected'
+                            : 'No photo selected'}
+                      </span>
+                      <span className="photo-selector__hint">
+                        {isLinkedToUser && linkedUserPhoto
+                          ? 'Photo selection is managed from the linked account profile.'
+                          : isLinkedToUser
+                            ? 'The linked account has no profile photo, so this player keeps the saved system photo.'
+                          : 'Open the gallery to choose from all player photos.'}
+                      </span>
+                    </div>
+                    <div className="photo-selector__actions">
+                      {!isLinkedToUser && (
+                        <>
+                          <button
+                            type="button"
+                            className="photo-selector__btn"
+                            onClick={openPhotoModal}
+                          >
+                            <i className="bi bi-images" /> Choose Photo
+                          </button>
+                          {cardImage && (
+                            <button
+                              type="button"
+                              className="photo-selector__btn photo-selector__btn--ghost"
+                              onClick={() => setCardImage('')}
+                            >
+                              Clear
+                            </button>
                           )}
-                        </button>
-                      );
-                    })}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -273,6 +328,72 @@ const AddPlayerForm = () => {
           </form>
         </div>
       </div>
+
+      {isPhotoModalOpen && (
+        <div className="photo-modal" role="dialog" aria-modal="true" aria-label="Choose player photo">
+          <button className="photo-modal__backdrop" type="button" onClick={closePhotoModal} aria-label="Close photo selector" />
+          <div className="photo-modal__panel">
+            <div className="photo-modal__header">
+              <div>
+                <div className="photo-modal__eyebrow">Player Photo</div>
+                <h3 className="photo-modal__title">Choose From Gallery</h3>
+              </div>
+              <button className="photo-modal__close" type="button" onClick={closePhotoModal} aria-label="Close">
+                <i className="bi bi-x-lg" />
+              </button>
+            </div>
+
+            <div className="photo-modal__body">
+              <aside className="photo-modal__selected">
+                <div className="photo-modal__selected-frame">
+                  {draftPhoto ? (
+                    <img src={draftPhoto} alt="Selected draft player" />
+                  ) : (
+                    <i className="bi bi-person-bounding-box" />
+                  )}
+                </div>
+                <span>{draftPhoto ? 'Ready to select' : 'No photo selected'}</span>
+              </aside>
+
+              <div className="photo-modal__grid">
+                {playerPhotoOptions.map((src, index) => {
+                  const selected = draftPhoto === src;
+                  return (
+                    <button
+                      key={src}
+                      type="button"
+                      className={`photo-picker-item ${selected ? 'photo-picker-item--selected' : ''}`}
+                      onClick={() => setDraftPhoto(src)}
+                      aria-label={`Player photo ${index + 1}`}
+                    >
+                      <img src={src} alt={`player ${index + 1}`} />
+                      {selected && (
+                        <div className="photo-picker-check">
+                          <i className="bi bi-check-circle-fill" />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="photo-modal__footer">
+              <button type="button" className="photo-modal__btn photo-modal__btn--ghost" onClick={closePhotoModal}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="photo-modal__btn"
+                onClick={selectDraftPhoto}
+                disabled={!draftPhoto}
+              >
+                Select Photo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -21,6 +21,7 @@ const GoogleSignInButton: React.FC = () => {
         method: 'POST',
         body: JSON.stringify({
           displayName: user.displayName || user.email?.split('@')[0] || 'User',
+          photoURL: user.photoURL || '',
         }),
       });
       const redirect = searchParams.get('redirect');
