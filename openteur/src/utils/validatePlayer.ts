@@ -17,7 +17,7 @@ export function validatePlayer(
 ): string | null {
   // Fields to skip in the "missing" check
   // Fields excluded from the required check (optional fields)
-  const OPTIONAL_FIELDS = ['marketValue', 'email'];
+  const OPTIONAL_FIELDS = ['marketValue', 'email', 'linkedUserId'];
 
   const missing = Object.entries(player)
     .filter(([key, value]) => {
