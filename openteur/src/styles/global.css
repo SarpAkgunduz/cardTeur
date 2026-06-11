@@ -142,7 +142,13 @@
   margin-top: 50px;
 }
 
-/* Responsive Design */
+/* Prevent background scroll when mobile nav menu is open */
+body.mobile-menu-open {
+  overflow: hidden;
+}
+
+/* ─── Responsive Design ───────────────────────────────────────────────── */
+
 @media (max-width: 768px) {
   .page-wrapper {
     padding: 15px;
@@ -152,8 +158,21 @@
     padding: 20px;
   }
 
-  .gradient-button {
-    padding: 10px 20px;
-    font-size: 0.9rem;
+  /* Slightly tighter buttons on mobile to prevent overflow in button groups */
+  .btn-ct {
+    padding: 8px 14px;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* Stack page header vertically when the side items would overflow */
+  .page-header {
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+  }
+
+  .page-title {
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
   }
 }

@@ -123,13 +123,13 @@ const MatchesPage = () => {
           <div className="back-button-container">
             <BackButton position="static" />
           </div>
-          <div className="matches-page__title-wrap">
-            <h1 className="page-title matches-page__title">Saved Matches</h1>
-          </div>
           <button className="matches-page__new-btn" onClick={() => navigate('/match')}>
             <i className="bi bi-plus-lg me-1" />
             New Match
           </button>
+          <div className="matches-page__title-wrap">
+            <h1 className="page-title matches-page__title">Saved Matches</h1>
+          </div>
         </div>
 
         {loading && (

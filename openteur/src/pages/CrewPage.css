@@ -654,3 +654,71 @@
   text-align: center;
   padding: 32px 0;
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  /* Header: stack vertically (double-class beats .page-header from global.css) */
+  .page-header.crew-page__header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .crew-page__title {
+    width: 100%;
+    text-align: center;
+  }
+
+  .crew-left__header-btns {
+    width: 100%;
+    flex-wrap: wrap;
+    white-space: normal;
+    justify-content: flex-start;
+  }
+
+  /* Two-panel layout → single column stack */
+  .crew-page {
+    flex-direction: column;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .crew-left {
+    width: 100%;
+    padding-right: 0;
+  }
+
+  /* Hide vertical divider between panels */
+  .crew-left::after {
+    display: none;
+  }
+
+  .crew-right {
+    width: 100%;
+    padding-left: 0;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 222, 236, 0.12);
+  }
+
+  /* Email row: name can shrink, pill gets tighter cap */
+  .crew-email-row__name {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .crew-email-row__email-pill {
+    max-width: 110px;
+  }
+
+  /* Show hover-only controls without mouse on mobile */
+  .crew-edit-btn,
+  .crew-member-row__remove {
+    opacity: 1;
+  }
+
+  /* Permission toggle: drop forced min-width */
+  .crew-permission-toggle {
+    min-width: 100px;
+  }
+}

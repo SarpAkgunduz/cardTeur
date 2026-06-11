@@ -299,29 +299,34 @@
     gap: 16px;
   }
 
-  .players-page__header {
-    grid-template-columns: 1fr;
-    justify-items: stretch;
-  }
-
-  .players-page__header > :first-child,
-  .players-page__header > :last-child,
-  .players-page__header .page-title {
-    justify-self: stretch;
+  /* Double-class selector beats .page-header from global.css (same specificity, later source order guarantees win) */
+  .page-header.players-page__header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .players-page__title {
     transform: none;
+    width: 100%;
+    text-align: center;
   }
 
   .players-page__actions {
-    flex-wrap: wrap;
-    justify-content: stretch;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    width: 100%;
   }
 
   .players-page__actions .btn-ct {
-    flex: 1 1 calc(50% - 10px);
-    min-width: 140px;
+    flex: unset;
+    min-width: 0;
+    justify-content: center;
+    padding-inline: 6px;
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
   }
 
   .random-player-modal__choices {

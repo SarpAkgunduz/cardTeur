@@ -1294,12 +1294,8 @@
   .match-layout {
     flex-direction: column;
   }
-  .match-page-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
   .match-page-title {
-    text-align: left;
+    text-align: center;
   }
   .match-page-actions {
     width: 100%;

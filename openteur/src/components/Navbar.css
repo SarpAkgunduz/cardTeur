@@ -1,3 +1,5 @@
+/* ─── Desktop navbar ──────────────────────────────────────────────────── */
+
 .ct-nav {
   height: 64px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -160,4 +162,144 @@
 .ct-nav__btn-signup:hover {
   background: #8ff5ff;
   border-color: #8ff5ff;
+}
+
+/* ─── Mobile hamburger button — hidden on desktop ─────────────────────── */
+
+.ct-nav__hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.ct-nav__hamburger:hover {
+  color: #00deec;
+}
+
+/* ─── Mobile overlay menu ─────────────────────────────────────────────── */
+
+.ct-nav__mobile-menu {
+  position: fixed;
+  top: 64px; /* align below sticky navbar */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 25, 42, 0.97);
+  backdrop-filter: blur(16px);
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  overflow-y: auto;
+  animation: mobileMenuIn 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes mobileMenuIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ct-nav__mobile-links {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Each mobile link has a large tap target (min 48px via padding) */
+.ct-nav__mobile-link {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 1.1rem 0;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.2s ease;
+  width: 100%;
+}
+
+.ct-nav__mobile-link:hover,
+.ct-nav__mobile-link--active {
+  color: #00deec;
+}
+
+/* Footer section: profile + logout (or auth buttons) */
+.ct-nav__mobile-footer {
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ct-nav__mobile-logout {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #ff6b6b;
+  background: rgba(220, 50, 50, 0.08);
+  border: 1px solid rgba(220, 50, 50, 0.3);
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.ct-nav__mobile-logout:hover {
+  background: rgba(220, 50, 50, 0.15);
+  border-color: rgba(220, 50, 50, 0.6);
+}
+
+.ct-nav__mobile-auth-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Override: full-width buttons inside mobile auth section */
+.ct-nav__mobile-auth-btns .ct-nav__btn-login,
+.ct-nav__mobile-auth-btns .ct-nav__btn-signup {
+  width: 100%;
+  justify-content: center;
+  padding: 12px;
+  text-align: center;
+}
+
+/* ─── Responsive: switch to hamburger below 768px ─────────────────────── */
+
+@media (max-width: 768px) {
+  .ct-nav {
+    padding: 0 1rem;
+  }
+
+  .ct-nav__left {
+    gap: 0;
+  }
+
+  /* Hide all desktop nav links and user controls */
+  .ct-nav__links,
+  .ct-nav__user-area,
+  .ct-nav__auth-btns {
+    display: none;
+  }
+
+  /* Show hamburger */
+  .ct-nav__hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
