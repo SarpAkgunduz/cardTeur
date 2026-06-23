@@ -36,6 +36,8 @@ const MatchPage = () => {
   const [pitchMode, setPitchMode]         = useState(false);
   const [savedMatchId, setSavedMatchId]   = useState<string | null>(null);
   const [showMatchModal, setShowMatchModal] = useState(false);
+  const [benchPlayers, setBenchPlayers] = useState<any[]>([]);
+  const [swapPending, setSwapPending] = useState<{ player: any } | null>(null);
   const [toastMsg, setToastMsg]           = useState('');
   const [toastVariant, setToastVariant]   = useState<'success' | 'danger'>('success');
   const [showToast, setShowToast]         = useState(false);

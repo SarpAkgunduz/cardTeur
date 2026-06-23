@@ -271,15 +271,16 @@
   .page-header.matches-page__header {
     display: grid;
     grid-template-areas:
-      "title title title"
-      "back  .     btn";
+      "back title ."
+      "btn  btn   btn";
     grid-template-columns: auto 1fr auto;
-    row-gap: 12px;
+    row-gap: 10px;
     column-gap: 0;
   }
 
   .page-header.matches-page__header .back-button-container {
     grid-area: back;
+    align-self: center;
   }
 
   .matches-page__title-wrap {
@@ -289,5 +290,7 @@
 
   .matches-page__new-btn {
     grid-area: btn;
+    width: 100%;
+    justify-content: center;
   }
 }

@@ -24,8 +24,7 @@ const LoginPage = () => {
     setError('');
     try {
       await signIn(email, password);
-      const redirect = searchParams.get('redirect');
-      navigate(redirect || '/');
+      // PublicRoute handles redirect once Firebase auth state propagates to context
     } catch {
       setError('Invalid email or password.');
     } finally {
