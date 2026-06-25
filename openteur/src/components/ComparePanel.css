@@ -1,90 +1,204 @@
-/* Offcanvas dark theme override */
+/* ── Offcanvas shell ── */
 .compare-panel.offcanvas {
-  background: rgba(22, 38, 62, 0.98);
-  backdrop-filter: blur(8px);
-  border-left: 1px solid rgba(0, 222, 236, 0.25);
+  background: rgba(16, 28, 46, 0.98);
+  backdrop-filter: blur(12px);
+  border-left: 1px solid rgba(0, 222, 236, 0.18);
   color: #f7f5fd;
   font-family: 'Manrope', sans-serif;
-  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
-}
-
-.compare-panel.offcanvas.hiding {
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
 .compare-panel .offcanvas-header {
   background: rgba(36, 59, 90, 0.85);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 24px;
   height: 64px;
 }
 
 .compare-panel .offcanvas-title {
   color: #ffffff;
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .compare-panel .btn-close {
-  filter: invert(1) brightness(0.7);
+  filter: invert(1) brightness(0.6);
 }
 
 .compare-panel .offcanvas-body {
-  padding: 24px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-/* Radar chart axis labels */
+/* ── Empty state ── */
+.cp-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 260px;
+  color: rgba(255, 255, 255, 0.2);
+  text-align: center;
+}
+
+.cp-empty i {
+  font-size: 3rem;
+}
+
+.cp-empty p {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* ── Radar chart ── */
+.cp-chart-wrap {
+  background: rgba(36, 59, 90, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px 8px 8px;
+}
+
 .compare-panel .recharts-polar-angle-axis-tick text {
   fill: #a0b4c8;
-  font-size: 0.75rem;
+  font-size: 0.78rem;
+  font-family: 'Manrope', sans-serif;
 }
 
 .compare-panel .recharts-polar-radius-axis-tick text {
-  fill: #a0b4c8;
+  fill: rgba(255, 255, 255, 0.25);
+  font-size: 0.65rem;
 }
 
-.compare-panel .recharts-legend-item-text {
-  color: #f7f5fd !important;
+/* ── Stats table ── */
+.cp-stats-table {
+  background: rgba(36, 59, 90, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-.player-badge {
-  background-color: rgba(36, 59, 90, 0.9);
-  color: #00deec;
-  border: 1px solid rgba(0, 222, 236, 0.3);
-  border-radius: 0;
+.cp-stats-header {
+  display: grid;
+  grid-template-columns: 1fr 52px 52px 52px 28px;
+  gap: 4px;
   padding: 8px 12px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cp-stats-header__name {
+  font-size: 0.62rem;
+  font-weight: 800;
   text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.cp-stats-header__val {
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+}
+
+.cp-stats-row {
+  display: grid;
+  grid-template-columns: 1fr 52px 52px 52px 28px;
+  align-items: center;
+  gap: 4px;
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.cp-stats-row:last-child {
+  border-bottom: none;
+}
+
+.cp-stats-row--removing {
+  opacity: 0;
+  transform: translateX(16px);
+}
+
+.cp-stats-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.cp-color-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.cp-stats-name__text {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cp-stats-val {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.cp-stats-val__bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  opacity: 0.2;
+  border-radius: 4px;
+  transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.cp-stats-val__num {
+  position: relative;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #fff;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.cp-stats-remove {
+  width: 24px;
+  height: 24px;
   display: inline-flex;
   align-items: center;
-  margin-right: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.player-badge .remove-btn {
-  padding: 2px 6px;
-  font-size: 0.8rem;
-  border-radius: 0;
-  background-color: rgba(0, 222, 236, 0.15);
-  color: #00deec;
-  font-weight: bold;
-  border: none;
-  margin-left: 0.5rem;
+  justify-content: center;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 5px;
+  background: rgba(255, 107, 107, 0.06);
+  color: rgba(255, 107, 107, 0.7);
   cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
 }
 
-.player-badge--removing {
-  animation: badge-remove 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
-}
-
-@keyframes badge-remove {
-  0%   { opacity: 1; transform: scale(1) translateX(0); max-width: 300px; }
-  100% { opacity: 0; transform: scale(0.8) translateX(12px); max-width: 0; padding: 0; margin: 0; }
+.cp-stats-remove:hover {
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
 }
