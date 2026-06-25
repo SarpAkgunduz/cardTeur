@@ -32,13 +32,14 @@ interface FootballPitchProps {
   readOnly?: boolean;                 // disables drag and context menu (for match previews)
   onMove: (id: string, x: number, y: number) => void;
   onChangeTeam: (playerId: string) => void;
+  onBench?: (playerId: string) => void;
   onChangeRole: (playerId: string, newRole: string) => void;
 }
 
 const FootballPitch = ({
   players, teamLabel, teamOvr, teamStaminaOvr,
   isTeamB = false, formationRoles, readOnly = false,
-  onMove, onChangeTeam, onChangeRole,
+  onMove, onChangeTeam, onBench, onChangeRole,
 }: FootballPitchProps) => {
   const pitchRef = useRef<HTMLDivElement>(null);
   const [ctxMenu, setCtxMenu] = useState<ContextMenuState | null>(null);
@@ -161,6 +162,15 @@ const FootballPitch = ({
               <i className="bi bi-arrow-left-right" />
               Team {isTeamB ? 'A' : 'B'}
             </button>
+            {onBench && (
+              <button
+                className="fp-ctx-menu__item fp-ctx-menu__item--bench"
+                onClick={() => { onBench(ctxMenu.playerId); setCtxMenu(null); }}
+              >
+                <i className="bi bi-person-dash" />
+                Bench
+              </button>
+            )}
 
             <div className="fp-ctx-menu__section-label">Change role</div>
             {formationRoles.map(role => (

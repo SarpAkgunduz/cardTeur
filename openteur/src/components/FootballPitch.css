@@ -344,6 +344,11 @@
   font-weight: 600;
 }
 
+.fp-ctx-menu__item--bench {
+  color: #ff6b6b;
+  font-weight: 600;
+}
+
 /* ── Pitch footer action buttons ── */
 .fp-btn {
   display: inline-flex;

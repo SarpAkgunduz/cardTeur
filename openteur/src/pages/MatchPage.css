@@ -1152,9 +1152,9 @@
 
 .match-team-roster__row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 68px 32px;
+  grid-template-columns: minmax(0, 1fr) 68px 30px 30px;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   min-height: 36px;
   padding: 5px 7px;
   background: rgba(255, 255, 255, 0.035);
@@ -1281,6 +1281,142 @@
 
 .match-pitch-placeholder strong {
   color: rgba(0, 222, 236, 0.7);
+}
+
+.match-team-roster__bench {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 107, 107, 0.35);
+  border-radius: 6px;
+  background: rgba(255, 107, 107, 0.06);
+  color: rgba(255, 107, 107, 0.7);
+  cursor: pointer;
+  transition: background 0.16s ease, transform 0.16s ease;
+}
+
+.match-team-roster__bench:hover {
+  background: rgba(255, 107, 107, 0.18);
+  transform: translateY(-1px);
+}
+
+.match-center-column {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-self: start;
+}
+
+.match-bench-panel {
+  background: rgba(36, 59, 90, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 250px;
+}
+
+.match-bench-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.match-bench-count {
+  background: rgba(255, 107, 107, 0.18);
+  color: #ff6b6b;
+  border-radius: 20px;
+  padding: 1px 8px;
+  font-size: 0.7rem;
+}
+
+.match-bench-empty {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.25);
+  text-align: center;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.match-bench-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.match-bench-row {
+  display: grid;
+  grid-template-columns: 1fr 26px 26px;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 7px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+}
+
+.match-bench-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.match-bench-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.match-bench-pos {
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.match-bench-btn {
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  border: 1px solid;
+  font-size: 0.68rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.match-bench-btn--a {
+  border-color: rgba(0, 222, 236, 0.4);
+  background: rgba(0, 222, 236, 0.08);
+  color: #00deec;
+}
+
+.match-bench-btn--a:hover {
+  background: rgba(0, 222, 236, 0.22);
+}
+
+.match-bench-btn--b {
+  border-color: rgba(194, 155, 64, 0.4);
+  background: rgba(194, 155, 64, 0.08);
+  color: #c29b40;
+}
+
+.match-bench-btn--b:hover {
+  background: rgba(194, 155, 64, 0.22);
 }
 
 .match-pitch-hint {

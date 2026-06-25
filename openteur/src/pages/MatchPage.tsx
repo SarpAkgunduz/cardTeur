@@ -7,6 +7,7 @@ import { usePlayers } from '../contexts/PlayerContext';
 import { usePlayerDisplay } from '../hooks/usePlayerDisplay';
 import { apiRequest } from '../services/api/apiClient';
 import './MatchPage.css';
+import '../components/MatchDetailsModal.css';
 import { PLAYER_COUNT_OPTIONS, getFormationSet, smartAssign } from '../data/formations';
 
 interface CrewOption {
@@ -38,6 +39,7 @@ const MatchPage = () => {
   const [showMatchModal, setShowMatchModal] = useState(false);
   const [benchPlayers, setBenchPlayers] = useState<any[]>([]);
   const [swapPending, setSwapPending] = useState<{ player: any } | null>(null);
+  const [showIncompleteWarning, setShowIncompleteWarning] = useState(false);
   const [toastMsg, setToastMsg]           = useState('');
   const [toastVariant, setToastVariant]   = useState<'success' | 'danger'>('success');
   const [showToast, setShowToast]         = useState(false);
@@ -194,6 +196,31 @@ const MatchPage = () => {
     setPositionsB(prev => ({ ...prev, [id]: { x, y } }));
 
   // Swap a player between teams at the same slot index
+  const handleBench = (playerId: string, fromTeam: 'A' | 'B') => {
+    const srcList = fromTeam === 'A' ? leftPlayers : rightPlayers;
+    const player = srcList.find(p => (p._id ?? p.id) === playerId);
+    if (!player) return;
+
+    if (fromTeam === 'A') {
+      setLeftPlayers(prev => prev.filter(p => (p._id ?? p.id) !== playerId));
+      setPositionsA(prev => { const next = { ...prev }; delete next[playerId]; return next; });
+    } else {
+      setRightPlayers(prev => prev.filter(p => (p._id ?? p.id) !== playerId));
+      setPositionsB(prev => { const next = { ...prev }; delete next[playerId]; return next; });
+    }
+    setBenchPlayers(prev => [...prev, player]);
+    setSavedMatchId(null);
+  };
+
+  const handleAddFromBench = (playerId: string, toTeam: 'A' | 'B') => {
+    const player = benchPlayers.find(p => (p._id ?? p.id) === playerId);
+    if (!player) return;
+    setBenchPlayers(prev => prev.filter(p => (p._id ?? p.id) !== playerId));
+    if (toTeam === 'A') setLeftPlayers(prev => [...prev, player]);
+    else setRightPlayers(prev => [...prev, player]);
+    setSavedMatchId(null);
+  };
+
   const handleChangeTeam = (playerId: string, fromTeam: 'A' | 'B') => {
     const srcList = fromTeam === 'A' ? leftPlayers  : rightPlayers;
     const dstList = fromTeam === 'A' ? rightPlayers : leftPlayers;
@@ -348,6 +375,47 @@ const MatchPage = () => {
     </div>
   );
 
+  const renderBench = () => (
+    <div className="match-bench-panel">
+      <div className="match-bench-header">
+        <i className="bi bi-person-dash" />
+        Bench
+        {benchPlayers.length > 0 && (
+          <span className="match-bench-count">{benchPlayers.length}</span>
+        )}
+      </div>
+      {benchPlayers.length === 0 ? (
+        <p className="match-bench-empty">No players on bench</p>
+      ) : (
+        <div className="match-bench-list">
+          {benchPlayers.map(player => {
+            const id = player._id ?? player.id;
+            return (
+              <div key={id} className="match-bench-row">
+                <div className="match-bench-info">
+                  <span className="match-bench-name">{player.name ?? 'Unknown'}</span>
+                  <span className="match-bench-pos">{player.preferredPosition ?? '?'}</span>
+                </div>
+                <button
+                  type="button"
+                  className="match-bench-btn match-bench-btn--a"
+                  onClick={() => handleAddFromBench(id, 'A')}
+                  title="Add to Team A"
+                >A</button>
+                <button
+                  type="button"
+                  className="match-bench-btn match-bench-btn--b"
+                  onClick={() => handleAddFromBench(id, 'B')}
+                  title="Add to Team B"
+                >B</button>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+
   const renderTeamRoster = (
     team: 'A' | 'B',
     teamPlayers: any[],
@@ -388,6 +456,14 @@ const MatchPage = () => {
               >
                 <i className="bi bi-arrow-left-right" />
               </button>
+              <button
+                type="button"
+                className="match-team-roster__bench"
+                onClick={() => handleBench(id, team)}
+                title="Send to bench"
+              >
+                <i className="bi bi-person-dash" />
+              </button>
             </div>
           );
         })}
@@ -400,6 +476,40 @@ const MatchPage = () => {
       <div className="page-container match-page-container">
         <div className="content-card match-content-card">
         <ToastNotification show={showToast} message={toastMsg} onClose={() => setShowToast(false)} variant={toastVariant} />
+
+        {showIncompleteWarning && (
+          <div className="mdm-backdrop">
+            <div className="mdm-panel" role="dialog" aria-modal="true">
+              <div className="mdm-header">
+                <i className="bi bi-exclamation-triangle" style={{ color: '#f0ad4e' }} />
+                <h3>Incomplete Teams</h3>
+              </div>
+              <p className="mdm-subtitle">
+                Your lineup has <strong className="mdm-accent">{leftPlayers.length + rightPlayers.length}</strong> players,
+                but a {playerCount}v{playerCount} match expects <strong className="mdm-accent">{playerCount * 2}</strong>.
+                Team A has <strong className="mdm-accent">{leftPlayers.length}</strong> and Team B has <strong className="mdm-accent">{rightPlayers.length}</strong>.
+              </p>
+              <p className="mdm-subtitle">Do you still want to announce this match with incomplete teams?</p>
+              <div className="mdm-actions">
+                <button
+                  type="button"
+                  className="btn btn-ct active-mode"
+                  onClick={() => setShowIncompleteWarning(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-ct"
+                  onClick={() => { setShowIncompleteWarning(false); setShowMatchModal(true); }}
+                >
+                  <i className="bi bi-send-fill" />
+                  Announce Anyway
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {showMatchModal && (
           <MatchDetailsModal
@@ -421,7 +531,18 @@ const MatchPage = () => {
                 <button className="fp-btn fp-btn--save" onClick={handleSave}>
                   {savedMatchId ? <><i className="bi bi-check2 me-1" />Saved</> : <><i className="bi bi-floppy me-1" />Save</>}
                 </button>
-                <button className="fp-btn fp-btn--accent" onClick={() => setShowMatchModal(true)}>
+                <button
+                  className="fp-btn fp-btn--accent"
+                  onClick={() => {
+                    const expected = playerCount * 2;
+                    const actual = leftPlayers.length + rightPlayers.length;
+                    if (actual < expected) {
+                      setShowIncompleteWarning(true);
+                    } else {
+                      setShowMatchModal(true);
+                    }
+                  }}
+                >
                   ANNOUNCE MATCH
                 </button>
               </>
@@ -479,11 +600,15 @@ const MatchPage = () => {
                       formationRoles={allRolesA}
                       onMove={handleMoveA}
                       onChangeTeam={id => handleChangeTeam(id, 'A')}
+                      onBench={id => handleBench(id, 'A')}
                       onChangeRole={(id, role) => handleChangeRole(id, role, 'A')}
                     />
                     {renderTeamRoster('A', leftPlayers, rolesA, roleOverridesA, allRolesA)}
                   </div>
-                  {renderFormationBuilder()}
+                  <div className="match-center-column">
+                    {renderFormationBuilder()}
+                    {renderBench()}
+                  </div>
                   <div className="match-team-panel">
                     <FootballPitch
                       players={toPitchPlayers(rightPlayers, positionsB, rolesB, roleOverridesB)}
@@ -494,6 +619,7 @@ const MatchPage = () => {
                       formationRoles={allRolesB}
                       onMove={handleMoveB}
                       onChangeTeam={id => handleChangeTeam(id, 'B')}
+                      onBench={id => handleBench(id, 'B')}
                       onChangeRole={(id, role) => handleChangeRole(id, role, 'B')}
                     />
                     {renderTeamRoster('B', rightPlayers, rolesB, roleOverridesB, allRolesB)}
