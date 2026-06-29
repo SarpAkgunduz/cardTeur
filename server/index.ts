@@ -33,11 +33,13 @@ import matchRoutes from './routes/match';
 import matchesRoutes from './routes/matches';
 import userRoutes from './routes/users';
 import crewRoutes from './routes/crews';
+import uploadsRoutes from './routes/uploads';
 app.use('/api/players', playerRoutes);
 app.use('/api/match', matchRoutes);
 app.use('/api/matches', matchesRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/crews', crewRoutes);
+app.use('/api/uploads', uploadsRoutes);
 
 const PORT = process.env.PORT || 5002;
 

@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "cardTeurMobile",
+    "slug": "cardTeurMobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#1A2B42",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.cardteur.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#1A2B42",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.cardteur.mobile"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "scheme": "cardteurmobile"
+  }
+}

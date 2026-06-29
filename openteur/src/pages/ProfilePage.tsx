@@ -106,11 +106,19 @@ const ProfilePage = () => {
     if (!photoPreview) return;
     setSavingPhoto(true);
     try {
+      let photoURL = photoPreview;
+      if (photoPreview.startsWith('data:')) {
+        const { url } = await apiRequest<{ url: string }>('/uploads/image', {
+          method: 'POST',
+          body: JSON.stringify({ imageDataUrl: photoPreview }),
+        });
+        photoURL = url;
+      }
       const profile = await apiRequest<UserProfile>('/users/profile', {
         method: 'PUT',
-        body: JSON.stringify({ photoURL: photoPreview }),
+        body: JSON.stringify({ photoURL }),
       });
-      const profilePhoto = profile.photoURL || photoPreview;
+      const profilePhoto = profile.photoURL || photoURL;
       setSavedPhotoURL(profilePhoto);
       setPhotoPreview(profilePhoto);
       showMsg('Profile photo updated.');
