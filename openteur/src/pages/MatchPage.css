@@ -699,45 +699,6 @@
   gap: 6px;
 }
 
-.crew-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.crew-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 5px 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.82rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.crew-chip:hover {
-  border-color: rgba(0, 222, 236, 0.5);
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.crew-chip--selected {
-  background: rgba(0, 222, 236, 0.15);
-  border-color: #00deec;
-  color: #fff;
-}
-
-.crew-chip__pos {
-  font-size: 0.7rem;
-  opacity: 0.6;
-  margin-left: 4px;
-  background: rgba(255,255,255,0.08);
-  padding: 1px 5px;
-  border-radius: 4px;
-}
 
 /* Empty slot placeholder */
 .slot-empty {
@@ -768,35 +729,6 @@
 
 .match-layout--pitch {
   display: block;
-}
-
-.match-sidebar {
-  flex: 0 0 250px;
-  min-width: 230px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.match-sidebar__modes {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.match-sidebar .mode-button {
-  height: 90px;
-  font-size: 0.9rem;
-}
-
-.match-sidebar .mode-button h2 {
-  font-size: 1rem;
-  margin: 0;
-}
-
-.match-sidebar .mode-button p {
-  font-size: 0.72rem;
-  margin: 0;
 }
 
 .match-main {
@@ -896,12 +828,6 @@
 
 .match-builder-stage .pitch-card__stats {
   display: none;
-}
-
-.match-setup-stage {
-  display: grid;
-  justify-items: center;
-  gap: 20px;
 }
 
 /* Formation panel */
@@ -1106,18 +1032,6 @@
   background: rgba(0, 222, 236, 0.25);
 }
 
-.match-crew-panel {
-  background: rgba(36, 59, 90, 0.75);
-  border: 1px solid rgba(0, 222, 236, 0.13);
-  border-radius: 12px;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-height: 380px;
-  overflow-y: auto;
-}
-
 .match-team-roster {
   background: rgba(36, 59, 90, 0.72);
   border: 1px solid rgba(0, 222, 236, 0.16);
@@ -1215,72 +1129,6 @@
 .match-team-roster__swap:hover {
   background: rgba(0, 222, 236, 0.18);
   transform: translateY(-1px);
-}
-
-.match-crew-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.55);
-  flex-wrap: wrap;
-}
-
-.match-crew-count {
-  margin-left: auto;
-  background: rgba(0, 222, 236, 0.12);
-  color: #00deec;
-  border-radius: 20px;
-  padding: 1px 8px;
-  font-size: 0.7rem;
-}
-
-.match-crew-actions {
-  display: flex;
-  gap: 4px;
-}
-
-.match-crew-actions button {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 5px;
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.7rem;
-  padding: 2px 8px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.match-crew-actions button:hover {
-  background: rgba(255, 255, 255, 0.13);
-}
-
-.match-pitch-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 280px;
-  gap: 16px;
-  color: rgba(255, 255, 255, 0.25);
-  text-align: center;
-}
-
-.match-pitch-placeholder i {
-  font-size: 4rem;
-}
-
-.match-pitch-placeholder p {
-  font-size: 0.95rem;
-  max-width: 320px;
-  line-height: 1.6;
-}
-
-.match-pitch-placeholder strong {
-  color: rgba(0, 222, 236, 0.7);
 }
 
 .match-team-roster__bench {
@@ -1438,13 +1286,6 @@
     justify-content: flex-start;
     flex-wrap: wrap;
     min-width: 0;
-  }
-  .match-sidebar {
-    flex: unset;
-    width: 100%;
-  }
-  .match-sidebar__modes {
-    flex-direction: row;
   }
   .match-page-container {
     padding: 14px;

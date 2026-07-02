@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import BackButton from '../components/BackButton';
+import Dropdown from '../components/Dropdown';
 import FootballPitch, { PitchPlayer } from '../components/FootballPitch';
 import MatchDetailsModal from '../components/MatchDetailsModal';
 import ToastNotification from '../components/ToastNotification';
@@ -23,7 +24,6 @@ const MatchPage = () => {
   const [crews, setCrews] = useState<CrewOption[]>([]);
   const [selectedCrewId, setSelectedCrewId] = useState('');
   const [playersPool, setPlayersPool]    = useState<any[]>([]);
-  const [selectedPlayerIds, setSelectedPlayerIds] = useState<Set<string>>(new Set());
   const [leftPlayers, setLeftPlayers]    = useState<any[]>([]);
   const [rightPlayers, setRightPlayers]   = useState<any[]>([]);
   const [playerCount, setPlayerCount]     = useState<number>(8);
@@ -37,7 +37,10 @@ const MatchPage = () => {
   const [pitchMode, setPitchMode]         = useState(false);
   const [savedMatchId, setSavedMatchId]   = useState<string | null>(null);
   const [showMatchModal, setShowMatchModal] = useState(false);
-  const [benchPlayers, setBenchPlayers] = useState<any[]>([]);
+  const benchPlayers = useMemo(() => {
+    const assignedIds = new Set([...leftPlayers, ...rightPlayers].map(p => p._id ?? p.id));
+    return playersPool.filter(p => !assignedIds.has(p._id ?? p.id));
+  }, [playersPool, leftPlayers, rightPlayers]);
   const [swapPending, setSwapPending] = useState<{ player: any } | null>(null);
   const [showIncompleteWarning, setShowIncompleteWarning] = useState(false);
   const [toastMsg, setToastMsg]           = useState('');
@@ -110,22 +113,13 @@ const MatchPage = () => {
     const crewPlayers = crews.flatMap(crew => crew.players ?? []);
     const allPlayers = mergePlayers([...players, ...crewPlayers]);
     const selectedCrew = crews.find(crew => crew._id === selectedCrewId);
-    const nextPool = selectedCrew ? getCrewPlayers(selectedCrew) : allPlayers;
-
+    const nextPool = selectedCrew
+      ? getCrewPlayers(selectedCrew)
+      : selectedCrewId === 'ALL'
+        ? allPlayers
+        : [];
     setPlayersPool(nextPool);
-    setSelectedPlayerIds(new Set(nextPool.map(p => p._id ?? p.id).filter(Boolean)));
   }, [players, crews, selectedCrewId]);
-
-  useEffect(() => {
-    if (pitchMode) return;
-    const active = playersPool.filter(p => selectedPlayerIds.has(p._id ?? p.id));
-    if (active.length === 0) { setLeftPlayers([]); setRightPlayers([]); return; }
-    const { left, right } = distributePlayers(active, playerCount);
-    setLeftPlayers(left);
-    setRightPlayers(right);
-    setPitchMode(false);
-    setSavedMatchId(null);
-  }, [playersPool, playerCount, selectedPlayerIds, pitchMode]);
 
   const computeTeamOvr = (players: any[]) => {
     if (!players.length) return 0;
@@ -208,14 +202,12 @@ const MatchPage = () => {
       setRightPlayers(prev => prev.filter(p => (p._id ?? p.id) !== playerId));
       setPositionsB(prev => { const next = { ...prev }; delete next[playerId]; return next; });
     }
-    setBenchPlayers(prev => [...prev, player]);
     setSavedMatchId(null);
   };
 
   const handleAddFromBench = (playerId: string, toTeam: 'A' | 'B') => {
     const player = benchPlayers.find(p => (p._id ?? p.id) === playerId);
     if (!player) return;
-    setBenchPlayers(prev => prev.filter(p => (p._id ?? p.id) !== playerId));
     if (toTeam === 'A') setLeftPlayers(prev => [...prev, player]);
     else setRightPlayers(prev => [...prev, player]);
     setSavedMatchId(null);
@@ -333,40 +325,49 @@ const MatchPage = () => {
 
       <div className="match-setting-group">
         <label className="match-setting-label">Crew</label>
-        <select
-          className="match-setting-select"
+        <Dropdown
           value={selectedCrewId}
-          onChange={e => setSelectedCrewId(e.target.value)}
-          disabled={pitchMode}
-        >
-          <option value="">All Players</option>
-          {crews.map(crew => (
-            <option key={crew._id} value={crew._id}>
-              {crew.name.toUpperCase()} ({getCrewPlayers(crew).length})
-            </option>
-          ))}
-        </select>
+          onChange={setSelectedCrewId}
+          ariaLabel="Crew"
+          options={[
+            { value: '', label: 'Select Crew' },
+            { value: 'ALL', label: 'All Players' },
+            ...crews.map(crew => ({
+              value: crew._id,
+              label: `${crew.name.toUpperCase()} (${getCrewPlayers(crew).length})`,
+            })),
+          ]}
+        />
       </div>
 
       <div className="match-setting-group">
         <label className="match-setting-label">Number of Players</label>
-        <select className="match-setting-select" value={playerCount} onChange={e => setPlayerCount(Number(e.target.value))} disabled={pitchMode}>
-          {PLAYER_COUNT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
+        <Dropdown
+          value={String(playerCount)}
+          onChange={v => setPlayerCount(Number(v))}
+          ariaLabel="Number of Players"
+          options={PLAYER_COUNT_OPTIONS.map(o => ({ value: String(o.value), label: o.label }))}
+        />
       </div>
 
       <div className="match-setting-group">
         <label className="match-setting-label">Team A Formation</label>
-        <select className="match-setting-select" value={formationA} onChange={e => setFormationA(e.target.value)}>
-          {formationSet.map(f => <option key={f.name} value={f.name}>{f.name.toUpperCase()}</option>)}
-        </select>
+        <Dropdown
+          value={formationA}
+          onChange={setFormationA}
+          ariaLabel="Team A Formation"
+          options={formationSet.map(f => ({ value: f.name, label: f.name.toUpperCase() }))}
+        />
       </div>
 
       <div className="match-setting-group">
         <label className="match-setting-label">Team B Formation</label>
-        <select className="match-setting-select" value={formationB} onChange={e => setFormationB(e.target.value)}>
-          {formationSet.map(f => <option key={f.name} value={f.name}>{f.name.toUpperCase()}</option>)}
-        </select>
+        <Dropdown
+          value={formationB}
+          onChange={setFormationB}
+          ariaLabel="Team B Formation"
+          options={formationSet.map(f => ({ value: f.name, label: f.name.toUpperCase() }))}
+        />
       </div>
 
       <button className="match-apply-btn" onClick={applyFormation} disabled={leftPlayers.length === 0}>
@@ -550,92 +551,45 @@ const MatchPage = () => {
           </div>
         </div>
 
-        <div className={`match-layout ${pitchMode ? 'match-layout--pitch' : 'match-layout--setup'}`}>
-          {!pitchMode && (
-          <aside className="match-sidebar">
-
-            {playersPool.length > 0 && (
-              <div className="match-crew-panel">
-                <div className="match-crew-header">
-                  <span><i className="bi bi-people-fill me-1" />Players</span>
-                  <span className="match-crew-count">{selectedPlayerIds.size} / {playersPool.length}</span>
-                  <div className="match-crew-actions">
-                    <button type="button" onClick={() => setSelectedPlayerIds(new Set(playersPool.map((p: any) => p._id ?? p.id).filter(Boolean)))}>All</button>
-                    <button type="button" onClick={() => setSelectedPlayerIds(new Set())}>None</button>
-                  </div>
-                </div>
-                <div className="crew-chips">
-                  {playersPool.map((p: any) => {
-                    const id = p._id ?? p.id;
-                    const sel = selectedPlayerIds.has(id);
-                    return (
-                      <button
-                        key={id}
-                        type="button"
-                        className={'crew-chip ' + (sel ? 'crew-chip--selected' : '')}
-                        onClick={() => setSelectedPlayerIds(prev => { const next = new Set(prev); sel ? next.delete(id) : next.add(id); return next; })}
-                      >
-                        {sel && <i className="bi bi-check-circle-fill me-1" style={{ fontSize: '0.75rem' }} />}
-                        {p.name}<span className="crew-chip__pos">{p.preferredPosition ?? '?'}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </aside>
-          )}
-
+        <div className="match-layout match-layout--pitch">
           {/* ── Main area ── */}
           <div className="match-main">
-            {pitchMode ? (
-              <>
-                <div className="match-builder-stage">
-                  <div className="match-team-panel">
-                    <FootballPitch
-                      players={toPitchPlayers(leftPlayers, positionsA, rolesA, roleOverridesA)}
-                      teamLabel="A"
-                      teamOvr={computeTeamOvr(leftPlayers)}
-                      teamStaminaOvr={computeTeamStaminaOvr(leftPlayers)}
-                      formationRoles={allRolesA}
-                      onMove={handleMoveA}
-                      onChangeTeam={id => handleChangeTeam(id, 'A')}
-                      onBench={id => handleBench(id, 'A')}
-                      onChangeRole={(id, role) => handleChangeRole(id, role, 'A')}
-                    />
-                    {renderTeamRoster('A', leftPlayers, rolesA, roleOverridesA, allRolesA)}
-                  </div>
-                  <div className="match-center-column">
-                    {renderFormationBuilder()}
-                    {renderBench()}
-                  </div>
-                  <div className="match-team-panel">
-                    <FootballPitch
-                      players={toPitchPlayers(rightPlayers, positionsB, rolesB, roleOverridesB)}
-                      teamLabel="B"
-                      teamOvr={computeTeamOvr(rightPlayers)}
-                      teamStaminaOvr={computeTeamStaminaOvr(rightPlayers)}
-                      isTeamB
-                      formationRoles={allRolesB}
-                      onMove={handleMoveB}
-                      onChangeTeam={id => handleChangeTeam(id, 'B')}
-                      onBench={id => handleBench(id, 'B')}
-                      onChangeRole={(id, role) => handleChangeRole(id, role, 'B')}
-                    />
-                    {renderTeamRoster('B', rightPlayers, rolesB, roleOverridesB, allRolesB)}
-                  </div>
-                </div>
-                <p className="match-pitch-hint">Drag players to reposition. Use the team lists or right-click a card to adjust teams and roles.</p>
-              </>
-            ) : (
-              <div className="match-setup-stage">
-                {renderFormationBuilder()}
-                <div className="match-pitch-placeholder">
-                  <i className="bi bi-diagram-3" />
-                  <p>Pick formations and click <strong>Apply Formation</strong> to see the lineup on the pitch.</p>
-                </div>
+            <div className="match-builder-stage">
+              <div className="match-team-panel">
+                <FootballPitch
+                  players={pitchMode ? toPitchPlayers(leftPlayers, positionsA, rolesA, roleOverridesA) : []}
+                  teamLabel="A"
+                  teamOvr={computeTeamOvr(leftPlayers)}
+                  teamStaminaOvr={computeTeamStaminaOvr(leftPlayers)}
+                  formationRoles={allRolesA}
+                  onMove={handleMoveA}
+                  onChangeTeam={id => handleChangeTeam(id, 'A')}
+                  onBench={id => handleBench(id, 'A')}
+                  onChangeRole={(id, role) => handleChangeRole(id, role, 'A')}
+                />
+                {pitchMode && renderTeamRoster('A', leftPlayers, rolesA, roleOverridesA, allRolesA)}
               </div>
-            )}
+              <div className="match-center-column">
+                {renderFormationBuilder()}
+                {renderBench()}
+              </div>
+              <div className="match-team-panel">
+                <FootballPitch
+                  players={pitchMode ? toPitchPlayers(rightPlayers, positionsB, rolesB, roleOverridesB) : []}
+                  teamLabel="B"
+                  teamOvr={computeTeamOvr(rightPlayers)}
+                  teamStaminaOvr={computeTeamStaminaOvr(rightPlayers)}
+                  isTeamB
+                  formationRoles={allRolesB}
+                  onMove={handleMoveB}
+                  onChangeTeam={id => handleChangeTeam(id, 'B')}
+                  onBench={id => handleBench(id, 'B')}
+                  onChangeRole={(id, role) => handleChangeRole(id, role, 'B')}
+                />
+                {pitchMode && renderTeamRoster('B', rightPlayers, rolesB, roleOverridesB, allRolesB)}
+              </div>
+            </div>
+            {pitchMode && <p className="match-pitch-hint">Drag players to reposition. Use the team lists or right-click a card to adjust teams and roles.</p>}
           </div>
         </div>
         </div>
