@@ -224,11 +224,19 @@ export function usePlayerForm() {
     }
 
     try {
+      let payload = newPlayer;
+      if (cardImage.startsWith('data:')) {
+        const { url } = await apiRequest<{ url: string }>('/uploads/image', {
+          method: 'POST',
+          body: JSON.stringify({ imageDataUrl: cardImage }),
+        });
+        payload = { ...newPlayer, cardImage: url };
+      }
       if (isEditMode && id) {
-        await updatePlayer(id, newPlayer);
+        await updatePlayer(id, payload);
         setToastMsg('Player updated successfully!');
       } else {
-        await createPlayer(newPlayer);
+        await createPlayer(payload);
         setToastMsg('Player added successfully!');
       }
       setShowToast(true);
