@@ -13,8 +13,8 @@ const CrewSchema = new Schema<ICrew>({
   ownerUid: { type: String, required: true, index: true },
   name: { type: String, required: true },
   playerIds: { type: [String], default: [] },
-  memberUids: { type: [String], default: [] },
-  editorUids: { type: [String], default: [] },
+  memberUids: { type: [String], default: [], index: true },
+  editorUids: { type: [String], default: [], index: true },
   createdAt: { type: Date, default: Date.now },
 });
 

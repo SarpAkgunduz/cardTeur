@@ -52,7 +52,7 @@ export interface IPlayer extends Document {
 
 const PlayerSchema: Schema<IPlayer> = new Schema({
   ownerUid: { type: String, required: true, index: true },
-  linkedUserId: { type: String, default: undefined },
+  linkedUserId: { type: String, default: undefined, index: true },
   name: String,
   email: { type: String, default: undefined },
   jerseyNumber: Number,
