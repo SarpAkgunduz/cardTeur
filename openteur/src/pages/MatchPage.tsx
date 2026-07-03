@@ -41,7 +41,6 @@ const MatchPage = () => {
     const assignedIds = new Set([...leftPlayers, ...rightPlayers].map(p => p._id ?? p.id));
     return playersPool.filter(p => !assignedIds.has(p._id ?? p.id));
   }, [playersPool, leftPlayers, rightPlayers]);
-  const [swapPending, setSwapPending] = useState<{ player: any } | null>(null);
   const [showIncompleteWarning, setShowIncompleteWarning] = useState(false);
   const [toastMsg, setToastMsg]           = useState('');
   const [toastVariant, setToastVariant]   = useState<'success' | 'danger'>('success');
@@ -71,21 +70,6 @@ const MatchPage = () => {
     const v3 = toNum(p.athleticismOverall ?? p.athleticism);
     const parts = [v1, v2, v3].filter(x => x > 0);
     return (v1 + v2 + v3) / (parts.length || 3);
-  };
-
-  const distributePlayers = (pool: any[], countPerSide: number) => {
-    const arr = pool.map(p => ({ ...p, __ovr: computeOverall(p) })).sort((a, b) => b.__ovr - a.__ovr);
-    const left: any[] = [], right: any[] = [];
-    let sumL = 0, sumR = 0;
-    for (const p of arr) {
-      if (left.length >= countPerSide && right.length >= countPerSide) break;
-      if (left.length < countPerSide && right.length < countPerSide) {
-        if (sumL <= sumR) { left.push(p); sumL += p.__ovr; }
-        else { right.push(p); sumR += p.__ovr; }
-      } else if (left.length < countPerSide) { left.push(p); sumL += p.__ovr; }
-      else { right.push(p); sumR += p.__ovr; }
-    }
-    return { left, right };
   };
 
   const mergePlayers = (items: any[]): any[] => {
