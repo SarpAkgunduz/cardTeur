@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { Plan } from '../config/plans';
 
 export interface IUser extends Document {
   uid: string;
@@ -7,6 +8,7 @@ export interface IUser extends Document {
   photoURL?: string;
   friends: string[];
   friendRequests: string[];
+  plan: Plan;
   createdAt: Date;
 }
 
@@ -17,6 +19,7 @@ const UserSchema = new Schema<IUser>({
   photoURL: { type: String },
   friends: { type: [String], default: [] },
   friendRequests: { type: [String], default: [] },
+  plan: { type: String, enum: ['free', 'premium', 'premium_plus'], default: 'free' },
   createdAt: { type: Date, default: Date.now },
 });
 
