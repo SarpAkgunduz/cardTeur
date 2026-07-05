@@ -15,7 +15,9 @@ const allowedOrigins = [
   'https://www.cardteur.com',
   'https://cardteur.sarpakg.workers.dev',
   // Extra origins from env (comma-separated)
-  ...(process.env.EXTRA_CORS_ORIGINS ? process.env.EXTRA_CORS_ORIGINS.split(',') : []),
+  ...(process.env.EXTRA_CORS_ORIGINS
+    ? process.env.EXTRA_CORS_ORIGINS.split(',').map(o => o.trim()).filter(Boolean)
+    : []),
 ];
 app.use(cors({
   origin: (origin, callback) => {
@@ -29,13 +31,11 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 
 import playerRoutes from './routes/players';
-import matchRoutes from './routes/match';
 import matchesRoutes from './routes/matches';
 import userRoutes from './routes/users';
 import crewRoutes from './routes/crews';
 import uploadsRoutes from './routes/uploads';
 app.use('/api/players', playerRoutes);
-app.use('/api/match', matchRoutes);
 app.use('/api/matches', matchesRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/crews', crewRoutes);

@@ -3,6 +3,7 @@ import { requireAuth } from '../middleware/auth';
 import Crew from '../models/Crew';
 import Player from '../models/Player';
 import User from '../models/User';
+import { getUserLimits } from '../services/planService';
 
 const router = Router();
 router.use(requireAuth);
@@ -63,6 +64,13 @@ router.post('/', async (req: Request, res: Response) => {
   const { name } = req.body;
   if (!name?.trim()) return res.status(400).json({ error: 'Name is required' });
   try {
+    const { maxCrews } = await getUserLimits(uid);
+    if (maxCrews !== Infinity) {
+      const count = await Crew.countDocuments({ ownerUid: uid });
+      if (count >= maxCrews) {
+        return res.status(403).json({ error: 'Crew limit reached', code: 'PLAN_LIMIT_CREWS', limit: maxCrews });
+      }
+    }
     const crew = await Crew.create({ ownerUid: uid, name: name.trim(), playerIds: [], memberUids: [], editorUids: [] });
     res.status(201).json(crew);
   } catch {

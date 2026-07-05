@@ -65,7 +65,7 @@
 
 ## Backend architecture
 
-- Server boots from `server/index.ts`, mounts `/api/players`, `/api/match`, `/api/users`, `/api/crews`.
+- Server boots from `server/index.ts`, mounts `/api/players`, `/api/matches`, `/api/users`, `/api/crews`, `/api/uploads`.
 - MongoDB via `MONGO_URI` in `server/.env`. Default port `5002` (not 5001 — macOS AirPlay Receiver occupies 5001). Production on Railway uses `PORT` env var (set to 8080 in Railway dashboard).
 - CORS allowlist in `server/index.ts`: `https://cardteur.com`, `https://cardteur.sarpakg.workers.dev`, `http://localhost:5173`. Never use `cors({ origin: '*' })`.
 - All routes protected by `requireAuth` middleware (`server/middleware/auth.ts`), which verifies `Authorization: Bearer <token>` via Firebase Admin SDK and attaches `uid`/`email` to the request.

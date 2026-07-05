@@ -23,6 +23,17 @@ export interface MatchEmailPayload {
 export interface SendResult {
   sent: string[];
   skipped: string[];
+  failed: string[];
+}
+
+// Escape user-provided values before interpolating into email HTML
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 type RoleGroup = 'GK' | 'DEF' | 'MID' | 'ATT';
@@ -59,8 +70,8 @@ function buildPitchHtml(leftTeam: MatchPlayer[], rightTeam: MatchPlayer[]): stri
       if (!groups[g]?.length) continue;
       const rows = groups[g]!.map(p => `
         <tr>
-          <td style="padding:5px 8px; color:#ffffff; font-size:12px; font-weight:700;">${p.name}</td>
-          <td style="padding:5px 8px; color:${color}; font-size:11px; font-weight:600; text-align:right;">${p.role ?? p.preferredPosition ?? '—'}</td>
+          <td style="padding:5px 8px; color:#ffffff; font-size:12px; font-weight:700;">${escapeHtml(p.name)}</td>
+          <td style="padding:5px 8px; color:${color}; font-size:11px; font-weight:600; text-align:right;">${escapeHtml(p.role ?? p.preferredPosition ?? '—')}</td>
         </tr>`).join('');
       sections.push(`
         <tr><td colspan="2" style="padding:6px 8px 2px; font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.35);">${GROUP_LABELS[g]}</td></tr>
@@ -118,7 +129,7 @@ function buildEmailHtml(payload: MatchEmailPayload, recipientName: string): stri
       padding: 28px 32px;
     ">
       <p style="color: rgba(255,255,255,0.8); font-size: 15px; margin: 0 0 24px 0;">
-        Hello <strong style="color:#ffffff;">${recipientName}</strong>, you have been added to an upcoming match!
+        Hello <strong style="color:#ffffff;">${escapeHtml(recipientName)}</strong>, you have been added to an upcoming match!
       </p>
 
       <!-- Match details -->
@@ -132,15 +143,15 @@ function buildEmailHtml(payload: MatchEmailPayload, recipientName: string): stri
         <table style="width:100%; border-collapse: collapse;">
           <tr>
             <td style="padding: 8px 0; color: rgba(0,222,236,0.7); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em; width: 30%;">Location</td>
-            <td style="padding: 8px 0; color: #ffffff; font-size: 14px; font-weight: 600;">${payload.location}</td>
+            <td style="padding: 8px 0; color: #ffffff; font-size: 14px; font-weight: 600;">${escapeHtml(payload.location)}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: rgba(0,222,236,0.7); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em;">Date</td>
-            <td style="padding: 8px 0; color: #ffffff; font-size: 14px; font-weight: 600;">${payload.date}</td>
+            <td style="padding: 8px 0; color: #ffffff; font-size: 14px; font-weight: 600;">${escapeHtml(payload.date)}</td>
           </tr>
           <tr>
             <td style="padding: 8px 0; color: rgba(0,222,236,0.7); font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em;">Time</td>
-            <td style="padding: 8px 0; color: #ffffff; font-size: 14px; font-weight: 600;">${payload.time}</td>
+            <td style="padding: 8px 0; color: #ffffff; font-size: 14px; font-weight: 600;">${escapeHtml(payload.time)}</td>
           </tr>
         </table>
       </div>
@@ -167,6 +178,7 @@ export async function sendMatchAnnouncement(payload: MatchEmailPayload): Promise
 
   const sent: string[] = [];
   const skipped: string[] = [];
+  const failed: string[] = [];
 
   for (const player of allPlayers) {
     if (!player.email || player.email.trim() === '') {
@@ -176,23 +188,28 @@ export async function sendMatchAnnouncement(payload: MatchEmailPayload): Promise
 
     const html = buildEmailHtml(payload, player.name);
 
-    const { data, error } = await resend.emails.send({
-      from: process.env.SMTP_FROM!,
-      to: player.email,
-      subject: `⚽ Match on ${payload.date} at ${payload.time} — CardTeur`,
-      html,
-    });
+    try {
+      const { data, error } = await resend.emails.send({
+        from: process.env.SMTP_FROM!,
+        to: player.email,
+        subject: `⚽ Match on ${payload.date} at ${payload.time} — CardTeur`,
+        html,
+      });
 
-    if (error) {
-      console.error(`[emailService] Failed to send to ${player.email}:`, error);
-      throw new Error(JSON.stringify(error));
+      if (error) {
+        console.error(`[emailService] Failed to send to ${player.email}:`, error);
+        failed.push(player.email);
+        continue;
+      }
+
+      console.log(`[emailService] Sent to ${player.email}, id: ${data?.id}`);
+      sent.push(player.email);
+    } catch (err) {
+      console.error(`[emailService] Failed to send to ${player.email}:`, err);
+      failed.push(player.email);
     }
-
-    console.log(`[emailService] Sent to ${player.email}, id: ${data?.id}`);
-
-    sent.push(player.email);
   }
 
-  console.log(`[emailService] Sent: ${sent.length}, Skipped (no email): ${skipped.length}`);
-  return { sent, skipped };
+  console.log(`[emailService] Sent: ${sent.length}, Skipped (no email): ${skipped.length}, Failed: ${failed.length}`);
+  return { sent, skipped, failed };
 }

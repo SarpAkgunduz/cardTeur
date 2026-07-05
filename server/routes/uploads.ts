@@ -16,6 +16,17 @@ router.post('/image', requireAuth, async (req: Request, res: Response) => {
     return;
   }
 
+  if (!/^data:image\/(webp|jpeg|png|gif);base64,/.test(imageDataUrl)) {
+    res.status(400).json({ error: 'Only webp, jpeg, png, or gif images are allowed' });
+    return;
+  }
+
+  // ~5MB decoded (base64 inflates by ~4/3)
+  if (imageDataUrl.length > 7_000_000) {
+    res.status(400).json({ error: 'Image too large (max ~5MB)' });
+    return;
+  }
+
   try {
     const url = await uploadImageToR2(imageDataUrl, `users/${uid}`);
     res.json({ url });

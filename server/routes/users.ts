@@ -4,6 +4,7 @@ import Player from '../models/Player';
 import Crew from '../models/Crew';
 import { requireAuth } from '../middleware/auth';
 import admin from '../firebaseAdmin';
+import { getUserLimits } from '../services/planService';
 
 const router: Router = Router();
 
@@ -54,17 +55,21 @@ router.put('/profile', requireAuth, async (req: Request, res: Response) => {
 router.delete('/account', requireAuth, async (req: Request, res: Response) => {
   const uid = (req as any).uid as string;
   try {
-    await admin.auth().deleteUser(uid);
+    // Clean up MongoDB first — if this fails, the user can retry with a still-valid token
     await User.deleteOne({ uid });
     await User.updateMany(
       { $or: [{ friends: uid }, { friendRequests: uid }] } as any,
       { $pull: { friends: uid, friendRequests: uid } } as any
     );
     await Player.updateMany({ linkedUserId: uid }, { $unset: { linkedUserId: '' } });
+    await Player.deleteMany({ ownerUid: uid });
     await Crew.updateMany(
       { $or: [{ memberUids: uid }, { editorUids: uid }] } as any,
       { $pull: { memberUids: uid, editorUids: uid } } as any
     );
+    await Crew.deleteMany({ ownerUid: uid });
+    // Delete the Firebase account last
+    await admin.auth().deleteUser(uid);
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete account' });
@@ -75,7 +80,7 @@ router.delete('/account', requireAuth, async (req: Request, res: Response) => {
 router.get('/me', requireAuth, async (req: Request, res: Response) => {
   const uid = (req as any).uid as string;
   try {
-    const user = await User.findOne({ uid }).select('uid email displayName photoURL');
+    const user = await User.findOne({ uid }).select('uid email displayName photoURL plan planRenewsAt');
     if (!user) { res.status(404).json({ error: 'User not found' }); return; }
     res.json(user);
   } catch (err) {
@@ -142,6 +147,11 @@ router.post('/friends/:friendUid', requireAuth, async (req: Request, res: Respon
     if ((me.friends ?? []).includes(friendUid)) { res.json({ success: true, status: 'friends' }); return; }
 
     if ((me.friendRequests ?? []).includes(friendUid)) {
+      const { maxFriends } = await getUserLimits(uid);
+      if ((me.friends ?? []).length >= maxFriends) {
+        res.status(403).json({ error: 'Friend limit reached', code: 'PLAN_LIMIT_FRIENDS', limit: maxFriends });
+        return;
+      }
       await User.findOneAndUpdate({ uid }, { $pull: { friendRequests: friendUid }, $addToSet: { friends: friendUid } } as any);
       await User.findOneAndUpdate({ uid: friendUid }, { $addToSet: { friends: uid } } as any);
       res.json({ success: true, status: 'accepted' });
@@ -164,6 +174,12 @@ router.post('/friend-requests/:requesterUid/accept', requireAuth, async (req: Re
     if (!me) { res.status(404).json({ error: 'User not found' }); return; }
     if (!(me.friendRequests ?? []).includes(requesterUid)) {
       res.status(404).json({ error: 'Friend request not found' });
+      return;
+    }
+
+    const { maxFriends } = await getUserLimits(uid);
+    if ((me.friends ?? []).length >= maxFriends) {
+      res.status(403).json({ error: 'Friend limit reached', code: 'PLAN_LIMIT_FRIENDS', limit: maxFriends });
       return;
     }
 
@@ -208,6 +224,7 @@ router.delete('/friends/:friendUid', requireAuth, async (req: Request, res: Resp
 router.post('/lookup-by-emails', requireAuth, async (req: Request, res: Response) => {
   const { emails } = req.body as { emails: string[] };
   if (!Array.isArray(emails) || emails.length === 0) { res.json([]); return; }
+  if (emails.length > 50) { res.status(400).json({ error: 'Too many emails (max 50)' }); return; }
   try {
     const users = await User.find({ email: { $in: emails } }).select('uid email displayName photoURL');
     res.json(users);
@@ -220,6 +237,7 @@ router.post('/lookup-by-emails', requireAuth, async (req: Request, res: Response
 router.post('/lookup-by-uids', requireAuth, async (req: Request, res: Response) => {
   const { uids } = req.body as { uids: string[] };
   if (!Array.isArray(uids) || uids.length === 0) { res.json([]); return; }
+  if (uids.length > 50) { res.status(400).json({ error: 'Too many uids (max 50)' }); return; }
   try {
     const users = await User.find({ uid: { $in: uids } }).select('uid email displayName photoURL');
     res.json(users);

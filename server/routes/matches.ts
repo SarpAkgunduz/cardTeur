@@ -2,15 +2,23 @@ import { Router, Request, Response } from 'express';
 import { requireAuth } from '../middleware/auth';
 import Match from '../models/Match';
 import { sendMatchAnnouncement } from '../services/emailService';
+import { getUserLimits } from '../services/planService';
 
 const router = Router();
 router.use(requireAuth);
 
-// GET /api/matches — list all saved matches for this user
+// GET /api/matches — list saved matches within the user's plan history window
 router.get('/', async (req: Request, res: Response) => {
   try {
     const uid = (req as any).uid;
-    const matches = await Match.find({ ownerUid: uid }).sort({ createdAt: -1 });
+    const { matchHistoryMonths } = await getUserLimits(uid);
+    const filter: Record<string, unknown> = { ownerUid: uid };
+    if (matchHistoryMonths !== Infinity) {
+      const cutoff = new Date();
+      cutoff.setMonth(cutoff.getMonth() - matchHistoryMonths);
+      filter.createdAt = { $gte: cutoff };
+    }
+    const matches = await Match.find(filter).sort({ createdAt: -1 });
     res.json(matches);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch matches' });

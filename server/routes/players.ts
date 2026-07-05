@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import Player from '../models/Player';
 import Crew from '../models/Crew';
 import { requireAuth, AuthenticatedRequest } from '../middleware/auth';
+import { getUserLimits } from '../services/planService';
 
 const router: Router = Router();
 
@@ -21,9 +22,13 @@ async function canEditPlayer(playerId: string, uid: string): Promise<boolean> {
 
 // Get all players belonging to the authenticated user
 router.get('/', async (req: Request, res: Response) => {
-  const uid = (req as AuthenticatedRequest).uid;
-  const players = await Player.find({ ownerUid: uid });
-  res.json(players);
+  try {
+    const uid = (req as AuthenticatedRequest).uid;
+    const players = await Player.find({ ownerUid: uid });
+    res.json(players);
+  } catch {
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 // Get single player by ID (must belong to authenticated user)
@@ -51,6 +56,14 @@ router.get('/:id', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   try {
     const uid = (req as AuthenticatedRequest).uid;
+    const { maxPlayers } = await getUserLimits(uid);
+    if (maxPlayers !== Infinity) {
+      const count = await Player.countDocuments({ ownerUid: uid });
+      if (count >= maxPlayers) {
+        res.status(403).json({ error: 'Player limit reached', code: 'PLAN_LIMIT_PLAYERS', limit: maxPlayers });
+        return;
+      }
+    }
     const newPlayer = new Player({ ...req.body, ownerUid: uid });
     await newPlayer.save();
     res.json(newPlayer);
@@ -111,9 +124,13 @@ router.put('/:id', async (req: Request, res: Response) => {
 
 // Delete player (must belong to authenticated user)
 router.delete('/:id', async (req: Request, res: Response) => {
-  const uid = (req as AuthenticatedRequest).uid;
-  await Player.findOneAndDelete({ _id: req.params.id, ownerUid: uid });
-  res.sendStatus(204);
+  try {
+    const uid = (req as AuthenticatedRequest).uid;
+    await Player.findOneAndDelete({ _id: req.params.id, ownerUid: uid });
+    res.sendStatus(204);
+  } catch {
+    res.status(400).json({ error: 'Invalid player ID' });
+  }
 });
 
 export default router;
