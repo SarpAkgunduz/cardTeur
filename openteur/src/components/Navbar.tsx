@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTutorial } from '../contexts/TutorialContext';
 import './Navbar.css';
 
 const NAV_LINKS = [
@@ -16,8 +17,23 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser, signOut } = useAuth();
+  const { startTutorial } = useTutorial();
   const loggedIn = !!currentUser;
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
+  const helpRef = useRef<HTMLDivElement>(null);
+
+  // Close help menu on outside click
+  useEffect(() => {
+    if (!helpOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (helpRef.current && !helpRef.current.contains(e.target as Node)) {
+        setHelpOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onClick);
+    return () => document.removeEventListener('mousedown', onClick);
+  }, [helpOpen]);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -60,6 +76,29 @@ const Navbar = () => {
 
         <div className="ct-nav__right">
           {/* Desktop: user chip + logout / login + signup */}
+          {loggedIn && (
+            <div className="ct-nav__help" ref={helpRef}>
+              <button
+                className="ct-nav__help-btn"
+                onClick={() => setHelpOpen(prev => !prev)}
+                aria-label="Help"
+                title="Help"
+              >
+                <i className="bi bi-question-lg" />
+              </button>
+              {helpOpen && (
+                <div className="ct-nav__help-menu">
+                  <button
+                    className="ct-nav__help-item"
+                    onClick={() => { setHelpOpen(false); startTutorial(); }}
+                  >
+                    <i className="bi bi-arrow-repeat" />
+                    Replay tutorial
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
           {loggedIn ? (
             <div className="ct-nav__user-area">
               <button

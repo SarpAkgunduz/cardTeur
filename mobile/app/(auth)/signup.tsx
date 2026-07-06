@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTutorial } from '../../contexts/TutorialContext';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { useGoogleSignIn } from '../../hooks/useGoogleSignIn';
 
@@ -22,8 +23,12 @@ export default function SignupScreen() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const { signUp } = useAuth();
+  const { startTutorial } = useTutorial();
   const router = useRouter();
-  const google = useGoogleSignIn(() => router.replace('/(tabs)/roster'));
+  const google = useGoogleSignIn(() => {
+    startTutorial();
+    router.replace('/(tabs)/roster');
+  });
 
   const handleSignup = async () => {
     if (!email.trim() || !password.trim() || !confirm.trim()) {
@@ -42,6 +47,7 @@ export default function SignupScreen() {
     setError('');
     try {
       await signUp(email.trim(), password);
+      startTutorial();
       router.replace('/(tabs)/roster');
     } catch (err: any) {
       if (err?.code === 'auth/email-already-in-use') {

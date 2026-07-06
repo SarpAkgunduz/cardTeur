@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTutorial } from '../contexts/TutorialContext';
 import { apiRequest } from '../services/api/apiClient';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 import './SignupPage.css';
@@ -15,6 +16,7 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { signUp } = useAuth();
+  const { startTutorial } = useTutorial();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +47,7 @@ const SignupPage = () => {
 
     try {
       await signUp(email, password);
+      startTutorial();
       // Persist user info in MongoDB after Firebase account creation
       await apiRequest('/users/register', {
         method: 'POST',

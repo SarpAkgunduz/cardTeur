@@ -9,6 +9,7 @@ import {
   Image,
 } from 'react-native';
 import { usePlayers } from '../../contexts/PlayerContext';
+import { useTutorial } from '../../contexts/TutorialContext';
 import ScreenHeader from '../../components/ScreenHeader';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import type { Player } from '../../services/api/types';
@@ -82,6 +83,7 @@ function PlayerRow({ player }: { player: Player }) {
 
 export default function PreviewScreen() {
   const { players, loading, error } = usePlayers();
+  const { registerTarget } = useTutorial();
 
   const grouped = GROUP_ORDER.reduce<Record<string, Player[]>>((acc, g) => {
     acc[g] = players
@@ -92,7 +94,7 @@ export default function PreviewScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader title="Preview" />
+      <ScreenHeader title="Preview" showHelp />
 
       {loading && (
         <View style={styles.center}>
@@ -107,6 +109,7 @@ export default function PreviewScreen() {
       )}
 
       {!loading && !error && (
+        <View style={{ flex: 1 }} collapsable={false} ref={node => registerTarget('preview-list', node)}>
         <ScrollView contentContainerStyle={styles.scroll}>
           <Text style={styles.totalCount}>{players.length} PLAYERS IN ROSTER</Text>
           {GROUP_ORDER.map((group) => {
@@ -124,6 +127,7 @@ export default function PreviewScreen() {
             );
           })}
         </ScrollView>
+        </View>
       )}
     </SafeAreaView>
   );

@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTutorial } from '../../contexts/TutorialContext';
 import ScreenHeader from '../../components/ScreenHeader';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { crewApi } from '../../services/api/crewApi';
@@ -17,6 +18,7 @@ import type { Crew } from '../../services/api/types';
 
 export default function CrewScreen() {
   const { currentUser } = useAuth();
+  const { registerTarget } = useTutorial();
   const [crews, setCrews] = useState<Crew[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +33,7 @@ export default function CrewScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader title="Crew" />
+      <ScreenHeader title="Crew" showHelp />
 
       {loading && (
         <View style={styles.center}>
@@ -46,6 +48,7 @@ export default function CrewScreen() {
       )}
 
       {!loading && !error && (
+        <View style={{ flex: 1 }} collapsable={false} ref={node => registerTarget('crew-list', node)}>
         <ScrollView contentContainerStyle={styles.scroll}>
           {crews.length === 0 ? (
             <View style={styles.center}>
@@ -92,6 +95,7 @@ export default function CrewScreen() {
             ))
           )}
         </ScrollView>
+        </View>
       )}
     </SafeAreaView>
   );

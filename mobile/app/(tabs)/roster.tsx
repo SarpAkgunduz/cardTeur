@@ -14,6 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { usePlayers } from '../../contexts/PlayerContext';
+import { useTutorial } from '../../contexts/TutorialContext';
 import PlayerCard from '../../components/PlayerCard';
 import ComparePanel from '../../components/ComparePanel';
 import ScreenHeader from '../../components/ScreenHeader';
@@ -45,6 +46,7 @@ const PLAYER_PHOTOS = [
 
 export default function RosterScreen() {
   const { players, loading, error, deletePlayer, createPlayer } = usePlayers();
+  const { registerTarget } = useTutorial();
   const router = useRouter();
   const [mode, setMode] = useState<Mode>('none');
   const [compareSelection, setCompareSelection] = useState<Player[]>([]);
@@ -147,7 +149,11 @@ export default function RosterScreen() {
   };
 
   const headerRight = (
-    <>
+    <View
+      style={{ flexDirection: 'row', gap: 8 }}
+      collapsable={false}
+      ref={node => registerTarget('roster-tools', node)}
+    >
       <TouchableOpacity
         style={[styles.modeBtn, mode === 'compare' && styles.modeBtnActive]}
         onPress={() => setActiveMode('compare')}
@@ -169,17 +175,19 @@ export default function RosterScreen() {
       <TouchableOpacity style={styles.modeBtn} onPress={() => router.push('/player/add')}>
         <Ionicons name="person-add-outline" size={16} color={Colors.accent} />
       </TouchableOpacity>
-    </>
+    </View>
   );
 
   const renderItem = ({ item }: { item: Player | 'random' }) => {
     if (item === 'random') {
       return (
-        <TouchableOpacity style={styles.randomCard} onPress={() => setRandomPickerOpen(true)}>
-          <Text style={styles.randomQuestion}>?</Text>
-          <Text style={styles.randomTitle}>Generate Random Player</Text>
-          <Text style={styles.randomSub}>Unlock a new card</Text>
-        </TouchableOpacity>
+        <View collapsable={false} ref={node => registerTarget('roster-random', node)}>
+          <TouchableOpacity style={styles.randomCard} onPress={() => setRandomPickerOpen(true)}>
+            <Text style={styles.randomQuestion}>?</Text>
+            <Text style={styles.randomTitle}>Generate Random Player</Text>
+            <Text style={styles.randomSub}>Unlock a new card</Text>
+          </TouchableOpacity>
+        </View>
       );
     }
     return (
@@ -211,7 +219,7 @@ export default function RosterScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader title="Players" right={headerRight} />
+      <ScreenHeader title="Players" right={headerRight} showHelp />
 
       {mode !== 'none' && (
         <View style={styles.modeBanner}>

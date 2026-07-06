@@ -4,6 +4,8 @@ import { StatusBar } from 'expo-status-bar';
 import { View, ActivityIndicator } from 'react-native';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { PlayerProvider } from '../contexts/PlayerContext';
+import { TutorialProvider } from '../contexts/TutorialContext';
+import TutorialOverlay from '../components/tutorial/TutorialOverlay';
 import { Colors } from '../constants/theme';
 
 function RootNavigator() {
@@ -45,8 +47,13 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <PlayerProvider>
-        <StatusBar style="light" />
-        <RootNavigator />
+        <TutorialProvider>
+          <StatusBar style="light" />
+          <View style={{ flex: 1 }}>
+            <RootNavigator />
+            <TutorialOverlay />
+          </View>
+        </TutorialProvider>
       </PlayerProvider>
     </AuthProvider>
   );

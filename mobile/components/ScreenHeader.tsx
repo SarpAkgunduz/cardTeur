@@ -1,17 +1,27 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, FontSizes, Spacing } from '../constants/theme';
+import { useTutorial } from '../contexts/TutorialContext';
 
 interface ScreenHeaderProps {
   title: string;
   showBack?: boolean;
+  showHelp?: boolean;
   right?: React.ReactNode;
 }
 
-export default function ScreenHeader({ title, showBack = false, right }: ScreenHeaderProps) {
+export default function ScreenHeader({ title, showBack = false, showHelp = false, right }: ScreenHeaderProps) {
   const router = useRouter();
+  const { startTutorial } = useTutorial();
+
+  const handleHelp = () => {
+    Alert.alert('Help', 'Replay the app tutorial?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Replay tutorial', onPress: startTutorial },
+    ]);
+  };
 
   return (
     <View style={styles.header}>
@@ -23,7 +33,14 @@ export default function ScreenHeader({ title, showBack = false, right }: ScreenH
         )}
       </View>
       <Text style={styles.title}>{title}</Text>
-      <View style={styles.right}>{right}</View>
+      <View style={styles.right}>
+        {right}
+        {showHelp && (
+          <TouchableOpacity onPress={handleHelp} style={styles.helpBtn} accessibilityLabel="Help">
+            <Ionicons name="help" size={14} color={Colors.accent} />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 }
@@ -59,5 +76,15 @@ const styles = StyleSheet.create({
   },
   backBtn: {
     padding: 4,
+  },
+  helpBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    borderWidth: 1,
+    borderColor: Colors.accentBorder,
+    backgroundColor: 'rgba(0, 222, 236, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

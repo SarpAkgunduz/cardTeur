@@ -12,6 +12,7 @@ import {
   Image,
 } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTutorial } from '../../contexts/TutorialContext';
 import ScreenHeader from '../../components/ScreenHeader';
 import Toast from '../../components/Toast';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
@@ -21,6 +22,7 @@ import type { AppUser } from '../../services/api/types';
 type Tab = 'my-friends' | 'add-friend';
 
 export default function FriendsScreen() {
+  const { registerTarget } = useTutorial();
   const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('my-friends');
   const [myUser, setMyUser] = useState<AppUser | null>(null);
@@ -99,9 +101,13 @@ export default function FriendsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader title="Friends" />
+      <ScreenHeader title="Friends" showHelp />
 
-      <View style={styles.tabs}>
+      <View
+        style={styles.tabs}
+        collapsable={false}
+        ref={node => registerTarget('friends-tabs', node)}
+      >
         {(['my-friends', 'add-friend'] as Tab[]).map(tab => (
           <TouchableOpacity
             key={tab}

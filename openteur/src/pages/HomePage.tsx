@@ -12,7 +12,7 @@ const HomePage = () => {
               <h1 className="welcome-title">Your <span>Cardteur</span> League</h1>
             </div>
           </div>
-          <div className="home-grid">
+          <div className="home-grid" data-tutorial="home-grid">
             <button className="btn-homepage" onClick={() => navigate('/manage')}>
               <i className="bi bi-person-fill-gear btn-icon"></i>
               <span className="btn-label">Manage Squad</span>

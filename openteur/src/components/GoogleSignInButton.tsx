@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTutorial } from '../contexts/TutorialContext';
 import { apiRequest } from '../services/api/apiClient';
 import './GoogleSignInButton.css';
 
@@ -8,7 +9,9 @@ const GoogleSignInButton: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const { signInWithGoogle } = useAuth();
+  const { startTutorial } = useTutorial();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
 
   const handleGoogleSignIn = async () => {
@@ -16,6 +19,9 @@ const GoogleSignInButton: React.FC = () => {
     setError('');
     try {
       const user = await signInWithGoogle();
+      if (location.pathname === '/signup') {
+        startTutorial();
+      }
       // Persist user in MongoDB — existing users are returned as-is
       await apiRequest('/users/register', {
         method: 'POST',

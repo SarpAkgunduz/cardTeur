@@ -222,7 +222,7 @@ const FriendsPage = () => {
       </div>
 
       {/* Tabs */}
-      <div className="friends-page__tabs">
+      <div className="friends-page__tabs" data-tutorial="friends-tabs">
         <button
           className={`friends-page__tab ${activeTab === 'friends' ? 'friends-page__tab--active' : ''}`}
           onClick={() => setActiveTab('friends')}

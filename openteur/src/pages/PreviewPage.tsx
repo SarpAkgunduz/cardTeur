@@ -122,7 +122,7 @@ const PreviewPage = () => {
           )}
 
           {!isLoading && visiblePlayers.length > 0 && (
-            <div className="preview-sections">
+            <div className="preview-sections" data-tutorial="preview-sections">
               {sections.map(section => (
                 <div key={section.key} className="preview-section">
                   <div className="preview-section__header">

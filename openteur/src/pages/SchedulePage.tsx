@@ -140,13 +140,13 @@ const MatchesPage = () => {
         )}
 
         {!loading && matches.length === 0 && (
-          <div className="matches-page__empty">
+          <div className="matches-page__empty" data-tutorial="schedule-list">
             <i className="bi bi-collection" />
             <p>No saved matches yet.</p>
           </div>
         )}
 
-        <div className="matches-list">
+        <div className="matches-list" data-tutorial="schedule-list">
           {matches.map(match => (
             <div key={match._id} className="match-card">
               {/* Match meta */}

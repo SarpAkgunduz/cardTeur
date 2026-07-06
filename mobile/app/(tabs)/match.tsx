@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { usePlayers } from '../../contexts/PlayerContext';
+import { useTutorial } from '../../contexts/TutorialContext';
 import ScreenHeader from '../../components/ScreenHeader';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import type { Player } from '../../services/api/types';
@@ -34,6 +35,7 @@ interface SlotState {
 
 export default function MatchScreen() {
   const { players, loading } = usePlayers();
+  const { registerTarget } = useTutorial();
   const [formation, setFormation] = useState<Formation>('4-3-3');
   const [slots, setSlots] = useState<SlotState[]>([]);
   const [applied, setApplied] = useState(false);
@@ -101,9 +103,13 @@ export default function MatchScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader title="Match" />
+      <ScreenHeader title="Match" showHelp />
       <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={styles.formationSelector}>
+        <View
+          style={styles.formationSelector}
+          collapsable={false}
+          ref={node => registerTarget('match-formation', node)}
+        >
           <Text style={styles.sectionLabel}>Formation</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.formationRow}>
             {(Object.keys(FORMATIONS) as Formation[]).map(f => (
@@ -120,9 +126,11 @@ export default function MatchScreen() {
         </View>
 
         {!applied ? (
-          <TouchableOpacity style={styles.applyBtn} onPress={handleApplyFormation}>
-            <Text style={styles.applyBtnText}>Apply Formation</Text>
-          </TouchableOpacity>
+          <View collapsable={false} ref={node => registerTarget('match-apply', node)}>
+            <TouchableOpacity style={styles.applyBtn} onPress={handleApplyFormation}>
+              <Text style={styles.applyBtnText}>Apply Formation</Text>
+            </TouchableOpacity>
+          </View>
         ) : (
           <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
             <Text style={styles.resetBtnText}>Reset</Text>

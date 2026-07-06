@@ -353,7 +353,7 @@ const CrewPage = () => {
                 <button className="btn-ct crew-left__shimmer-btn" onClick={handleShimmerRename}>
                   <i className="bi bi-pencil-square"></i> Rename Crew
                 </button>
-                <button className="btn-ct crew-left__add-crew-btn"
+                <button className="btn-ct crew-left__add-crew-btn" data-tutorial="crew-add"
                   onClick={() => { setCreatingCrew(true); setTimeout(() => newCrewInputRef.current?.focus(), 50); }}>
                   <i className="bi bi-plus-lg"></i> New Crew
                 </button>

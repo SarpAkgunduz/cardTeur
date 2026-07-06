@@ -301,7 +301,7 @@ const MatchPage = () => {
   };
 
   const renderFormationBuilder = () => (
-    <div className="match-settings-card match-settings-card--builder">
+    <div className="match-settings-card match-settings-card--builder" data-tutorial="match-builder">
       <h2 className="match-settings-card__header">
         <span className="match-settings-card__dot" />
         Formation Builder
@@ -510,7 +510,7 @@ const MatchPage = () => {
             <BackButton position="static" />
           </div>
           <h2 className="page-title match-page-title">Match Lineup</h2>
-          <div className="match-page-actions">
+          <div className="match-page-actions" data-tutorial="match-actions">
             {pitchMode && (
               <>
                 <button className="fp-btn fp-btn--save" onClick={handleSave}>

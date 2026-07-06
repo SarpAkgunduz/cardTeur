@@ -181,7 +181,7 @@ const PlayersPage = () => {
               <BackButton position="static" />
             </div>
             <h2 className="page-title players-page__title">Players</h2>
-            <div className="players-page__actions">
+            <div className="players-page__actions" data-tutorial="roster-tools">
               <PlanUsageMeter label="Cards" used={players.length} limit={limits.maxPlayers} />
               <button
                 className={`btn btn-ct ${compareMode ? 'active-mode' : ''}`}
@@ -231,6 +231,7 @@ const PlayersPage = () => {
               <button
                 className="btn btn-ct"
                 id="createCard"
+                data-tutorial="roster-add"
                 onClick={handleAddPlayer}
               >
                 <i className="bi bi-person-plus-fill" style={{ marginRight: 8 }}></i>
@@ -248,6 +249,7 @@ const PlayersPage = () => {
               <button
                 type="button"
                 className="random-player-card"
+                data-tutorial="roster-random"
                 onClick={() => setRandomPickerOpen(true)}
                 aria-label="Generate random player"
               >

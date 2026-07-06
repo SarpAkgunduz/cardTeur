@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { PlayerProvider } from './contexts/PlayerContext';
+import { TutorialProvider } from './contexts/TutorialContext';
 import './App.css';
 
 import PlayersPage from './pages/PlayersPage';
@@ -12,6 +13,7 @@ import AddPlayerForm from './pages/AddPlayerForm';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import HomePage from './pages/HomePage';
+import LandingPage from './pages/LandingPage';
 import ProfilePage from './pages/ProfilePage';
 import FriendsPage from './pages/FriendsPage';
 import InvitePage from './pages/InvitePage';
@@ -20,19 +22,26 @@ import ReferralsPage from './pages/ReferralsPage';
 import PrivateRoute from './components/routes/PrivateRoute';
 import PublicRoute from './components/routes/PublicRoute';
 import Navbar from './components/Navbar';
+import TutorialOverlay from './components/tutorial/TutorialOverlay';
+
+const HomeRoute = () => {
+  const { currentUser } = useAuth();
+  return currentUser ? <HomePage /> : <LandingPage />;
+};
 
 const App = () => {
   return (
     <AuthProvider>
     <Router>
       <PlayerProvider>
+      <TutorialProvider>
       <div className="ct-app-shell">
         <Navbar />
         <div className="ct-app-content">
           <Routes>
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
             <Route path="/signup" element={<PublicRoute><SignupPage /></PublicRoute>} />
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<HomeRoute />} />
         <Route
           path="/manage"
           element={
@@ -124,7 +133,9 @@ const App = () => {
         <Route path="/invite/:inviterUid" element={<InvitePage />} />
           </Routes>
         </div>
+        <TutorialOverlay />
       </div>
+      </TutorialProvider>
       </PlayerProvider>
     </Router>
     </AuthProvider>

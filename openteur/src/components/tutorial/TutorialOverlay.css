@@ -1,0 +1,162 @@
+.ct-tutorial {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+}
+
+/* Full dim layer for steps without a target */
+.ct-tutorial__dim {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 15, 26, 0.82);
+  animation: ct-tutorial-fade 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* Spotlight hole — the giant shadow dims everything around it */
+.ct-tutorial__spotlight {
+  position: fixed;
+  border-radius: 10px;
+  box-shadow: 0 0 0 9999px rgba(8, 15, 26, 0.82);
+  border: 2px solid rgba(0, 222, 236, 0.9);
+  animation: ct-tutorial-pulse 1.6s ease-in-out infinite;
+  transition: top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  pointer-events: none;
+}
+
+@keyframes ct-tutorial-pulse {
+  0%, 100% {
+    border-color: rgba(0, 222, 236, 0.9);
+    filter: drop-shadow(0 0 6px rgba(0, 222, 236, 0.45));
+  }
+  50% {
+    border-color: rgba(0, 222, 236, 0.45);
+    filter: drop-shadow(0 0 18px rgba(0, 222, 236, 0.75));
+  }
+}
+
+@keyframes ct-tutorial-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Popup card ── */
+.ct-tutorial__popup {
+  position: fixed;
+  background: rgba(36, 59, 90, 0.97);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 222, 236, 0.4);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 222, 236, 0.12);
+  padding: 22px 24px 18px;
+  color: #f7f5fd;
+  font-family: 'Manrope', sans-serif;
+  animation: ct-tutorial-pop 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+.ct-tutorial__popup--centered {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(420px, calc(100vw - 32px));
+}
+
+@keyframes ct-tutorial-pop {
+  from {
+    opacity: 0;
+    margin-top: 12px;
+  }
+  to {
+    opacity: 1;
+    margin-top: 0;
+  }
+}
+
+.ct-tutorial__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: rgba(247, 245, 253, 0.6);
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 4px 6px;
+  line-height: 1;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.ct-tutorial__close:hover {
+  color: #ff6b6b;
+  transform: scale(1.1);
+}
+
+.ct-tutorial__progress {
+  display: inline-block;
+  color: #00deec;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  margin-bottom: 10px;
+}
+
+.ct-tutorial__title {
+  color: white;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 10px;
+}
+
+.ct-tutorial__text {
+  color: rgba(247, 245, 253, 0.8);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  margin: 0 0 18px;
+}
+
+.ct-tutorial__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ct-tutorial__skip {
+  background: transparent;
+  border: none;
+  color: rgba(247, 245, 253, 0.5);
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  padding: 4px 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+
+.ct-tutorial__skip:hover {
+  color: #ff6b6b;
+}
+
+.ct-tutorial__nav-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.ct-tutorial__btn {
+  padding: 7px 16px;
+  font-size: 0.72rem;
+}
+
+.ct-tutorial__btn--next {
+  background: rgba(0, 222, 236, 0.2);
+}
+
+.ct-tutorial__btn-icon {
+  margin-left: 8px;
+}
