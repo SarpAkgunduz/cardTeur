@@ -28,6 +28,7 @@ app.use(cors({
   credentials: true
 }));
 
+app.use('/api/billing/webhook', express.raw({ type: '*/*', limit: '1mb' }));
 app.use(express.json({ limit: '10mb' }));
 
 import playerRoutes from './routes/players';
@@ -35,11 +36,15 @@ import matchesRoutes from './routes/matches';
 import userRoutes from './routes/users';
 import crewRoutes from './routes/crews';
 import uploadsRoutes from './routes/uploads';
+import referralRoutes from './routes/referrals';
+import billingRoutes from './routes/billing';
 app.use('/api/players', playerRoutes);
 app.use('/api/matches', matchesRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/crews', crewRoutes);
 app.use('/api/uploads', uploadsRoutes);
+app.use('/api/referrals', referralRoutes);
+app.use('/api/billing', billingRoutes);
 
 const PORT = process.env.PORT || 5002;
 

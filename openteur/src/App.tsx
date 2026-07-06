@@ -15,6 +15,8 @@ import HomePage from './pages/HomePage';
 import ProfilePage from './pages/ProfilePage';
 import FriendsPage from './pages/FriendsPage';
 import InvitePage from './pages/InvitePage';
+import PricingPage from './pages/PricingPage';
+import ReferralsPage from './pages/ReferralsPage';
 import PrivateRoute from './components/routes/PrivateRoute';
 import PublicRoute from './components/routes/PublicRoute';
 import Navbar from './components/Navbar';
@@ -100,6 +102,22 @@ const App = () => {
           element={
             <PrivateRoute>
               <SchedulePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/pricing"
+          element={
+            <PrivateRoute>
+              <PricingPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/referrals"
+          element={
+            <PrivateRoute>
+              <ReferralsPage />
             </PrivateRoute>
           }
         />

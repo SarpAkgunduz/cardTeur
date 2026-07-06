@@ -1,0 +1,41 @@
+.plan-usage-meter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(36, 59, 90, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.plan-usage-meter__label {
+  opacity: 0.8;
+}
+
+.plan-usage-meter__count {
+  font-weight: 700;
+  color: #00deec;
+}
+
+.plan-usage-meter__bar {
+  width: 60px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.plan-usage-meter__fill {
+  display: block;
+  height: 100%;
+  background: #00deec;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.plan-usage-meter--warn .plan-usage-meter__count { color: #ffc861; }
+.plan-usage-meter--warn .plan-usage-meter__fill { background: #ffc861; }
+
+.plan-usage-meter--full .plan-usage-meter__count { color: #ff6b6b; }
+.plan-usage-meter--full .plan-usage-meter__fill { background: #ff6b6b; }

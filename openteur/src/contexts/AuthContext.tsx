@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import {
   User,
   onAuthStateChanged,
@@ -9,10 +9,17 @@ import {
   signOut as firebaseSignOut,
 } from 'firebase/auth';
 import { auth } from '../firebase';
+import { apiRequest } from '../services/api/apiClient';
+import type { UserProfile, Plan, PlanLimits } from '../services/api/types';
+import { PLAN_LIMITS } from '../services/api/types';
 
 interface AuthContextType {
   currentUser: User | null;
   loading: boolean;
+  profile: UserProfile | null;
+  plan: Plan;
+  limits: PlanLimits;
+  refreshProfile: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<User>;
   signInWithGoogle: () => Promise<User>;
@@ -24,15 +31,33 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+
+  const refreshProfile = useCallback(async () => {
+    if (!auth.currentUser) {
+      setProfile(null);
+      return;
+    }
+    try {
+      const data = await apiRequest<UserProfile>('/users/me');
+      setProfile(data);
+    } catch {
+      setProfile(null);
+    }
+  }, []);
 
   useEffect(() => {
-    // Listen to Firebase auth state changes
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       setLoading(false);
+      if (user) {
+        refreshProfile();
+      } else {
+        setProfile(null);
+      }
     });
     return unsubscribe;
-  }, []);
+  }, [refreshProfile]);
 
   const signIn = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
@@ -61,8 +86,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
   }
 
+  const plan: Plan = profile?.plan ?? 'free';
+  const limits = PLAN_LIMITS[plan] ?? PLAN_LIMITS.free;
+
   return (
-    <AuthContext.Provider value={{ currentUser, loading, signIn, signUp, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ currentUser, loading, profile, plan, limits, refreshProfile, signIn, signUp, signInWithGoogle, signOut }}>
       {children}
     </AuthContext.Provider>
   );

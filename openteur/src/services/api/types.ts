@@ -79,3 +79,29 @@ export interface UserProfile {
   plan: Plan;
   planRenewsAt?: string;
 }
+
+export type PaidTier = 'premium' | 'premium_plus';
+export type BillingInterval = 'monthly' | 'annual';
+
+export interface Referral {
+  _id: string;
+  referrerUid: string;
+  code: string;
+  status: 'unused' | 'redeemed';
+  referredUid?: string;
+  rewardGranted: boolean;
+  createdAt: string;
+}
+
+export interface ReferralOverview {
+  slots: number;
+  used: number;
+  available: number;
+  referrals: Referral[];
+}
+
+export interface CheckoutResult {
+  provider: 'paddle' | 'iyzico';
+  url?: string;
+  token?: string;
+}

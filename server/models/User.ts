@@ -15,6 +15,7 @@ export interface IUser extends Document {
   billingProvider?: BillingProvider;
   billingCustomerId?: string;
   billingSubscriptionId?: string;
+  referralRewardMonths: number;
   createdAt: Date;
 }
 
@@ -30,6 +31,7 @@ const UserSchema = new Schema<IUser>({
   billingProvider: { type: String, enum: ['paddle', 'iyzico'] },
   billingCustomerId: { type: String },
   billingSubscriptionId: { type: String },
+  referralRewardMonths: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
 });
 

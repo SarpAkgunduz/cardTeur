@@ -5,9 +5,13 @@ import Card from '../components/Card';
 import ComparePanel from '../components/ComparePanel';
 import ConfirmDialog from '../components/ConfirmDialog';
 import ToastNotification from '../components/ToastNotification';
+import UpgradeModal from '../components/UpgradeModal';
+import PlanUsageMeter from '../components/PlanUsageMeter';
 import { Player } from '../services';
 import { usePlayers } from '../contexts/PlayerContext';
 import { usePlayerDisplay } from '../hooks/usePlayerDisplay';
+import { useAuth } from '../contexts/AuthContext';
+import { isPlanLimitError } from '../services/api/apiClient';
 import './PlayersPage.css';
 
 type RandomTier = 'bronze' | 'silver' | 'gold';
@@ -37,6 +41,8 @@ const getNextRandomPlayerNumber = (players: Player[], label: string) => {
 const PlayersPage = () => {
   const { players, error: fetchError, deletePlayer, createPlayer } = usePlayers();
   const { getPlayerCardImage, playerPhotoOptions } = usePlayerDisplay();
+  const { limits } = useAuth();
+  const [showUpgrade, setShowUpgrade] = useState(false);
   const [deleteMode, setDeleteMode] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [compareMode, setCompareMode] = useState(false);
@@ -141,13 +147,28 @@ const PlayersPage = () => {
       setShowToast(true);
       setRandomPickerOpen(false);
     } catch (error) {
-      console.error('Generate random player error:', error);
-      setToastMsg('Failed to generate player.');
-      setToastVariant('danger');
-      setShowToast(true);
+      if (isPlanLimitError(error)) {
+        setRandomPickerOpen(false);
+        setShowUpgrade(true);
+      } else {
+        console.error('Generate random player error:', error);
+        setToastMsg('Failed to generate player.');
+        setToastVariant('danger');
+        setShowToast(true);
+      }
     } finally {
       setGeneratingTier(null);
     }
+  };
+
+  const atPlayerLimit = limits.maxPlayers !== Infinity && players.length >= limits.maxPlayers;
+
+  const handleAddPlayer = () => {
+    if (atPlayerLimit) {
+      setShowUpgrade(true);
+      return;
+    }
+    navigate('/add');
   };
 
   return (
@@ -161,6 +182,7 @@ const PlayersPage = () => {
             </div>
             <h2 className="page-title players-page__title">Players</h2>
             <div className="players-page__actions">
+              <PlanUsageMeter label="Cards" used={players.length} limit={limits.maxPlayers} />
               <button
                 className={`btn btn-ct ${compareMode ? 'active-mode' : ''}`}
                 onClick={() => {
@@ -209,7 +231,7 @@ const PlayersPage = () => {
               <button
                 className="btn btn-ct"
                 id="createCard"
-                onClick={() => navigate('/add')}
+                onClick={handleAddPlayer}
               >
                 <i className="bi bi-person-plus-fill" style={{ marginRight: 8 }}></i>
                 Add Player
@@ -323,6 +345,13 @@ const PlayersPage = () => {
         message={toastMsg}
         onClose={() => setShowToast(false)}
         variant={toastVariant}
+      />
+
+      <UpgradeModal
+        show={showUpgrade}
+        onClose={() => setShowUpgrade(false)}
+        title={`You have reached your card limit (${limits.maxPlayers})`}
+        message="Upgrade to Premium for 44 cards, or Premium+ for unlimited cards."
       />
     </div>
   );
