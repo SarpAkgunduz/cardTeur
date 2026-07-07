@@ -2,25 +2,31 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 12px;
+  padding: 5px 12px;
   background: rgba(36, 59, 90, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
-  font-size: 0.85rem;
+  font-family: 'Space Grotesk', sans-serif;
   color: rgba(255, 255, 255, 0.85);
+  flex: 0 0 auto;
 }
 
 .plan-usage-meter__label {
   opacity: 0.8;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .plan-usage-meter__count {
+  font-size: 0.72rem;
   font-weight: 700;
   color: #00deec;
 }
 
 .plan-usage-meter__bar {
-  width: 60px;
+  width: 44px;
   height: 5px;
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.12);

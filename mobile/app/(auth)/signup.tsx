@@ -25,8 +25,8 @@ export default function SignupScreen() {
   const { signUp } = useAuth();
   const { startTutorial } = useTutorial();
   const router = useRouter();
-  const google = useGoogleSignIn(() => {
-    startTutorial();
+  const google = useGoogleSignIn(isNewUser => {
+    if (isNewUser) startTutorial();
     router.replace('/(tabs)/roster');
   });
 

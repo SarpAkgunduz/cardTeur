@@ -182,7 +182,6 @@ const PlayersPage = () => {
             </div>
             <h2 className="page-title players-page__title">Players</h2>
             <div className="players-page__actions" data-tutorial="roster-tools">
-              <PlanUsageMeter label="Cards" used={players.length} limit={limits.maxPlayers} />
               <button
                 className={`btn btn-ct ${compareMode ? 'active-mode' : ''}`}
                 onClick={() => {
@@ -238,6 +237,10 @@ const PlayersPage = () => {
                 Add Player
               </button>
             </div>
+        </div>
+
+        <div className="players-page__meter-row">
+          <PlanUsageMeter label="Cards" used={players.length} limit={limits.maxPlayers} />
         </div>
 
         {/* Players Grid */}

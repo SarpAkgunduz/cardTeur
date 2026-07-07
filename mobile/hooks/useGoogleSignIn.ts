@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
-import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithCredential, getAdditionalUserInfo } from 'firebase/auth';
 import { auth } from '../firebase';
 import { apiRequest } from '../services/api/apiClient';
 
 WebBrowser.maybeCompleteAuthSession();
 
-export function useGoogleSignIn(onSuccess?: () => void) {
+export function useGoogleSignIn(onSuccess?: (isNewUser: boolean) => void) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -35,6 +35,7 @@ export function useGoogleSignIn(onSuccess?: () => void) {
     try {
       const credential = GoogleAuthProvider.credential(idToken);
       const result = await signInWithCredential(auth, credential);
+      const isNewUser = getAdditionalUserInfo(result)?.isNewUser ?? false;
       const user = result.user;
       await apiRequest('/users/register', {
         method: 'POST',
@@ -43,7 +44,7 @@ export function useGoogleSignIn(onSuccess?: () => void) {
           photoURL: user.photoURL || '',
         }),
       });
-      onSuccess?.();
+      onSuccess?.(isNewUser);
     } catch {
       setError('Google sign-in failed. Please try again.');
     } finally {

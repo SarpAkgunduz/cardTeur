@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import BackButton from '../components/BackButton';
 import Dropdown from '../components/Dropdown';
 import FootballPitch, { PitchPlayer } from '../components/FootballPitch';
@@ -27,8 +27,8 @@ const MatchPage = () => {
   const [leftPlayers, setLeftPlayers]    = useState<any[]>([]);
   const [rightPlayers, setRightPlayers]   = useState<any[]>([]);
   const [playerCount, setPlayerCount]     = useState<number>(8);
-  const [formationA, setFormationA]       = useState('');
-  const [formationB, setFormationB]       = useState('');
+  const [formationA, setFormationA]       = useState(() => getFormationSet(8)[0]?.name ?? '');
+  const [formationB, setFormationB]       = useState(() => getFormationSet(8)[0]?.name ?? '');
   const [positionsA, setPositionsA]       = useState<Record<string, { x: number; y: number }>>({});
   const [positionsB, setPositionsB]       = useState<Record<string, { x: number; y: number }>>({});
   // Role overrides per player (applied on top of slot-based role)
@@ -137,14 +137,36 @@ const MatchPage = () => {
       };
     });
 
+  const splitPoolIntoTeams = () => {
+    const sorted = [...playersPool].sort((a, b) => computeOverall(b) - computeOverall(a));
+    const seedLeft: any[] = [];
+    const seedRight: any[] = [];
+    // Snake draft (A,B,B,A,...) keeps team strength balanced
+    sorted.forEach((p, i) => {
+      const pickA = i % 4 === 0 || i % 4 === 3;
+      if (pickA && seedLeft.length < playerCount) seedLeft.push(p);
+      else if (seedRight.length < playerCount) seedRight.push(p);
+      else if (seedLeft.length < playerCount) seedLeft.push(p);
+    });
+    return { seedLeft, seedRight };
+  };
+
   const applyFormation = () => {
     const set = getFormationSet(playerCount);
     const chosenA = set.find(f => f.name === formationA) ?? set[0];
     const chosenB = set.find(f => f.name === formationB) ?? set[0];
 
+    let baseLeft = leftPlayers;
+    let baseRight = rightPlayers;
+    if (baseLeft.length === 0 && baseRight.length === 0) {
+      const { seedLeft, seedRight } = splitPoolIntoTeams();
+      baseLeft = seedLeft;
+      baseRight = seedRight;
+    }
+
     // Smart stat-based assignment
-    const orderedLeft  = smartAssign(leftPlayers, chosenA.slots);
-    const orderedRight = smartAssign(rightPlayers, chosenB.slots);
+    const orderedLeft  = smartAssign(baseLeft, chosenA.slots);
+    const orderedRight = smartAssign(baseRight, chosenB.slots);
 
     setLeftPlayers(orderedLeft);
     setRightPlayers(orderedRight);
@@ -189,12 +211,78 @@ const MatchPage = () => {
     setSavedMatchId(null);
   };
 
+  const getSlots = (team: 'A' | 'B') => {
+    const set = getFormationSet(playerCount);
+    const name = team === 'A' ? formationA : formationB;
+    return (set.find(f => f.name === name) ?? set[0])?.slots ?? [];
+  };
+
   const handleAddFromBench = (playerId: string, toTeam: 'A' | 'B') => {
     const player = benchPlayers.find(p => (p._id ?? p.id) === playerId);
     if (!player) return;
-    if (toTeam === 'A') setLeftPlayers(prev => [...prev, player]);
-    else setRightPlayers(prev => [...prev, player]);
+    if (toTeam === 'A') {
+      const slot = getSlots('A')[leftPlayers.length];
+      setLeftPlayers(prev => [...prev, player]);
+      setPositionsA(prev => ({ ...prev, [playerId]: slot ? { x: slot.x, y: slot.y } : { x: 50, y: 50 } }));
+    } else {
+      const slot = getSlots('B')[rightPlayers.length];
+      setRightPlayers(prev => [...prev, player]);
+      setPositionsB(prev => ({ ...prev, [playerId]: slot ? { x: slot.x, y: 100 - slot.y } : { x: 50, y: 50 } }));
+    }
     setSavedMatchId(null);
+  };
+
+  const movePlayer = (playerId: string, from: 'A' | 'B' | 'BENCH', to: 'A' | 'B' | 'BENCH') => {
+    if (from === to) return;
+    if (from === 'BENCH') {
+      handleAddFromBench(playerId, to as 'A' | 'B');
+      return;
+    }
+    if (to === 'BENCH') {
+      handleBench(playerId, from);
+      return;
+    }
+    const srcList = from === 'A' ? leftPlayers : rightPlayers;
+    const player = srcList.find(p => (p._id ?? p.id) === playerId);
+    if (!player) return;
+    if (from === 'A') {
+      const slot = getSlots('B')[rightPlayers.length];
+      setLeftPlayers(prev => prev.filter(p => (p._id ?? p.id) !== playerId));
+      setPositionsA(prev => { const next = { ...prev }; delete next[playerId]; return next; });
+      setRightPlayers(prev => [...prev, player]);
+      setPositionsB(prev => ({ ...prev, [playerId]: slot ? { x: slot.x, y: 100 - slot.y } : { x: 50, y: 50 } }));
+    } else {
+      const slot = getSlots('A')[leftPlayers.length];
+      setRightPlayers(prev => prev.filter(p => (p._id ?? p.id) !== playerId));
+      setPositionsB(prev => { const next = { ...prev }; delete next[playerId]; return next; });
+      setLeftPlayers(prev => [...prev, player]);
+      setPositionsA(prev => ({ ...prev, [playerId]: slot ? { x: slot.x, y: slot.y } : { x: 50, y: 50 } }));
+    }
+    setSavedMatchId(null);
+  };
+
+  const [dragOverZone, setDragOverZone] = useState<'A' | 'B' | 'BENCH' | null>(null);
+
+  const handleDragStart = (playerId: string, from: 'A' | 'B' | 'BENCH') => (e: React.DragEvent) => {
+    e.dataTransfer.setData('text/plain', JSON.stringify({ playerId, from }));
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (zone: 'A' | 'B' | 'BENCH') => (e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    setDragOverZone(zone);
+  };
+
+  const handleDrop = (zone: 'A' | 'B' | 'BENCH') => (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOverZone(null);
+    try {
+      const { playerId, from } = JSON.parse(e.dataTransfer.getData('text/plain'));
+      if (playerId && from) movePlayer(playerId, from, zone);
+    } catch {
+      // Not a player drag — ignore
+    }
   };
 
   const handleChangeTeam = (playerId: string, fromTeam: 'A' | 'B') => {
@@ -328,7 +416,14 @@ const MatchPage = () => {
         <label className="match-setting-label">Number of Players</label>
         <Dropdown
           value={String(playerCount)}
-          onChange={v => setPlayerCount(Number(v))}
+          onChange={v => {
+            const count = Number(v);
+            setPlayerCount(count);
+            const names = getFormationSet(count).map(f => f.name);
+            const first = names[0] ?? '';
+            if (!names.includes(formationA)) setFormationA(first);
+            if (!names.includes(formationB)) setFormationB(first);
+          }}
           ariaLabel="Number of Players"
           options={PLAYER_COUNT_OPTIONS.map(o => ({ value: String(o.value), label: o.label }))}
         />
@@ -354,14 +449,19 @@ const MatchPage = () => {
         />
       </div>
 
-      <button className="match-apply-btn" onClick={applyFormation} disabled={leftPlayers.length === 0}>
+      <button className="match-apply-btn" onClick={applyFormation} disabled={playersPool.length === 0}>
         Apply Formation
       </button>
     </div>
   );
 
   const renderBench = () => (
-    <div className="match-bench-panel">
+    <div
+      className={`match-bench-panel ${dragOverZone === 'BENCH' ? 'match-dropzone--active' : ''}`}
+      onDragOver={handleDragOver('BENCH')}
+      onDragLeave={() => setDragOverZone(null)}
+      onDrop={handleDrop('BENCH')}
+    >
       <div className="match-bench-header">
         <i className="bi bi-person-dash" />
         Bench
@@ -376,7 +476,12 @@ const MatchPage = () => {
           {benchPlayers.map(player => {
             const id = player._id ?? player.id;
             return (
-              <div key={id} className="match-bench-row">
+              <div
+                key={id}
+                className="match-bench-row"
+                draggable
+                onDragStart={handleDragStart(id, 'BENCH')}
+              >
                 <div className="match-bench-info">
                   <span className="match-bench-name">{player.name ?? 'Unknown'}</span>
                   <span className="match-bench-pos">{player.preferredPosition ?? '?'}</span>
@@ -408,7 +513,12 @@ const MatchPage = () => {
     roleOverrides: Record<string, string>,
     roles: string[],
   ) => (
-    <div className={`match-team-roster match-team-roster--${team.toLowerCase()}`}>
+    <div
+      className={`match-team-roster match-team-roster--${team.toLowerCase()} ${dragOverZone === team ? 'match-dropzone--active' : ''}`}
+      onDragOver={handleDragOver(team)}
+      onDragLeave={() => setDragOverZone(null)}
+      onDrop={handleDrop(team)}
+    >
       <div className="match-team-roster__header">
         <span>Team {team} List</span>
         <span>{teamPlayers.length}</span>
@@ -418,7 +528,12 @@ const MatchPage = () => {
           const id = player._id ?? player.id;
           const role = roleOverrides[id] ?? slotRoles[index] ?? player.preferredPosition ?? '?';
           return (
-            <div key={id} className="match-team-roster__row">
+            <div
+              key={id}
+              className="match-team-roster__row"
+              draggable
+              onDragStart={handleDragStart(id, team)}
+            >
               <div className="match-team-roster__player">
                 <span className="match-team-roster__name">{player.name ?? 'Unknown'}</span>
                 <span className="match-team-roster__pos">{player.preferredPosition ?? '?'}</span>
@@ -555,7 +670,7 @@ const MatchPage = () => {
               </div>
               <div className="match-center-column">
                 {renderFormationBuilder()}
-                {renderBench()}
+                {pitchMode && renderBench()}
               </div>
               <div className="match-team-panel">
                 <FootballPitch

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTutorial } from '../contexts/TutorialContext';
 import { apiRequest } from '../services/api/apiClient';
@@ -11,15 +11,14 @@ const GoogleSignInButton: React.FC = () => {
   const { signInWithGoogle } = useAuth();
   const { startTutorial } = useTutorial();
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchParams] = useSearchParams();
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     setError('');
     try {
-      const user = await signInWithGoogle();
-      if (location.pathname === '/signup') {
+      const { user, isNewUser } = await signInWithGoogle();
+      if (isNewUser) {
         startTutorial();
       }
       // Persist user in MongoDB — existing users are returned as-is
