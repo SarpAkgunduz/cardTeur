@@ -1,16 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useTutorial } from '../contexts/TutorialContext';
+import { LANGUAGES } from '../i18n';
 import './Navbar.css';
 
 const NAV_LINKS = [
-  { path: '/manage', label: 'Roster' },
-  { path: '/match', label: 'Match' },
-  { path: '/schedule', label: 'Schedule' },
-  { path: '/preview', label: 'Preview' },
-  { path: '/crew', label: 'My Crew' },
-  { path: '/friends', label: 'Friends' },
+  { path: '/manage', labelKey: 'nav.roster' },
+  { path: '/match', labelKey: 'nav.match' },
+  { path: '/schedule', labelKey: 'nav.schedule' },
+  { path: '/preview', labelKey: 'nav.preview' },
+  { path: '/crew', labelKey: 'nav.crew' },
+  { path: '/friends', labelKey: 'nav.friends' },
 ];
 
 const Navbar = () => {
@@ -18,22 +20,30 @@ const Navbar = () => {
   const location = useLocation();
   const { currentUser, signOut } = useAuth();
   const { startTutorial } = useTutorial();
+  const { t, i18n } = useTranslation();
   const loggedIn = !!currentUser;
   const [mobileOpen, setMobileOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const helpRef = useRef<HTMLDivElement>(null);
+  const langRef = useRef<HTMLDivElement>(null);
 
-  // Close help menu on outside click
+  // Close help/language menus on outside click
   useEffect(() => {
-    if (!helpOpen) return;
+    if (!helpOpen && !langOpen) return;
     const onClick = (e: MouseEvent) => {
       if (helpRef.current && !helpRef.current.contains(e.target as Node)) {
         setHelpOpen(false);
       }
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
     };
     document.addEventListener('mousedown', onClick);
     return () => document.removeEventListener('mousedown', onClick);
-  }, [helpOpen]);
+  }, [helpOpen, langOpen]);
+
+  const currentLang = LANGUAGES.find(l => i18n.language?.startsWith(l.code)) ?? LANGUAGES[0];
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -61,13 +71,13 @@ const Navbar = () => {
           </div>
           {loggedIn && (
             <div className="ct-nav__links">
-              {NAV_LINKS.map(({ path, label }) => (
+              {NAV_LINKS.map(({ path, labelKey }) => (
                 <button
                   key={path}
                   className={`ct-nav__link ${isActive(path) ? 'ct-nav__link--active' : ''}`}
                   onClick={() => navigate(path)}
                 >
-                  {label}
+                  {t(labelKey)}
                 </button>
               ))}
             </div>
@@ -75,14 +85,38 @@ const Navbar = () => {
         </div>
 
         <div className="ct-nav__right">
+          <div className="ct-nav__help ct-nav__lang" ref={langRef}>
+            <button
+              className="ct-nav__help-btn ct-nav__lang-btn"
+              onClick={() => setLangOpen(prev => !prev)}
+              aria-label={t('nav.language')}
+              title={t('nav.language')}
+            >
+              {currentLang.code.toUpperCase()}
+            </button>
+            {langOpen && (
+              <div className="ct-nav__help-menu ct-nav__lang-menu">
+                {LANGUAGES.map(lang => (
+                  <button
+                    key={lang.code}
+                    className={`ct-nav__help-item ${currentLang.code === lang.code ? 'ct-nav__help-item--active' : ''}`}
+                    onClick={() => { i18n.changeLanguage(lang.code); setLangOpen(false); }}
+                  >
+                    <span className="ct-nav__lang-code">{lang.code.toUpperCase()}</span>
+                    {lang.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           {/* Desktop: user chip + logout / login + signup */}
           {loggedIn && (
             <div className="ct-nav__help" ref={helpRef}>
               <button
                 className="ct-nav__help-btn"
                 onClick={() => setHelpOpen(prev => !prev)}
-                aria-label="Help"
-                title="Help"
+                aria-label={t('nav.help')}
+                title={t('nav.help')}
               >
                 <i className="bi bi-question-lg" />
               </button>
@@ -93,7 +127,7 @@ const Navbar = () => {
                     onClick={() => { setHelpOpen(false); startTutorial(); }}
                   >
                     <i className="bi bi-arrow-repeat" />
-                    Replay tutorial
+                    {t('nav.replayTutorial')}
                   </button>
                 </div>
               )}
@@ -108,13 +142,13 @@ const Navbar = () => {
                 {currentUser?.displayName || currentUser?.email?.split('@')[0]}
               </button>
               <button className="ct-nav__logout" onClick={() => { signOut(); navigate('/login'); }}>
-                Logout
+                {t('nav.logout')}
               </button>
             </div>
           ) : (
             <div className="ct-nav__auth-btns">
-              <button className="ct-nav__btn-login" onClick={() => navigate('/login')}>Login</button>
-              <button className="ct-nav__btn-signup" onClick={() => navigate('/signup')}>Sign Up</button>
+              <button className="ct-nav__btn-login" onClick={() => navigate('/login')}>{t('nav.login')}</button>
+              <button className="ct-nav__btn-signup" onClick={() => navigate('/signup')}>{t('nav.signup')}</button>
             </div>
           )}
 
@@ -134,13 +168,13 @@ const Navbar = () => {
         <div className="ct-nav__mobile-menu">
           {loggedIn && (
             <nav className="ct-nav__mobile-links">
-              {NAV_LINKS.map(({ path, label }) => (
+              {NAV_LINKS.map(({ path, labelKey }) => (
                 <button
                   key={path}
                   className={`ct-nav__mobile-link ${isActive(path) ? 'ct-nav__mobile-link--active' : ''}`}
                   onClick={() => navigate(path)}
                 >
-                  {label}
+                  {t(labelKey)}
                 </button>
               ))}
             </nav>
@@ -153,19 +187,19 @@ const Navbar = () => {
                   className={`ct-nav__mobile-link ${isActive('/profile') ? 'ct-nav__mobile-link--active' : ''}`}
                   onClick={() => navigate('/profile')}
                 >
-                  Profile
+                  {t('nav.profile')}
                 </button>
                 <button
                   className="ct-nav__mobile-logout"
                   onClick={() => { signOut(); navigate('/login'); }}
                 >
-                  Logout
+                  {t('nav.logout')}
                 </button>
               </>
             ) : (
               <div className="ct-nav__mobile-auth-btns">
-                <button className="ct-nav__btn-login" onClick={() => navigate('/login')}>Login</button>
-                <button className="ct-nav__btn-signup" onClick={() => navigate('/signup')}>Sign Up</button>
+                <button className="ct-nav__btn-login" onClick={() => navigate('/login')}>{t('nav.login')}</button>
+                <button className="ct-nav__btn-signup" onClick={() => navigate('/signup')}>{t('nav.signup')}</button>
               </div>
             )}
           </div>

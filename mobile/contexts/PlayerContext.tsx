@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { Player, CreatePlayerDto, UpdatePlayerDto } from '../services/api/types';
 import { playerApi } from '../services/api/playerApi';
 import { apiRequest } from '../services/api/apiClient';
@@ -22,6 +23,7 @@ interface PlayerContextType {
 const PlayerContext = createContext<PlayerContextType | null>(null);
 
 export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
   const { currentUser } = useAuth();
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(false);
@@ -64,7 +66,7 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return enriched;
       })
       .catch((err) => {
-        setError(err?.message || 'Failed to load players.');
+        setError(err?.message || t('roster.loadFailed'));
         throw err;
       })
       .finally(() => {

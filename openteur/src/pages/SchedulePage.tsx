@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import FootballPitch, { PitchPlayer } from '../components/FootballPitch';
 import MatchDetailsModal from '../components/MatchDetailsModal';
 import ToastNotification from '../components/ToastNotification';
@@ -55,6 +56,7 @@ function toPitchPlayers(players: SavedPlayer[]): PitchPlayer[] {
 
 const MatchesPage = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [matches, setMatches] = useState<SavedMatch[]>([]);
   const [loading, setLoading] = useState(true);
   const [announceTarget, setAnnounceTarget] = useState<SavedMatch | null>(null);
@@ -69,7 +71,7 @@ const MatchesPage = () => {
   useEffect(() => {
     apiRequest<SavedMatch[]>('/matches')
       .then(data => setMatches(data))
-      .catch(() => showT('Failed to load matches', 'danger'))
+      .catch(() => showT(t('schedule.loadFailed'), 'danger'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -77,9 +79,9 @@ const MatchesPage = () => {
     try {
       await apiRequest(`/matches/${id}`, { method: 'DELETE' });
       setMatches(prev => prev.filter(m => m._id !== id));
-      showT('Match deleted.');
+      showT(t('schedule.deletedToast'));
     } catch {
-      showT('Failed to delete match.', 'danger');
+      showT(t('schedule.deleteFailed'), 'danger');
     }
   };
 
@@ -91,15 +93,15 @@ const MatchesPage = () => {
         body: JSON.stringify(details),
       });
       setMatches(prev => prev.map(m => m._id === announceTarget._id ? { ...m, announced: true, ...details } : m));
-      showT(`Announced! Emails sent to ${result.sent.length} player(s).`);
+      showT(t('schedule.announcedToast', { count: result.sent.length }));
     } catch (err: any) {
-      showT('Failed to announce: ' + err.message, 'danger');
+      showT(t('schedule.announceFailed', { message: err.message }), 'danger');
     }
     setAnnounceTarget(null);
   };
 
   const formatDate = (iso: string) => {
-    try { return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+    try { return new Date(iso).toLocaleDateString(i18n.language, { day: 'numeric', month: 'short', year: 'numeric' }); }
     catch { return iso; }
   };
 
@@ -125,24 +127,24 @@ const MatchesPage = () => {
           </div>
           <button className="matches-page__new-btn" onClick={() => navigate('/match')}>
             <i className="bi bi-plus-lg me-1" />
-            New Match
+            {t('schedule.newMatch')}
           </button>
           <div className="matches-page__title-wrap">
-            <h1 className="page-title matches-page__title">Saved Matches</h1>
+            <h1 className="page-title matches-page__title">{t('schedule.title')}</h1>
           </div>
         </div>
 
         {loading && (
           <div className="matches-page__loading">
             <div className="matches-spinner" />
-            Loading matches…
+            {t('schedule.loading')}
           </div>
         )}
 
         {!loading && matches.length === 0 && (
           <div className="matches-page__empty" data-tutorial="schedule-list">
             <i className="bi bi-collection" />
-            <p>No saved matches yet.</p>
+            <p>{t('schedule.empty')}</p>
           </div>
         )}
 
@@ -173,7 +175,7 @@ const MatchesPage = () => {
                   {match.announced && (
                     <span className="match-card__badge match-card__badge--announced">
                       <i className="bi bi-send-check-fill me-1" />
-                      Announced
+                      {t('schedule.announced')}
                     </span>
                   )}
                   <button
@@ -181,12 +183,12 @@ const MatchesPage = () => {
                     onClick={() => setAnnounceTarget(match)}
                   >
                     <i className="bi bi-send-fill me-1" />
-                    Announce
+                    {t('schedule.announce')}
                   </button>
                   <button
                     className="match-card__action match-card__action--delete"
                     onClick={() => handleDelete(match._id)}
-                    title="Delete match"
+                    title={t('schedule.deleteMatch')}
                   >
                     <i className="bi bi-trash3" />
                   </button>
@@ -196,12 +198,12 @@ const MatchesPage = () => {
               {/* Formation info strip */}
               <div className="match-card__formations">
                 <span className="match-card__team-label match-card__team-label--a">
-                  Team A — {match.teamA.formation}
+                  {t('schedule.team', { team: 'A' })} — {match.teamA.formation}
                   <span className="match-card__ovr-chip">OVR {match.teamA.ovr}</span>
                 </span>
-                <span className="match-card__vs">VS</span>
+                <span className="match-card__vs">{t('schedule.vs')}</span>
                 <span className="match-card__team-label match-card__team-label--b">
-                  {match.teamB.formation} — Team B
+                  {match.teamB.formation} — {t('schedule.team', { team: 'B' })}
                   <span className="match-card__ovr-chip">OVR {match.teamB.ovr}</span>
                 </span>
               </div>

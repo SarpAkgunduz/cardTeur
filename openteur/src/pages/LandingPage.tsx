@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import Card from '../components/Card';
 import './LandingPage.css';
 
@@ -35,49 +36,22 @@ const SHOWCASE_CARDS = [
   },
 ];
 
-const FEATURES = [
-  {
-    icon: 'bi-person-badge-fill',
-    title: 'FIFA-Style Cards',
-    text: 'Create a card for every player in your squad — stats, positions and tiers that reflect how they really play.',
-  },
-  {
-    icon: 'bi-person-fill-gear',
-    title: 'Squad Management',
-    text: 'Build and manage your roster, compare players side by side and keep every card up to date.',
-  },
-  {
-    icon: 'bi-clipboard-check-fill',
-    title: 'Match Organizer',
-    text: 'Pick formations, balance teams automatically and announce the match to everyone with one click.',
-  },
-  {
-    icon: 'bi-people-fill',
-    title: 'Crews & Friends',
-    text: 'Group your regulars into crews, invite friends and grow the competition week after week.',
-  },
-];
-
-const STEPS = [
-  {
-    number: '01',
-    title: 'Sign Up',
-    text: 'Create your free account in seconds and open your own CardTeur league.',
-  },
-  {
-    number: '02',
-    title: 'Create Your Cards',
-    text: 'Add your squad and craft a FIFA-style card for every player — bronze to gold.',
-  },
-  {
-    number: '03',
-    title: 'Organize the Match',
-    text: 'Build balanced teams on the pitch, save the lineup and announce match day.',
-  },
-];
-
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const features = [
+    { icon: 'bi-person-badge-fill', title: t('landing.featureCardsTitle'), text: t('landing.featureCardsText') },
+    { icon: 'bi-person-fill-gear', title: t('landing.featureSquadTitle'), text: t('landing.featureSquadText') },
+    { icon: 'bi-clipboard-check-fill', title: t('landing.featureMatchTitle'), text: t('landing.featureMatchText') },
+    { icon: 'bi-people-fill', title: t('landing.featureCrewTitle'), text: t('landing.featureCrewText') },
+  ];
+
+  const steps = [
+    { number: '01', title: t('landing.step1Title'), text: t('landing.step1Text') },
+    { number: '02', title: t('landing.step2Title'), text: t('landing.step2Text') },
+    { number: '03', title: t('landing.step3Title'), text: t('landing.step3Text') },
+  ];
 
   return (
     <div className="page-wrapper landing">
@@ -85,21 +59,18 @@ const LandingPage = () => {
         {/* ── Hero ── */}
         <section className="landing__hero">
           <div className="landing__hero-copy">
-            <span className="landing__hero-badge">Amateur Football, Pro Experience</span>
+            <span className="landing__hero-badge">{t('landing.badge')}</span>
             <h1 className="landing__hero-title">
-              Turn Your Squad Into <span>Legends</span>
+              <Trans i18nKey="landing.heroTitle" components={{ accent: <span /> }} />
             </h1>
-            <p className="landing__hero-sub">
-              CardTeur builds FIFA-style cards for your amateur squad, balances your teams
-              and organizes match day — so you only think about playing.
-            </p>
+            <p className="landing__hero-sub">{t('landing.heroSub')}</p>
             <div className="landing__hero-actions">
               <button className="landing__cta" onClick={() => navigate('/signup')}>
-                Get Started
+                {t('landing.getStarted')}
                 <i className="bi bi-arrow-right"></i>
               </button>
               <button className="landing__cta landing__cta--ghost" onClick={() => navigate('/login')}>
-                Login
+                {t('nav.login')}
               </button>
             </div>
           </div>
@@ -115,11 +86,11 @@ const LandingPage = () => {
         {/* ── Features ── */}
         <section className="landing__section">
           <div className="landing__section-header">
-            <h2 className="landing__section-title">Everything Match Day Needs</h2>
+            <h2 className="landing__section-title">{t('landing.featuresTitle')}</h2>
           </div>
           <div className="landing__features">
-            {FEATURES.map(feature => (
-              <div key={feature.title} className="landing__feature">
+            {features.map(feature => (
+              <div key={feature.icon} className="landing__feature">
                 <i className={`bi ${feature.icon} landing__feature-icon`}></i>
                 <h3 className="landing__feature-title">{feature.title}</h3>
                 <p className="landing__feature-text">{feature.text}</p>
@@ -131,10 +102,10 @@ const LandingPage = () => {
         {/* ── How it works ── */}
         <section className="landing__section">
           <div className="landing__section-header">
-            <h2 className="landing__section-title">How It Works</h2>
+            <h2 className="landing__section-title">{t('landing.howTitle')}</h2>
           </div>
           <div className="landing__steps">
-            {STEPS.map(step => (
+            {steps.map(step => (
               <div key={step.number} className="landing__step">
                 <span className="landing__step-number">{step.number}</span>
                 <h3 className="landing__step-title">{step.title}</h3>
@@ -147,10 +118,10 @@ const LandingPage = () => {
         {/* ── Bottom CTA ── */}
         <section className="landing__bottom-cta">
           <h2 className="landing__bottom-title">
-            Ready to build your <span>CardTeur</span> league?
+            <Trans i18nKey="landing.bottomTitle" components={{ accent: <span /> }} />
           </h2>
           <button className="landing__cta" onClick={() => navigate('/signup')}>
-            Create Free Account
+            {t('landing.bottomCta')}
             <i className="bi bi-arrow-right"></i>
           </button>
         </section>

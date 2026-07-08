@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useTutorial } from '../contexts/TutorialContext';
 import { apiRequest } from '../services/api/apiClient';
@@ -17,28 +18,29 @@ const SignupPage = () => {
   const [searchParams] = useSearchParams();
   const { signUp } = useAuth();
   const { startTutorial } = useTutorial();
+  const { t } = useTranslation();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const missing: string[] = [];
-    if (!displayName) missing.push('Name');
-    if (!email) missing.push('Email');
-    if (!password) missing.push('Password');
-    if (!confirmPassword) missing.push('Confirm Password');
+    if (!displayName) missing.push(t('common.name'));
+    if (!email) missing.push(t('common.email'));
+    if (!password) missing.push(t('common.password'));
+    if (!confirmPassword) missing.push(t('auth.confirmPassword'));
 
     if (missing.length > 0) {
-      setError(`Please fill in the following fields: ${missing.join(', ')}`);
+      setError(t('auth.fillFields', { fields: missing.join(', ') }));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError(t('auth.passwordMismatch'));
       return;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+      setError(t('auth.passwordTooShort'));
       return;
     }
 
@@ -69,11 +71,11 @@ const SignupPage = () => {
       }
     } catch (err: any) {
       if (err?.code === 'auth/email-already-in-use') {
-        setError('This email is already registered.');
+        setError(t('auth.emailInUse'));
       } else if (err?.code === 'auth/weak-password') {
-        setError('Password is too weak.');
+        setError(t('auth.weakPassword'));
       } else {
-        setError('Could not create account. Please try again.');
+        setError(t('auth.signupFailed'));
       }
     } finally {
       setIsSubmitting(false);
@@ -83,12 +85,12 @@ const SignupPage = () => {
   return (
     <div className="ct-signup-wrap">
       <div className="ct-signup-box">
-        <div className="ct-signup-title">Create <span>Account</span></div>
-        <p className="ct-signup-sub">Register to join the squad</p>
+        <div className="ct-signup-title"><Trans i18nKey="auth.signupTitle" components={{ accent: <span /> }} /></div>
+        <p className="ct-signup-sub">{t('auth.signupSub')}</p>
         <form onSubmit={handleSignup}>
           {error && <div className="ct-signup-error">{error}</div>}
           <div className="ct-signup-field">
-            <label className="ct-signup-label">Name <span className="ct-signup-required">*</span></label>
+            <label className="ct-signup-label">{t('common.name')} <span className="ct-signup-required">*</span></label>
             <input
               type="text"
               className="ct-signup-input"
@@ -98,7 +100,7 @@ const SignupPage = () => {
             />
           </div>
           <div className="ct-signup-field">
-            <label className="ct-signup-label">Email <span className="ct-signup-required">*</span></label>
+            <label className="ct-signup-label">{t('common.email')} <span className="ct-signup-required">*</span></label>
             <input
               type="email"
               className="ct-signup-input"
@@ -108,7 +110,7 @@ const SignupPage = () => {
             />
           </div>
           <div className="ct-signup-field">
-            <label className="ct-signup-label">Password <span className="ct-signup-required">*</span></label>
+            <label className="ct-signup-label">{t('common.password')} <span className="ct-signup-required">*</span></label>
             <input
               type="password"
               className="ct-signup-input"
@@ -118,7 +120,7 @@ const SignupPage = () => {
             />
           </div>
           <div className="ct-signup-field">
-            <label className="ct-signup-label">Confirm Password <span className="ct-signup-required">*</span></label>
+            <label className="ct-signup-label">{t('auth.confirmPassword')} <span className="ct-signup-required">*</span></label>
             <input
               type="password"
               className="ct-signup-input"
@@ -128,14 +130,14 @@ const SignupPage = () => {
             />
           </div>
           <button className="ct-signup-btn" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Creating Account...' : 'Sign Up'}
+            {isSubmitting ? t('auth.signingUp') : t('auth.signupBtn')}
           </button>
         </form>
-        <div className="ct-google-divider"><span>or</span></div>
+        <div className="ct-google-divider"><span>{t('common.or')}</span></div>
         <GoogleSignInButton />
         <p className="ct-signup-login-link">
-          Already have an account?{' '}
-          <span onClick={() => navigate(`/login${searchParams.get('redirect') ? `?redirect=${encodeURIComponent(searchParams.get('redirect')!)}` : ''}`)}>Login</span>
+          {t('auth.haveAccount')}{' '}
+          <span onClick={() => navigate(`/login${searchParams.get('redirect') ? `?redirect=${encodeURIComponent(searchParams.get('redirect')!)}` : ''}`)}>{t('nav.login')}</span>
         </p>
       </div>
     </div>

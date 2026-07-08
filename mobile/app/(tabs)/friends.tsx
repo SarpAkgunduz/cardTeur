@@ -11,6 +11,7 @@ import {
   Alert,
   Image,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTutorial } from '../../contexts/TutorialContext';
 import ScreenHeader from '../../components/ScreenHeader';
@@ -22,6 +23,7 @@ import type { AppUser } from '../../services/api/types';
 type Tab = 'my-friends' | 'add-friend';
 
 export default function FriendsScreen() {
+  const { t } = useTranslation();
   const { registerTarget } = useTutorial();
   const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('my-friends');
@@ -57,10 +59,10 @@ export default function FriendsScreen() {
       if (found) {
         setSearchResult(found);
       } else {
-        setSearchError('No user found with that email or UID.');
+        setSearchError(t('friends.searchNotFound'));
       }
     } catch {
-      setSearchError('Search failed. Please try again.');
+      setSearchError(t('friends.searchFailed'));
     } finally {
       setSearching(false);
     }
@@ -72,25 +74,25 @@ export default function FriendsScreen() {
       setMyUser(prev => prev ? { ...prev, friends: [...prev.friends, uid] } : prev);
       setSearchResult(null);
       setSearchQuery('');
-      showToast('Friend added!');
+      showToast(t('friends.addedToast'));
     } catch {
-      showToast('Failed to add friend.', 'error');
+      showToast(t('friends.addFailedToast'), 'error');
     }
   };
 
   const handleRemoveFriend = (uid: string, name: string) => {
-    Alert.alert('Remove Friend', `Remove ${name} from your friends?`, [
-      { text: 'Cancel', style: 'cancel' },
+    Alert.alert(t('friends.removeTitle'), t('friends.removeConfirm', { name }), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Remove',
+        text: t('common.remove'),
         style: 'destructive',
         onPress: async () => {
           try {
             await userApi.removeFriend(uid);
             setMyUser(prev => prev ? { ...prev, friends: prev.friends.filter(f => f !== uid) } : prev);
-            showToast('Friend removed.');
+            showToast(t('friends.removedToast'));
           } catch {
-            showToast('Failed to remove friend.', 'error');
+            showToast(t('friends.removeFailedToast'), 'error');
           }
         },
       },
@@ -101,7 +103,7 @@ export default function FriendsScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader title="Friends" showHelp />
+      <ScreenHeader title={t('friends.title')} showHelp />
 
       <View
         style={styles.tabs}
@@ -115,7 +117,7 @@ export default function FriendsScreen() {
             onPress={() => setActiveTab(tab)}
           >
             <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-              {tab === 'my-friends' ? `My Friends (${myFriends.length})` : 'Add Friend'}
+              {tab === 'my-friends' ? t('friends.myFriendsTab', { count: myFriends.length }) : t('friends.addFriendTab')}
             </Text>
           </TouchableOpacity>
         ))}
@@ -131,8 +133,8 @@ export default function FriendsScreen() {
         <ScrollView contentContainerStyle={styles.scroll}>
           {myFriends.length === 0 ? (
             <View style={styles.center}>
-              <Text style={styles.emptyText}>No friends yet</Text>
-              <Text style={styles.emptyHint}>Use the Add Friend tab to find people</Text>
+              <Text style={styles.emptyText}>{t('friends.noFriends')}</Text>
+              <Text style={styles.emptyHint}>{t('friends.noFriendsHint')}</Text>
             </View>
           ) : (
             myFriends.map(uid => (
@@ -147,7 +149,7 @@ export default function FriendsScreen() {
                   style={styles.removeBtn}
                   onPress={() => handleRemoveFriend(uid, uid)}
                 >
-                  <Text style={styles.removeBtnText}>Remove</Text>
+                  <Text style={styles.removeBtnText}>{t('common.remove')}</Text>
                 </TouchableOpacity>
               </View>
             ))
@@ -157,13 +159,13 @@ export default function FriendsScreen() {
 
       {!loading && activeTab === 'add-friend' && (
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <Text style={styles.searchLabel}>Search by exact UID or email</Text>
+          <Text style={styles.searchLabel}>{t('friends.searchLabel')}</Text>
           <View style={styles.searchRow}>
             <TextInput
               style={styles.searchInput}
               value={searchQuery}
               onChangeText={setSearchQuery}
-              placeholder="Email or UID"
+              placeholder={t('friends.searchPlaceholder')}
               placeholderTextColor={Colors.textMuted}
               autoCapitalize="none"
               autoCorrect={false}
@@ -176,7 +178,7 @@ export default function FriendsScreen() {
             >
               {searching
                 ? <ActivityIndicator size="small" color={Colors.background} />
-                : <Text style={styles.searchBtnText}>Search</Text>
+                : <Text style={styles.searchBtnText}>{t('common.search')}</Text>
               }
             </TouchableOpacity>
           </View>
@@ -197,14 +199,14 @@ export default function FriendsScreen() {
               </View>
               {isAlreadyFriend(searchResult.uid) ? (
                 <View style={styles.alreadyFriendBadge}>
-                  <Text style={styles.alreadyFriendText}>Added</Text>
+                  <Text style={styles.alreadyFriendText}>{t('friends.added')}</Text>
                 </View>
               ) : (
                 <TouchableOpacity
                   style={styles.addBtn}
                   onPress={() => handleAddFriend(searchResult.uid)}
                 >
-                  <Text style={styles.addBtnText}>Add</Text>
+                  <Text style={styles.addBtnText}>{t('common.add')}</Text>
                 </TouchableOpacity>
               )}
             </View>

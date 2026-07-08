@@ -145,6 +145,35 @@
   color: #00deec;
 }
 
+.ct-nav__help-item--active {
+  color: #00deec;
+  background: rgba(0, 222, 236, 0.08);
+}
+
+.ct-nav__lang-btn {
+  border-radius: 999px;
+  width: auto;
+  min-width: 30px;
+  padding: 0 9px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.ct-nav__lang-menu {
+  min-width: 170px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.ct-nav__lang-code {
+  color: rgba(0, 222, 236, 0.7);
+  font-size: 0.6rem;
+  width: 22px;
+  flex-shrink: 0;
+}
+
 .ct-nav__user-area {
   display: flex;
   align-items: center;

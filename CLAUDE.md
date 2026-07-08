@@ -113,6 +113,32 @@
 
 ---
 
+## Internationalization (i18n) — web (`openteur/`)
+- Stack: `i18next` + `react-i18next` + `i18next-browser-languagedetector`. Setup lives in `openteur/src/i18n/index.ts`, imported once via `import './i18n'` in `main.tsx`.
+- 9 languages configured in `LANGUAGES`/`resources`: `en`, `tr`, `de`, `az`, `pl`, `ru`, `zh`, `ko`, `ja`. Each has a file in `openteur/src/i18n/locales/<code>.ts`, typed as `const x: typeof en = {...}` against `en.ts` — this means adding/removing/renaming a key in `en.ts` requires the same change in **all 9** locale files or `tsc -b` fails with `TS2307`/missing-property errors. `en.ts` is the source of truth for key shape.
+- Detection: browser language via `navigator`, cached in `localStorage` under `ct_lang`. Fallback language is `en`.
+- Usage pattern: `import { useTranslation } from 'react-i18next'; const { t } = useTranslation();` then `t('section.key')`. Interpolation uses `{{var}}` (e.g. `t('match.saveFailed', { message })`).
+- Key sections in `locales/*.ts`: `common`, `nav`, `landing`, `home`, `auth`, `tutorial`, `players`, `playerForm`, `stats`, `preview`, `match`, `schedule`, `crew`, `friends`, `profile`, `mdm`. `pricing`, `referrals`, `users`, `invite` have **no key section yet** — add one before wiring those pages.
+- Fully wired (all structural UI text uses `t()`): `LandingPage`, `HomePage`, `LoginPage`, `SignupPage`, `PlayersPage`, `PreviewPage`, `MatchPage`, `SchedulePage`, `CrewPage`, `FriendsPage`, `ProfilePage`, `AddPlayerForm` (+ its `usePlayerForm` hook, which supplies the `stats.*` labels for `StatGrid`), `Navbar`, `GoogleSignInButton`, `MatchDetailsModal`, `tutorial/TutorialOverlay` (via `titleKey`/`textKey` in `tutorialSteps.ts`).
+- Not wired at all (no `t()` calls, no key section): `PricingPage`, `ReferralsPage`, `UsersPage`, `InvitePage`.
+- Not wired, no dedicated key section either: `ComparePanel`, `ConfirmDialog`, `UpgradeModal`, `PlanUsageMeter`, `FootballPitch`, `AppFooter`.
+- Convention observed across every wired file: dynamic toast/error strings (`showMsg('Failed to ...')`, `ConfirmDialog` messages, inline hint text) are largely left as hardcoded English unless a matching key already existed pre-authored (e.g. `players.generateFailed`, `match.saveFailed`, `schedule.deleteFailed`). Don't invent new keys for every toast — only add one if the string is structural/repeated, and remember to add it to all 9 locale files.
+- `validatePlayer.ts` (`openteur/src/utils/validatePlayer.ts`) returns raw English error strings — it's a plain function, not a hook, so it can't call `t()` without threading the translator through as a parameter. Left untranslated; out of scope until someone decides to refactor its signature.
+- `openteur/src/i18n/` is currently **untracked in git** (`git status` shows `??`) — nothing under it has ever been committed. Commit it once the remaining pages are wired, or earlier if there's a risk of losing work.
+
+## Internationalization (i18n) — mobile (`mobile/`)
+- Fully wired, all 9 languages (`en`, `tr`, `de`, `az`, `pl`, `ru`, `zh`, `ko`, `ja`), mirroring the web setup but as an independent implementation — separate key structure, separate locale files, no code shared with `openteur/src/i18n/`.
+- Setup lives in `mobile/i18n/index.ts` + `mobile/i18n/locales/<code>.ts`. Same typed-locale pattern as web: `import type en from './en'; const xx: typeof en = {...}`, so `en.ts` is the source of truth for key shape and any key change must be mirrored in all 9 files or `tsc` fails.
+- Unlike web (`localStorage`, synchronous), mobile persists the chosen language in `@react-native-async-storage/async-storage` under the same `ct_lang` key, and init is async: `initI18n()` returns a `Promise` that must be awaited before the app renders. `mobile/app/_layout.tsx`'s `RootLayout` awaits it in a `useEffect` and shows an `ActivityIndicator` gate until ready, before the `AuthProvider`/`PlayerProvider`/`TutorialProvider` tree mounts.
+- Device language detection uses `Intl.DateTimeFormat().resolvedOptions().locale` (Hermes/RN's built-in Intl polyfill) rather than adding `expo-localization` as a new native dependency.
+- Key sections in `mobile/i18n/locales/*.ts`: `common`, `nav`, `auth`, `tutorial`, `roster`, `match`, `preview`, `crew`, `friends`, `playerForm`, `stats`. Mobile's key names/shape are independent of web's — e.g. `stats.gkPositioning`/`gkSpeed` are explicitly GK-prefixed on mobile (web reuses the shared `positioning`/`speed` keys for both contexts).
+- Fully wired screens/components: `(auth)/login`, `(auth)/signup`, `(tabs)/_layout` (tab bar labels), `(tabs)/roster`, `(tabs)/match`, `(tabs)/preview`, `(tabs)/crew`, `(tabs)/friends`, `player/add`, `player/[id]`, `ScreenHeader` (help alert), `ComparePanel`, `TutorialOverlay` + `tutorialSteps.ts` (converted to `titleKey`/`textKey`, same pattern as web), `useGoogleSignIn` hook, `PlayerContext` (load-failure fallback string).
+- Same convention as web: the random-player-generator's tier *naming* (`Bronze/Silver/Gold Player N`, used for regex-based sequence numbering) stays hardcoded English in `roster.tsx`'s `RANDOM_TIERS` — only the tier-picker UI labels are translated (`roster.bronze`/`silver`/`gold`), so generated player names stay consistent across languages, matching `PlayersPage`'s tier-naming rule on web.
+- `PlayerCard.tsx` (short stat abbreviations only — REF/HAN/DIV/OFF/ATH/DEF) and `Toast.tsx` (message passed as prop) intentionally left untranslated, consistent with web leaving analogous short labels/abbreviations alone.
+- Verified with `npx tsc -p tsconfig.json --noEmit` (mobile has no dedicated typecheck script in `package.json`) — clean, no errors.
+
+---
+
 ## Dev workflows
 
 ```bash

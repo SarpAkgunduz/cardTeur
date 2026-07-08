@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import BackButton from '../components/BackButton';
 import Dropdown from '../components/Dropdown';
 import FootballPitch, { PitchPlayer } from '../components/FootballPitch';
@@ -20,6 +21,7 @@ interface CrewOption {
 
 const MatchPage = () => {
   const { players } = usePlayers();
+  const { t } = useTranslation();
   const { getPlayerCardImage } = usePlayerDisplay();
   const [crews, setCrews] = useState<CrewOption[]>([]);
   const [selectedCrewId, setSelectedCrewId] = useState('');
@@ -90,7 +92,7 @@ const MatchPage = () => {
   useEffect(() => {
     apiRequest<CrewOption[]>('/crews')
       .then(setCrews)
-      .catch(() => showToastMsg('Failed to load crews.', 'danger'));
+      .catch(() => showToastMsg(t('match.loadCrewsFailed'), 'danger'));
   }, []);
 
   useEffect(() => {
@@ -356,9 +358,9 @@ const MatchPage = () => {
         body: JSON.stringify({ teamA, teamB }),
       });
       setSavedMatchId(saved._id);
-      showToastMsg('Match saved!');
+      showToastMsg(t('match.savedToast'));
     } catch (err: any) {
-      showToastMsg('Failed to save: ' + err.message, 'danger');
+      showToastMsg(t('match.saveFailed', { message: err.message }), 'danger');
     }
   };
 
@@ -381,9 +383,9 @@ const MatchPage = () => {
         method: 'POST',
         body: JSON.stringify(details),
       });
-      showToastMsg('Announced & saved! Emails sent to ' + result.sent.length + ' player(s).');
+      showToastMsg(t('match.announcedToast', { count: result.sent.length }));
     } catch (err: any) {
-      showToastMsg('Failed: ' + err.message, 'danger');
+      showToastMsg(t('match.announceFailed', { message: err.message }), 'danger');
     }
     setShowMatchModal(false);
   };
@@ -392,18 +394,18 @@ const MatchPage = () => {
     <div className="match-settings-card match-settings-card--builder" data-tutorial="match-builder">
       <h2 className="match-settings-card__header">
         <span className="match-settings-card__dot" />
-        Formation Builder
+        {t('match.formationBuilder')}
       </h2>
 
       <div className="match-setting-group">
-        <label className="match-setting-label">Crew</label>
+        <label className="match-setting-label">{t('match.crew')}</label>
         <Dropdown
           value={selectedCrewId}
           onChange={setSelectedCrewId}
-          ariaLabel="Crew"
+          ariaLabel={t('match.crew')}
           options={[
-            { value: '', label: 'Select Crew' },
-            { value: 'ALL', label: 'All Players' },
+            { value: '', label: t('match.selectCrew') },
+            { value: 'ALL', label: t('match.allPlayers') },
             ...crews.map(crew => ({
               value: crew._id,
               label: `${crew.name.toUpperCase()} (${getCrewPlayers(crew).length})`,
@@ -413,7 +415,7 @@ const MatchPage = () => {
       </div>
 
       <div className="match-setting-group">
-        <label className="match-setting-label">Number of Players</label>
+        <label className="match-setting-label">{t('match.numberOfPlayers')}</label>
         <Dropdown
           value={String(playerCount)}
           onChange={v => {
@@ -424,33 +426,33 @@ const MatchPage = () => {
             if (!names.includes(formationA)) setFormationA(first);
             if (!names.includes(formationB)) setFormationB(first);
           }}
-          ariaLabel="Number of Players"
+          ariaLabel={t('match.numberOfPlayers')}
           options={PLAYER_COUNT_OPTIONS.map(o => ({ value: String(o.value), label: o.label }))}
         />
       </div>
 
       <div className="match-setting-group">
-        <label className="match-setting-label">Team A Formation</label>
+        <label className="match-setting-label">{t('match.teamAFormation')}</label>
         <Dropdown
           value={formationA}
           onChange={setFormationA}
-          ariaLabel="Team A Formation"
+          ariaLabel={t('match.teamAFormation')}
           options={formationSet.map(f => ({ value: f.name, label: f.name.toUpperCase() }))}
         />
       </div>
 
       <div className="match-setting-group">
-        <label className="match-setting-label">Team B Formation</label>
+        <label className="match-setting-label">{t('match.teamBFormation')}</label>
         <Dropdown
           value={formationB}
           onChange={setFormationB}
-          ariaLabel="Team B Formation"
+          ariaLabel={t('match.teamBFormation')}
           options={formationSet.map(f => ({ value: f.name, label: f.name.toUpperCase() }))}
         />
       </div>
 
       <button className="match-apply-btn" onClick={applyFormation} disabled={playersPool.length === 0}>
-        Apply Formation
+        {t('match.applyFormation')}
       </button>
     </div>
   );
@@ -464,13 +466,13 @@ const MatchPage = () => {
     >
       <div className="match-bench-header">
         <i className="bi bi-person-dash" />
-        Bench
+        {t('match.bench')}
         {benchPlayers.length > 0 && (
           <span className="match-bench-count">{benchPlayers.length}</span>
         )}
       </div>
       {benchPlayers.length === 0 ? (
-        <p className="match-bench-empty">No players on bench</p>
+        <p className="match-bench-empty">{t('match.benchEmpty')}</p>
       ) : (
         <div className="match-bench-list">
           {benchPlayers.map(player => {
@@ -490,13 +492,13 @@ const MatchPage = () => {
                   type="button"
                   className="match-bench-btn match-bench-btn--a"
                   onClick={() => handleAddFromBench(id, 'A')}
-                  title="Add to Team A"
+                  title={t('match.addToTeam', { team: 'A' })}
                 >A</button>
                 <button
                   type="button"
                   className="match-bench-btn match-bench-btn--b"
                   onClick={() => handleAddFromBench(id, 'B')}
-                  title="Add to Team B"
+                  title={t('match.addToTeam', { team: 'B' })}
                 >B</button>
               </div>
             );
@@ -520,7 +522,7 @@ const MatchPage = () => {
       onDrop={handleDrop(team)}
     >
       <div className="match-team-roster__header">
-        <span>Team {team} List</span>
+        <span>{t('match.teamList', { team })}</span>
         <span>{teamPlayers.length}</span>
       </div>
       <div className="match-team-roster__list">
@@ -542,7 +544,7 @@ const MatchPage = () => {
                 className="match-team-roster__role"
                 value={role}
                 onChange={e => handleChangeRole(id, e.target.value, team)}
-                aria-label={`Change ${player.name ?? 'player'} role`}
+                aria-label={t('match.changeRole', { name: player.name ?? 'player' })}
               >
                 {[...new Set([role, ...roles])].map(option => (
                   <option key={option} value={option}>{option}</option>
@@ -552,7 +554,7 @@ const MatchPage = () => {
                 type="button"
                 className="match-team-roster__swap"
                 onClick={() => handleChangeTeam(id, team)}
-                title={`Move to Team ${team === 'A' ? 'B' : 'A'}`}
+                title={t('match.moveToTeam', { team: team === 'A' ? 'B' : 'A' })}
               >
                 <i className="bi bi-arrow-left-right" />
               </button>
@@ -560,7 +562,7 @@ const MatchPage = () => {
                 type="button"
                 className="match-team-roster__bench"
                 onClick={() => handleBench(id, team)}
-                title="Send to bench"
+                title={t('match.sendToBench')}
               >
                 <i className="bi bi-person-dash" />
               </button>
@@ -582,21 +584,25 @@ const MatchPage = () => {
             <div className="mdm-panel" role="dialog" aria-modal="true">
               <div className="mdm-header">
                 <i className="bi bi-exclamation-triangle" style={{ color: '#f0ad4e' }} />
-                <h3>Incomplete Teams</h3>
+                <h3>{t('match.incompleteTitle')}</h3>
               </div>
               <p className="mdm-subtitle">
-                Your lineup has <strong className="mdm-accent">{leftPlayers.length + rightPlayers.length}</strong> players,
-                but a {playerCount}v{playerCount} match expects <strong className="mdm-accent">{playerCount * 2}</strong>.
-                Team A has <strong className="mdm-accent">{leftPlayers.length}</strong> and Team B has <strong className="mdm-accent">{rightPlayers.length}</strong>.
+                {t('match.incompleteText', {
+                  actual: leftPlayers.length + rightPlayers.length,
+                  count: playerCount,
+                  expected: playerCount * 2,
+                  teamA: leftPlayers.length,
+                  teamB: rightPlayers.length,
+                })}
               </p>
-              <p className="mdm-subtitle">Do you still want to announce this match with incomplete teams?</p>
+              <p className="mdm-subtitle">{t('match.incompleteQuestion')}</p>
               <div className="mdm-actions">
                 <button
                   type="button"
                   className="btn btn-ct active-mode"
                   onClick={() => setShowIncompleteWarning(false)}
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="button"
@@ -604,7 +610,7 @@ const MatchPage = () => {
                   onClick={() => { setShowIncompleteWarning(false); setShowMatchModal(true); }}
                 >
                   <i className="bi bi-send-fill" />
-                  Announce Anyway
+                  {t('match.announceAnyway')}
                 </button>
               </div>
             </div>
@@ -624,12 +630,12 @@ const MatchPage = () => {
           <div className="back-button-container">
             <BackButton position="static" />
           </div>
-          <h2 className="page-title match-page-title">Match Lineup</h2>
+          <h2 className="page-title match-page-title">{t('match.title')}</h2>
           <div className="match-page-actions" data-tutorial="match-actions">
             {pitchMode && (
               <>
                 <button className="fp-btn fp-btn--save" onClick={handleSave}>
-                  {savedMatchId ? <><i className="bi bi-check2 me-1" />Saved</> : <><i className="bi bi-floppy me-1" />Save</>}
+                  {savedMatchId ? <><i className="bi bi-check2 me-1" />{t('common.saved')}</> : <><i className="bi bi-floppy me-1" />{t('common.save')}</>}
                 </button>
                 <button
                   className="fp-btn fp-btn--accent"
@@ -643,7 +649,7 @@ const MatchPage = () => {
                     }
                   }}
                 >
-                  ANNOUNCE MATCH
+                  {t('match.announceMatch')}
                 </button>
               </>
             )}
@@ -688,7 +694,7 @@ const MatchPage = () => {
                 {pitchMode && renderTeamRoster('B', rightPlayers, rolesB, roleOverridesB, allRolesB)}
               </div>
             </div>
-            {pitchMode && <p className="match-pitch-hint">Drag players to reposition. Use the team lists or right-click a card to adjust teams and roles.</p>}
+            {pitchMode && <p className="match-pitch-hint">{t('match.pitchHint')}</p>}
           </div>
         </div>
         </div>

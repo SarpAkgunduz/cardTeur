@@ -13,6 +13,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { usePlayers } from '../../contexts/PlayerContext';
 import { useTutorial } from '../../contexts/TutorialContext';
 import PlayerCard from '../../components/PlayerCard';
@@ -45,6 +46,7 @@ const PLAYER_PHOTOS = [
 ];
 
 export default function RosterScreen() {
+  const { t } = useTranslation();
   const { players, loading, error, deletePlayer, createPlayer } = usePlayers();
   const { registerTarget } = useTutorial();
   const router = useRouter();
@@ -72,19 +74,19 @@ export default function RosterScreen() {
 
   const handleDelete = (id: string) => {
     Alert.alert(
-      'Delete Player',
-      'Are you sure you want to delete this player?',
+      t('roster.deleteTitle'),
+      t('roster.deleteConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deletePlayer(id);
-              showToast('Player deleted.', 'success');
+              showToast(t('roster.deletedToast'), 'success');
             } catch {
-              showToast('Failed to delete player.', 'error');
+              showToast(t('roster.deleteFailedToast'), 'error');
             }
           },
         },
@@ -139,10 +141,10 @@ export default function RosterScreen() {
     setGeneratingTier(tier);
     try {
       const player = await createPlayer(buildRandomPlayer(tier));
-      showToast(`${player.name} generated!`);
+      showToast(t('roster.generatedToast', { name: player.name }));
       setRandomPickerOpen(false);
     } catch {
-      showToast('Failed to generate player.', 'error');
+      showToast(t('roster.generateFailedToast'), 'error');
     } finally {
       setGeneratingTier(null);
     }
@@ -184,8 +186,8 @@ export default function RosterScreen() {
         <View collapsable={false} ref={node => registerTarget('roster-random', node)}>
           <TouchableOpacity style={styles.randomCard} onPress={() => setRandomPickerOpen(true)}>
             <Text style={styles.randomQuestion}>?</Text>
-            <Text style={styles.randomTitle}>Generate Random Player</Text>
-            <Text style={styles.randomSub}>Unlock a new card</Text>
+            <Text style={styles.randomTitle}>{t('roster.randomTitle')}</Text>
+            <Text style={styles.randomSub}>{t('roster.randomSub')}</Text>
           </TouchableOpacity>
         </View>
       );
@@ -219,15 +221,15 @@ export default function RosterScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader title="Players" right={headerRight} showHelp />
+      <ScreenHeader title={t('roster.title')} right={headerRight} showHelp />
 
       {mode !== 'none' && (
         <View style={styles.modeBanner}>
           <Text style={styles.modeBannerText}>
-            {mode === 'edit' ? 'Tap a card to edit' : mode === 'delete' ? 'Tap ✕ to delete' : `Compare mode — ${compareSelection.length} selected`}
+            {mode === 'edit' ? t('roster.modeEdit') : mode === 'delete' ? t('roster.modeDelete') : t('roster.modeCompareCount', { count: compareSelection.length })}
           </Text>
           <TouchableOpacity onPress={() => { setMode('none'); setCompareSelection([]); }}>
-            <Text style={styles.modeBannerCancel}>Cancel</Text>
+            <Text style={styles.modeBannerCancel}>{t('common.cancel')}</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -263,8 +265,8 @@ export default function RosterScreen() {
       >
         <Pressable style={styles.modalBackdrop} onPress={() => setRandomPickerOpen(false)}>
           <Pressable style={styles.modalContent} onPress={(e) => e.stopPropagation()}>
-            <Text style={styles.modalTitle}>Generate Random Player</Text>
-            <Text style={styles.modalSub}>Choose a card tier</Text>
+            <Text style={styles.modalTitle}>{t('roster.randomTitle')}</Text>
+            <Text style={styles.modalSub}>{t('roster.randomModalSub')}</Text>
             <View style={styles.tierRow}>
               {RANDOM_TIERS.map((tier) => (
                 <TouchableOpacity
@@ -274,17 +276,17 @@ export default function RosterScreen() {
                   disabled={generatingTier !== null}
                 >
                   <Text style={[styles.tierLabel, { color: tier.id === 'gold' ? '#e8c060' : tier.id === 'silver' ? '#d7e6f2' : '#c48b5b' }]}>
-                    {tier.label}
+                    {t(`roster.${tier.id}`)}
                   </Text>
                   <Text style={styles.tierRange}>{tier.range[0]}-{tier.range[1]} OVR</Text>
                   <Text style={styles.tierAction}>
-                    {generatingTier === tier.id ? 'Generating...' : 'Unlock'}
+                    {generatingTier === tier.id ? t('roster.generating') : t('roster.unlock')}
                   </Text>
                 </TouchableOpacity>
               ))}
             </View>
             <TouchableOpacity style={styles.modalClose} onPress={() => setRandomPickerOpen(false)}>
-              <Text style={styles.modalCloseText}>Cancel</Text>
+              <Text style={styles.modalCloseText}>{t('common.cancel')}</Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>
@@ -292,12 +294,12 @@ export default function RosterScreen() {
 
       {compareSelection.length > 0 && (
         <View style={styles.compareBar}>
-          <Text style={styles.compareBarText}>{compareSelection.length} selected</Text>
+          <Text style={styles.compareBarText}>{t('roster.selectedCount', { count: compareSelection.length })}</Text>
           <TouchableOpacity onPress={() => setShowComparePanel(true)} style={styles.compareViewBtn}>
-            <Text style={styles.compareViewBtnText}>Compare</Text>
+            <Text style={styles.compareViewBtnText}>{t('roster.compare')}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => setCompareSelection([])}>
-            <Text style={styles.compareBarClear}>Clear</Text>
+            <Text style={styles.compareBarClear}>{t('roster.clear')}</Text>
           </TouchableOpacity>
         </View>
       )}

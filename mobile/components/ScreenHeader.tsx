@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Colors, FontSizes, Spacing } from '../constants/theme';
 import { useTutorial } from '../contexts/TutorialContext';
 
@@ -13,13 +14,14 @@ interface ScreenHeaderProps {
 }
 
 export default function ScreenHeader({ title, showBack = false, showHelp = false, right }: ScreenHeaderProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { startTutorial } = useTutorial();
 
   const handleHelp = () => {
-    Alert.alert('Help', 'Replay the app tutorial?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Replay tutorial', onPress: startTutorial },
+    Alert.alert(t('tutorial.help'), t('tutorial.helpMsg'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('tutorial.replay'), onPress: startTutorial },
     ]);
   };
 

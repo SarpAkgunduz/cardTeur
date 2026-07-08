@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { playerApi } from '../services';
 import { validatePlayer } from '../utils/validatePlayer';
@@ -17,6 +18,7 @@ const calculateAverage = (stats: number[]) =>
   stats.length ? Math.round(stats.reduce((a, b) => a + b, 0) / stats.length) : 0;
 
 export function usePlayerForm() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const isEditMode = Boolean(id);
   const navigate = useNavigate();
@@ -163,37 +165,37 @@ export function usePlayerForm() {
 
   // Stat field groups
   const gkFields: StatField[] = [
-    { id: 'diving',        label: 'Diving',      value: diving,        setter: setDiving },
-    { id: 'handling',      label: 'Handling',    value: handling,      setter: setHandling },
-    { id: 'kicking',       label: 'Kicking',     value: kicking,       setter: setKicking },
-    { id: 'reflexes',      label: 'Reflexes',    value: reflexes,      setter: setReflexes },
-    { id: 'gkPositioning', label: 'Positioning', value: gkPositioning, setter: setGkPositioning },
-    { id: 'gkSpeed',       label: 'Speed',       value: gkSpeed,       setter: setGkSpeed },
+    { id: 'diving',        label: t('stats.diving'),        value: diving,        setter: setDiving },
+    { id: 'handling',      label: t('stats.handling'),      value: handling,      setter: setHandling },
+    { id: 'kicking',       label: t('stats.kicking'),       value: kicking,       setter: setKicking },
+    { id: 'reflexes',      label: t('stats.reflexes'),      value: reflexes,      setter: setReflexes },
+    { id: 'gkPositioning', label: t('stats.gkPositioning'), value: gkPositioning, setter: setGkPositioning },
+    { id: 'gkSpeed',       label: t('stats.gkSpeed'),       value: gkSpeed,       setter: setGkSpeed },
   ];
 
   const offensiveFields: StatField[] = [
-    { id: 'dribbling',    label: 'Dribbling',     value: dribbling,    setter: setDribbling },
-    { id: 'shotAccuracy', label: 'Shot Accuracy', value: shotAccuracy, setter: setShotAccuracy },
-    { id: 'shotSpeed',    label: 'Shot Speed',    value: shotSpeed,    setter: setShotSpeed },
-    { id: 'headers',      label: 'Headers',       value: headers,      setter: setHeaders },
-    { id: 'longPass',     label: 'Long Pass',     value: longPass,     setter: setLongPass },
-    { id: 'shortPass',    label: 'Short Pass',    value: shortPass,    setter: setShortPass },
-    { id: 'ballControl',  label: 'Ball Control',  value: ballControl,  setter: setBallControl },
-    { id: 'positioning',  label: 'Positioning',   value: positioning,  setter: setPositioning },
-    { id: 'vision',       label: 'Vision',        value: vision,       setter: setVision },
+    { id: 'dribbling',    label: t('stats.dribbling'),    value: dribbling,    setter: setDribbling },
+    { id: 'shotAccuracy', label: t('stats.shotAccuracy'), value: shotAccuracy, setter: setShotAccuracy },
+    { id: 'shotSpeed',    label: t('stats.shotSpeed'),    value: shotSpeed,    setter: setShotSpeed },
+    { id: 'headers',      label: t('stats.headers'),      value: headers,      setter: setHeaders },
+    { id: 'longPass',     label: t('stats.longPass'),     value: longPass,     setter: setLongPass },
+    { id: 'shortPass',    label: t('stats.shortPass'),    value: shortPass,    setter: setShortPass },
+    { id: 'ballControl',  label: t('stats.ballControl'),  value: ballControl,  setter: setBallControl },
+    { id: 'positioning',  label: t('stats.positioning'),  value: positioning,  setter: setPositioning },
+    { id: 'vision',       label: t('stats.vision'),       value: vision,       setter: setVision },
   ];
 
   const defensiveFields: StatField[] = [
-    { id: 'tackling',      label: 'Tackling',      value: tackling,      setter: setTackling },
-    { id: 'interceptions', label: 'Interceptions', value: interceptions, setter: setInterceptions },
-    { id: 'marking',       label: 'Marking',       value: marking,       setter: setMarking },
-    { id: 'defensiveIQ',   label: 'Defensive IQ',  value: defensiveIQ,   setter: setDefensiveIQ },
+    { id: 'tackling',      label: t('stats.tackling'),      value: tackling,      setter: setTackling },
+    { id: 'interceptions', label: t('stats.interceptions'), value: interceptions, setter: setInterceptions },
+    { id: 'marking',       label: t('stats.marking'),       value: marking,       setter: setMarking },
+    { id: 'defensiveIQ',   label: t('stats.defensiveIQ'),   value: defensiveIQ,   setter: setDefensiveIQ },
   ];
 
   const athleticismFields: StatField[] = [
-    { id: 'speed',    label: 'Speed',    value: speed,    setter: setSpeed },
-    { id: 'strength', label: 'Strength', value: strength, setter: setStrength },
-    { id: 'stamina',  label: 'Stamina',  value: stamina,  setter: setStamina },
+    { id: 'speed',    label: t('stats.speed'),    value: speed,    setter: setSpeed },
+    { id: 'strength', label: t('stats.strength'), value: strength, setter: setStrength },
+    { id: 'stamina',  label: t('stats.stamina'),  value: stamina,  setter: setStamina },
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, deleteUser } from 'firebase/auth';
 import { useAuth } from '../contexts/AuthContext';
 import { apiRequest } from '../services/api/apiClient';
@@ -16,6 +17,7 @@ interface UserProfile {
 }
 
 const ProfilePage = () => {
+  const { t } = useTranslation();
   const { currentUser, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -175,14 +177,14 @@ const ProfilePage = () => {
     <div className="profile-page">
       <div className="profile-page__container">
         <div className="profile-page__header">
-          <h1 className="profile-page__title">Account Settings</h1>
+          <h1 className="profile-page__title">{t('profile.title')}</h1>
           <p className="profile-page__subtitle">{currentUser?.email}</p>
         </div>
 
         {/* Photo section */}
         <div className="profile-page__card">
           <div className="profile-page__card-header">
-            <span className="profile-page__card-label">Profile Photo</span>
+            <span className="profile-page__card-label">{t('profile.photo')}</span>
           </div>
           <div className="profile-page__photo-row">
             <div className="profile-page__avatar" onClick={() => fileInputRef.current?.click()}>
@@ -194,7 +196,7 @@ const ProfilePage = () => {
             </div>
             <div className="profile-page__photo-actions">
               <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePhotoChange} />
-              <button className="btn-ct" onClick={() => fileInputRef.current?.click()}>Choose Photo</button>
+              <button className="btn-ct" onClick={() => fileInputRef.current?.click()}>{t('profile.choosePhoto')}</button>
               {photoPreview && photoPreview !== savedPhotoURL && (
                 <button className="btn-ct" onClick={handleSavePhoto} disabled={savingPhoto}>
                   {savingPhoto ? 'Saving...' : 'Save Photo'}
@@ -207,22 +209,22 @@ const ProfilePage = () => {
         {/* Username section */}
         <div className="profile-page__card">
           <div className="profile-page__card-header">
-            <span className="profile-page__card-label">Username</span>
+            <span className="profile-page__card-label">{t('profile.username')}</span>
           </div>
           <div className="profile-page__row">
             <div className="profile-page__field">
-              <label className="profile-page__field-label">Display Name</label>
+              <label className="profile-page__field-label">{t('profile.displayName')}</label>
               <input
                 className="profile-page__input"
                 type="text"
                 value={displayName}
                 onChange={e => setDisplayName(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') handleSaveName(); }}
-                placeholder="Your display name"
+                placeholder={t('profile.displayNamePh')}
               />
             </div>
             <div className="profile-page__field profile-page__field--email">
-              <label className="profile-page__field-label">Email <span className="profile-page__readonly-badge">read-only</span></label>
+              <label className="profile-page__field-label">{t('common.email')} <span className="profile-page__readonly-badge">{t('profile.readOnly')}</span></label>
               <input className="profile-page__input profile-page__input--readonly" type="text" value={currentUser?.email || ''} readOnly />
             </div>
           </div>
@@ -236,9 +238,9 @@ const ProfilePage = () => {
         {/* Account ID section */}
         <div className="profile-page__card">
           <div className="profile-page__card-header">
-            <span className="profile-page__card-label">Account ID</span>
+            <span className="profile-page__card-label">{t('profile.accountId')}</span>
           </div>
-          <p className="profile-page__id-desc">Share this ID with friends so they can find and add you directly.</p>
+          <p className="profile-page__id-desc">{t('profile.accountIdDesc')}</p>
           <div className="profile-page__id-row">
             <span className="profile-page__id-value">{currentUser?.uid}</span>
             <button className="profile-page__id-copy-btn" onClick={handleCopyUid} title="Copy ID">
@@ -251,20 +253,20 @@ const ProfilePage = () => {
         {/* Password section */}
         <div className="profile-page__card">
           <div className="profile-page__card-header">
-            <span className="profile-page__card-label">Change Password</span>
+            <span className="profile-page__card-label">{t('profile.changePassword')}</span>
           </div>
           <div className="profile-page__fields">
             <div className="profile-page__field">
-              <label className="profile-page__field-label">Current Password <span className="profile-page__required">*</span></label>
-              <input className="profile-page__input" type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} placeholder="Enter current password" />
+              <label className="profile-page__field-label">{t('profile.currentPassword')} <span className="profile-page__required">*</span></label>
+              <input className="profile-page__input" type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} placeholder={t('profile.currentPasswordPh')} />
             </div>
             <div className="profile-page__field">
-              <label className="profile-page__field-label">New Password <span className="profile-page__required">*</span></label>
-              <input className="profile-page__input" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder="Min. 6 characters" />
+              <label className="profile-page__field-label">{t('profile.newPassword')} <span className="profile-page__required">*</span></label>
+              <input className="profile-page__input" type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} placeholder={t('profile.newPasswordPh')} />
             </div>
             <div className="profile-page__field">
-              <label className="profile-page__field-label">Confirm New Password <span className="profile-page__required">*</span></label>
-              <input className="profile-page__input" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') handleSavePassword(); }} placeholder="Repeat new password" />
+              <label className="profile-page__field-label">{t('profile.confirmNewPassword')} <span className="profile-page__required">*</span></label>
+              <input className="profile-page__input" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') handleSavePassword(); }} placeholder={t('profile.confirmNewPasswordPh')} />
             </div>
           </div>
           <div className="profile-page__actions">
@@ -277,9 +279,9 @@ const ProfilePage = () => {
         {/* Danger zone */}
         <div className="profile-page__card profile-page__card--danger">
           <div className="profile-page__card-header">
-            <span className="profile-page__card-label profile-page__card-label--danger">Danger Zone</span>
+            <span className="profile-page__card-label profile-page__card-label--danger">{t('profile.dangerZone')}</span>
           </div>
-          <p className="profile-page__danger-desc">Permanently delete your account and all associated data. This cannot be undone.</p>
+          <p className="profile-page__danger-desc">{t('profile.dangerDesc')}</p>
           <button className="btn-ct profile-page__delete-btn" onClick={() => setShowDeleteConfirm(true)} disabled={deletingAccount}>
             {deletingAccount ? 'Deleting...' : 'Delete Account'}
           </button>

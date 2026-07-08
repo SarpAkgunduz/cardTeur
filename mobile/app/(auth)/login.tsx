@@ -12,11 +12,13 @@ import {
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { useGoogleSignIn } from '../../hooks/useGoogleSignIn';
 
 export default function LoginScreen() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -27,20 +29,20 @@ export default function LoginScreen() {
 
   const handleForgotPassword = async () => {
     if (!email.trim()) {
-      setError('Enter your email above first.');
+      setError(t('auth.enterEmailFirst'));
       return;
     }
     try {
       await resetPassword(email.trim());
-      Alert.alert('Email Sent', 'Check your inbox for a password reset link.');
+      Alert.alert(t('auth.resetSentTitle'), t('auth.resetSentMsg'));
     } catch {
-      setError('Could not send reset email. Check the address and try again.');
+      setError(t('auth.resetFailed'));
     }
   };
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
-      setError('Please fill in all fields.');
+      setError(t('auth.fillAllFields'));
       return;
     }
     setSubmitting(true);
@@ -49,7 +51,7 @@ export default function LoginScreen() {
       await signIn(email.trim(), password);
       router.replace('/(tabs)/roster');
     } catch {
-      setError('Invalid email or password.');
+      setError(t('auth.invalidCredentials'));
     } finally {
       setSubmitting(false);
     }
@@ -66,7 +68,7 @@ export default function LoginScreen() {
             <Text style={styles.title}>
               Card<Text style={styles.titleAccent}>Teur</Text>
             </Text>
-            <Text style={styles.subtitle}>Sign in to your account</Text>
+            <Text style={styles.subtitle}>{t('auth.loginSubtitle')}</Text>
 
             {(error || google.error) ? (
               <View style={styles.errorBox}>
@@ -75,7 +77,7 @@ export default function LoginScreen() {
             ) : null}
 
             <View style={styles.field}>
-              <Text style={styles.label}>Email</Text>
+              <Text style={styles.label}>{t('common.email')}</Text>
               <TextInput
                 style={styles.input}
                 value={email}
@@ -89,7 +91,7 @@ export default function LoginScreen() {
             </View>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Password</Text>
+              <Text style={styles.label}>{t('common.password')}</Text>
               <TextInput
                 style={styles.input}
                 value={password}
@@ -101,7 +103,7 @@ export default function LoginScreen() {
             </View>
 
             <TouchableOpacity style={styles.forgotBtn} onPress={handleForgotPassword}>
-              <Text style={styles.forgotText}>Forgot password?</Text>
+              <Text style={styles.forgotText}>{t('auth.forgotPassword')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -112,13 +114,13 @@ export default function LoginScreen() {
             >
               {submitting
                 ? <ActivityIndicator color={Colors.background} />
-                : <Text style={styles.btnText}>LOGIN</Text>
+                : <Text style={styles.btnText}>{t('auth.loginBtn')}</Text>
               }
             </TouchableOpacity>
 
             <View style={styles.divider}>
               <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>or</Text>
+              <Text style={styles.dividerText}>{t('common.or')}</Text>
               <View style={styles.dividerLine} />
             </View>
 
@@ -130,13 +132,13 @@ export default function LoginScreen() {
             >
               {google.loading
                 ? <ActivityIndicator color={Colors.textPrimary} />
-                : <Text style={styles.googleBtnText}>Continue with Google</Text>
+                : <Text style={styles.googleBtnText}>{t('auth.googleBtn')}</Text>
               }
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.signupLink} onPress={() => router.push('/(auth)/signup')}>
               <Text style={styles.signupText}>
-                Don't have an account? <Text style={styles.signupAccent}>Sign Up</Text>
+                {t('auth.noAccount')} <Text style={styles.signupAccent}>{t('auth.signUpLink')}</Text>
               </Text>
             </TouchableOpacity>
           </View>

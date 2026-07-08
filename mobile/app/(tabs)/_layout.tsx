@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Colors } from '../../constants/theme';
 
 type IoniconsName = React.ComponentProps<typeof Ionicons>['name'];
@@ -11,15 +12,17 @@ interface TabConfig {
   iconFocused: IoniconsName;
 }
 
-const TABS: TabConfig[] = [
-  { name: 'roster', title: 'Roster', icon: 'people-outline', iconFocused: 'people' },
-  { name: 'match', title: 'Match', icon: 'football-outline', iconFocused: 'football' },
-  { name: 'preview', title: 'Preview', icon: 'eye-outline', iconFocused: 'eye' },
-  { name: 'crew', title: 'Crew', icon: 'shield-outline', iconFocused: 'shield' },
-  { name: 'friends', title: 'Friends', icon: 'person-add-outline', iconFocused: 'person-add' },
-];
-
 export default function TabLayout() {
+  const { t } = useTranslation();
+
+  const TABS: TabConfig[] = [
+    { name: 'roster', title: t('nav.roster'), icon: 'people-outline', iconFocused: 'people' },
+    { name: 'match', title: t('nav.match'), icon: 'football-outline', iconFocused: 'football' },
+    { name: 'preview', title: t('nav.preview'), icon: 'eye-outline', iconFocused: 'eye' },
+    { name: 'crew', title: t('nav.crew'), icon: 'shield-outline', iconFocused: 'shield' },
+    { name: 'friends', title: t('nav.friends'), icon: 'person-add-outline', iconFocused: 'person-add' },
+  ];
+
   return (
     <Tabs
       screenOptions={{

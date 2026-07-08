@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { usePlayers } from '../contexts/PlayerContext';
 import BackButton from '../components/BackButton';
@@ -20,6 +21,7 @@ interface Crew {
 }
 
 const CrewPage = () => {
+  const { t } = useTranslation();
   const { currentUser } = useAuth();
   const { players, loading: playersLoading, updatePlayer } = usePlayers();
   const { getPlayerCardImage } = usePlayerDisplay();
@@ -279,7 +281,7 @@ const CrewPage = () => {
                 className="crew-email-input" type="email" value={editingEmail}
                 onChange={e => setEditingEmail(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') saveEmail(player._id); if (e.key === 'Escape') cancelEmailEdit(); }}
-                autoFocus placeholder="player@example.com"
+                autoFocus placeholder={t('crew.emailPh')}
               />
               <button className="crew-edit-btn crew-edit-btn--save" onClick={() => saveEmail(player._id)} disabled={isSaving}>
                 <i className={`bi ${isSaving ? 'bi-hourglass-split' : 'bi-check-lg'}`}></i>
@@ -312,7 +314,7 @@ const CrewPage = () => {
 
         {isSelected && (
           <div className="crew-picker">
-            {assignableCrews.length === 0 && <span className="crew-picker__empty">No crews yet.</span>}
+            {assignableCrews.length === 0 && <span className="crew-picker__empty">{t('crew.noCrewsYet')}</span>}
             {assignableCrews.map((crew, ci) => {
               const alreadyIn = crew.playerIds.includes(player._id);
               return (
@@ -343,19 +345,19 @@ const CrewPage = () => {
               <div className="back-button-container">
                 <BackButton position="static" />
               </div>
-              <h2 className="page-title crew-page__title">Crews</h2>
+              <h2 className="page-title crew-page__title">{t('crew.title')}</h2>
               <div className="crew-left__header-btns">
                 {savedFlash && (
                   <span className="crew-saved-badge">
-                    <i className="bi bi-check-circle-fill"></i> Kaydedildi
+                    <i className="bi bi-check-circle-fill"></i> {t('common.saved')}
                   </span>
                 )}
                 <button className="btn-ct crew-left__shimmer-btn" onClick={handleShimmerRename}>
-                  <i className="bi bi-pencil-square"></i> Rename Crew
+                  <i className="bi bi-pencil-square"></i> {t('crew.renameCrew')}
                 </button>
                 <button className="btn-ct crew-left__add-crew-btn" data-tutorial="crew-add"
                   onClick={() => { setCreatingCrew(true); setTimeout(() => newCrewInputRef.current?.focus(), 50); }}>
-                  <i className="bi bi-plus-lg"></i> New Crew
+                  <i className="bi bi-plus-lg"></i> {t('crew.newCrew')}
                 </button>
               </div>
             </div>
@@ -382,7 +384,7 @@ const CrewPage = () => {
         <div className="crew-left">
           {creatingCrew && (
             <div className="crew-create-bar">
-              <input ref={newCrewInputRef} className="crew-email-input" placeholder="Crew name\u2026"
+              <input ref={newCrewInputRef} className="crew-email-input" placeholder={t('crew.crewNamePh')}
                 value={newCrewName} onChange={e => setNewCrewName(e.target.value)}
                 onKeyDown={e => { if (e.key === 'Enter') handleCreateCrew(); if (e.key === 'Escape') { setCreatingCrew(false); setNewCrewName(''); } }}
               />
@@ -395,7 +397,7 @@ const CrewPage = () => {
             </div>
           )}
 
-          {(loading || playersLoading) && <p className="crew-empty">Loading...</p>}
+          {(loading || playersLoading) && <p className="crew-empty">{t('common.loading')}</p>}
 
           {!loading && !playersLoading && (
             <div className="crew-card-list">
@@ -444,7 +446,7 @@ const CrewPage = () => {
                       </div>
 
                       <div className="crew-card__members">
-                        {playersInCrew(crew).length === 0 && <p className="crew-card__empty">No players yet.</p>}
+                        {playersInCrew(crew).length === 0 && <p className="crew-card__empty">{t('crew.noPlayersYet')}</p>}
                         {playersInCrew(crew).map(p => renderPlayerRowLeft(p, crew._id, isOwned))}
                       </div>
 
@@ -454,7 +456,7 @@ const CrewPage = () => {
                             <div className="crew-card__player-select">
                               <select className="crew-email-input" defaultValue=""
                                 onChange={e => { if (e.target.value) handleAddPlayerToCrew(crew._id, e.target.value); }}>
-                                <option value="" disabled>Select a player…</option>
+                                <option value="" disabled>{t('crew.selectPlayer')}</option>
                                 {availableForCrew(crew).map(p => (
                                   <option key={p._id} value={p._id}>{p.name} ({p.preferredPosition})</option>
                                 ))}
@@ -478,14 +480,14 @@ const CrewPage = () => {
 
                 return (
                   <>
-                    {ownedCrews.length > 0 && <p className="crew-section-label">MY CREWS</p>}
+                    {ownedCrews.length > 0 && <p className="crew-section-label">{t('crew.myCrews')}</p>}
                     {ownedCrews.map(c => renderCrewCard(c, false))}
-                    {memberCrews.length > 0 && <p className="crew-section-label crew-section-label--member">ADDED TO</p>}
+                    {memberCrews.length > 0 && <p className="crew-section-label crew-section-label--member">{t('crew.addedTo')}</p>}
                     {memberCrews.map(c => renderCrewCard(c, true))}
                     {crews.length === 0 && players.length > 0 && !creatingCrew && (
-                      <p className="crew-empty">Create a crew to start organising your players.</p>
+                      <p className="crew-empty">{t('crew.createHint')}</p>
                     )}
-                    {visiblePlayers.length === 0 && <p className="crew-empty">No players found.</p>}
+                    {visiblePlayers.length === 0 && <p className="crew-empty">{t('crew.noPlayers')}</p>}
                   </>
                 );
               })()}
@@ -495,8 +497,8 @@ const CrewPage = () => {
 
         <div className="crew-right">
           <div className="crew-right__header">
-            <h2 className="crew-right__title">ALL PLAYERS</h2>
-            <p className="crew-right__hint">Click a player to assign to a crew</p>
+            <h2 className="crew-right__title">{t('crew.allPlayersTitle')}</h2>
+            <p className="crew-right__hint">{t('crew.assignHint')}</p>
           </div>
           <div className="crew-email-list">
             {players.map((p, idx) => renderEmailRow(p, idx))}
@@ -506,7 +508,7 @@ const CrewPage = () => {
       ) : (
         <div className="crew-permissions">
           {ownedCrewsForPermissions.length === 0 && (
-            <p className="crew-empty">Create a crew before assigning roster permissions.</p>
+            <p className="crew-empty">{t('crew.createBeforeAssign')}</p>
           )}
           {ownedCrewsForPermissions.map(crew => {
             const memberUids = getCrewPermissionMemberUids(crew);
@@ -517,7 +519,7 @@ const CrewPage = () => {
                   <small>{memberUids.length} linked member{memberUids.length === 1 ? '' : 's'}</small>
                 </div>
                 {memberUids.length === 0 ? (
-                  <p className="crew-card__empty">No linked members in this crew yet.</p>
+                  <p className="crew-card__empty">{t('crew.noLinkedMembers')}</p>
                 ) : (
                   <div className="crew-permission-list">
                     {memberUids.map(memberUid => {

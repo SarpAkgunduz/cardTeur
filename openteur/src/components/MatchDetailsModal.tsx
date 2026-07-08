@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 import './MatchDetailsModal.css';
 
 export interface MatchPlayer {
@@ -25,17 +26,18 @@ const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
   const [time, setTime] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
+  const { t } = useTranslation();
 
   const emailCount = [...leftTeam, ...rightTeam].filter((p) => p.email).length;
 
   const handleAnnounce = async (e: React.FormEvent) => {
     e.preventDefault();
     const missing: string[] = [];
-    if (!location.trim()) missing.push('Location');
-    if (!date) missing.push('Date');
-    if (!time) missing.push('Time');
+    if (!location.trim()) missing.push(t('mdm.location'));
+    if (!date) missing.push(t('mdm.date'));
+    if (!time) missing.push(t('mdm.time'));
     if (missing.length > 0) {
-      setError(`Please fill: ${missing.join(', ')}`);
+      setError(t('auth.fillFields', { fields: missing.join(', ') }));
       return;
     }
     setError('');
@@ -52,29 +54,31 @@ const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
       <div className="mdm-panel" role="dialog" aria-modal="true" aria-labelledby="mdm-title">
         <div className="mdm-header">
           <i className="bi bi-calendar2-check"></i>
-          <h3 id="mdm-title">Match Details</h3>
+          <h3 id="mdm-title">{t('mdm.title')}</h3>
         </div>
 
         <div className="mdm-autosave-note">
           <i className="bi bi-floppy-fill" />
-          This match will be automatically saved when you announce it.
+          {t('mdm.autosaveNote')}
         </div>
 
         <p className="mdm-subtitle">
-          Fill in the match info. Emails will be sent to{' '}
-          <strong className="mdm-accent">{emailCount}</strong> player
-          {emailCount !== 1 ? 's' : ''} who have an email address.
+          <Trans
+            i18nKey="mdm.subtitle"
+            values={{ count: emailCount }}
+            components={{ accent: <strong className="mdm-accent" /> }}
+          />
         </p>
 
         <form onSubmit={handleAnnounce} noValidate>
           <div className="mdm-field">
             <label htmlFor="mdm-location">
-              Location <span className="mdm-required">*</span>
+              {t('mdm.location')} <span className="mdm-required">*</span>
             </label>
             <input
               id="mdm-location"
               className="mdm-input"
-              placeholder="e.g. City Sports Center, Pitch 3"
+              placeholder={t('mdm.locationPh')}
               value={location}
               onChange={(e) => setLocation(e.target.value)}
             />
@@ -82,7 +86,7 @@ const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
 
           <div className="mdm-field">
             <label htmlFor="mdm-date">
-              Date <span className="mdm-required">*</span>
+              {t('mdm.date')} <span className="mdm-required">*</span>
             </label>
             <input
               id="mdm-date"
@@ -95,7 +99,7 @@ const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
 
           <div className="mdm-field">
             <label htmlFor="mdm-time">
-              Time <span className="mdm-required">*</span>
+              {t('mdm.time')} <span className="mdm-required">*</span>
             </label>
             <input
               id="mdm-time"
@@ -115,7 +119,7 @@ const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
               onClick={onSkip}
               disabled={sending}
             >
-              Skip
+              {t('mdm.skip')}
             </button>
             <button
               type="submit"
@@ -125,12 +129,12 @@ const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
               {sending ? (
                 <>
                   <span className="mdm-spinner"></span>
-                  Sending...
+                  {t('mdm.sending')}
                 </>
               ) : (
                 <>
                   <i className="bi bi-send-fill"></i>
-                  Save &amp; Announce
+                  {t('mdm.saveAnnounce')}
                 </>
               )}
             </button>

@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { usePlayers } from '../../contexts/PlayerContext';
 import { useTutorial } from '../../contexts/TutorialContext';
 import ScreenHeader from '../../components/ScreenHeader';
@@ -34,6 +35,7 @@ interface SlotState {
 }
 
 export default function MatchScreen() {
+  const { t } = useTranslation();
   const { players, loading } = usePlayers();
   const { registerTarget } = useTutorial();
   const [formation, setFormation] = useState<Formation>('4-3-3');
@@ -103,14 +105,14 @@ export default function MatchScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader title="Match" showHelp />
+      <ScreenHeader title={t('match.title')} showHelp />
       <ScrollView contentContainerStyle={styles.scroll}>
         <View
           style={styles.formationSelector}
           collapsable={false}
           ref={node => registerTarget('match-formation', node)}
         >
-          <Text style={styles.sectionLabel}>Formation</Text>
+          <Text style={styles.sectionLabel}>{t('match.formation')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.formationRow}>
             {(Object.keys(FORMATIONS) as Formation[]).map(f => (
               <TouchableOpacity
@@ -128,12 +130,12 @@ export default function MatchScreen() {
         {!applied ? (
           <View collapsable={false} ref={node => registerTarget('match-apply', node)}>
             <TouchableOpacity style={styles.applyBtn} onPress={handleApplyFormation}>
-              <Text style={styles.applyBtnText}>Apply Formation</Text>
+              <Text style={styles.applyBtnText}>{t('match.applyFormation')}</Text>
             </TouchableOpacity>
           </View>
         ) : (
           <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
-            <Text style={styles.resetBtnText}>Reset</Text>
+            <Text style={styles.resetBtnText}>{t('match.reset')}</Text>
           </TouchableOpacity>
         )}
 
@@ -175,7 +177,7 @@ export default function MatchScreen() {
           <View style={styles.bench}>
             <View style={styles.benchHeader}>
               <Ionicons name="person-remove-outline" size={13} color={Colors.textSecondary} />
-              <Text style={styles.benchTitle}>BENCH</Text>
+              <Text style={styles.benchTitle}>{t('match.bench')}</Text>
               <Text style={styles.benchCount}>{benchPlayers.length}</Text>
             </View>
             {benchPlayers.map(player => (
@@ -188,7 +190,7 @@ export default function MatchScreen() {
                   <Text style={styles.benchName}>{player.name}</Text>
                   <Text style={styles.benchPos}>{player.preferredPosition ?? '?'}</Text>
                 </View>
-                <Text style={styles.benchAdd}>+ Add</Text>
+                <Text style={styles.benchAdd}>{t('match.addBtn')}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -217,17 +219,17 @@ export default function MatchScreen() {
               onPress={() => { clearSlot(slotActionIdx!); setSlotActionIdx(null); }}
             >
               <Ionicons name="close-circle-outline" size={16} color={Colors.error} />
-              <Text style={[styles.actionBtnText, { color: Colors.error }]}>Remove from lineup</Text>
+              <Text style={[styles.actionBtnText, { color: Colors.error }]}>{t('match.removeFromLineup')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.actionBtn}
               onPress={() => handleBench(slotActionIdx!)}
             >
               <Ionicons name="person-remove-outline" size={16} color={Colors.textSecondary} />
-              <Text style={styles.actionBtnText}>Send to bench</Text>
+              <Text style={styles.actionBtnText}>{t('match.sendToBench')}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.modalClose} onPress={() => setSlotActionIdx(null)}>
-              <Text style={styles.modalCloseText}>Cancel</Text>
+              <Text style={styles.modalCloseText}>{t('common.cancel')}</Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>
@@ -242,7 +244,7 @@ export default function MatchScreen() {
         <Pressable style={styles.modalBackdrop} onPress={() => setSelectingSlot(null)}>
           <Pressable style={styles.modalContent} onPress={e => e.stopPropagation()}>
             <Text style={styles.modalTitle}>
-              Select Player — {selectingSlot !== null ? slots[selectingSlot]?.position : ''}
+              {t('match.selectPlayerTitle', { position: selectingSlot !== null ? slots[selectingSlot]?.position : '' })}
             </Text>
             <FlatList
               data={availablePlayers}
@@ -263,11 +265,11 @@ export default function MatchScreen() {
                 );
               }}
               ListEmptyComponent={
-                <Text style={styles.emptyText}>No available players</Text>
+                <Text style={styles.emptyText}>{t('match.noAvailablePlayers')}</Text>
               }
             />
             <TouchableOpacity style={styles.modalClose} onPress={() => setSelectingSlot(null)}>
-              <Text style={styles.modalCloseText}>Cancel</Text>
+              <Text style={styles.modalCloseText}>{t('common.cancel')}</Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>

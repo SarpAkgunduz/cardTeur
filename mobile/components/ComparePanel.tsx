@@ -9,6 +9,7 @@ import {
   Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Colors, Spacing, FontSizes } from '../constants/theme';
 
 interface ComparePlayer {
@@ -35,6 +36,7 @@ const STAT_ROWS: Array<{ label: string; key: keyof ComparePlayer }> = [
 ];
 
 export default function ComparePanel({ visible, onClose, players, onRemovePlayer }: ComparePanelProps) {
+  const { t } = useTranslation();
   return (
     <Modal
       visible={visible}
@@ -45,7 +47,7 @@ export default function ComparePanel({ visible, onClose, players, onRemovePlayer
       <Pressable style={styles.backdrop} onPress={onClose}>
         <Pressable style={styles.panel} onPress={e => e.stopPropagation()}>
           <View style={styles.header}>
-            <Text style={styles.title}>Compare Players</Text>
+            <Text style={styles.title}>{t('roster.comparePanelTitle')}</Text>
             <TouchableOpacity onPress={onClose}>
               <Ionicons name="close" size={20} color={Colors.textSecondary} />
             </TouchableOpacity>
@@ -53,12 +55,12 @@ export default function ComparePanel({ visible, onClose, players, onRemovePlayer
 
           {players.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyText}>Select players on the roster to compare</Text>
+              <Text style={styles.emptyText}>{t('roster.compareEmpty')}</Text>
             </View>
           ) : (
             <ScrollView showsVerticalScrollIndicator={false}>
               <View style={styles.tableHeader}>
-                <Text style={[styles.thCell, styles.nameCol]}>Player</Text>
+                <Text style={[styles.thCell, styles.nameCol]}>{t('playerForm.nameField')}</Text>
                 {STAT_ROWS.map(s => (
                   <Text key={s.label} style={styles.thCell}>{s.label}</Text>
                 ))}

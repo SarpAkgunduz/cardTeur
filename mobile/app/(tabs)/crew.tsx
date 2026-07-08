@@ -9,6 +9,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTutorial } from '../../contexts/TutorialContext';
 import ScreenHeader from '../../components/ScreenHeader';
@@ -17,6 +18,7 @@ import { crewApi } from '../../services/api/crewApi';
 import type { Crew } from '../../services/api/types';
 
 export default function CrewScreen() {
+  const { t } = useTranslation();
   const { currentUser } = useAuth();
   const { registerTarget } = useTutorial();
   const [crews, setCrews] = useState<Crew[]>([]);
@@ -27,13 +29,13 @@ export default function CrewScreen() {
   useEffect(() => {
     crewApi.getAll()
       .then(setCrews)
-      .catch(() => setError('Failed to load crews.'))
+      .catch(() => setError(t('crew.loadFailed')))
       .finally(() => setLoading(false));
   }, []);
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader title="Crew" showHelp />
+      <ScreenHeader title={t('crew.title')} showHelp />
 
       {loading && (
         <View style={styles.center}>
@@ -52,7 +54,7 @@ export default function CrewScreen() {
         <ScrollView contentContainerStyle={styles.scroll}>
           {crews.length === 0 ? (
             <View style={styles.center}>
-              <Text style={styles.emptyText}>No crews yet</Text>
+              <Text style={styles.emptyText}>{t('crew.noCrews')}</Text>
             </View>
           ) : (
             crews.map(crew => (
@@ -64,7 +66,7 @@ export default function CrewScreen() {
                   <View style={styles.crewAccent} />
                   <View style={styles.crewInfo}>
                     <Text style={styles.crewName}>{crew.name}</Text>
-                    <Text style={styles.crewMeta}>{crew.players?.length ?? 0} players</Text>
+                    <Text style={styles.crewMeta}>{t('crew.playersCount', { count: crew.players?.length ?? 0 })}</Text>
                   </View>
                   <Text style={styles.chevron}>{expanded === crew._id ? '▲' : '▼'}</Text>
                 </TouchableOpacity>
@@ -84,7 +86,7 @@ export default function CrewScreen() {
                         </View>
                         {player.linkedUserId && (
                           <View style={styles.linkedBadge}>
-                            <Text style={styles.linkedBadgeText}>Linked</Text>
+                            <Text style={styles.linkedBadgeText}>{t('crew.linked')}</Text>
                           </View>
                         )}
                       </View>

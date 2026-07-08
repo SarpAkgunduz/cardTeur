@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 import './LoginPage.css';
@@ -11,12 +12,13 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { signIn } = useAuth();
+  const { t } = useTranslation();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!email || !password) {
-      setError('Please fill in all fields.');
+      setError(t('auth.fillFields', { fields: [t('common.email'), t('common.password')].join(', ') }));
       return;
     }
 
@@ -26,7 +28,7 @@ const LoginPage = () => {
       await signIn(email, password);
       // PublicRoute handles redirect once Firebase auth state propagates to context
     } catch {
-      setError('Invalid email or password.');
+      setError(t('auth.loginFailed'));
     } finally {
       setIsSubmitting(false);
     }
@@ -35,12 +37,12 @@ const LoginPage = () => {
   return (
     <div className="ct-login-wrap">
       <div className="ct-login-box">
-        <div className="ct-login-title">Commander's <span>Console</span></div>
-        <p className="ct-login-sub">Authenticate to proceed</p>
+        <div className="ct-login-title"><Trans i18nKey="auth.loginTitle" components={{ accent: <span /> }} /></div>
+        <p className="ct-login-sub">{t('auth.loginSub')}</p>
         <form onSubmit={handleLogin}>
           {error && <div className="ct-login-error">{error}</div>}
           <div className="ct-login-field">
-            <label className="ct-login-label">Email</label>
+            <label className="ct-login-label">{t('common.email')}</label>
             <input
               type="email"
               className="ct-login-input"
@@ -50,7 +52,7 @@ const LoginPage = () => {
             />
           </div>
           <div className="ct-login-field">
-            <label className="ct-login-label">Password</label>
+            <label className="ct-login-label">{t('common.password')}</label>
             <input
               type="password"
               className="ct-login-input"
@@ -60,14 +62,14 @@ const LoginPage = () => {
             />
           </div>
           <button className="ct-login-btn" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Logging in...' : 'Login'}
+            {isSubmitting ? t('auth.loggingIn') : t('auth.loginBtn')}
           </button>
         </form>
-        <div className="ct-google-divider"><span>or</span></div>
+        <div className="ct-google-divider"><span>{t('common.or')}</span></div>
         <GoogleSignInButton />
         <p className="ct-login-signup-link">
-          Don't have an account?{' '}
-          <span onClick={() => navigate(`/signup${searchParams.get('redirect') ? `?redirect=${encodeURIComponent(searchParams.get('redirect')!)}` : ''}`)}>Sign Up</span>
+          {t('auth.noAccount')}{' '}
+          <span onClick={() => navigate(`/signup${searchParams.get('redirect') ? `?redirect=${encodeURIComponent(searchParams.get('redirect')!)}` : ''}`)}>{t('nav.signup')}</span>
         </p>
       </div>
     </div>

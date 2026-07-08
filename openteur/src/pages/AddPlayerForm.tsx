@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import BackButton from '../components/BackButton';
 import ToastNotification from '../components/ToastNotification';
 import StatGrid from '../components/StatGrid';
@@ -7,6 +8,7 @@ import { usePlayerDisplay } from '../hooks/usePlayerDisplay';
 import './AddPlayerForm.css';
 
 const AddPlayerForm = () => {
+  const { t } = useTranslation();
   const {
     isEditMode,
     name, setName,
@@ -66,7 +68,7 @@ const AddPlayerForm = () => {
           </div>
 
           <h2 className="page-title" style={{ marginBottom: '30px' }}>
-            {isEditMode ? 'Edit Player' : 'Add Player'}
+            {isEditMode ? t('playerForm.editTitle') : t('playerForm.createTitle')}
           </h2>
 
           <form onSubmit={handleSubmit}>
@@ -75,44 +77,44 @@ const AddPlayerForm = () => {
             <div className="form-section">
               <div className="form-section-header">
                 <i className="bi bi-person-badge-fill"></i>
-                <span>Player Identity</span>
+                <span>{t('playerForm.identity')}</span>
               </div>
               <div className="identity-grid">
                 <div className="stat-field">
-                  <label htmlFor="name">Player Name</label>
+                  <label htmlFor="name">{t('playerForm.playerName')}</label>
                   <input
                     id="name"
                     className="form-control-dark"
-                    placeholder="Full name"
+                    placeholder={t('playerForm.playerNamePh')}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
                 </div>
                 <div className="stat-field">
-                  <label htmlFor="jerseyNumber">Jersey Number</label>
+                  <label htmlFor="jerseyNumber">{t('playerForm.jerseyNumber')}</label>
                   <input
                     id="jerseyNumber"
                     className="form-control-dark"
-                    placeholder="e.g. 10"
+                    placeholder={t('playerForm.jerseyPh')}
                     type="number"
                     value={jerseyNumber}
                     onChange={(e) => setJerseyNumber(e.target.value)}
                   />
                 </div>
                 <div className="stat-field">
-                  <label htmlFor="marketValue">Market Value</label>
+                  <label htmlFor="marketValue">{t('playerForm.marketValue')}</label>
                   <input
                     id="marketValue"
                     type="number"
                     min={0}
                     className="form-control-dark"
-                    placeholder="e.g. 5000000"
+                    placeholder={t('playerForm.marketValuePh')}
                     value={marketValue}
                     onChange={(e) => setMarketValue(e.target.value)}
                   />
                 </div>
                 <div className="stat-field">
-                  <label htmlFor="preferredPosition">Preferred Position</label>
+                  <label htmlFor="preferredPosition">{t('playerForm.preferredPosition')}</label>
                   <select
                     id="preferredPosition"
                     className="form-select-dark"
@@ -138,7 +140,7 @@ const AddPlayerForm = () => {
                   </select>
                 </div>
                 <div className="stat-field full-width">
-                  <label>Link to User</label>
+                  <label>{t('playerForm.linkToUser')}</label>
                   <div className="user-picker-grid">
                     {userOptions.map((u) => {
                       const isLinked = linkedUserId === u.uid;
@@ -172,7 +174,7 @@ const AddPlayerForm = () => {
                 </div>
 
                 <div className="stat-field full-width">
-                  <label>Player Photo {linkedUserId && <span className="photo-linked-note">(managed from linked account)</span>}</label>
+                  <label>{t('playerForm.photo')} {linkedUserId && <span className="photo-linked-note">(managed from linked account)</span>}</label>
                   <div className={`photo-selector ${isLinkedToUser ? 'photo-selector--locked' : ''}`}>
                     <div className="photo-selector__preview">
                       {isLinkedToUser && linkedUserPhoto ? (
@@ -207,7 +209,7 @@ const AddPlayerForm = () => {
                             className="photo-selector__btn"
                             onClick={openPhotoModal}
                           >
-                            <i className="bi bi-images" /> Choose Photo
+                            <i className="bi bi-images" /> {t('playerForm.choosePhoto')}
                           </button>
                           {cardImage && (
                             <button
@@ -244,14 +246,14 @@ const AddPlayerForm = () => {
                   className={`stat-tab ${activeStatTab === 'offensive' ? 'active' : ''}`}
                   onClick={() => setActiveStatTab('offensive')}
                 >
-                  <i className="bi bi-lightning-fill me-1"></i>Offensive
+                  <i className="bi bi-lightning-fill me-1"></i>{t('playerForm.offensive')}
                 </button>
                 <button
                   type="button"
                   className={`stat-tab ${activeStatTab === 'defensive' ? 'active' : ''}`}
                   onClick={() => setActiveStatTab('defensive')}
                 >
-                  <i className="bi bi-shield-fill me-1"></i>Defensive &amp; Athleticism
+                  <i className="bi bi-shield-fill me-1"></i>{t('playerForm.defensive')} &amp; {t('playerForm.athleticism')}
                 </button>
               </div>
 
@@ -268,9 +270,9 @@ const AddPlayerForm = () => {
               {/* Defensive & Athleticism tab */}
               {activeStatTab === 'defensive' && (
                 <>
-                  <p className="stat-subheader" style={{ marginTop: 16 }}>Defensive</p>
+                  <p className="stat-subheader" style={{ marginTop: 16 }}>{t('playerForm.defensive')}</p>
                   <StatGrid fields={defensiveFields} />
-                  <p className="stat-subheader" style={{ marginTop: 24 }}>Athleticism</p>
+                  <p className="stat-subheader" style={{ marginTop: 24 }}>{t('playerForm.athleticism')}</p>
                   <StatGrid fields={athleticismFields} />
                 </>
               )}
@@ -280,32 +282,32 @@ const AddPlayerForm = () => {
             <div className="form-section">
               <div className="form-section-header">
                 <i className="bi bi-clipboard-check-fill"></i>
-                <span>Summary</span>
+                <span>{t('playerForm.summary')}</span>
               </div>
 
               <div className="overall-badges-row">
                 {preferredPosition === 'GK' ? (
                   <div className="overall-badge">
-                    <span className="badge-title">Goalkeeper</span>
+                    <span className="badge-title">{t('playerForm.goalkeeper')}</span>
                     <span className="badge-value">{gkOverall}</span>
-                    <span className="badge-label">OVR</span>
+                    <span className="badge-label">{t('playerForm.ovr')}</span>
                   </div>
                 ) : (
                   <>
                     <div className="overall-badge">
-                      <span className="badge-title">Offensive</span>
+                      <span className="badge-title">{t('playerForm.offensive')}</span>
                       <span className="badge-value">{offensiveOverall}</span>
-                      <span className="badge-label">OVR</span>
+                      <span className="badge-label">{t('playerForm.ovr')}</span>
                     </div>
                     <div className="overall-badge">
-                      <span className="badge-title">Defensive</span>
+                      <span className="badge-title">{t('playerForm.defensive')}</span>
                       <span className="badge-value">{defensiveOverall}</span>
-                      <span className="badge-label">OVR</span>
+                      <span className="badge-label">{t('playerForm.ovr')}</span>
                     </div>
                     <div className="overall-badge">
-                      <span className="badge-title">Athleticism</span>
+                      <span className="badge-title">{t('playerForm.athleticism')}</span>
                       <span className="badge-value">{athleticismOverall}</span>
-                      <span className="badge-label">OVR</span>
+                      <span className="badge-label">{t('playerForm.ovr')}</span>
                     </div>
                   </>
                 )}
@@ -320,7 +322,7 @@ const AddPlayerForm = () => {
               <div className="form-submit-row">
                 <button type="submit" className="btn btn-ct">
                   <i className={`bi ${isEditMode ? 'bi-pencil-fill' : 'bi-person-plus-fill'} me-2`}></i>
-                  {isEditMode ? 'Update Player' : 'Add Player'}
+                  {isEditMode ? t('players.editPlayer') : t('players.addPlayer')}
                 </button>
               </div>
             </div>
@@ -335,8 +337,8 @@ const AddPlayerForm = () => {
           <div className="photo-modal__panel">
             <div className="photo-modal__header">
               <div>
-                <div className="photo-modal__eyebrow">Player Photo</div>
-                <h3 className="photo-modal__title">Choose From Gallery</h3>
+                <div className="photo-modal__eyebrow">{t('playerForm.photo')}</div>
+                <h3 className="photo-modal__title">{t('playerForm.choosePhoto')}</h3>
               </div>
               <button className="photo-modal__close" type="button" onClick={closePhotoModal} aria-label="Close">
                 <i className="bi bi-x-lg" />
@@ -380,7 +382,7 @@ const AddPlayerForm = () => {
 
             <div className="photo-modal__footer">
               <button type="button" className="photo-modal__btn photo-modal__btn--ghost" onClick={closePhotoModal}>
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 type="button"

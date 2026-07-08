@@ -8,6 +8,7 @@ import {
   SafeAreaView,
   Image,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { usePlayers } from '../../contexts/PlayerContext';
 import { useTutorial } from '../../contexts/TutorialContext';
 import ScreenHeader from '../../components/ScreenHeader';
@@ -24,11 +25,11 @@ const positionGroup = (pos: string): string => {
 };
 
 const GROUP_ORDER = ['GK', 'DEF', 'MID', 'ATT'];
-const GROUP_LABELS: Record<string, string> = {
-  GK: 'Goalkeepers',
-  DEF: 'Defenders',
-  MID: 'Midfielders',
-  ATT: 'Attackers',
+const GROUP_LABEL_KEYS: Record<string, string> = {
+  GK: 'preview.goalkeepers',
+  DEF: 'preview.defenders',
+  MID: 'preview.midfielders',
+  ATT: 'preview.attackers',
 };
 
 const tierColor = (tier: string) => {
@@ -82,6 +83,7 @@ function PlayerRow({ player }: { player: Player }) {
 }
 
 export default function PreviewScreen() {
+  const { t } = useTranslation();
   const { players, loading, error } = usePlayers();
   const { registerTarget } = useTutorial();
 
@@ -94,7 +96,7 @@ export default function PreviewScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader title="Preview" showHelp />
+      <ScreenHeader title={t('preview.title')} showHelp />
 
       {loading && (
         <View style={styles.center}>
@@ -111,7 +113,7 @@ export default function PreviewScreen() {
       {!loading && !error && (
         <View style={{ flex: 1 }} collapsable={false} ref={node => registerTarget('preview-list', node)}>
         <ScrollView contentContainerStyle={styles.scroll}>
-          <Text style={styles.totalCount}>{players.length} PLAYERS IN ROSTER</Text>
+          <Text style={styles.totalCount}>{t('preview.totalPlayers', { count: players.length })}</Text>
           {GROUP_ORDER.map((group) => {
             const groupPlayers = grouped[group];
             if (groupPlayers.length === 0) return null;
@@ -119,7 +121,7 @@ export default function PreviewScreen() {
               <View key={group} style={styles.section}>
                 <View style={styles.sectionHeader}>
                   <View style={styles.sectionAccentBar} />
-                  <Text style={styles.sectionTitle}>{GROUP_LABELS[group]}</Text>
+                  <Text style={styles.sectionTitle}>{t(GROUP_LABEL_KEYS[group])}</Text>
                   <Text style={styles.sectionCount}>{groupPlayers.length}</Text>
                 </View>
                 {groupPlayers.map(p => <PlayerRow key={p._id} player={p} />)}

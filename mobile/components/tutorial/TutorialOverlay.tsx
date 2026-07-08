@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { Colors, FontSizes, Spacing } from '../../constants/theme';
 import { useTutorial } from '../../contexts/TutorialContext';
 import { TUTORIAL_STEPS } from './tutorialSteps';
@@ -29,6 +30,7 @@ const FIND_MAX_TRIES = 16;
 const DIM_COLOR = 'rgba(8, 15, 26, 0.85)';
 
 export default function TutorialOverlay() {
+  const { t } = useTranslation();
   const { active, stepIndex, totalSteps, closeTutorial, nextStep, prevStep, getTarget } =
     useTutorial();
   const router = useRouter();
@@ -197,20 +199,20 @@ export default function TutorialOverlay() {
         <Text style={styles.progress}>
           {stepIndex + 1} / {totalSteps}
         </Text>
-        <Text style={styles.title}>{step.title}</Text>
-        <Text style={styles.text}>{step.text}</Text>
+        <Text style={styles.title}>{t(step.titleKey)}</Text>
+        <Text style={styles.text}>{t(step.textKey)}</Text>
         <View style={styles.actions}>
           <TouchableOpacity onPress={closeTutorial}>
-            <Text style={styles.skip}>Skip tour</Text>
+            <Text style={styles.skip}>{t('tutorial.skip')}</Text>
           </TouchableOpacity>
           <View style={styles.navBtns}>
             {stepIndex > 0 && (
               <TouchableOpacity style={styles.btn} onPress={prevStep}>
-                <Text style={styles.btnText}>Back</Text>
+                <Text style={styles.btnText}>{t('tutorial.back')}</Text>
               </TouchableOpacity>
             )}
             <TouchableOpacity style={[styles.btn, styles.btnNext]} onPress={nextStep}>
-              <Text style={styles.btnText}>{isLast ? 'Finish' : 'Next'}</Text>
+              <Text style={styles.btnText}>{isLast ? t('tutorial.finish') : t('tutorial.next')}</Text>
               {!isLast && <Ionicons name="arrow-forward" size={13} color={Colors.accent} />}
             </TouchableOpacity>
           </View>

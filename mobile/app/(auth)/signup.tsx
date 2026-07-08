@@ -11,12 +11,14 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTutorial } from '../../contexts/TutorialContext';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { useGoogleSignIn } from '../../hooks/useGoogleSignIn';
 
 export default function SignupScreen() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -32,15 +34,15 @@ export default function SignupScreen() {
 
   const handleSignup = async () => {
     if (!email.trim() || !password.trim() || !confirm.trim()) {
-      setError('Please fill in all fields.');
+      setError(t('auth.fillAllFields'));
       return;
     }
     if (password !== confirm) {
-      setError('Passwords do not match.');
+      setError(t('auth.passwordMismatch'));
       return;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
+      setError(t('auth.passwordTooShort'));
       return;
     }
     setSubmitting(true);
@@ -51,9 +53,9 @@ export default function SignupScreen() {
       router.replace('/(tabs)/roster');
     } catch (err: any) {
       if (err?.code === 'auth/email-already-in-use') {
-        setError('Email already in use.');
+        setError(t('auth.emailInUse'));
       } else {
-        setError('Failed to create account. Please try again.');
+        setError(t('auth.signupFailed'));
       }
     } finally {
       setSubmitting(false);
@@ -65,10 +67,8 @@ export default function SignupScreen() {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.box}>
-            <Text style={styles.title}>
-              Create <Text style={styles.titleAccent}>Account</Text>
-            </Text>
-            <Text style={styles.subtitle}>Join the CardTeur roster</Text>
+            <Text style={styles.title}>{t('auth.signupTitle')}</Text>
+            <Text style={styles.subtitle}>{t('auth.signupSubtitle')}</Text>
 
             {(error || google.error) ? (
               <View style={styles.errorBox}>
@@ -77,7 +77,7 @@ export default function SignupScreen() {
             ) : null}
 
             <View style={styles.field}>
-              <Text style={styles.label}>Email</Text>
+              <Text style={styles.label}>{t('common.email')}</Text>
               <TextInput
                 style={styles.input}
                 value={email}
@@ -91,7 +91,7 @@ export default function SignupScreen() {
             </View>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Password</Text>
+              <Text style={styles.label}>{t('common.password')}</Text>
               <TextInput
                 style={styles.input}
                 value={password}
@@ -103,7 +103,7 @@ export default function SignupScreen() {
             </View>
 
             <View style={styles.field}>
-              <Text style={styles.label}>Confirm Password</Text>
+              <Text style={styles.label}>{t('auth.confirmPassword')}</Text>
               <TextInput
                 style={styles.input}
                 value={confirm}
@@ -122,13 +122,13 @@ export default function SignupScreen() {
             >
               {submitting
                 ? <ActivityIndicator color={Colors.background} />
-                : <Text style={styles.btnText}>CREATE ACCOUNT</Text>
+                : <Text style={styles.btnText}>{t('auth.signupBtn')}</Text>
               }
             </TouchableOpacity>
 
             <View style={styles.divider}>
               <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>or</Text>
+              <Text style={styles.dividerText}>{t('common.or')}</Text>
               <View style={styles.dividerLine} />
             </View>
 
@@ -140,13 +140,13 @@ export default function SignupScreen() {
             >
               {google.loading
                 ? <ActivityIndicator color={Colors.textPrimary} />
-                : <Text style={styles.googleBtnText}>Continue with Google</Text>
+                : <Text style={styles.googleBtnText}>{t('auth.googleBtn')}</Text>
               }
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.loginLink} onPress={() => router.back()}>
               <Text style={styles.loginText}>
-                Already have an account? <Text style={styles.loginAccent}>Login</Text>
+                {t('auth.haveAccount')} <Text style={styles.loginAccent}>{t('auth.loginLink')}</Text>
               </Text>
             </TouchableOpacity>
           </View>

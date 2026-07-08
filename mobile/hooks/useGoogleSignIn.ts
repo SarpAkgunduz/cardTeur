@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
 import { GoogleAuthProvider, signInWithCredential, getAdditionalUserInfo } from 'firebase/auth';
+import { useTranslation } from 'react-i18next';
 import { auth } from '../firebase';
 import { apiRequest } from '../services/api/apiClient';
 
 WebBrowser.maybeCompleteAuthSession();
 
 export function useGoogleSignIn(onSuccess?: (isNewUser: boolean) => void) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -21,7 +23,7 @@ export function useGoogleSignIn(onSuccess?: (isNewUser: boolean) => void) {
     if (response.type === 'success') {
       const idToken = response.params?.id_token ?? (response as any).authentication?.idToken;
       if (!idToken) {
-        setError('Google sign-in failed. Please try again.');
+        setError(t('auth.googleFailed'));
         setLoading(false);
         return;
       }
@@ -46,7 +48,7 @@ export function useGoogleSignIn(onSuccess?: (isNewUser: boolean) => void) {
       });
       onSuccess?.(isNewUser);
     } catch {
-      setError('Google sign-in failed. Please try again.');
+      setError(t('auth.googleFailed'));
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useTutorial } from '../contexts/TutorialContext';
 import { apiRequest } from '../services/api/apiClient';
@@ -10,6 +11,7 @@ const GoogleSignInButton: React.FC = () => {
   const [error, setError] = useState('');
   const { signInWithGoogle } = useAuth();
   const { startTutorial } = useTutorial();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
@@ -46,7 +48,7 @@ const GoogleSignInButton: React.FC = () => {
       if (err?.code === 'auth/popup-closed-by-user') {
         // User closed the popup — no error shown
       } else {
-        setError('Google sign-in failed. Please try again.');
+        setError(t('auth.googleFailed'));
       }
     } finally {
       setIsLoading(false);
@@ -70,7 +72,7 @@ const GoogleSignInButton: React.FC = () => {
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
         )}
-        {isLoading ? 'Signing in...' : 'Continue with Google'}
+        {isLoading ? t('auth.googleLoading') : t('auth.googleBtn')}
       </button>
     </div>
   );

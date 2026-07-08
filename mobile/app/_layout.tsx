@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, ActivityIndicator } from 'react-native';
@@ -7,6 +7,7 @@ import { PlayerProvider } from '../contexts/PlayerContext';
 import { TutorialProvider } from '../contexts/TutorialContext';
 import TutorialOverlay from '../components/tutorial/TutorialOverlay';
 import { Colors } from '../constants/theme';
+import { initI18n } from '../i18n';
 
 function RootNavigator() {
   const { currentUser, loading } = useAuth();
@@ -44,6 +45,20 @@ function RootNavigator() {
 }
 
 export default function RootLayout() {
+  const [i18nReady, setI18nReady] = useState(false);
+
+  useEffect(() => {
+    initI18n().then(() => setI18nReady(true));
+  }, []);
+
+  if (!i18nReady) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.background }}>
+        <ActivityIndicator size="large" color={Colors.accent} />
+      </View>
+    );
+  }
+
   return (
     <AuthProvider>
       <PlayerProvider>

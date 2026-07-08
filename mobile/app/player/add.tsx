@@ -12,6 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { usePlayers } from '../../contexts/PlayerContext';
 import ScreenHeader from '../../components/ScreenHeader';
 import Toast from '../../components/Toast';
@@ -32,6 +33,7 @@ const DEFAULT_STATS = {
 };
 
 export default function AddPlayerScreen() {
+  const { t } = useTranslation();
   const { createPlayer } = usePlayers();
   const router = useRouter();
 
@@ -66,11 +68,11 @@ export default function AddPlayerScreen() {
 
   const handleSubmit = async () => {
     const missing: string[] = [];
-    if (!name.trim()) missing.push('Name');
-    if (!preferredPosition) missing.push('Position');
-    if (!jerseyNumber) missing.push('Jersey Number');
+    if (!name.trim()) missing.push(t('playerForm.nameField'));
+    if (!preferredPosition) missing.push(t('playerForm.positionField'));
+    if (!jerseyNumber) missing.push(t('playerForm.jerseyField'));
     if (missing.length > 0) {
-      setToast({ visible: true, message: `Please fill: ${missing.join(', ')}`, variant: 'error' });
+      setToast({ visible: true, message: t('playerForm.fillRequired', { fields: missing.join(', ') }), variant: 'error' });
       return;
     }
 
@@ -86,10 +88,10 @@ export default function AddPlayerScreen() {
         offensiveOverall, defensiveOverall, athleticismOverall, gkOverall,
         ...stats,
       });
-      setToast({ visible: true, message: 'Player added!', variant: 'success' });
+      setToast({ visible: true, message: t('playerForm.addedToast'), variant: 'success' });
       setTimeout(() => router.back(), 1200);
     } catch {
-      setToast({ visible: true, message: 'Failed to add player.', variant: 'error' });
+      setToast({ visible: true, message: t('playerForm.addFailedToast'), variant: 'error' });
     } finally {
       setSubmitting(false);
     }
@@ -119,25 +121,25 @@ export default function AddPlayerScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader title="Add Player" showBack />
+      <ScreenHeader title={t('playerForm.addTitle')} showBack />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Player Identity</Text>
+            <Text style={styles.sectionTitle}>{t('playerForm.identity')}</Text>
 
-            <Text style={styles.label}>Player Name *</Text>
+            <Text style={styles.label}>{t('playerForm.playerName')}</Text>
             <TextInput
               style={styles.input}
               value={name}
               onChangeText={setName}
-              placeholder="Full name"
+              placeholder={t('playerForm.playerNamePh')}
               placeholderTextColor={Colors.textMuted}
             />
 
             <View style={styles.row}>
               <View style={styles.halfField}>
-                <Text style={styles.label}>Jersey No. *</Text>
+                <Text style={styles.label}>{t('playerForm.jerseyNumber')}</Text>
                 <TextInput
                   style={styles.input}
                   value={jerseyNumber}
@@ -149,7 +151,7 @@ export default function AddPlayerScreen() {
                 />
               </View>
               <View style={styles.halfField}>
-                <Text style={styles.label}>Market Value</Text>
+                <Text style={styles.label}>{t('playerForm.marketValue')}</Text>
                 <TextInput
                   style={styles.input}
                   value={marketValue}
@@ -161,7 +163,7 @@ export default function AddPlayerScreen() {
               </View>
             </View>
 
-            <Text style={styles.label}>Position *</Text>
+            <Text style={styles.label}>{t('playerForm.position')}</Text>
             <View style={styles.positionGrid}>
               {POSITIONS.map(pos => (
                 <TouchableOpacity
@@ -179,66 +181,66 @@ export default function AddPlayerScreen() {
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Stats</Text>
+            <Text style={styles.sectionTitle}>{t('playerForm.stats')}</Text>
 
             <View style={styles.tabRow}>
               {isGK && (
                 <TouchableOpacity style={[styles.tab, activeTab === 'gk' && styles.tabActive]} onPress={() => setActiveTab('gk')}>
-                  <Text style={[styles.tabText, activeTab === 'gk' && styles.tabTextActive]}>GK</Text>
+                  <Text style={[styles.tabText, activeTab === 'gk' && styles.tabTextActive]}>{t('playerForm.gkTab')}</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={[styles.tab, activeTab === 'offensive' && styles.tabActive]} onPress={() => setActiveTab('offensive')}>
-                <Text style={[styles.tabText, activeTab === 'offensive' && styles.tabTextActive]}>Offensive</Text>
+                <Text style={[styles.tabText, activeTab === 'offensive' && styles.tabTextActive]}>{t('playerForm.offensiveTab')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.tab, activeTab === 'defensive' && styles.tabActive]} onPress={() => setActiveTab('defensive')}>
-                <Text style={[styles.tabText, activeTab === 'defensive' && styles.tabTextActive]}>Def + Ath</Text>
+                <Text style={[styles.tabText, activeTab === 'defensive' && styles.tabTextActive]}>{t('playerForm.defensiveTab')}</Text>
               </TouchableOpacity>
             </View>
 
             {activeTab === 'gk' && isGK && (
               <View style={styles.statsGrid}>
-                <StatField label="Diving" statKey="diving" />
-                <StatField label="Handling" statKey="handling" />
-                <StatField label="Kicking" statKey="kicking" />
-                <StatField label="Reflexes" statKey="reflexes" />
-                <StatField label="GK Positioning" statKey="gkPositioning" />
-                <StatField label="GK Speed" statKey="gkSpeed" />
+                <StatField label={t('stats.diving')} statKey="diving" />
+                <StatField label={t('stats.handling')} statKey="handling" />
+                <StatField label={t('stats.kicking')} statKey="kicking" />
+                <StatField label={t('stats.reflexes')} statKey="reflexes" />
+                <StatField label={t('stats.gkPositioning')} statKey="gkPositioning" />
+                <StatField label={t('stats.gkSpeed')} statKey="gkSpeed" />
               </View>
             )}
 
             {activeTab === 'offensive' && (
               <View style={styles.statsGrid}>
-                <StatField label="Dribbling" statKey="dribbling" />
-                <StatField label="Shot Accuracy" statKey="shotAccuracy" />
-                <StatField label="Shot Speed" statKey="shotSpeed" />
-                <StatField label="Headers" statKey="headers" />
-                <StatField label="Long Pass" statKey="longPass" />
-                <StatField label="Short Pass" statKey="shortPass" />
-                <StatField label="Ball Control" statKey="ballControl" />
-                <StatField label="Positioning" statKey="positioning" />
-                <StatField label="Vision" statKey="vision" />
+                <StatField label={t('stats.dribbling')} statKey="dribbling" />
+                <StatField label={t('stats.shotAccuracy')} statKey="shotAccuracy" />
+                <StatField label={t('stats.shotSpeed')} statKey="shotSpeed" />
+                <StatField label={t('stats.headers')} statKey="headers" />
+                <StatField label={t('stats.longPass')} statKey="longPass" />
+                <StatField label={t('stats.shortPass')} statKey="shortPass" />
+                <StatField label={t('stats.ballControl')} statKey="ballControl" />
+                <StatField label={t('stats.positioning')} statKey="positioning" />
+                <StatField label={t('stats.vision')} statKey="vision" />
               </View>
             )}
 
             {activeTab === 'defensive' && (
               <View style={styles.statsGrid}>
-                <StatField label="Tackling" statKey="tackling" />
-                <StatField label="Interceptions" statKey="interceptions" />
-                <StatField label="Marking" statKey="marking" />
-                <StatField label="Defensive IQ" statKey="defensiveIQ" />
-                <StatField label="Speed" statKey="speed" />
-                <StatField label="Strength" statKey="strength" />
-                <StatField label="Stamina" statKey="stamina" />
+                <StatField label={t('stats.tackling')} statKey="tackling" />
+                <StatField label={t('stats.interceptions')} statKey="interceptions" />
+                <StatField label={t('stats.marking')} statKey="marking" />
+                <StatField label={t('stats.defensiveIQ')} statKey="defensiveIQ" />
+                <StatField label={t('stats.speed')} statKey="speed" />
+                <StatField label={t('stats.strength')} statKey="strength" />
+                <StatField label={t('stats.stamina')} statKey="stamina" />
               </View>
             )}
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Summary</Text>
+            <Text style={styles.sectionTitle}>{t('playerForm.summary')}</Text>
             <View style={styles.overallRow}>
               {isGK ? (
                 <View style={styles.overallBadge}>
-                  <Text style={styles.overallLabel}>GK</Text>
+                  <Text style={styles.overallLabel}>{t('playerForm.gkTab')}</Text>
                   <Text style={styles.overallValue}>{gkOverall}</Text>
                 </View>
               ) : (
@@ -259,11 +261,11 @@ export default function AddPlayerScreen() {
               )}
             </View>
             <View style={styles.cardTierRow}>
-              <Text style={styles.cardTierLabel}>Card Tier:</Text>
+              <Text style={styles.cardTierLabel}>{t('playerForm.cardTier')}</Text>
               <Text style={[styles.cardTierValue, { color: getCardTitle() === 'gold' ? Colors.cardGold : getCardTitle() === 'silver' ? Colors.cardSilver : Colors.cardBronze }]}>
                 {getCardTitle().toUpperCase()}
               </Text>
-              <Text style={styles.overallTotalText}>OVR {overallRating}</Text>
+              <Text style={styles.overallTotalText}>{t('playerForm.ovr')} {overallRating}</Text>
             </View>
 
             <TouchableOpacity
@@ -273,7 +275,7 @@ export default function AddPlayerScreen() {
             >
               {submitting
                 ? <ActivityIndicator color={Colors.background} />
-                : <Text style={styles.submitBtnText}>Add Player</Text>
+                : <Text style={styles.submitBtnText}>{t('playerForm.addBtn')}</Text>
               }
             </TouchableOpacity>
           </View>

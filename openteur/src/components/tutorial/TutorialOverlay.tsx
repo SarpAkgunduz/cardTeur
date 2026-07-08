@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useTutorial } from '../../contexts/TutorialContext';
 import { TUTORIAL_STEPS } from './tutorialSteps';
 import './TutorialOverlay.css';
@@ -20,6 +21,7 @@ const FIND_MAX_TRIES = 25;
 
 const TutorialOverlay = () => {
   const { active, stepIndex, totalSteps, closeTutorial, nextStep, prevStep } = useTutorial();
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [rect, setRect] = useState<SpotlightRect | null>(null);
@@ -152,27 +154,27 @@ const TutorialOverlay = () => {
         <button
           className="ct-tutorial__close"
           onClick={closeTutorial}
-          aria-label="Close tutorial"
+          aria-label={t('common.close')}
         >
           <i className="bi bi-x-lg" />
         </button>
         <span className="ct-tutorial__progress">
           {stepIndex + 1} / {totalSteps}
         </span>
-        <h3 className="ct-tutorial__title">{step.title}</h3>
-        <p className="ct-tutorial__text">{step.text}</p>
+        <h3 className="ct-tutorial__title">{t(step.titleKey)}</h3>
+        <p className="ct-tutorial__text">{t(step.textKey)}</p>
         <div className="ct-tutorial__actions">
           <button className="ct-tutorial__skip" onClick={closeTutorial}>
-            Skip tour
+            {t('tutorial.skip')}
           </button>
           <div className="ct-tutorial__nav-btns">
             {stepIndex > 0 && (
               <button className="btn-ct ct-tutorial__btn" onClick={prevStep}>
-                Back
+                {t('common.back')}
               </button>
             )}
             <button className="btn-ct ct-tutorial__btn ct-tutorial__btn--next" onClick={nextStep}>
-              {isLast ? 'Finish' : 'Next'}
+              {isLast ? t('common.finish') : t('common.next')}
               {!isLast && <i className="bi bi-arrow-right ct-tutorial__btn-icon" />}
             </button>
           </div>

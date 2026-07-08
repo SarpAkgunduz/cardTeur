@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiRequest } from '../services/api/apiClient';
 import { useAuth } from '../contexts/AuthContext';
 import ToastNotification from '../components/ToastNotification';
@@ -19,6 +20,7 @@ interface FriendRequestsResponse {
 }
 
 const FriendsPage = () => {
+  const { t } = useTranslation();
   const { currentUser } = useAuth();
   const inviteLink = `${window.location.origin}/invite/${currentUser?.uid}`;
 
@@ -200,7 +202,7 @@ const FriendsPage = () => {
         <div className="back-button-container">
           <BackButton position="static" />
         </div>
-        <h2 className="page-title friends-page__title">Friends</h2>
+        <h2 className="page-title friends-page__title">{t('friends.title')}</h2>
         <span className="friends-page__count">{friends.length} friends</span>
       </div>
 
@@ -211,11 +213,11 @@ const FriendsPage = () => {
         </div>
         <div className="friends-page__invite-row">
           <span className="friends-page__invite-url">{inviteLink}</span>
-          <button className="friends-page__invite-btn" onClick={handleCopyLink} title="Copy link">
+          <button className="friends-page__invite-btn" onClick={handleCopyLink} title={t('friends.copyLink')}>
             <i className={`bi ${copied ? 'bi-check-lg' : 'bi-clipboard'}`} />
             {copied ? 'Copied!' : 'Copy'}
           </button>
-          <button className="friends-page__invite-btn friends-page__invite-btn--whatsapp" onClick={handleShareWhatsApp} title="Share on WhatsApp">
+          <button className="friends-page__invite-btn friends-page__invite-btn--whatsapp" onClick={handleShareWhatsApp} title={t('friends.shareWhatsApp')}>
             <i className="bi bi-whatsapp" /> WhatsApp
           </button>
         </div>
@@ -227,20 +229,20 @@ const FriendsPage = () => {
           className={`friends-page__tab ${activeTab === 'friends' ? 'friends-page__tab--active' : ''}`}
           onClick={() => setActiveTab('friends')}
         >
-          <i className="bi bi-people-fill" /> My Friends
+          <i className="bi bi-people-fill" /> {t('friends.myFriends')}
         </button>
         <button
           className={`friends-page__tab ${activeTab === 'requests' ? 'friends-page__tab--active' : ''}`}
           onClick={() => setActiveTab('requests')}
         >
-          <i className="bi bi-inbox-fill" /> Requests
+          <i className="bi bi-inbox-fill" /> {t('friends.requests')}
           {incomingRequests.length > 0 && <span className="friends-page__tab-badge">{incomingRequests.length}</span>}
         </button>
         <button
           className={`friends-page__tab ${activeTab === 'add' ? 'friends-page__tab--active' : ''}`}
           onClick={() => setActiveTab('add')}
         >
-          <i className="bi bi-person-plus-fill" /> Add Friend
+          <i className="bi bi-person-plus-fill" /> {t('friends.addFriend')}
         </button>
       </div>
 
@@ -252,7 +254,7 @@ const FriendsPage = () => {
             <input
               className="friends-page__search-input"
               type="text"
-              placeholder="Filter your friends..."
+              placeholder={t('friends.filterPh')}
               value={friendFilter}
               onChange={e => setFriendFilter(e.target.value)}
             />
@@ -264,7 +266,7 @@ const FriendsPage = () => {
             ) : filteredFriends.length === 0 ? (
               <div className="friends-page__empty">
                 {friends.length === 0
-                  ? 'No friends yet. Use the "Add Friend" tab to find people.'
+                  ? t('friends.noFriends')
                   : 'No friends match your filter.'}
               </div>
             ) : (
@@ -280,7 +282,7 @@ const FriendsPage = () => {
                       className="friends-page__action-btn friends-page__action-btn--remove"
                       onClick={() => setConfirmRemoveUid(friend.uid)}
                       disabled={removingUid === friend.uid}
-                      title="Remove friend"
+                      title={t('friends.remove')}
                     >
                       {removingUid === friend.uid
                         ? <span className="spinner-border spinner-border-sm" />
@@ -298,11 +300,11 @@ const FriendsPage = () => {
       {/* ── Tab: Requests ── */}
       {activeTab === 'requests' && (
         <div className="friends-page__section">
-          <div className="friends-page__section-label">Incoming requests</div>
+          <div className="friends-page__section-label">{t('friends.incomingRequests')}</div>
           {loadingRequests ? (
             <div className="friends-page__loading"><div className="spinner-border text-info" role="status" /></div>
           ) : incomingRequests.length === 0 ? (
-            <div className="friends-page__empty">No incoming friend requests.</div>
+            <div className="friends-page__empty">{t('friends.noIncoming')}</div>
           ) : (
             <div className="friends-page__list">
               {incomingRequests.map((request, i) => (
@@ -317,18 +319,18 @@ const FriendsPage = () => {
                       className="friends-page__action-btn friends-page__action-btn--add"
                       onClick={() => handleAcceptRequest(request)}
                       disabled={requestActionUid === request.uid}
-                      title="Accept request"
+                      title={t('friends.accept')}
                     >
                       {requestActionUid === request.uid
                         ? <span className="spinner-border spinner-border-sm" />
-                        : <><i className="bi bi-check-lg" /> Accept</>
+                        : <><i className="bi bi-check-lg" /> {t('friends.accept')}</>
                       }
                     </button>
                     <button
                       className="friends-page__action-btn friends-page__action-btn--remove"
                       onClick={() => handleRejectRequest(request)}
                       disabled={requestActionUid === request.uid}
-                      title="Decline request"
+                      title={t('friends.decline')}
                     >
                       <i className="bi bi-x-lg" />
                     </button>
@@ -338,9 +340,9 @@ const FriendsPage = () => {
             </div>
           )}
 
-          <div className="friends-page__section-label friends-page__section-label--spaced">Sent requests</div>
+          <div className="friends-page__section-label friends-page__section-label--spaced">{t('friends.sentRequests')}</div>
           {loadingRequests ? null : outgoingRequests.length === 0 ? (
-            <div className="friends-page__empty friends-page__empty--compact">No sent requests.</div>
+            <div className="friends-page__empty friends-page__empty--compact">{t('friends.noSent')}</div>
           ) : (
             <div className="friends-page__list">
               {outgoingRequests.map((request, i) => (
@@ -350,7 +352,7 @@ const FriendsPage = () => {
                     <span className="friends-page__name">{request.displayName}</span>
                     <span className="friends-page__email">{request.email}</span>
                   </div>
-                  <span className="friends-page__already-badge">Pending</span>
+                  <span className="friends-page__already-badge">{t('friends.pending')}</span>
                 </div>
               ))}
             </div>
@@ -371,7 +373,7 @@ const FriendsPage = () => {
               <input
                 className="friends-page__search-input"
                 type="text"
-                placeholder="Exact user ID or email..."
+                placeholder={t('friends.searchPh')}
                 value={addQuery}
                 onChange={e => { setAddQuery(e.target.value); setAddResult(null); setAddNotFound(false); }}
                 onKeyDown={e => { if (e.key === 'Enter') handleExactSearch(); }}
@@ -382,7 +384,7 @@ const FriendsPage = () => {
               onClick={handleExactSearch}
               disabled={searching || !addQuery.trim()}
             >
-              {searching ? <span className="spinner-border spinner-border-sm" /> : 'Search'}
+              {searching ? <span className="spinner-border spinner-border-sm" /> : t('common.search')}
             </button>
           </div>
 
@@ -400,9 +402,9 @@ const FriendsPage = () => {
                 <span className="friends-page__email">{addResult.email}</span>
               </div>
               {friendUids.has(addResult.uid) ? (
-                <span className="friends-page__already-badge">Already friends</span>
+                <span className="friends-page__already-badge">{t('friends.alreadyFriends')}</span>
               ) : outgoingUids.has(addResult.uid) ? (
-                <span className="friends-page__already-badge">Request sent</span>
+                <span className="friends-page__already-badge">{t('friends.requestSent')}</span>
               ) : (
                 <button
                   className="friends-page__action-btn friends-page__action-btn--add"
@@ -411,7 +413,7 @@ const FriendsPage = () => {
                 >
                   {addingUid === addResult.uid
                     ? <span className="spinner-border spinner-border-sm" />
-                    : <><i className="bi bi-person-plus-fill" /> Add</>
+                    : <><i className="bi bi-person-plus-fill" /> {t('common.add')}</>
                   }
                 </button>
               )}

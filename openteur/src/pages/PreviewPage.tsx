@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import BackButton from '../components/BackButton';
 import Card from '../components/Card';
 import { usePlayers } from '../contexts/PlayerContext';
@@ -10,10 +11,10 @@ import type { Player } from '../services/api/types';
 import './PreviewPage.css';
 
 const POSITION_GROUPS = [
-  { key: 'gk',  label: 'Goalkeepers', icon: 'bi-person-fill',     positions: ['GK'] },
-  { key: 'def', label: 'Defenders',   icon: 'bi-shield-fill',      positions: ['CB', 'LB', 'RB', 'LWB', 'RWB', 'SW', 'WB'] },
-  { key: 'mid', label: 'Midfielders', icon: 'bi-arrow-left-right', positions: ['CM', 'CDM', 'CAM', 'LM', 'RM', 'DM', 'AM'] },
-  { key: 'att', label: 'Attackers',   icon: 'bi-lightning-fill',   positions: ['ST', 'CF', 'LW', 'RW', 'SS', 'FW', 'LS', 'RS'] },
+  { key: 'gk',  labelKey: 'preview.goalkeepers', icon: 'bi-person-fill',     positions: ['GK'] },
+  { key: 'def', labelKey: 'preview.defenders',   icon: 'bi-shield-fill',      positions: ['CB', 'LB', 'RB', 'LWB', 'RWB', 'SW', 'WB'] },
+  { key: 'mid', labelKey: 'preview.midfielders', icon: 'bi-arrow-left-right', positions: ['CM', 'CDM', 'CAM', 'LM', 'RM', 'DM', 'AM'] },
+  { key: 'att', labelKey: 'preview.attackers',   icon: 'bi-lightning-fill',   positions: ['ST', 'CF', 'LW', 'RW', 'SS', 'FW', 'LS', 'RS'] },
 ];
 
 interface VisibleCrew {
@@ -29,6 +30,7 @@ const PreviewPage = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { players, loading } = usePlayers();
+  const { t } = useTranslation();
   const { getPlayerCardImage } = usePlayerDisplay();
   const [crews, setCrews] = useState<VisibleCrew[]>([]);
   const [crewsLoading, setCrewsLoading] = useState(true);
@@ -91,12 +93,12 @@ const PreviewPage = () => {
             <div className="back-button-container">
               <BackButton position="static" />
             </div>
-            <h2 className="page-title">Player Roster</h2>
+            <h2 className="page-title">{t('preview.title')}</h2>
             <div className="page-header-spacer" />
           </div>
 
           <div className="preview-filter">
-            <label className="preview-filter__label" htmlFor="previewCrewFilter">Roster Scope</label>
+            <label className="preview-filter__label" htmlFor="previewCrewFilter">{t('preview.rosterScope')}</label>
             <select
               id="previewCrewFilter"
               className="preview-filter__select"
@@ -105,7 +107,7 @@ const PreviewPage = () => {
               disabled={crews.length === 0}
             >
               <option value="">
-                {crews.length === 0 ? 'No Crew' : `All Players (${visiblePlayers.length})`}
+                {crews.length === 0 ? t('preview.noCrew') : `${t('preview.allPlayers')} (${visiblePlayers.length})`}
               </option>
               {crews.map(crew => (
                 <option key={crew._id} value={crew._id}>
@@ -115,10 +117,10 @@ const PreviewPage = () => {
             </select>
           </div>
 
-          {isLoading && <p className="empty-message">Loading players...</p>}
+          {isLoading && <p className="empty-message">{t('preview.loadingPlayers')}</p>}
 
           {!isLoading && visiblePlayers.length === 0 && (
-            <p className="empty-message">No players found.</p>
+            <p className="empty-message">{t('preview.noPlayers')}</p>
           )}
 
           {!isLoading && visiblePlayers.length > 0 && (
@@ -127,7 +129,7 @@ const PreviewPage = () => {
                 <div key={section.key} className="preview-section">
                   <div className="preview-section__header">
                     <i className={`bi ${section.icon} preview-section__icon`}></i>
-                    <span className="preview-section__label">{section.label}</span>
+                    <span className="preview-section__label">{t(section.labelKey)}</span>
                     <span className="preview-section__count">{section.players.length}</span>
                   </div>
                   <div className="preview-grid">
@@ -163,7 +165,7 @@ const PreviewPage = () => {
                 <div className="preview-section">
                   <div className="preview-section__header">
                     <i className="bi bi-person-fill preview-section__icon"></i>
-                    <span className="preview-section__label">Other</span>
+                    <span className="preview-section__label">{t('common.other')}</span>
                     <span className="preview-section__count">{ungrouped.length}</span>
                   </div>
                   <div className="preview-grid">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import BackButton from '../components/BackButton';
 import Card from '../components/Card';
 import ComparePanel from '../components/ComparePanel';
@@ -42,6 +43,7 @@ const PlayersPage = () => {
   const { players, error: fetchError, deletePlayer, createPlayer } = usePlayers();
   const { getPlayerCardImage, playerPhotoOptions } = usePlayerDisplay();
   const { limits } = useAuth();
+  const { t } = useTranslation();
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [deleteMode, setDeleteMode] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -56,17 +58,17 @@ const PlayersPage = () => {
   const navigate = useNavigate();
 
   const handleDelete = (id: string) => setConfirm({
-    message: 'Are you sure you want to delete this player?',
+    message: t('players.deleteConfirmText'),
     onConfirm: async () => {
       setConfirm(null);
       try {
         await deletePlayer(id);
-        setToastMsg('Player deleted successfully.');
+        setToastMsg(t('players.deletedToast'));
         setToastVariant('success');
         setShowToast(true);
       } catch (error) {
         console.error('Delete error:', error);
-        setToastMsg('Failed to delete player.');
+        setToastMsg(t('players.deleteFailed'));
         setToastVariant('danger');
         setShowToast(true);
       }
@@ -142,7 +144,7 @@ const PlayersPage = () => {
     setGeneratingTier(tier);
     try {
       const player = await createPlayer(buildRandomPlayer(tier));
-      setToastMsg(`${player.name} generated.`);
+      setToastMsg(t('players.generatedToast', { name: player.name }));
       setToastVariant('success');
       setShowToast(true);
       setRandomPickerOpen(false);
@@ -152,7 +154,7 @@ const PlayersPage = () => {
         setShowUpgrade(true);
       } else {
         console.error('Generate random player error:', error);
-        setToastMsg('Failed to generate player.');
+        setToastMsg(t('players.generateFailed'));
         setToastVariant('danger');
         setShowToast(true);
       }
@@ -180,7 +182,7 @@ const PlayersPage = () => {
             <div className="back-button-container">
               <BackButton position="static" />
             </div>
-            <h2 className="page-title players-page__title">Players</h2>
+            <h2 className="page-title players-page__title">{t('players.title')}</h2>
             <div className="players-page__actions" data-tutorial="roster-tools">
               <button
                 className={`btn btn-ct ${compareMode ? 'active-mode' : ''}`}
@@ -195,7 +197,7 @@ const PlayersPage = () => {
                 }}
               >
                 <i className={`bi ${compareMode ? 'bi-x-circle-fill' : 'bi-columns-gap'}`} style={{ marginRight: 8 }}></i>
-                {compareMode ? 'Cancel Compare' : 'Compare'}
+                {compareMode ? t('players.cancelCompare') : t('players.compare')}
               </button>
               <button
                 className={`btn btn-ct ${editMode ? 'active-mode' : ''}`}
@@ -210,7 +212,7 @@ const PlayersPage = () => {
                 }}
               >
                 <i className={`bi ${editMode ? 'bi-x-circle-fill' : 'bi-pencil-fill'}`} style={{ marginRight: 8 }}></i>
-                {editMode ? 'Cancel Edit' : 'Edit Player'}
+                {editMode ? t('players.cancelEdit') : t('players.editPlayer')}
               </button>
               <button
                 className={`btn btn-ct ${deleteMode ? 'active-mode' : ''}`}
@@ -225,7 +227,7 @@ const PlayersPage = () => {
                 }}
               >
                 <i className={`bi ${deleteMode ? 'bi-x-circle-fill' : 'bi-trash-fill'}`} style={{ marginRight: 8 }}></i>
-                {deleteMode ? 'Cancel' : 'Delete Player'}
+                {deleteMode ? t('common.cancel') : t('players.deletePlayer')}
               </button>
               <button
                 className="btn btn-ct"
@@ -234,13 +236,13 @@ const PlayersPage = () => {
                 onClick={handleAddPlayer}
               >
                 <i className="bi bi-person-plus-fill" style={{ marginRight: 8 }}></i>
-                Add Player
+                {t('players.addPlayer')}
               </button>
             </div>
         </div>
 
         <div className="players-page__meter-row">
-          <PlanUsageMeter label="Cards" used={players.length} limit={limits.maxPlayers} />
+          <PlanUsageMeter label={t('players.cards')} used={players.length} limit={limits.maxPlayers} />
         </div>
 
         {/* Players Grid */}
@@ -257,8 +259,8 @@ const PlayersPage = () => {
                 aria-label="Generate random player"
               >
                 <span className="random-player-card__question">?</span>
-                <span className="random-player-card__title">Generate Random Player</span>
-                <span className="random-player-card__subtitle">Unlock a new card</span>
+                <span className="random-player-card__title">{t('players.randomTitle')}</span>
+                <span className="random-player-card__subtitle">{t('players.randomSubtitle')}</span>
               </button>
             </div>
             {players.map((player) => (
@@ -303,8 +305,8 @@ const PlayersPage = () => {
             <div className="random-player-modal__hero">
               <div className="random-player-card random-player-card--modal">
                 <span className="random-player-card__question">?</span>
-                <span className="random-player-card__title">Generate Random Player</span>
-                <span className="random-player-card__subtitle">Choose a card tier</span>
+                <span className="random-player-card__title">{t('players.randomTitle')}</span>
+                <span className="random-player-card__subtitle">{t('players.randomModalSub')}</span>
               </div>
             </div>
             <div className="random-player-modal__choices">
@@ -318,10 +320,10 @@ const PlayersPage = () => {
                 >
                   <span className="random-tier-card__overall">?</span>
                   <span className="random-tier-card__mark">?</span>
-                  <span className="random-tier-card__name">{tier.label}</span>
+                  <span className="random-tier-card__name">{t(`players.${tier.id}`)}</span>
                   <span className="random-tier-card__range">{tier.range[0]}-{tier.range[1]} OVR</span>
                   <span className="random-tier-card__action">
-                    {generatingTier === tier.id ? 'Generating...' : 'Unlock'}
+                    {generatingTier === tier.id ? t('players.generating') : t('players.unlock')}
                   </span>
                 </button>
               ))}
@@ -355,8 +357,8 @@ const PlayersPage = () => {
       <UpgradeModal
         show={showUpgrade}
         onClose={() => setShowUpgrade(false)}
-        title={`You have reached your card limit (${limits.maxPlayers})`}
-        message="Upgrade to Premium for 44 cards, or Premium+ for unlimited cards."
+        title={t('players.upgradeTitle', { limit: limits.maxPlayers })}
+        message={t('players.upgradeMessage')}
       />
     </div>
   );
