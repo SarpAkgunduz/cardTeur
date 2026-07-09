@@ -38,7 +38,7 @@ const tr: typeof en = {
   landing: {
     badge: 'Amatör Futbol, Profesyonel Deneyim',
     heroTitle: 'Kadronu <accent>Efsaneye</accent> Dönüştür',
-    heroSub: 'CardTeur amatör kadron için FIFA tarzı kartlar oluşturur, takımlarını dengeler ve maç gününü organize eder — sen sadece oynamayı düşün.',
+    heroSub: 'CardTeur amatör kadron için FIFA tarzı kartlar oluşturur, takımlarını dengeler ve maç gününü organize eder, sen sadece oynamayı düşün.',
     getStarted: 'Hemen Başla',
     featuresTitle: 'Maç Gününün Tüm İhtiyaçları',
     featureCardsTitle: 'FIFA Tarzı Kartlar',

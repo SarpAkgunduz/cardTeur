@@ -38,7 +38,7 @@ const de: typeof en = {
   landing: {
     badge: 'Amateurfußball, Profi-Erlebnis',
     heroTitle: 'Verwandle dein Team in <accent>Legenden</accent>',
-    heroSub: 'CardTeur erstellt FIFA-Style-Karten für dein Amateurteam, gleicht deine Mannschaften aus und organisiert den Spieltag — du musst nur noch spielen.',
+    heroSub: 'CardTeur erstellt FIFA-Style-Karten für dein Amateurteam, gleicht deine Mannschaften aus und organisiert den Spieltag, du musst nur noch spielen.',
     getStarted: 'Loslegen',
     featuresTitle: 'Alles, was der Spieltag braucht',
     featureCardsTitle: 'FIFA-Style-Karten',

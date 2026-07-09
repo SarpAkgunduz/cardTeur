@@ -36,7 +36,7 @@ export default {
   landing: {
     badge: 'Amateur Football, Pro Experience',
     heroTitle: 'Turn Your Squad Into <accent>Legends</accent>',
-    heroSub: 'CardTeur builds FIFA-style cards for your amateur squad, balances your teams and organizes match day — so you only think about playing.',
+    heroSub: 'CardTeur builds FIFA-style cards for your amateur squad, balances your teams and organizes match day, so you only think about playing.',
     getStarted: 'Get Started',
     featuresTitle: 'Everything Match Day Needs',
     featureCardsTitle: 'FIFA-Style Cards',

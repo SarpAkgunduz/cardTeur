@@ -38,7 +38,7 @@ const az: typeof en = {
   landing: {
     badge: 'Həvəskar Futbol, Peşəkar Təcrübə',
     heroTitle: 'Komandanı <accent>Əfsanələrə</accent> Çevir',
-    heroSub: 'CardTeur həvəskar komandan üçün FIFA tərzi kartlar yaradır, komandalarını balanslaşdırır və matç gününü təşkil edir — sənə yalnız oynamaq qalır.',
+    heroSub: 'CardTeur həvəskar komandan üçün FIFA tərzi kartlar yaradır, komandalarını balanslaşdırır və matç gününü təşkil edir, sənə yalnız oynamaq qalır.',
     getStarted: 'Başla',
     featuresTitle: 'Matç Gününün Bütün Ehtiyacları',
     featureCardsTitle: 'FIFA Tərzi Kartlar',
