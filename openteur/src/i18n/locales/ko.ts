@@ -39,7 +39,7 @@ const ko: typeof en = {
   landing: {
     badge: '아마추어 축구, 프로의 경험',
     heroTitle: '당신의 팀을 <accent>전설</accent>로 만드세요',
-    heroSub: 'CardTeur는 아마추어 팀을 위한 FIFA 스타일 카드를 만들고, 팀 밸런스를 맞추고, 경기 날을 조직합니다 — 당신은 경기만 생각하면 됩니다.',
+    heroSub: 'CardTeur는 아마추어 팀을 위한 FIFA 스타일 카드를 만들고, 팀 밸런스를 맞추고, 경기 날을 조직합니다, 당신은 경기만 생각하면 됩니다.',
     getStarted: '시작하기',
     featuresTitle: '경기 날에 필요한 모든 것',
     featureCardsTitle: 'FIFA 스타일 카드',

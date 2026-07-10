@@ -39,7 +39,7 @@ const zh: typeof en = {
   landing: {
     badge: '业余足球，专业体验',
     heroTitle: '让你的球队成为<accent>传奇</accent>',
-    heroSub: 'CardTeur 为你的业余球队制作 FIFA 风格球员卡，平衡阵容并组织比赛日——你只需要专注于比赛。',
+    heroSub: 'CardTeur 为你的业余球队制作 FIFA 风格球员卡，平衡阵容并组织比赛日,你只需要专注于比赛。',
     getStarted: '立即开始',
     featuresTitle: '比赛日所需的一切',
     featureCardsTitle: 'FIFA 风格球员卡',

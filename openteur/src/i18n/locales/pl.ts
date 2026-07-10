@@ -39,7 +39,7 @@ const pl: typeof en = {
   landing: {
     badge: 'Amatorska Piłka Nożna, Profesjonalne Doświadczenie',
     heroTitle: 'Zamień swoją drużynę w <accent>Legendy</accent>',
-    heroSub: 'CardTeur tworzy karty w stylu FIFA dla Twojej amatorskiej drużyny, równoważy zespoły i organizuje dzień meczu — Ty musisz tylko grać.',
+    heroSub: 'CardTeur tworzy karty w stylu FIFA dla Twojej amatorskiej drużyny, równoważy zespoły i organizuje dzień meczu, Ty musisz tylko grać.',
     getStarted: 'Rozpocznij',
     featuresTitle: 'Wszystko, czego potrzeba w dniu meczu',
     featureCardsTitle: 'Karty w stylu FIFA',

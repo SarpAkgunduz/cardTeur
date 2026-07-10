@@ -39,7 +39,7 @@ const ja: typeof en = {
   landing: {
     badge: 'アマチュアサッカー、プロの体験',
     heroTitle: 'あなたのチームを<accent>伝説</accent>に',
-    heroSub: 'CardTeurはアマチュアチームのためにFIFAスタイルのカードを作成し、チームバランスを整え、試合日を組織します — あなたはプレーに集中するだけ。',
+    heroSub: 'CardTeurはアマチュアチームのためにFIFAスタイルのカードを作成し、チームバランスを整え、試合日を組織します, あなたはプレーに集中するだけ。',
     getStarted: '今すぐ始める',
     featuresTitle: '試合日に必要なすべて',
     featureCardsTitle: 'FIFAスタイルのカード',

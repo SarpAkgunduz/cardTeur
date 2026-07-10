@@ -6,7 +6,7 @@ import './LandingPage.css';
 const SHOWCASE_CARDS = [
   {
     _id: 'landing-gold',
-    name: 'Rodrigo',
+    name: 'Liam',
     preferredPosition: 'ST',
     offensiveOverall: 91,
     defensiveOverall: 45,
@@ -16,7 +16,7 @@ const SHOWCASE_CARDS = [
   },
   {
     _id: 'landing-silver',
-    name: 'Kerem',
+    name: 'Alberto',
     preferredPosition: 'CM',
     offensiveOverall: 74,
     defensiveOverall: 71,
@@ -26,7 +26,7 @@ const SHOWCASE_CARDS = [
   },
   {
     _id: 'landing-bronze',
-    name: 'Deniz',
+    name: 'Aslan',
     preferredPosition: 'CB',
     offensiveOverall: 48,
     defensiveOverall: 66,
