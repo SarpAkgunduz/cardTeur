@@ -335,8 +335,12 @@ export default {
     premiumPlusFeature3: '5 years match history',
     premiumPlusFeature4: 'Analytics & voting insights',
     premiumPlusFeature5: '6 referral discounts (7v7 squad)',
-    note: 'First month free on any paid plan. Turkish customers are billed in ₺ via iyzico; everyone else via Paddle.',
+    note: '7-day free trial on any paid plan (card required; billed automatically after the trial). Turkish customers are billed in ₺ via iyzico; everyone else via Paddle.',
     checkoutStarted: 'Checkout started. Complete payment in the opened window.',
     checkoutFailed: 'Could not start checkout.',
+    referralPlaceholder: 'Referral code',
+    referralApply: 'Apply',
+    referralValid: "Referral code applied — you'll get a discount on your first payment.",
+    referralInvalid: "That code isn't valid or has already been used.",
   },
 };

@@ -337,9 +337,13 @@ const tr: typeof en = {
     premiumPlusFeature3: '5 yıllık maç geçmişi',
     premiumPlusFeature4: 'Analitik ve oylama içgörüleri',
     premiumPlusFeature5: '6 referans indirimi (7v7 kadro)',
-    note: 'Herhangi bir ücretli planda ilk ay ücretsiz. Türk müşteriler iyzico ile ₺ olarak, diğerleri Paddle ile faturalandırılır.',
+    note: 'Her ücretli planda 7 günlük ücretsiz deneme (kart bilgisi gerekir; deneme bitince otomatik faturalandırılır). Türk müşteriler iyzico ile ₺ olarak, diğerleri Paddle ile faturalandırılır.',
     checkoutStarted: 'Ödeme başlatıldı. Açılan pencerede ödemeyi tamamlayın.',
     checkoutFailed: 'Ödeme başlatılamadı.',
+    referralPlaceholder: 'Referans kodu',
+    referralApply: 'Uygula',
+    referralValid: 'Referans kodu uygulandı — ilk ödemende indirim kazanacaksın.',
+    referralInvalid: 'Bu kod geçerli değil veya zaten kullanılmış.',
   },
 };
 

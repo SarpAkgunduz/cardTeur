@@ -36,6 +36,16 @@ export async function generateReferral(uid: string) {
   return Referral.create({ referrerUid: uid, code, status: 'unused' });
 }
 
+// Read-only check used before checkout to tell the referred friend whether their
+// code is valid, without marking it redeemed — actual redemption only happens on
+// a real paid conversion (see redeemReferral, called from the webhook).
+export async function previewReferral(code: string, uid: string) {
+  const referral = await Referral.findOne({ code, status: 'unused' });
+  if (!referral) return null;
+  if (referral.referrerUid === uid) return null;
+  return referral;
+}
+
 export async function redeemReferral(code: string, referredUid: string) {
   const referral = await Referral.findOne({ code, status: 'unused' });
   if (!referral) return null;

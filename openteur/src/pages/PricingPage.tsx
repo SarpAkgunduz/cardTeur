@@ -1,11 +1,48 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import BackButton from '../components/BackButton';
 import ToastNotification from '../components/ToastNotification';
 import { useAuth } from '../contexts/AuthContext';
-import { billingApi } from '../services';
+import { billingApi, referralApi } from '../services';
 import type { BillingInterval, PaidTier, Plan } from '../services/api/types';
 import './PricingPage.css';
+
+const REFERRAL_STORAGE_KEY = 'ct_referral_code';
+
+type CurrencyCode = 'USD' | 'GBP' | 'EUR' | 'AUD';
+
+const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
+  USD: '$',
+  GBP: '£',
+  EUR: '€',
+  AUD: 'AUD $',
+};
+
+// Mirrors the unit_price_overrides configured on the Paddle prices — UK/Ireland/
+// Australia get a local-currency price, everyone else falls back to the USD base.
+function currencyForCountry(countryCode?: string): CurrencyCode {
+  switch (countryCode) {
+    case 'GB': return 'GBP';
+    case 'IE': return 'EUR';
+    case 'AU': return 'AUD';
+    default: return 'USD';
+  }
+}
+
+const PRICES: Record<PaidTier, Record<CurrencyCode, { monthly: number; annual: number }>> = {
+  premium: {
+    USD: { monthly: 3, annual: 30 },
+    GBP: { monthly: 3, annual: 30 },
+    EUR: { monthly: 3, annual: 30 },
+    AUD: { monthly: 5, annual: 50 },
+  },
+  premium_plus: {
+    USD: { monthly: 5, annual: 50 },
+    GBP: { monthly: 5, annual: 50 },
+    EUR: { monthly: 5, annual: 50 },
+    AUD: { monthly: 8, annual: 80 },
+  },
+};
 
 interface TierCard {
   id: PaidTier | 'free';
@@ -16,6 +53,9 @@ interface TierCard {
   highlight?: boolean;
 }
 
+// Best-effort guess from the browser locale, used to preview local pricing here.
+// The real charge is decided by Paddle's own checkout-time geolocation, which is
+// more reliable — this is a preview, not a guarantee of the final currency.
 function detectCountryCode(): string | undefined {
   const locale = navigator.language || '';
   const region = locale.split('-')[1];
@@ -29,6 +69,31 @@ const PricingPage = () => {
   const [loadingTier, setLoadingTier] = useState<PaidTier | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
+  const [referralInput, setReferralInput] = useState('');
+  const [referralStatus, setReferralStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
+
+  const checkReferral = async (code: string) => {
+    if (!code) {
+      setReferralStatus('idle');
+      return;
+    }
+    setReferralStatus('checking');
+    try {
+      const result = await referralApi.validate(code);
+      setReferralStatus(result.valid ? 'valid' : 'invalid');
+    } catch {
+      setReferralStatus('invalid');
+    }
+  };
+
+  // Auto-apply a code captured on signup (?ref=CODE stored by SignupPage)
+  useEffect(() => {
+    const stored = localStorage.getItem(REFERRAL_STORAGE_KEY);
+    if (stored) {
+      setReferralInput(stored);
+      checkReferral(stored);
+    }
+  }, []);
 
   const planNames: Record<Plan, string> = {
     free: t('pricing.freeName'),
@@ -36,12 +101,16 @@ const PricingPage = () => {
     premium_plus: t('pricing.premiumPlusName'),
   };
 
+  const countryCode = detectCountryCode();
+  const currency = currencyForCountry(countryCode);
+  const symbol = CURRENCY_SYMBOLS[currency];
+
   const TIERS: TierCard[] = [
     {
       id: 'free',
       name: t('pricing.freeName'),
-      monthly: '$0',
-      annual: '$0',
+      monthly: `${symbol}0`,
+      annual: `${symbol}0`,
       features: [
         t('pricing.freeFeature1'),
         t('pricing.freeFeature2'),
@@ -53,8 +122,8 @@ const PricingPage = () => {
     {
       id: 'premium',
       name: t('pricing.premiumName'),
-      monthly: '$3',
-      annual: '$30',
+      monthly: `${symbol}${PRICES.premium[currency].monthly}`,
+      annual: `${symbol}${PRICES.premium[currency].annual}`,
       features: [
         t('pricing.premiumFeature1'),
         t('pricing.premiumFeature2'),
@@ -68,8 +137,8 @@ const PricingPage = () => {
     {
       id: 'premium_plus',
       name: t('pricing.premiumPlusName'),
-      monthly: '$5',
-      annual: '$50',
+      monthly: `${symbol}${PRICES.premium_plus[currency].monthly}`,
+      annual: `${symbol}${PRICES.premium_plus[currency].annual}`,
       features: [
         t('pricing.premiumPlusFeature1'),
         t('pricing.premiumPlusFeature2'),
@@ -83,7 +152,8 @@ const PricingPage = () => {
   const handleChoose = async (tier: PaidTier) => {
     setLoadingTier(tier);
     try {
-      const result = await billingApi.checkout({ tier, interval, countryCode: detectCountryCode() });
+      const referralCode = referralStatus === 'valid' ? referralInput : undefined;
+      const result = await billingApi.checkout({ tier, interval, countryCode, referralCode });
       if (result.url) {
         window.location.href = result.url;
       } else {
@@ -123,6 +193,37 @@ const PricingPage = () => {
             >
               {t('pricing.annual')} <span className="pricing-interval__save">{t('pricing.annualSave')}</span>
             </button>
+          </div>
+
+          <div className="pricing-referral">
+            <input
+              type="text"
+              className="pricing-referral__input"
+              placeholder={t('pricing.referralPlaceholder')}
+              value={referralInput}
+              onChange={(e) => {
+                setReferralInput(e.target.value.toUpperCase());
+                setReferralStatus('idle');
+              }}
+            />
+            <button
+              type="button"
+              className="btn btn-ct"
+              disabled={!referralInput || referralStatus === 'checking'}
+              onClick={() => checkReferral(referralInput)}
+            >
+              {t('pricing.referralApply')}
+            </button>
+            {referralStatus === 'valid' && (
+              <span className="pricing-referral__status pricing-referral__status--valid">
+                <i className="bi bi-check-circle-fill" /> {t('pricing.referralValid')}
+              </span>
+            )}
+            {referralStatus === 'invalid' && (
+              <span className="pricing-referral__status pricing-referral__status--invalid">
+                <i className="bi bi-x-circle-fill" /> {t('pricing.referralInvalid')}
+              </span>
+            )}
           </div>
 
           <div className="pricing-grid">

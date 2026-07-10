@@ -7,4 +7,6 @@ export const referralApi = {
     apiRequest<Referral>('/referrals', {
       method: 'POST',
     }),
+  validate: (code: string) =>
+    apiRequest<{ valid: boolean }>(`/referrals/validate/${encodeURIComponent(code)}`),
 };

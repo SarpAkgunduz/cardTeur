@@ -11,6 +11,47 @@
   margin-left: 6px;
 }
 
+.pricing-referral {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin: 0 0 28px;
+}
+
+.pricing-referral__input {
+  background: rgba(36, 59, 90, 0.75);
+  border: 1px solid rgba(0, 222, 236, 0.35);
+  color: #f7f5fd;
+  padding: 8px 14px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  width: 200px;
+}
+
+.pricing-referral__input:focus {
+  outline: none;
+  border-color: #00deec;
+}
+
+.pricing-referral__status {
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pricing-referral__status--valid {
+  color: #00deec;
+}
+
+.pricing-referral__status--invalid {
+  color: #ff6b6b;
+}
+
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));

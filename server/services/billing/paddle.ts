@@ -15,6 +15,17 @@ function priceIdFor(tier: PaidTier, interval: BillingInterval): string | undefin
   return process.env[key];
 }
 
+// Two separate Paddle Discounts: 50% off first month (restricted to the monthly
+// prices), 30% off first year (restricted to the annual prices). A percentage
+// discount applies proportionally to whatever currency/price the customer is
+// actually charged, so this is correct across USD/GBP/EUR/AUD without extra work —
+// the important part is picking the discount scoped to the right interval.
+function discountIdFor(interval: BillingInterval): string | undefined {
+  return interval === 'annual'
+    ? process.env.PADDLE_DISCOUNT_REFERRAL_ANNUAL
+    : process.env.PADDLE_DISCOUNT_REFERRAL_MONTHLY;
+}
+
 function planForPriceId(priceId?: string): Plan | undefined {
   if (!priceId) return undefined;
   if (priceId === process.env.PADDLE_PRICE_PREMIUM_MONTHLY || priceId === process.env.PADDLE_PRICE_PREMIUM_ANNUAL) return 'premium';
@@ -32,6 +43,8 @@ export const paddleAdapter: BillingAdapter = {
       throw new Error('Paddle is not configured (missing PADDLE_API_KEY or price id)');
     }
 
+    const discountId = params.referralCode ? discountIdFor(params.interval) : undefined;
+
     const res = await fetch(`${PADDLE_API()}/transactions`, {
       method: 'POST',
       headers: {
@@ -40,6 +53,7 @@ export const paddleAdapter: BillingAdapter = {
       },
       body: JSON.stringify({
         items: [{ price_id: priceId, quantity: 1 }],
+        ...(discountId ? { discount_id: discountId } : {}),
         custom_data: { uid: params.uid, tier: params.tier, referralCode: params.referralCode ?? '' },
       }),
     });

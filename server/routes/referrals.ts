@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { requireAuth } from '../middleware/auth';
-import { getReferralOverview, generateReferral } from '../services/referralService';
+import { getReferralOverview, generateReferral, previewReferral } from '../services/referralService';
 
 const router = Router();
 router.use(requireAuth);
@@ -26,6 +26,17 @@ router.post('/', async (req: Request, res: Response) => {
       return;
     }
     res.status(500).json({ error: 'Failed to generate referral' });
+  }
+});
+
+router.get('/validate/:code', async (req: Request, res: Response) => {
+  const uid = (req as any).uid as string;
+  const code = req.params.code as string;
+  try {
+    const referral = await previewReferral(code, uid);
+    res.json({ valid: !!referral });
+  } catch {
+    res.status(500).json({ error: 'Failed to validate referral' });
   }
 });
 

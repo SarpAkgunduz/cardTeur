@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { requireAuth } from '../middleware/auth';
 import { startCheckout, applySubscriptionEvent, providerForRegion, getAdapter, ProviderName } from '../services/billing';
 import { BillingInterval, PaidTier } from '../services/billing/types';
+import { previewReferral } from '../services/referralService';
 
 const router = Router();
 
@@ -22,6 +23,14 @@ router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
   }
   const resolvedInterval: BillingInterval = interval === 'annual' ? 'annual' : 'monthly';
   const provider = providerForRegion(countryCode);
+
+  if (referralCode) {
+    const referral = await previewReferral(referralCode, uid);
+    if (!referral) {
+      res.status(400).json({ error: 'Invalid or already-used referral code' });
+      return;
+    }
+  }
 
   try {
     const result = await startCheckout(provider, { uid, email, tier, interval: resolvedInterval, referralCode, iyzico });

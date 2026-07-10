@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
@@ -19,6 +19,16 @@ const SignupPage = () => {
   const { signUp } = useAuth();
   const { startTutorial } = useTutorial();
   const { t } = useTranslation();
+
+  // Capture a referral link's ?ref=CODE so PricingPage can apply it later —
+  // signup can bounce through Firebase/Google auth, so localStorage is used
+  // instead of carrying the param through every redirect.
+  useEffect(() => {
+    const ref = searchParams.get('ref');
+    if (ref) {
+      localStorage.setItem('ct_referral_code', ref);
+    }
+  }, [searchParams]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();

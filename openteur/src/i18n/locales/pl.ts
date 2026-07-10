@@ -337,9 +337,13 @@ const pl: typeof en = {
     premiumPlusFeature3: '5 lat historii meczów',
     premiumPlusFeature4: 'Analizy i statystyki głosowania',
     premiumPlusFeature5: '6 zniżek polecających (skład 7v7)',
-    note: 'Pierwszy miesiąc gratis w każdym płatnym planie. Klienci z Turcji są rozliczani w ₺ przez iyzico, pozostali przez Paddle.',
+    note: '7-dniowy bezpłatny okres próbny w każdym płatnym planie (wymagana karta; automatyczne rozliczenie po zakończeniu okresu próbnego). Klienci z Turcji są rozliczani w ₺ przez iyzico, pozostali przez Paddle.',
     checkoutStarted: 'Płatność rozpoczęta. Dokończ płatność w otwartym oknie.',
     checkoutFailed: 'Nie udało się rozpocząć płatności.',
+    referralPlaceholder: 'Kod polecający',
+    referralApply: 'Zastosuj',
+    referralValid: 'Kod polecający zastosowany — otrzymasz zniżkę na pierwszą płatność.',
+    referralInvalid: 'Ten kod jest nieprawidłowy lub został już wykorzystany.',
   },
 };
 

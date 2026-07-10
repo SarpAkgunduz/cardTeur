@@ -337,9 +337,13 @@ const ko: typeof en = {
     premiumPlusFeature3: '5년 경기 기록',
     premiumPlusFeature4: '분석 및 투표 인사이트',
     premiumPlusFeature5: '추천 할인 6개 (7인 스쿼드)',
-    note: '모든 유료 요금제 첫 달 무료. 터키 고객은 iyzico를 통해 ₺로, 그 외 지역은 Paddle을 통해 결제됩니다.',
+    note: '모든 유료 요금제에서 7일 무료 체험 제공(카드 등록 필요, 체험 종료 후 자동 결제). 터키 고객은 iyzico를 통해 ₺로, 그 외 지역은 Paddle을 통해 결제됩니다.',
     checkoutStarted: '결제가 시작되었습니다. 열린 창에서 결제를 완료하세요.',
     checkoutFailed: '결제를 시작할 수 없습니다.',
+    referralPlaceholder: '추천 코드',
+    referralApply: '적용',
+    referralValid: '추천 코드가 적용되었습니다 — 첫 결제 시 할인을 받습니다.',
+    referralInvalid: '유효하지 않거나 이미 사용된 코드입니다.',
   },
 };
 

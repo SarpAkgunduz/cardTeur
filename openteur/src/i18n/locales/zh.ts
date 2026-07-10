@@ -337,9 +337,13 @@ const zh: typeof en = {
     premiumPlusFeature3: '5年比赛记录',
     premiumPlusFeature4: '数据分析与投票洞察',
     premiumPlusFeature5: '6个推荐折扣（7人阵容）',
-    note: '任意付费套餐首月免费。土耳其客户通过iyzico以里拉结算，其他地区通过Paddle结算。',
+    note: '任意付费套餐均提供7天免费试用（需绑定银行卡；试用期结束后自动扣费）。土耳其客户通过iyzico以里拉结算，其他地区通过Paddle结算。',
     checkoutStarted: '结账已开始，请在打开的窗口中完成付款。',
     checkoutFailed: '无法开始结账。',
+    referralPlaceholder: '推荐码',
+    referralApply: '应用',
+    referralValid: '推荐码已应用——您的首次付款将获得折扣。',
+    referralInvalid: '该代码无效或已被使用。',
   },
 };
 

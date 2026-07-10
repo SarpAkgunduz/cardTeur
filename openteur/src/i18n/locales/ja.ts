@@ -337,9 +337,13 @@ const ja: typeof en = {
     premiumPlusFeature3: '試合履歴5年分',
     premiumPlusFeature4: '分析と投票インサイト',
     premiumPlusFeature5: '紹介割引6回分（7人制チーム分）',
-    note: 'どの有料プランも最初の1か月は無料です。トルコのお客様はiyzico経由で₺建て、それ以外はPaddle経由で請求されます。',
+    note: 'どの有料プランも7日間の無料トライアルがあります(クレジットカードの登録が必要で、トライアル終了後に自動課金されます)。トルコのお客様はiyzico経由で₺建て、それ以外はPaddle経由で請求されます。',
     checkoutStarted: '決済を開始しました。開いたウィンドウで支払いを完了してください。',
     checkoutFailed: '決済を開始できませんでした。',
+    referralPlaceholder: '紹介コード',
+    referralApply: '適用',
+    referralValid: '紹介コードが適用されました — 初回のお支払いが割引されます。',
+    referralInvalid: 'このコードは無効か、すでに使用されています。',
   },
 };
 

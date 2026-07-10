@@ -337,9 +337,13 @@ const de: typeof en = {
     premiumPlusFeature3: '5 Jahre Spielhistorie',
     premiumPlusFeature4: 'Analysen & Abstimmungs-Insights',
     premiumPlusFeature5: '6 Empfehlungsrabatte (7v7-Kader)',
-    note: 'Der erste Monat ist bei jedem kostenpflichtigen Plan kostenlos. Türkische Kunden werden über iyzico in ₺ abgerechnet, alle anderen über Paddle.',
+    note: '7 Tage kostenlose Testphase bei jedem kostenpflichtigen Plan (Zahlungsmethode erforderlich; automatische Abrechnung nach der Testphase). Türkische Kunden werden über iyzico in ₺ abgerechnet, alle anderen über Paddle.',
     checkoutStarted: 'Bezahlvorgang gestartet. Schließe die Zahlung im geöffneten Fenster ab.',
     checkoutFailed: 'Bezahlvorgang konnte nicht gestartet werden.',
+    referralPlaceholder: 'Empfehlungscode',
+    referralApply: 'Anwenden',
+    referralValid: 'Empfehlungscode angewendet — du erhältst einen Rabatt auf deine erste Zahlung.',
+    referralInvalid: 'Dieser Code ist ungültig oder wurde bereits verwendet.',
   },
 };
 
