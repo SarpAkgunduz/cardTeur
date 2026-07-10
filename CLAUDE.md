@@ -95,6 +95,58 @@
 
 ---
 
+## Billing & Plans
+
+- Real system, not a stub — do not assume it's placeholder work just because it's undocumented above this line.
+- `server/config/plans.ts`: `Plan = 'free' | 'premium' | 'premium_plus'`. `PLAN_LIMITS` table drives `maxPlayers` (22/44/∞), `maxCrews` (1/5/∞), `maxFriends` (25/∞/∞), `matchHistoryMonths` (3/12/60), `fullResImages`, `analytics`, `referralSlots` (0/1/6).
+- `server/services/planService.ts` (`getUserPlan`/`getUserLimits`) is consumed directly by `players.ts` (blocks create at `maxPlayers`, 403 `PLAN_LIMIT_PLAYERS`), `crews.ts` (`maxCrews`), `users.ts` (`maxFriends`), `matches.ts` (`matchHistoryMonths`) — enforcement is real and DB-driven, not per-route hardcoding.
+- `User` model carries `plan`, `planRenewsAt`, `billingProvider`, `billingCustomerId`, `billingSubscriptionId`, `referralRewardMonths`.
+- Referrals (`server/models/Referral.ts`, `referralService.ts`) are wired to `referralSlots` and grant a free month via `referralRewardMonths` on redemption — triggered from `applySubscriptionEvent` on `'activated'`.
+
+### Provider routing (`server/services/billing/index.ts`)
+- `providerForRegion(countryCode)`: `TR` → iyzico, everything else → Paddle. Frontend passes `countryCode` in the `/api/billing/checkout` request body.
+- `getAdapter(provider)` returns `paddleAdapter` or `iyzicoAdapter`, both implementing the shared `BillingAdapter` interface (`server/services/billing/types.ts`): `createCheckout(params)` and `verifyAndParse(rawBody, headers)`.
+- `verifyAndParse` may return a `Promise` (iyzico needs an async lookup) or a plain value (Paddle verifies synchronously via HMAC) — the union return type covers both; `routes/billing.ts` always `await`s it.
+- `applySubscriptionEvent(provider, event)` is the single place that writes `User.plan`/`billingProvider`/etc. and fires referral rewards — both adapters funnel into it, don't duplicate this logic per-provider.
+
+### Paddle adapter (`server/services/billing/paddle.ts`) — real, just unconfigured
+- Calls Paddle's REST API directly via `fetch` (no SDK) — `POST {PADDLE_API}/transactions` for checkout, returns `{ url }` for a straight `window.location` redirect on the frontend.
+- `PADDLE_API()` picks sandbox vs production host from `PADDLE_ENV`.
+- Webhook (`POST /api/billing/webhook/paddle`) verifies the `paddle-signature` header via HMAC-SHA256 against `PADDLE_WEBHOOK_SECRET`, maps `subscription.activated/created` → `activated`, `subscription.updated` → `updated`, `subscription.canceled` → `canceled`.
+- `custom_data.uid`/`custom_data.tier`/`custom_data.referralCode` set at checkout time are echoed back on the webhook — this is how we map a Paddle event back to a Firebase uid.
+- **Not yet functional in this environment**: no `PADDLE_API_KEY`/`PADDLE_PRICE_*`/`PADDLE_WEBHOOK_SECRET` are set in `server/.env`. Checkout will 502 until a real Paddle account/product/prices are created and the env vars below are filled in.
+
+### iyzico adapter (`server/services/billing/iyzico.ts`) — implemented, not yet sandbox-verified
+- Uses the `iyzipay` npm SDK (callback-based, wrapped in `Promise`s here) + `@types/iyzipay` for types. Client is lazily constructed from `IYZICO_API_KEY`/`IYZICO_SECRET_KEY`, host picked via `IYZICO_BASE_URL` (a full URL, sandbox vs prod, matching `MONETIZATION_HANDOFF.md`'s convention — not an env-name flag like Paddle's `PADDLE_ENV`).
+- `createCheckout` calls `subscriptionCheckoutForm.initialize` and returns `formHtml` (the `checkoutFormContent` iyzico gives back), **not** a `url`. This is a real difference from Paddle — **the frontend (`PricingPage.tsx`) does not handle this yet**; it currently only does `window.location = result.url`, which will be `undefined` for iyzico. Needs a follow-up to render `formHtml` (e.g. in an iframe/container) before iyzico checkout can actually work end-to-end.
+- **identityNumber (TC Kimlik No) gap**: iyzico's Subscription Customer model requires `name`, `surname`, `identityNumber` — none of these are collected anywhere in the app today (`ProfilePage`/`AddPlayerForm` don't ask for it). `createCheckout` throws a clear error if `CheckoutParams.iyzico` isn't supplied. A small form (probably on `PricingPage` before initiating a TR checkout) needs to collect this before the iyzico path can be used for real.
+- `conversationId` is set to the Firebase `uid` at initialize time (iyzico's equivalent of Paddle's `custom_data`) and read back via `subscription.retrieve` in the webhook handler — **not verified against a live sandbox**, confirm iyzico actually echoes it back before relying on it in production.
+- Webhook verification pattern is deliberately "retrieve to confirm": iyzico has no HMAC secret like Paddle's, so `verifyAndParse` only reads a reference code off the raw webhook body (field name guessed — `subscriptionReferenceCode`/`iyziReferenceCode`/`referenceCode`, unverified), then calls `subscription.retrieve` and trusts iyzico's authoritative response instead of the webhook payload directly.
+- **Before going live**: create a real iyzico sandbox account, confirm the actual webhook payload shape, confirm `conversationId` round-trips, and decide how/where to collect identity number + build the `formHtml` frontend rendering.
+- Full original design rationale (tiers, pricing, referral discount mechanics, R2 image migration, mobile IAP plan) lives in `MONETIZATION_PLAN.md`; build status / manual to-do list lives in `MONETIZATION_HANDOFF.md` — both at repo root. Read those before making further billing changes, they're more detailed than this section.
+
+### Env vars this subsystem needs (not yet in `server/.env`)
+```
+PADDLE_API_KEY=...
+PADDLE_ENV=sandbox            # or production
+PADDLE_PRICE_PREMIUM_MONTHLY=...
+PADDLE_PRICE_PREMIUM_ANNUAL=...
+PADDLE_PRICE_PREMIUM_PLUS_MONTHLY=...
+PADDLE_PRICE_PREMIUM_PLUS_ANNUAL=...
+PADDLE_WEBHOOK_SECRET=...
+
+IYZICO_API_KEY=...
+IYZICO_SECRET_KEY=...
+IYZICO_BASE_URL=https://sandbox-api.iyzipay.com   # prod: https://api.iyzipay.com
+IYZICO_CALLBACK_URL=...        # where iyzico redirects after the hosted checkout form completes
+IYZICO_PLAN_PREMIUM_MONTHLY=...
+IYZICO_PLAN_PREMIUM_ANNUAL=...
+IYZICO_PLAN_PREMIUM_PLUS_MONTHLY=...
+IYZICO_PLAN_PREMIUM_PLUS_ANNUAL=...
+```
+
+---
+
 ## CSS & Theme
 
 - Background `#1A2B42`, panel bg `rgba(36, 59, 90, 0.75)`, accent `#00deec`, error `#ff6b6b`.
@@ -118,9 +170,10 @@
 - 9 languages configured in `LANGUAGES`/`resources`: `en`, `tr`, `de`, `az`, `pl`, `ru`, `zh`, `ko`, `ja`. Each has a file in `openteur/src/i18n/locales/<code>.ts`, typed as `const x: typeof en = {...}` against `en.ts` — this means adding/removing/renaming a key in `en.ts` requires the same change in **all 9** locale files or `tsc -b` fails with `TS2307`/missing-property errors. `en.ts` is the source of truth for key shape.
 - Detection: browser language via `navigator`, cached in `localStorage` under `ct_lang`. Fallback language is `en`.
 - Usage pattern: `import { useTranslation } from 'react-i18next'; const { t } = useTranslation();` then `t('section.key')`. Interpolation uses `{{var}}` (e.g. `t('match.saveFailed', { message })`).
-- Key sections in `locales/*.ts`: `common`, `nav`, `landing`, `home`, `auth`, `tutorial`, `players`, `playerForm`, `stats`, `preview`, `match`, `schedule`, `crew`, `friends`, `profile`, `mdm`. `pricing`, `referrals`, `users`, `invite` have **no key section yet** — add one before wiring those pages.
-- Fully wired (all structural UI text uses `t()`): `LandingPage`, `HomePage`, `LoginPage`, `SignupPage`, `PlayersPage`, `PreviewPage`, `MatchPage`, `SchedulePage`, `CrewPage`, `FriendsPage`, `ProfilePage`, `AddPlayerForm` (+ its `usePlayerForm` hook, which supplies the `stats.*` labels for `StatGrid`), `Navbar`, `GoogleSignInButton`, `MatchDetailsModal`, `tutorial/TutorialOverlay` (via `titleKey`/`textKey` in `tutorialSteps.ts`).
-- Not wired at all (no `t()` calls, no key section): `PricingPage`, `ReferralsPage`, `UsersPage`, `InvitePage`.
+- Key sections in `locales/*.ts`: `common`, `nav`, `landing`, `home`, `auth`, `tutorial`, `players`, `playerForm`, `stats`, `preview`, `match`, `schedule`, `crew`, `friends`, `profile`, `mdm`, `pricing`. `referrals`, `users`, `invite` have **no key section yet** — add one before wiring those pages.
+- Fully wired (all structural UI text uses `t()`): `LandingPage`, `HomePage`, `LoginPage`, `SignupPage`, `PlayersPage`, `PreviewPage`, `MatchPage`, `SchedulePage`, `CrewPage`, `FriendsPage`, `ProfilePage`, `AddPlayerForm` (+ its `usePlayerForm` hook, which supplies the `stats.*` labels for `StatGrid`), `Navbar` (includes a `/pricing` link in `NAV_LINKS`, key `nav.pricing`), `PricingPage`, `GoogleSignInButton`, `MatchDetailsModal`, `tutorial/TutorialOverlay` (via `titleKey`/`textKey` in `tutorialSteps.ts`).
+- `PricingPage`'s tier names (`Free`/`Premium`/`Premium+`) are translated per-locale (`pricing.freeName` etc.) — unlike card tiers (`Bronze`/`Silver`/`Gold`), there's no name-matching/regex logic depending on these staying English, so full translation was the simpler, more correct choice.
+- Not wired at all (no `t()` calls, no key section): `ReferralsPage`, `UsersPage`, `InvitePage`.
 - Not wired, no dedicated key section either: `ComparePanel`, `ConfirmDialog`, `UpgradeModal`, `PlanUsageMeter`, `FootballPitch`, `AppFooter`.
 - Convention observed across every wired file: dynamic toast/error strings (`showMsg('Failed to ...')`, `ConfirmDialog` messages, inline hint text) are largely left as hardcoded English unless a matching key already existed pre-authored (e.g. `players.generateFailed`, `match.saveFailed`, `schedule.deleteFailed`). Don't invent new keys for every toast — only add one if the string is structural/repeated, and remember to add it to all 9 locale files.
 - `validatePlayer.ts` (`openteur/src/utils/validatePlayer.ts`) returns raw English error strings — it's a plain function, not a hook, so it can't call `t()` without threading the translator through as a parameter. Left untranslated; out of scope until someone decides to refactor its signature.
@@ -192,6 +245,7 @@ PORT=5002
 RESEND_API_KEY=re_...
 SMTP_FROM=onboarding@resend.dev
 ```
+Billing (`PADDLE_*`, `IYZICO_*`) and R2 (`R2_*`) env vars are also expected by the code but not yet present in this file — see `## Billing & Plans` above and `MONETIZATION_HANDOFF.md` for the full list and setup steps.
 
 ### `openteur/.env`
 ```

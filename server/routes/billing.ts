@@ -8,11 +8,12 @@ const router = Router();
 router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
   const uid = (req as any).uid as string;
   const email = (req as any).email as string | undefined;
-  const { tier, interval, referralCode, countryCode } = req.body as {
+  const { tier, interval, referralCode, countryCode, iyzico } = req.body as {
     tier?: PaidTier;
     interval?: BillingInterval;
     referralCode?: string;
     countryCode?: string;
+    iyzico?: { name: string; surname: string; identityNumber: string; gsmNumber?: string };
   };
 
   if (tier !== 'premium' && tier !== 'premium_plus') {
@@ -23,7 +24,7 @@ router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
   const provider = providerForRegion(countryCode);
 
   try {
-    const result = await startCheckout(provider, { uid, email, tier, interval: resolvedInterval, referralCode });
+    const result = await startCheckout(provider, { uid, email, tier, interval: resolvedInterval, referralCode, iyzico });
     res.json(result);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Checkout failed';
@@ -34,7 +35,7 @@ router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
 async function handleWebhook(provider: ProviderName, req: Request, res: Response) {
   try {
     const raw = Buffer.isBuffer(req.body) ? req.body : Buffer.from(JSON.stringify(req.body));
-    const event = getAdapter(provider).verifyAndParse(raw, req.headers);
+    const event = await getAdapter(provider).verifyAndParse(raw, req.headers);
     if (!event) {
       res.status(400).json({ error: 'Invalid or unverified webhook' });
       return;

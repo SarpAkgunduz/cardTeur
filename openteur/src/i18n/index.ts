@@ -48,4 +48,12 @@ i18n
     interpolation: { escapeValue: false },
   });
 
+// Keep <html lang="..."> in sync so CSS :lang() rules (e.g. shrinking header
+// buttons for languages with longer translated labels) resolve correctly.
+const syncHtmlLang = (lng: string) => {
+  document.documentElement.lang = lng;
+};
+syncHtmlLang(i18n.resolvedLanguage || i18n.language);
+i18n.on('languageChanged', syncHtmlLang);
+
 export default i18n;

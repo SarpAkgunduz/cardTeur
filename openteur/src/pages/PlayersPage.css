@@ -32,6 +32,36 @@
   margin-right: 6px !important;
 }
 
+/* Languages whose translated labels run noticeably longer than English
+   (e.g. German "Bearbeitung abbrechen", Turkish "Karşılaştırmayı İptal Et")
+   would otherwise overflow into the centered title. Shrink the buttons and
+   ease off the title's translateX so the row keeps fitting on one line. */
+:lang(de) .players-page__actions .btn-ct,
+:lang(ru) .players-page__actions .btn-ct,
+:lang(tr) .players-page__actions .btn-ct,
+:lang(az) .players-page__actions .btn-ct,
+:lang(pl) .players-page__actions .btn-ct {
+  font-size: 0.64rem;
+  padding-inline: 8px;
+  letter-spacing: 0.05em;
+}
+
+:lang(de) .players-page__actions,
+:lang(ru) .players-page__actions,
+:lang(tr) .players-page__actions,
+:lang(az) .players-page__actions,
+:lang(pl) .players-page__actions {
+  gap: 6px;
+}
+
+:lang(de) .players-page__title,
+:lang(ru) .players-page__title,
+:lang(tr) .players-page__title,
+:lang(az) .players-page__title,
+:lang(pl) .players-page__title {
+  transform: translateX(clamp(-40px, -3vw, -10px));
+}
+
 .players-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
