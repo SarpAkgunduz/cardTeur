@@ -43,7 +43,7 @@ This tracks what's built in code vs. what only **you** can do (accounts, keys, d
 - Create the product + **4 prices**: Premium $3/mo & $30/yr, Premium+ $5/mo & $50/yr.
 - Set a 30-day trial on the prices/subscription.
 - Create a webhook pointing to `https://<your-api>/api/billing/webhook/paddle`; copy its secret.
-- For referral discounts: create a 50%-off-first-payment **discount** in Paddle (the code currently passes `referralCode` in checkout `custom_data`; wire it to a real Paddle discount to actually apply the 50%).
+- For referral discounts: create **two** discounts in Paddle — 50%-off-first-payment for monthly, 30%-off-first-payment for annual (the code currently passes `referralCode` in checkout `custom_data` but doesn't select either discount; wire checkout to pick the right discount ID based on `interval`, not just presence of a code).
 - Env vars (`server/.env` + Railway):
   ```
   PADDLE_API_KEY=...

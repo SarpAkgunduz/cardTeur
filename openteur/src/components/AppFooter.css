@@ -4,21 +4,25 @@
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0 16px;
   overflow: hidden;
   flex-shrink: 0;
 }
 
-.ct-footer__ticker {
+.ct-footer__status {
   display: flex;
-  gap: 3rem;
+  gap: 1.5rem;
   white-space: nowrap;
-  animation: ct-ticker 20s linear infinite;
-  padding-left: 100%;
+  overflow: hidden;
 }
 
-@keyframes ct-ticker {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+.ct-footer__legal {
+  display: flex;
+  gap: 1.25rem;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .ct-footer__item {
@@ -42,4 +46,19 @@
   font-weight: 700;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.7);
+}
+
+.ct-footer__link {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(0, 222, 236, 0.7);
+  text-decoration: none;
+}
+
+.ct-footer__link:hover {
+  color: #00deec;
+  text-decoration: underline;
 }

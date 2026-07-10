@@ -19,9 +19,13 @@ import FriendsPage from './pages/FriendsPage';
 import InvitePage from './pages/InvitePage';
 import PricingPage from './pages/PricingPage';
 import ReferralsPage from './pages/ReferralsPage';
+import TermsPage from './pages/TermsPage';
+import PrivacyPage from './pages/PrivacyPage';
+import RefundPolicyPage from './pages/RefundPolicyPage';
 import PrivateRoute from './components/routes/PrivateRoute';
 import PublicRoute from './components/routes/PublicRoute';
 import Navbar from './components/Navbar';
+import AppFooter from './components/AppFooter';
 import TutorialOverlay from './components/tutorial/TutorialOverlay';
 
 const HomeRoute = () => {
@@ -131,8 +135,12 @@ const App = () => {
           }
         />
         <Route path="/invite/:inviterUid" element={<InvitePage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/refunds" element={<RefundPolicyPage />} />
           </Routes>
         </div>
+        <AppFooter />
         <TutorialOverlay />
       </div>
       </TutorialProvider>
