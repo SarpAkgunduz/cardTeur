@@ -1,0 +1,40 @@
+.thank-you {
+  max-width: 560px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: thank-you-in 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.thank-you__check {
+  font-size: 3.4rem;
+  color: #00deec;
+  text-shadow: 0 0 18px rgba(0, 222, 236, 0.4);
+}
+
+.thank-you__title {
+  margin: 0;
+}
+
+.thank-you__message {
+  color: #f7f5fd;
+  opacity: 0.85;
+  line-height: 1.6;
+}
+
+.thank-you__actions {
+  margin-top: 8px;
+}
+
+@keyframes thank-you-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

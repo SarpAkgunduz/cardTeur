@@ -5,6 +5,7 @@ import ToastNotification from '../components/ToastNotification';
 import { useAuth } from '../contexts/AuthContext';
 import { billingApi, referralApi } from '../services';
 import type { BillingInterval, PaidTier, Plan } from '../services/api/types';
+import { getPaddle } from '../services/paddle';
 import './PricingPage.css';
 
 const REFERRAL_STORAGE_KEY = 'ct_referral_code';
@@ -154,7 +155,22 @@ const PricingPage = () => {
     try {
       const referralCode = referralStatus === 'valid' ? referralInput : undefined;
       const result = await billingApi.checkout({ tier, interval, countryCode, referralCode });
-      if (result.url) {
+      if (result.provider === 'paddle' && result.token) {
+        const paddle = await getPaddle();
+        if (!paddle) {
+          setToastMsg(t('pricing.checkoutFailed'));
+          setShowToast(true);
+          return;
+        }
+        paddle.Checkout.open({
+          transactionId: result.token,
+          settings: {
+            displayMode: 'overlay',
+            variant: 'one-page',
+            successUrl: `${window.location.origin}/thank-you`,
+          },
+        });
+      } else if (result.url) {
         window.location.href = result.url;
       } else {
         setToastMsg(t('pricing.checkoutStarted'));

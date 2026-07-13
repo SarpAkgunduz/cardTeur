@@ -22,6 +22,7 @@ import ReferralsPage from './pages/ReferralsPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
 import RefundPolicyPage from './pages/RefundPolicyPage';
+import ThankYouPage from './pages/ThankYouPage';
 import PrivateRoute from './components/routes/PrivateRoute';
 import PublicRoute from './components/routes/PublicRoute';
 import Navbar from './components/Navbar';
@@ -138,6 +139,7 @@ const App = () => {
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/refunds" element={<RefundPolicyPage />} />
+        <Route path="/thank-you" element={<ThankYouPage />} />
           </Routes>
         </div>
         <AppFooter />
