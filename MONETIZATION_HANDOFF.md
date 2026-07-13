@@ -39,20 +39,23 @@ This tracks what's built in code vs. what only **you** can do (accounts, keys, d
 - Run the migration once: `cd server && npx ts-node scripts/migrateImagesToR2.ts`
 
 ### 2. Paddle (international payments)
-- Sign up at paddle.com; complete seller verification (Turkey-based sellers are supported).
-- Create the product + **4 prices**: Premium $3/mo & $30/yr, Premium+ $5/mo & $50/yr.
-- Set a 30-day trial on the prices/subscription.
-- Create a webhook pointing to `https://<your-api>/api/billing/webhook/paddle`; copy its secret.
-- For referral discounts: create **two** discounts in Paddle — 50%-off-first-payment for monthly, 30%-off-first-payment for annual (the code currently passes `referralCode` in checkout `custom_data` but doesn't select either discount; wire checkout to pick the right discount ID based on `interval`, not just presence of a code).
-- Env vars (`server/.env` + Railway):
+- ✅ **Sandbox catalog created** (2026-07-13) — 2 products, 4 prices (Premium $3/mo & $30/yr, Premium+ $5/mo & $50/yr, each with GB/IE/AU currency overrides), 2 referral discounts (50% off first month, 30% off first year, `restrict_to` locked to the correct interval's prices), 7-day card-required trial on every price. All IDs are already in `server/.env`. `paddle.ts` already picks the right discount by `interval` — no code change needed there anymore.
+- ⏳ **Still sandbox only** — this is Test Mode, no real money moves, only Paddle test cards work. Nothing here is live yet.
+- Still needed before this actually works end-to-end:
+  - Create a webhook in the **sandbox** dashboard pointing to `https://<your-local-or-tunnel-url>/api/billing/webhook/paddle`; copy its signing secret into `PADDLE_WEBHOOK_SECRET` in `server/.env`. Without this, checkout works but a subscription activating never updates the user's `plan` in Mongo.
+  - Test an actual checkout end-to-end with a [Paddle test card](https://developer.paddle.com/concepts/payment-methods/test-cards) before trusting the flow.
+- When ready to go live: sign up / complete seller verification on the **live** side (`vendors.paddle.com`, not sandbox), repeat product/price/discount creation there (sandbox and live are fully separate — no data carries over), set `PADDLE_ENV=production`, and swap in the live key + IDs (in `server/.env` and Railway).
+- Env vars (`server/.env` — ✅ already set for sandbox; repeat for Railway when deploying, and again for live later):
   ```
-  PADDLE_API_KEY=...
-  PADDLE_WEBHOOK_SECRET=...
-  PADDLE_ENV=sandbox            # then 'production'
-  PADDLE_PRICE_PREMIUM_MONTHLY=pri_...
-  PADDLE_PRICE_PREMIUM_ANNUAL=pri_...
-  PADDLE_PRICE_PREMIUM_PLUS_MONTHLY=pri_...
-  PADDLE_PRICE_PREMIUM_PLUS_ANNUAL=pri_...
+  PADDLE_API_KEY=...            # ✅ set (sandbox)
+  PADDLE_WEBHOOK_SECRET=...     # ⏳ still needed
+  PADDLE_ENV=sandbox            # then 'production' when going live
+  PADDLE_PRICE_PREMIUM_MONTHLY=pri_...          # ✅ set
+  PADDLE_PRICE_PREMIUM_ANNUAL=pri_...           # ✅ set
+  PADDLE_PRICE_PREMIUM_PLUS_MONTHLY=pri_...     # ✅ set
+  PADDLE_PRICE_PREMIUM_PLUS_ANNUAL=pri_...      # ✅ set
+  PADDLE_DISCOUNT_REFERRAL_MONTHLY=dsc_...      # ✅ set
+  PADDLE_DISCOUNT_REFERRAL_ANNUAL=dsc_...       # ✅ set
   ```
 
 ### 3. iyzico (Turkey payments) — needs the most work

@@ -14,6 +14,7 @@ pids
 
 # dotenv environment variables
 .env
+.env.*.local
 
 # Firebase service account key (contains private credentials - never commit)
 server/serviceAccountKey.json
