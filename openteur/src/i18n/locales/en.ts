@@ -26,6 +26,7 @@ export default {
     crew: 'My Crew',
     friends: 'Friends',
     pricing: 'Plans',
+    referrals: 'Referrals',
     profile: 'Profile',
     login: 'Login',
     signup: 'Sign Up',

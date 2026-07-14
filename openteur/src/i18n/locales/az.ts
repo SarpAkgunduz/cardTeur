@@ -28,6 +28,7 @@ const az: typeof en = {
     crew: 'Komandam',
     friends: 'Dostlar',
     pricing: 'Planlar',
+    referrals: 'Referanslar',
     profile: 'Profil',
     login: 'Giriş',
     signup: 'Qeydiyyat',

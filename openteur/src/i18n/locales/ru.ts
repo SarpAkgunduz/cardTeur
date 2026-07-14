@@ -28,6 +28,7 @@ const ru: typeof en = {
     crew: 'Моя команда',
     friends: 'Друзья',
     pricing: 'Тарифы',
+    referrals: 'Рефералы',
     profile: 'Профиль',
     login: 'Вход',
     signup: 'Регистрация',

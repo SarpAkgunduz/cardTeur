@@ -28,6 +28,7 @@ const ko: typeof en = {
     crew: '내 크루',
     friends: '친구',
     pricing: '요금제',
+    referrals: '추천',
     profile: '프로필',
     login: '로그인',
     signup: '회원가입',

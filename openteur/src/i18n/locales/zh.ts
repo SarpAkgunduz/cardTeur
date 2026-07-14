@@ -28,6 +28,7 @@ const zh: typeof en = {
     crew: '我的战队',
     friends: '好友',
     pricing: '套餐',
+    referrals: '推荐',
     profile: '个人资料',
     login: '登录',
     signup: '注册',

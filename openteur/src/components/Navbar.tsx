@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { path: '/crew', labelKey: 'nav.crew' },
   { path: '/friends', labelKey: 'nav.friends' },
   { path: '/pricing', labelKey: 'nav.pricing' },
+  { path: '/referrals', labelKey: 'nav.referrals' },
 ];
 
 const Navbar = () => {

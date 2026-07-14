@@ -28,6 +28,7 @@ const de: typeof en = {
     crew: 'Meine Crew',
     friends: 'Freunde',
     pricing: 'Preise',
+    referrals: 'Empfehlungen',
     profile: 'Profil',
     login: 'Anmelden',
     signup: 'Registrieren',

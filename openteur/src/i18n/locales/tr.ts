@@ -28,6 +28,7 @@ const tr: typeof en = {
     crew: 'Ekibim',
     friends: 'Arkadaşlar',
     pricing: 'Planlar',
+    referrals: 'Referanslar',
     profile: 'Profil',
     login: 'Giriş Yap',
     signup: 'Kayıt Ol',

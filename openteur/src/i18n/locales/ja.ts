@@ -28,6 +28,7 @@ const ja: typeof en = {
     crew: 'マイクルー',
     friends: 'フレンド',
     pricing: 'プラン',
+    referrals: '紹介',
     profile: 'プロフィール',
     login: 'ログイン',
     signup: '新規登録',

@@ -28,6 +28,7 @@ const pl: typeof en = {
     crew: 'Moja Ekipa',
     friends: 'Znajomi',
     pricing: 'Plany',
+    referrals: 'Polecenia',
     profile: 'Profil',
     login: 'Zaloguj się',
     signup: 'Zarejestruj się',
