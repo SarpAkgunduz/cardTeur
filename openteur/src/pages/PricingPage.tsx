@@ -10,22 +10,27 @@ import './PricingPage.css';
 
 const REFERRAL_STORAGE_KEY = 'ct_referral_code';
 
-type CurrencyCode = 'USD' | 'GBP' | 'EUR' | 'AUD';
+type CurrencyCode = 'USD' | 'GBP' | 'EUR' | 'AUD' | 'CNY' | 'JPY';
 
 const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
   USD: '$',
   GBP: '£',
   EUR: '€',
   AUD: 'AUD $',
+  CNY: 'CN¥',
+  JPY: '¥',
 };
 
 // Mirrors the unit_price_overrides configured on the Paddle prices — UK/Ireland/
-// Australia get a local-currency price, everyone else falls back to the USD base.
+// Australia/China/Japan get a local-currency price, everyone else falls back to
+// the USD base.
 function currencyForCountry(countryCode?: string): CurrencyCode {
   switch (countryCode) {
     case 'GB': return 'GBP';
     case 'IE': return 'EUR';
     case 'AU': return 'AUD';
+    case 'CN': return 'CNY';
+    case 'JP': return 'JPY';
     default: return 'USD';
   }
 }
@@ -36,12 +41,16 @@ const PRICES: Record<PaidTier, Record<CurrencyCode, { monthly: number; annual: n
     GBP: { monthly: 3, annual: 30 },
     EUR: { monthly: 3, annual: 30 },
     AUD: { monthly: 5, annual: 50 },
+    CNY: { monthly: 20, annual: 200 },
+    JPY: { monthly: 450, annual: 4500 },
   },
   premium_plus: {
     USD: { monthly: 5, annual: 50 },
     GBP: { monthly: 5, annual: 50 },
     EUR: { monthly: 5, annual: 50 },
     AUD: { monthly: 8, annual: 80 },
+    CNY: { monthly: 35, annual: 350 },
+    JPY: { monthly: 750, annual: 7500 },
   },
 };
 
