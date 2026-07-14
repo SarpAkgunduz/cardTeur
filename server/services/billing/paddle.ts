@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { Plan } from '../../config/plans';
-import { BillingAdapter, CheckoutParams, CheckoutResult, ParsedSubscriptionEvent, PaidTier, BillingInterval } from './types';
+import { BillingAdapter, CheckoutParams, CheckoutResult, ParsedSubscriptionEvent, PaidTier, BillingInterval, ChangePlanParams } from './types';
 
 const PADDLE_API = () =>
   process.env.PADDLE_ENV === 'production'
@@ -69,6 +69,36 @@ export const paddleAdapter: BillingAdapter = {
       token: body?.data?.id,
       url: body?.data?.checkout?.url,
     };
+  },
+
+  // Upgrade/downgrade: swaps the price on the customer's existing subscription
+  // instead of starting a new one, so they never end up paying for two plans at
+  // once. proration_billing_mode: 'prorated_immediately' charges/credits the
+  // difference for the remainder of the current billing period right away,
+  // matching common SaaS upgrade behavior.
+  async changePlan(params: ChangePlanParams): Promise<void> {
+    const apiKey = process.env.PADDLE_API_KEY;
+    const priceId = priceIdFor(params.tier, params.interval);
+    if (!apiKey || !priceId) {
+      throw new Error('Paddle is not configured (missing PADDLE_API_KEY or price id)');
+    }
+
+    const res = await fetch(`${PADDLE_API()}/subscriptions/${params.subscriptionId}`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        items: [{ price_id: priceId, quantity: 1 }],
+        proration_billing_mode: 'prorated_immediately',
+      }),
+    });
+
+    if (!res.ok) {
+      const detail = await res.text();
+      throw new Error(`Paddle change plan failed: ${res.status} ${detail}`);
+    }
   },
 
   verifyAndParse(rawBody: Buffer, headers): ParsedSubscriptionEvent | null {

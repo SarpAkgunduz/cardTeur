@@ -194,6 +194,25 @@ const PricingPage = () => {
     }
   };
 
+  // Already on a paid plan and picking a different paid tier: change the existing
+  // subscription's price in place instead of starting a second, parallel checkout —
+  // starting a new checkout here would leave the customer paying for two plans at
+  // once (see server/routes/billing.ts's /change-plan route).
+  const handleChangePlan = async (tier: PaidTier) => {
+    setLoadingTier(tier);
+    try {
+      await billingApi.changePlan({ tier, interval });
+      setToastMsg(t('pricing.planChanged'));
+      setShowToast(true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : t('pricing.planChangeFailed');
+      setToastMsg(message);
+      setShowToast(true);
+    } finally {
+      setLoadingTier(null);
+    }
+  };
+
   return (
     <div className="page-wrapper">
       <div className="page-container">
@@ -256,6 +275,11 @@ const PricingPage = () => {
               const isCurrent = plan === tier.id;
               const price = interval === 'annual' ? tier.annual : tier.monthly;
               const suffix = tier.id === 'free' ? '' : interval === 'annual' ? t('pricing.perYear') : t('pricing.perMonth');
+              // Already paying for some plan and looking at a different paid tier:
+              // this is an upgrade/downgrade of the existing subscription, not a
+              // fresh checkout.
+              const isPlanChange = tier.id !== 'free' && plan !== 'free' && !isCurrent;
+              const isUpgrade = isPlanChange && tier.id === 'premium_plus' && plan === 'premium';
               return (
                 <div key={tier.id} className={`pricing-card ${tier.highlight ? 'pricing-card--highlight' : ''}`}>
                   <h3 className="pricing-card__name">{tier.name}</h3>
@@ -275,9 +299,15 @@ const PricingPage = () => {
                     <button
                       className="btn btn-ct pricing-card__cta"
                       disabled={isCurrent || loadingTier !== null}
-                      onClick={() => handleChoose(tier.id as PaidTier)}
+                      onClick={() => (isPlanChange ? handleChangePlan(tier.id as PaidTier) : handleChoose(tier.id as PaidTier))}
                     >
-                      {isCurrent ? t('pricing.current', { plan: planNames[plan] }) : loadingTier === tier.id ? t('pricing.starting') : t('pricing.choose')}
+                      {isCurrent
+                        ? t('pricing.current', { plan: planNames[plan] })
+                        : loadingTier === tier.id
+                        ? (isPlanChange ? t('pricing.changingPlan') : t('pricing.starting'))
+                        : isPlanChange
+                        ? (isUpgrade ? t('pricing.upgrade') : t('pricing.downgrade'))
+                        : t('pricing.choose')}
                     </button>
                   )}
                 </div>

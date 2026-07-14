@@ -3,6 +3,7 @@ import { requireAuth } from '../middleware/auth';
 import { startCheckout, applySubscriptionEvent, providerForRegion, getAdapter, ProviderName } from '../services/billing';
 import { BillingInterval, PaidTier } from '../services/billing/types';
 import { previewReferral } from '../services/referralService';
+import User from '../models/User';
 
 const router = Router();
 
@@ -37,6 +38,37 @@ router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
     res.json(result);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Checkout failed';
+    res.status(502).json({ error: message });
+  }
+});
+
+router.post('/change-plan', requireAuth, async (req: Request, res: Response) => {
+  const uid = (req as any).uid as string;
+  const { tier, interval } = req.body as { tier?: PaidTier; interval?: BillingInterval };
+
+  if (tier !== 'premium' && tier !== 'premium_plus') {
+    res.status(400).json({ error: 'Invalid tier' });
+    return;
+  }
+  const resolvedInterval: BillingInterval = interval === 'annual' ? 'annual' : 'monthly';
+
+  const user = await User.findOne({ uid });
+  if (!user || !user.billingSubscriptionId || !user.billingProvider) {
+    res.status(400).json({ error: 'No active subscription to change — use checkout instead' });
+    return;
+  }
+
+  const adapter = getAdapter(user.billingProvider);
+  if (!adapter.changePlan) {
+    res.status(400).json({ error: `Plan changes are not supported for ${user.billingProvider} yet` });
+    return;
+  }
+
+  try {
+    await adapter.changePlan({ subscriptionId: user.billingSubscriptionId, tier, interval: resolvedInterval });
+    res.json({ ok: true });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Plan change failed';
     res.status(502).json({ error: message });
   }
 });

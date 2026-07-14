@@ -19,7 +19,8 @@ const NAV_LINKS = [
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { currentUser, signOut } = useAuth();
+  const { currentUser, signOut, plan } = useAuth();
+  const isPremium = plan === 'premium' || plan === 'premium_plus';
   const { startTutorial } = useTutorial();
   const { t, i18n } = useTranslation();
   const loggedIn = !!currentUser;
@@ -136,6 +137,15 @@ const Navbar = () => {
           )}
           {loggedIn ? (
             <div className="ct-nav__user-area">
+              {isPremium && (
+                <span
+                  className={`ct-nav__plan-badge ${plan === 'premium_plus' ? 'ct-nav__plan-badge--plus' : ''}`}
+                  title={plan === 'premium_plus' ? t('pricing.premiumPlusName') : t('pricing.premiumName')}
+                >
+                  <i className="bi bi-gem" />
+                  {plan === 'premium_plus' ? t('pricing.premiumPlusName') : t('pricing.premiumName')}
+                </span>
+              )}
               <button
                 className={`ct-nav__user-chip ${isActive('/profile') ? 'ct-nav__user-chip--active' : ''}`}
                 onClick={() => navigate('/profile')}
@@ -189,6 +199,12 @@ const Navbar = () => {
                   onClick={() => navigate('/profile')}
                 >
                   {t('nav.profile')}
+                  {isPremium && (
+                    <span className={`ct-nav__plan-badge ${plan === 'premium_plus' ? 'ct-nav__plan-badge--plus' : ''}`}>
+                      <i className="bi bi-gem" />
+                      {plan === 'premium_plus' ? t('pricing.premiumPlusName') : t('pricing.premiumName')}
+                    </span>
+                  )}
                 </button>
                 <button
                   className="ct-nav__mobile-logout"

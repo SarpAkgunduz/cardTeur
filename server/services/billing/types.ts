@@ -44,6 +44,12 @@ export interface ParsedSubscriptionEvent {
   referralCode?: string;
 }
 
+export interface ChangePlanParams {
+  subscriptionId: string;
+  tier: PaidTier;
+  interval: BillingInterval;
+}
+
 export interface BillingAdapter {
   readonly provider: 'paddle' | 'iyzico';
   createCheckout(params: CheckoutParams): Promise<CheckoutResult>;
@@ -55,4 +61,9 @@ export interface BillingAdapter {
     rawBody: Buffer,
     headers: Record<string, string | string[] | undefined>
   ): ParsedSubscriptionEvent | null | Promise<ParsedSubscriptionEvent | null>;
+  // Changes an existing subscription's price in place (upgrade/downgrade) instead
+  // of creating a second, parallel subscription. Optional because iyzico doesn't
+  // support this yet — the change-plan route checks for its presence and returns
+  // a clear error instead of silently creating a duplicate subscription.
+  changePlan?(params: ChangePlanParams): Promise<void>;
 }
