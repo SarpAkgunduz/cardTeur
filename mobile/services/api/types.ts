@@ -58,6 +58,23 @@ export interface Crew {
 
 export type Plan = 'free' | 'premium' | 'premium_plus';
 
+export interface Referral {
+  _id: string;
+  referrerUid: string;
+  code: string;
+  status: 'unused' | 'redeemed';
+  referredUid?: string;
+  rewardGranted: boolean;
+  createdAt: string;
+}
+
+export interface ReferralOverview {
+  slots: number;
+  used: number;
+  available: number;
+  referrals: Referral[];
+}
+
 export interface AppUser {
   uid: string;
   email: string;

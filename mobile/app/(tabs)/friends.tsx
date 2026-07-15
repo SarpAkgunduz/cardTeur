@@ -10,6 +10,7 @@ import {
   TextInput,
   Alert,
   Image,
+  Share,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
@@ -18,14 +19,15 @@ import ScreenHeader from '../../components/ScreenHeader';
 import Toast from '../../components/Toast';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { userApi } from '../../services/api/userApi';
-import type { AppUser } from '../../services/api/types';
+import { referralApi } from '../../services/api/referralApi';
+import type { AppUser, ReferralOverview } from '../../services/api/types';
 
-type Tab = 'my-friends' | 'add-friend';
+type Tab = 'my-friends' | 'add-friend' | 'referrals';
 
 export default function FriendsScreen() {
   const { t } = useTranslation();
   const { registerTarget } = useTutorial();
-  const { currentUser } = useAuth();
+  const { currentUser, plan } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>('my-friends');
   const [myUser, setMyUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,6 +36,9 @@ export default function FriendsScreen() {
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState('');
   const [toast, setToast] = useState({ visible: false, message: '', variant: 'success' as 'success' | 'error' });
+  const [referralOverview, setReferralOverview] = useState<ReferralOverview | null>(null);
+  const [referralLoading, setReferralLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
 
   const showToast = (message: string, variant: 'success' | 'error' = 'success') => {
     setToast({ visible: true, message, variant });
@@ -45,6 +50,40 @@ export default function FriendsScreen() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  const loadReferrals = () => {
+    setReferralLoading(true);
+    referralApi.getOverview()
+      .then(setReferralOverview)
+      .catch(() => setReferralOverview(null))
+      .finally(() => setReferralLoading(false));
+  };
+
+  useEffect(() => {
+    if (plan !== 'free') loadReferrals();
+    else setReferralLoading(false);
+  }, [plan]);
+
+  const handleGenerateReferral = async () => {
+    setGenerating(true);
+    try {
+      await referralApi.generate();
+      loadReferrals();
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : t('friends.referralGenerateFailed'), 'error');
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const shareReferralLink = async (code: string) => {
+    const link = `https://cardteur.com/signup?ref=${code}`;
+    try {
+      await Share.share({ message: link });
+    } catch {
+      // user dismissed the share sheet — nothing to do
+    }
+  };
 
   const myFriends = (myUser?.friends ?? []);
 
@@ -110,14 +149,18 @@ export default function FriendsScreen() {
         collapsable={false}
         ref={node => registerTarget('friends-tabs', node)}
       >
-        {(['my-friends', 'add-friend'] as Tab[]).map(tab => (
+        {(['my-friends', 'add-friend', 'referrals'] as Tab[]).map(tab => (
           <TouchableOpacity
             key={tab}
             style={[styles.tab, activeTab === tab && styles.tabActive]}
             onPress={() => setActiveTab(tab)}
           >
             <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-              {tab === 'my-friends' ? t('friends.myFriendsTab', { count: myFriends.length }) : t('friends.addFriendTab')}
+              {tab === 'my-friends'
+                ? t('friends.myFriendsTab', { count: myFriends.length })
+                : tab === 'add-friend'
+                ? t('friends.addFriendTab')
+                : t('friends.referralsTab')}
             </Text>
           </TouchableOpacity>
         ))}
@@ -209,6 +252,67 @@ export default function FriendsScreen() {
                   <Text style={styles.addBtnText}>{t('common.add')}</Text>
                 </TouchableOpacity>
               )}
+            </View>
+          )}
+        </ScrollView>
+      )}
+
+      {activeTab === 'referrals' && (
+        <ScrollView contentContainerStyle={styles.scroll}>
+          {plan === 'free' ? (
+            <View style={styles.center}>
+              <Text style={styles.emptyText}>{t('friends.referralsFreeTitle')}</Text>
+              <Text style={styles.emptyHint}>{t('friends.referralsFreeHint')}</Text>
+            </View>
+          ) : referralLoading ? (
+            <View style={styles.center}>
+              <ActivityIndicator color={Colors.accent} />
+            </View>
+          ) : referralOverview ? (
+            <>
+              <View style={styles.referralSummary}>
+                <Text style={styles.referralSummaryText}>
+                  {t('friends.referralSlots', { available: referralOverview.available, slots: referralOverview.slots })}
+                </Text>
+                <TouchableOpacity
+                  style={[styles.searchBtn, (generating || referralOverview.available <= 0) && styles.btnDisabled]}
+                  onPress={handleGenerateReferral}
+                  disabled={generating || referralOverview.available <= 0}
+                >
+                  {generating
+                    ? <ActivityIndicator size="small" color={Colors.background} />
+                    : <Text style={styles.searchBtnText}>{t('friends.createReferral')}</Text>
+                  }
+                </TouchableOpacity>
+              </View>
+
+              {referralOverview.referrals.length === 0 ? (
+                <View style={styles.center}>
+                  <Text style={styles.emptyText}>{t('friends.noReferrals')}</Text>
+                </View>
+              ) : (
+                referralOverview.referrals.map((r) => (
+                  <View key={r._id} style={styles.friendRow}>
+                    <View style={styles.friendInfo}>
+                      <Text style={styles.friendUid}>{r.code}</Text>
+                      <Text style={styles.friendEmail}>
+                        {r.status === 'redeemed'
+                          ? (r.rewardGranted ? t('friends.referralRedeemedRewarded') : t('friends.referralRedeemed'))
+                          : t('friends.referralUnused')}
+                      </Text>
+                    </View>
+                    {r.status === 'unused' && (
+                      <TouchableOpacity style={styles.addBtn} onPress={() => shareReferralLink(r.code)}>
+                        <Text style={styles.addBtnText}>{t('friends.shareLink')}</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                ))
+              )}
+            </>
+          ) : (
+            <View style={styles.center}>
+              <Text style={styles.emptyText}>{t('friends.referralsLoadFailed')}</Text>
             </View>
           )}
         </ScrollView>
@@ -355,4 +459,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
   },
   addBtnText: { color: Colors.background, fontWeight: '800', fontSize: FontSizes.xs, textTransform: 'uppercase' },
+  referralSummary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: Colors.panelBg,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    padding: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  referralSummaryText: {
+    color: Colors.textPrimary,
+    fontSize: FontSizes.sm,
+    fontWeight: '700',
+    flex: 1,
+    marginRight: Spacing.sm,
+  },
+  btnDisabled: {
+    opacity: 0.4,
+  },
 });
