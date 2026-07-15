@@ -4,7 +4,7 @@ import BackButton from '../components/BackButton';
 import ToastNotification from '../components/ToastNotification';
 import { useAuth } from '../contexts/AuthContext';
 import { billingApi, referralApi } from '../services';
-import type { BillingInterval, PaidTier, Plan } from '../services/api/types';
+import type { BillingInterval, PaidTier, Plan, ReferralOverview } from '../services/api/types';
 import { getPaddle } from '../services/paddle';
 import './PricingPage.css';
 
@@ -75,12 +75,16 @@ function detectCountryCode(): string | undefined {
 const PricingPage = () => {
   const { t } = useTranslation();
   const { plan } = useAuth();
+  const [view, setView] = useState<'plans' | 'referrals'>('plans');
   const [interval, setInterval] = useState<BillingInterval>('monthly');
   const [loadingTier, setLoadingTier] = useState<PaidTier | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
   const [referralInput, setReferralInput] = useState('');
   const [referralStatus, setReferralStatus] = useState<'idle' | 'checking' | 'valid' | 'invalid'>('idle');
+  const [referralOverview, setReferralOverview] = useState<ReferralOverview | null>(null);
+  const [referralOverviewLoading, setReferralOverviewLoading] = useState(true);
+  const [generatingReferral, setGeneratingReferral] = useState(false);
 
   const checkReferral = async (code: string) => {
     if (!code) {
@@ -104,6 +108,39 @@ const PricingPage = () => {
       checkReferral(stored);
     }
   }, []);
+
+  const loadReferralOverview = () => {
+    setReferralOverviewLoading(true);
+    referralApi.getOverview()
+      .then(setReferralOverview)
+      .catch(() => setReferralOverview(null))
+      .finally(() => setReferralOverviewLoading(false));
+  };
+
+  useEffect(() => {
+    if (plan !== 'free') loadReferralOverview();
+    else setReferralOverviewLoading(false);
+  }, [plan]);
+
+  const handleGenerateReferral = async () => {
+    setGeneratingReferral(true);
+    try {
+      await referralApi.generate();
+      loadReferralOverview();
+    } catch (err) {
+      setToastMsg(err instanceof Error ? err.message : t('pricing.referralGenerateFailed'));
+      setShowToast(true);
+    } finally {
+      setGeneratingReferral(false);
+    }
+  };
+
+  const copyReferralLink = (code: string) => {
+    const link = `${window.location.origin}/signup?ref=${code}`;
+    navigator.clipboard.writeText(link);
+    setToastMsg(t('pricing.referralLinkCopied'));
+    setShowToast(true);
+  };
 
   const planNames: Record<Plan, string> = {
     free: t('pricing.freeName'),
@@ -224,100 +261,169 @@ const PricingPage = () => {
             <h2 className="page-title">{t('pricing.title')}</h2>
           </div>
 
-          <div className="pricing-interval">
+          <div className="pricing-view-tabs">
             <button
-              className={`btn btn-ct ${interval === 'monthly' ? 'active-mode' : ''}`}
-              onClick={() => setInterval('monthly')}
+              className={`btn btn-ct ${view === 'plans' ? 'active-mode' : ''}`}
+              onClick={() => setView('plans')}
             >
-              {t('pricing.monthly')}
+              {t('pricing.plansTab')}
             </button>
             <button
-              className={`btn btn-ct ${interval === 'annual' ? 'active-mode' : ''}`}
-              onClick={() => setInterval('annual')}
+              className={`btn btn-ct ${view === 'referrals' ? 'active-mode' : ''}`}
+              onClick={() => setView('referrals')}
             >
-              {t('pricing.annual')} <span className="pricing-interval__save">{t('pricing.annualSave')}</span>
+              {t('pricing.referralsTab')}
             </button>
           </div>
 
-          <div className="pricing-referral">
-            <input
-              type="text"
-              className="pricing-referral__input"
-              placeholder={t('pricing.referralPlaceholder')}
-              value={referralInput}
-              onChange={(e) => {
-                setReferralInput(e.target.value.toUpperCase());
-                setReferralStatus('idle');
-              }}
-            />
-            <button
-              type="button"
-              className="btn btn-ct"
-              disabled={!referralInput || referralStatus === 'checking'}
-              onClick={() => checkReferral(referralInput)}
-            >
-              {t('pricing.referralApply')}
-            </button>
-            {referralStatus === 'valid' && (
-              <span className="pricing-referral__status pricing-referral__status--valid">
-                <i className="bi bi-check-circle-fill" /> {t('pricing.referralValid')}
-              </span>
-            )}
-            {referralStatus === 'invalid' && (
-              <span className="pricing-referral__status pricing-referral__status--invalid">
-                <i className="bi bi-x-circle-fill" /> {t('pricing.referralInvalid')}
-              </span>
-            )}
-          </div>
+          {view === 'plans' && (
+            <>
+              <div className="pricing-interval">
+                <button
+                  className={`btn btn-ct ${interval === 'monthly' ? 'active-mode' : ''}`}
+                  onClick={() => setInterval('monthly')}
+                >
+                  {t('pricing.monthly')}
+                </button>
+                <button
+                  className={`btn btn-ct ${interval === 'annual' ? 'active-mode' : ''}`}
+                  onClick={() => setInterval('annual')}
+                >
+                  {t('pricing.annual')} <span className="pricing-interval__save">{t('pricing.annualSave')}</span>
+                </button>
+              </div>
 
-          <div className="pricing-grid">
-            {TIERS.map((tier) => {
-              const isCurrent = plan === tier.id;
-              const price = interval === 'annual' ? tier.annual : tier.monthly;
-              const suffix = tier.id === 'free' ? '' : interval === 'annual' ? t('pricing.perYear') : t('pricing.perMonth');
-              // Already paying for some plan and looking at a different paid tier:
-              // this is an upgrade/downgrade of the existing subscription, not a
-              // fresh checkout.
-              const isPlanChange = tier.id !== 'free' && plan !== 'free' && !isCurrent;
-              const isUpgrade = isPlanChange && tier.id === 'premium_plus' && plan === 'premium';
-              return (
-                <div key={tier.id} className={`pricing-card ${tier.highlight ? 'pricing-card--highlight' : ''}`}>
-                  <h3 className="pricing-card__name">{tier.name}</h3>
-                  <div className="pricing-card__price">
-                    {price}<span className="pricing-card__suffix">{suffix}</span>
-                  </div>
-                  <ul className="pricing-card__features">
-                    {tier.features.map((f) => (
-                      <li key={f}><i className="bi bi-check-lg" /> {f}</li>
-                    ))}
-                  </ul>
-                  {tier.id === 'free' ? (
-                    <button className="btn btn-ct pricing-card__cta" disabled>
-                      {isCurrent ? t('pricing.currentPlan') : t('pricing.freeName')}
-                    </button>
-                  ) : (
-                    <button
-                      className="btn btn-ct pricing-card__cta"
-                      disabled={isCurrent || loadingTier !== null}
-                      onClick={() => (isPlanChange ? handleChangePlan(tier.id as PaidTier) : handleChoose(tier.id as PaidTier))}
-                    >
-                      {isCurrent
-                        ? t('pricing.current', { plan: planNames[plan] })
-                        : loadingTier === tier.id
-                        ? (isPlanChange ? t('pricing.changingPlan') : t('pricing.starting'))
-                        : isPlanChange
-                        ? (isUpgrade ? t('pricing.upgrade') : t('pricing.downgrade'))
-                        : t('pricing.choose')}
-                    </button>
-                  )}
+              <div className="pricing-referral">
+                <input
+                  type="text"
+                  className="pricing-referral__input"
+                  placeholder={t('pricing.referralPlaceholder')}
+                  value={referralInput}
+                  onChange={(e) => {
+                    setReferralInput(e.target.value.toUpperCase());
+                    setReferralStatus('idle');
+                  }}
+                />
+                <button
+                  type="button"
+                  className="btn btn-ct"
+                  disabled={!referralInput || referralStatus === 'checking'}
+                  onClick={() => checkReferral(referralInput)}
+                >
+                  {t('pricing.referralApply')}
+                </button>
+                {referralStatus === 'valid' && (
+                  <span className="pricing-referral__status pricing-referral__status--valid">
+                    <i className="bi bi-check-circle-fill" /> {t('pricing.referralValid')}
+                  </span>
+                )}
+                {referralStatus === 'invalid' && (
+                  <span className="pricing-referral__status pricing-referral__status--invalid">
+                    <i className="bi bi-x-circle-fill" /> {t('pricing.referralInvalid')}
+                  </span>
+                )}
+              </div>
+
+              <div className="pricing-grid">
+                {TIERS.map((tier) => {
+                  const isCurrent = plan === tier.id;
+                  const price = interval === 'annual' ? tier.annual : tier.monthly;
+                  const suffix = tier.id === 'free' ? '' : interval === 'annual' ? t('pricing.perYear') : t('pricing.perMonth');
+                  // Already paying for some plan and looking at a different paid tier:
+                  // this is an upgrade/downgrade of the existing subscription, not a
+                  // fresh checkout.
+                  const isPlanChange = tier.id !== 'free' && plan !== 'free' && !isCurrent;
+                  const isUpgrade = isPlanChange && tier.id === 'premium_plus' && plan === 'premium';
+                  return (
+                    <div key={tier.id} className={`pricing-card ${tier.highlight ? 'pricing-card--highlight' : ''}`}>
+                      <h3 className="pricing-card__name">{tier.name}</h3>
+                      <div className="pricing-card__price">
+                        {price}<span className="pricing-card__suffix">{suffix}</span>
+                      </div>
+                      <ul className="pricing-card__features">
+                        {tier.features.map((f) => (
+                          <li key={f}><i className="bi bi-check-lg" /> {f}</li>
+                        ))}
+                      </ul>
+                      {tier.id === 'free' ? (
+                        <button className="btn btn-ct pricing-card__cta" disabled>
+                          {isCurrent ? t('pricing.currentPlan') : t('pricing.freeName')}
+                        </button>
+                      ) : (
+                        <button
+                          className="btn btn-ct pricing-card__cta"
+                          disabled={isCurrent || loadingTier !== null}
+                          onClick={() => (isPlanChange ? handleChangePlan(tier.id as PaidTier) : handleChoose(tier.id as PaidTier))}
+                        >
+                          {isCurrent
+                            ? t('pricing.current', { plan: planNames[plan] })
+                            : loadingTier === tier.id
+                            ? (isPlanChange ? t('pricing.changingPlan') : t('pricing.starting'))
+                            : isPlanChange
+                            ? (isUpgrade ? t('pricing.upgrade') : t('pricing.downgrade'))
+                            : t('pricing.choose')}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <p className="pricing-note">
+                {t('pricing.note')}
+              </p>
+            </>
+          )}
+
+          {view === 'referrals' && (
+            <>
+              {plan === 'free' ? (
+                <div className="referrals-empty">
+                  <p>{t('pricing.referralsFreeTitle')}</p>
+                  <p className="referrals-empty__sub">{t('pricing.referralsFreeHint')}</p>
                 </div>
-              );
-            })}
-          </div>
+              ) : referralOverviewLoading ? (
+                <p className="referrals-loading">{t('pricing.referralsLoading')}</p>
+              ) : referralOverview ? (
+                <>
+                  <div className="referrals-summary">
+                    <span>
+                      {t('pricing.referralSlots', { available: referralOverview.available, slots: referralOverview.slots })}
+                    </span>
+                    <button
+                      className="btn btn-ct"
+                      onClick={handleGenerateReferral}
+                      disabled={generatingReferral || referralOverview.available <= 0}
+                    >
+                      {generatingReferral ? t('pricing.creatingReferral') : t('pricing.createReferral')}
+                    </button>
+                  </div>
 
-          <p className="pricing-note">
-            {t('pricing.note')}
-          </p>
+                  <div className="referrals-list">
+                    {referralOverview.referrals.length === 0 ? (
+                      <p className="referrals-loading">{t('pricing.noReferrals')}</p>
+                    ) : referralOverview.referrals.map((r) => (
+                      <div key={r._id} className={`referral-row referral-row--${r.status}`}>
+                        <span className="referral-row__code">{r.code}</span>
+                        <span className="referral-row__status">
+                          {r.status === 'redeemed'
+                            ? (r.rewardGranted ? t('pricing.referralRedeemedRewarded') : t('pricing.referralRedeemed'))
+                            : t('pricing.referralUnused')}
+                        </span>
+                        {r.status === 'unused' && (
+                          <button className="btn btn-ct referral-row__copy" onClick={() => copyReferralLink(r.code)}>
+                            <i className="bi bi-clipboard" style={{ marginRight: 6 }} />{t('pricing.copyLink')}
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p className="referrals-loading">{t('pricing.referralsLoadFailed')}</p>
+              )}
+            </>
+          )}
         </div>
       </div>
 

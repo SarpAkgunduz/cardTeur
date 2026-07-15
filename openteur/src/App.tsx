@@ -5,7 +5,6 @@ import { TutorialProvider } from './contexts/TutorialContext';
 import './App.css';
 
 import PlayersPage from './pages/PlayersPage';
-import PreviewPage from './pages/PreviewPage';
 import CrewPage from './pages/CrewPage';
 import MatchPage from './pages/MatchPage';
 import SchedulePage from './pages/SchedulePage';
@@ -18,10 +17,10 @@ import ProfilePage from './pages/ProfilePage';
 import FriendsPage from './pages/FriendsPage';
 import InvitePage from './pages/InvitePage';
 import PricingPage from './pages/PricingPage';
-import ReferralsPage from './pages/ReferralsPage';
 import TermsPage from './pages/TermsPage';
 import PrivacyPage from './pages/PrivacyPage';
 import RefundPolicyPage from './pages/RefundPolicyPage';
+import SupportPage from './pages/SupportPage';
 import ThankYouPage from './pages/ThankYouPage';
 import DevelopmentPage from './pages/DevelopmentPage';
 import PrivateRoute from './components/routes/PrivateRoute';
@@ -53,14 +52,6 @@ const App = () => {
           element={
             <PrivateRoute>
               <PlayersPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/preview"
-          element={
-            <PrivateRoute>
-              <PreviewPage />
             </PrivateRoute>
           }
         />
@@ -128,18 +119,11 @@ const App = () => {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/referrals"
-          element={
-            <PrivateRoute>
-              <ReferralsPage />
-            </PrivateRoute>
-          }
-        />
         <Route path="/invite/:inviterUid" element={<InvitePage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/refunds" element={<RefundPolicyPage />} />
+        <Route path="/support" element={<SupportPage />} />
         <Route path="/thank-you" element={<ThankYouPage />} />
         <Route
           path="/development"

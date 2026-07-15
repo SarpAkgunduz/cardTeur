@@ -10,12 +10,10 @@ const NAV_LINKS = [
   { path: '/manage', labelKey: 'nav.roster' },
   { path: '/match', labelKey: 'nav.match' },
   { path: '/schedule', labelKey: 'nav.schedule' },
-  { path: '/preview', labelKey: 'nav.preview' },
   { path: '/crew', labelKey: 'nav.crew' },
   { path: '/friends', labelKey: 'nav.friends' },
   { path: '/development', labelKey: 'nav.development' },
   { path: '/pricing', labelKey: 'nav.pricing' },
-  { path: '/referrals', labelKey: 'nav.referrals' },
 ];
 
 const Navbar = () => {
