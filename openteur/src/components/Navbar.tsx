@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { path: '/preview', labelKey: 'nav.preview' },
   { path: '/crew', labelKey: 'nav.crew' },
   { path: '/friends', labelKey: 'nav.friends' },
+  { path: '/development', labelKey: 'nav.development' },
   { path: '/pricing', labelKey: 'nav.pricing' },
   { path: '/referrals', labelKey: 'nav.referrals' },
 ];

@@ -29,6 +29,7 @@ const ko: typeof en = {
     friends: '친구',
     pricing: '요금제',
     referrals: '추천',
+    development: '성장 센터',
     profile: '프로필',
     login: '로그인',
     signup: '회원가입',
@@ -350,6 +351,20 @@ const ko: typeof en = {
     referralApply: '적용',
     referralValid: '추천 코드가 적용되었습니다 — 첫 결제 시 할인을 받습니다.',
     referralInvalid: '유효하지 않거나 이미 사용된 코드입니다.',
+  },
+  development: {
+    title: '성장 센터',
+    comingSoon: '출시 예정',
+    intro: '동료들의 성장을 지켜보는 새로운 방법. 경기 후, 매주, 또는 크루가 정한 방식대로 선수들이 서로의 활약을 평가하게 되며, 이 투표는 카드의 실제 스탯을 영구적으로 올려줍니다.',
+    feature1Title: '크루가 부여하는 권한',
+    feature1Body: '크루 소유자가 누가 투표를 시작할 수 있는지 결정합니다 — 누구나 시작할 수 있는 게 아니라 신뢰하는 사람만 가능합니다.',
+    feature2Title: '유연한 주기',
+    feature2Body: '매 경기 후, 매주, 또는 크루가 합의한 어떤 주기로든 투표를 진행할 수 있습니다.',
+    feature3Title: '영구적인 스탯 성장',
+    feature3Body: '투표 결과는 단순한 겉치레가 아닙니다 — 선수 카드의 스탯에 실제로 지속적인 변화를 가져옵니다.',
+    feature4Title: '코칭을 염두에 둔 설계',
+    feature4Body: '같은 시스템이 향후 완전한 코칭 도구로 발전할 수 있도록 설계되고 있습니다.',
+    note: '아직 투표 방식을 설계하는 중입니다 — 준비가 되면 이 페이지가 활성화됩니다.',
   },
 };
 

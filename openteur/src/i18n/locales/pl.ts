@@ -29,6 +29,7 @@ const pl: typeof en = {
     friends: 'Znajomi',
     pricing: 'Plany',
     referrals: 'Polecenia',
+    development: 'Rozwój',
     profile: 'Profil',
     login: 'Zaloguj się',
     signup: 'Zarejestruj się',
@@ -350,6 +351,20 @@ const pl: typeof en = {
     referralApply: 'Zastosuj',
     referralValid: 'Kod polecający zastosowany — otrzymasz zniżkę na pierwszą płatność.',
     referralInvalid: 'Ten kod jest nieprawidłowy lub został już wykorzystany.',
+  },
+  development: {
+    title: 'Centrum Rozwoju',
+    comingSoon: 'Wkrótce',
+    intro: 'Nowy sposób na obserwowanie rozwoju kolegów z drużyny. Po meczach, co tydzień lub w rytmie ustalonym przez waszą ekipę, gracze będą oceniać nawzajem swoje występy — a te oceny trwale podniosą prawdziwe statystyki na kartach.',
+    feature1Title: 'Dostęp Nadawany Przez Ekipę',
+    feature1Body: 'Właściciele ekipy decydują, kto może rozpocząć głosowanie — nie jest to otwarte dla wszystkich, tylko dla zaufanych osób.',
+    feature2Title: 'Elastyczna Częstotliwość',
+    feature2Body: 'Uruchamiaj głosowania po każdym meczu, raz w tygodniu lub w dowolnym rytmie ustalonym przez waszą ekipę.',
+    feature3Title: 'Trwały Wzrost Statystyk',
+    feature3Body: 'Wyniki głosowania nie są tylko kosmetyczne — wprowadzają realne, trwałe zmiany w statystykach karty zawodnika.',
+    feature4Title: 'Zbudowane z Myślą o Coachingu',
+    feature4Body: 'Ten sam system został zaprojektowany tak, aby z czasem rozwinąć się w pełne narzędzie coachingowe.',
+    note: 'Wciąż projektujemy mechanikę głosowania — ta strona ożyje, gdy będzie gotowa.',
   },
 };
 

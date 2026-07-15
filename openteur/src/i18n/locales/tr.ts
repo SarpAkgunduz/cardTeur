@@ -29,6 +29,7 @@ const tr: typeof en = {
     friends: 'Arkadaşlar',
     pricing: 'Planlar',
     referrals: 'Referanslar',
+    development: 'Gelişim',
     profile: 'Profil',
     login: 'Giriş Yap',
     signup: 'Kayıt Ol',
@@ -350,6 +351,20 @@ const tr: typeof en = {
     referralApply: 'Uygula',
     referralValid: 'Referans kodu uygulandı — ilk ödemende indirim kazanacaksın.',
     referralInvalid: 'Bu kod geçerli değil veya zaten kullanılmış.',
+  },
+  development: {
+    title: 'Gelişim Merkezi',
+    comingSoon: 'Yakında',
+    intro: 'Takım arkadaşlarınızın gelişimini görmenin yeni bir yolu. Maç sonrası, haftalık ya da ekibinizin belirlediği şekilde oyuncular birbirini oylayacak — ve bu oylamalar kartlardaki gerçek statları kalıcı olarak yükseltecek.',
+    feature1Title: 'Ekip Tarafından Verilen Yetki',
+    feature1Body: 'Ekip sahipleri kimlerin oylama başlatabileceğine karar verir — herkese açık değil, sadece güvendiğiniz kişiler.',
+    feature2Title: 'Esnek Sıklık',
+    feature2Body: 'Her maç sonrası, haftada bir ya da ekibinizin uygun gördüğü herhangi bir sıklıkta oylama başlatın.',
+    feature3Title: 'Kalıcı Stat Gelişimi',
+    feature3Body: 'Oylama sonuçları sadece görsel değil — oyuncunun kart statlarında gerçek ve kalıcı değişiklik yapar.',
+    feature4Title: 'Koçluk İçin Tasarlandı',
+    feature4Body: 'Aynı sistem ileride tam bir koçluk aracına dönüşecek şekilde tasarlanıyor.',
+    note: 'Oylama mekaniğini hâlâ tasarlıyoruz — hazır olduğunda bu sayfa canlanacak.',
   },
 };
 

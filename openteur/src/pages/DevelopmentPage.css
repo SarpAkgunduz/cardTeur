@@ -1,0 +1,83 @@
+.development-page {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.development-hero {
+  text-align: center;
+  padding: 12px 0 28px;
+}
+
+.development-badge {
+  display: inline-block;
+  background: rgba(0, 222, 236, 0.1);
+  border: 1px solid rgba(0, 222, 236, 0.4);
+  color: #00deec;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
+.development-intro {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.development-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.development-feature {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: rgba(36, 59, 90, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.development-feature i {
+  color: #00deec;
+  font-size: 1.4rem;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.development-feature h3 {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.development-feature p {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.development-note {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+@media (max-width: 640px) {
+  .development-features {
+    grid-template-columns: 1fr;
+  }
+}

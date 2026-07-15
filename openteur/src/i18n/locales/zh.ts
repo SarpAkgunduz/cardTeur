@@ -29,6 +29,7 @@ const zh: typeof en = {
     friends: '好友',
     pricing: '套餐',
     referrals: '推荐',
+    development: '成长中心',
     profile: '个人资料',
     login: '登录',
     signup: '注册',
@@ -350,6 +351,20 @@ const zh: typeof en = {
     referralApply: '应用',
     referralValid: '推荐码已应用——您的首次付款将获得折扣。',
     referralInvalid: '该代码无效或已被使用。',
+  },
+  development: {
+    title: '成长中心',
+    comingSoon: '即将推出',
+    intro: '一种全新的方式来见证队友的成长。赛后、每周，或按照您战队自行决定的节奏，球员们将互相为表现投票——这些投票将永久提升卡片上的真实属性。',
+    feature1Title: '由战队授予的权限',
+    feature1Body: '战队所有者决定谁可以发起投票——并非人人可用，只有您信任的人。',
+    feature2Title: '灵活的频率',
+    feature2Body: '可以在每场比赛后、每周一次，或按照战队商定的任何节奏发起投票。',
+    feature3Title: '永久的属性成长',
+    feature3Body: '投票结果不只是表面效果——它会对球员卡片属性带来真实、持久的改变。',
+    feature4Title: '为教练功能而生',
+    feature4Body: '同一套系统未来将发展成为一个完整的教练工具。',
+    note: '我们仍在设计投票机制——准备就绪后此页面将正式上线。',
   },
 };
 

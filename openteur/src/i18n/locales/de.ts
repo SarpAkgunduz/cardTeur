@@ -29,6 +29,7 @@ const de: typeof en = {
     friends: 'Freunde',
     pricing: 'Preise',
     referrals: 'Empfehlungen',
+    development: 'Entwicklung',
     profile: 'Profil',
     login: 'Anmelden',
     signup: 'Registrieren',
@@ -350,6 +351,20 @@ const de: typeof en = {
     referralApply: 'Anwenden',
     referralValid: 'Empfehlungscode angewendet — du erhältst einen Rabatt auf deine erste Zahlung.',
     referralInvalid: 'Dieser Code ist ungültig oder wurde bereits verwendet.',
+  },
+  development: {
+    title: 'Entwicklungszentrum',
+    comingSoon: 'Demnächst',
+    intro: 'Eine neue Art, das Wachstum deiner Mitspieler zu verfolgen. Nach Spielen, wöchentlich oder wie es deine Crew entscheidet, bewerten Spieler gegenseitig ihre Leistung — und diese Bewertungen erhöhen dauerhaft echte Werte auf ihren Karten.',
+    feature1Title: 'Von der Crew vergebener Zugang',
+    feature1Body: 'Crew-Besitzer entscheiden, wer eine Abstimmung starten darf — kein offenes Chaos, nur Personen, denen du vertraust.',
+    feature2Title: 'Flexibler Rhythmus',
+    feature2Body: 'Starte Abstimmungen nach jedem Spiel, einmal pro Woche oder in dem Rhythmus, den deine Crew vereinbart.',
+    feature3Title: 'Dauerhaftes Stat-Wachstum',
+    feature3Body: 'Abstimmungsergebnisse sind nicht nur kosmetisch — sie bewirken echte, bleibende Änderungen an den Kartenwerten eines Spielers.',
+    feature4Title: 'Für Coaching gebaut',
+    feature4Body: 'Dasselbe System ist so konzipiert, dass es sich langfristig zu einem vollständigen Coaching-Tool entwickeln kann.',
+    note: 'Wir gestalten die Abstimmungsmechanik noch — diese Seite wird lebendig, sobald sie fertig ist.',
   },
 };
 

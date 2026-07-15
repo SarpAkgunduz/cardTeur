@@ -29,6 +29,7 @@ const az: typeof en = {
     friends: 'Dostlar',
     pricing: 'Planlar',
     referrals: 'Referanslar',
+    development: 'İnkişaf',
     profile: 'Profil',
     login: 'Giriş',
     signup: 'Qeydiyyat',
@@ -350,6 +351,20 @@ const az: typeof en = {
     referralApply: 'Tətbiq et',
     referralValid: 'Referans kodu tətbiq edildi — ilk ödənişində endirim qazanacaqsan.',
     referralInvalid: 'Bu kod etibarlı deyil və ya artıq istifadə olunub.',
+  },
+  development: {
+    title: 'İnkişaf Mərkəzi',
+    comingSoon: 'Tezliklə',
+    intro: 'Komanda yoldaşlarınızın inkişafını görməyin yeni yolu. Matçdan sonra, həftəlik və ya ekibinizin qərar verdiyi şəkildə oyunçular bir-birini qiymətləndirəcək — və bu səsvermələr kartlardakı real statları daimi olaraq yüksəldəcək.',
+    feature1Title: 'Komanda Tərəfindən Verilən Səlahiyyət',
+    feature1Body: 'Komanda sahibləri kimin səsvermə başlada biləcəyinə qərar verir — hər kəsə açıq deyil, yalnız güvəndiyiniz insanlar.',
+    feature2Title: 'Çevik Tezlik',
+    feature2Body: 'Hər matçdan sonra, həftədə bir dəfə və ya komandanızın razılaşdığı istənilən tezlikdə səsvermə başladın.',
+    feature3Title: 'Daimi Stat İnkişafı',
+    feature3Body: 'Səsvermə nəticələri sadəcə vizual deyil — oyunçunun kart statlarında real və daimi dəyişiklik edir.',
+    feature4Title: 'Məşqçilik Üçün Dizayn Edilib',
+    feature4Body: 'Eyni sistem gələcəkdə tam bir məşqçilik alətinə çevrilə biləcək şəkildə dizayn edilir.',
+    note: 'Səsvermə mexanikasını hələ dizayn edirik — hazır olduqda bu səhifə canlanacaq.',
   },
 };
 
