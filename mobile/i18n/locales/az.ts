@@ -18,6 +18,10 @@ const az: typeof en = {
     crew: 'Komanda',
     friends: 'Dostlar',
   },
+  pricing: {
+    premiumName: 'Premium',
+    premiumPlusName: 'Premium+',
+  },
   auth: {
     loginSubtitle: 'Hesabına daxil ol',
     signupSubtitle: 'CardTeur heyətinə qoşul',

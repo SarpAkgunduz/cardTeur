@@ -18,6 +18,10 @@ const zh: typeof en = {
     crew: '队伍',
     friends: '好友',
   },
+  pricing: {
+    premiumName: 'Premium',
+    premiumPlusName: 'Premium+',
+  },
   auth: {
     loginSubtitle: '登录你的账户',
     signupSubtitle: '加入 CardTeur 阵容',

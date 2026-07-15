@@ -18,6 +18,10 @@ const ja: typeof en = {
     crew: 'クルー',
     friends: 'フレンド',
   },
+  pricing: {
+    premiumName: 'Premium',
+    premiumPlusName: 'Premium+',
+  },
   auth: {
     loginSubtitle: 'アカウントにログイン',
     signupSubtitle: 'CardTeurロスターに参加',

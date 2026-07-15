@@ -18,6 +18,10 @@ const pl: typeof en = {
     crew: 'Ekipa',
     friends: 'Znajomi',
   },
+  pricing: {
+    premiumName: 'Premium',
+    premiumPlusName: 'Premium+',
+  },
   auth: {
     loginSubtitle: 'Zaloguj się do swojego konta',
     signupSubtitle: 'Dołącz do składu CardTeur',

@@ -16,6 +16,10 @@ export default {
     crew: 'Crew',
     friends: 'Friends',
   },
+  pricing: {
+    premiumName: 'Premium',
+    premiumPlusName: 'Premium+',
+  },
   auth: {
     loginSubtitle: 'Sign in to your account',
     signupSubtitle: 'Join the CardTeur roster',

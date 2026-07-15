@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { Colors, FontSizes, Spacing } from '../constants/theme';
 import { useTutorial } from '../contexts/TutorialContext';
+import { useAuth } from '../contexts/AuthContext';
 
 interface ScreenHeaderProps {
   title: string;
@@ -17,6 +18,8 @@ export default function ScreenHeader({ title, showBack = false, showHelp = false
   const { t } = useTranslation();
   const router = useRouter();
   const { startTutorial } = useTutorial();
+  const { plan } = useAuth();
+  const isPremium = plan === 'premium' || plan === 'premium_plus';
 
   const handleHelp = () => {
     Alert.alert(t('tutorial.help'), t('tutorial.helpMsg'), [
@@ -36,6 +39,28 @@ export default function ScreenHeader({ title, showBack = false, showHelp = false
       </View>
       <Text style={styles.title}>{title}</Text>
       <View style={styles.right}>
+        {isPremium && (
+          <View
+            style={[
+              styles.planBadge,
+              plan === 'premium_plus' && styles.planBadgePlus,
+            ]}
+          >
+            <Ionicons
+              name="diamond"
+              size={11}
+              color={plan === 'premium_plus' ? Colors.cardGold : Colors.accent}
+            />
+            <Text
+              style={[
+                styles.planBadgeText,
+                plan === 'premium_plus' && styles.planBadgeTextPlus,
+              ]}
+            >
+              {plan === 'premium_plus' ? t('pricing.premiumPlusName') : t('pricing.premiumName')}
+            </Text>
+          </View>
+        )}
         {right}
         {showHelp && (
           <TouchableOpacity onPress={handleHelp} style={styles.helpBtn} accessibilityLabel="Help">
@@ -88,5 +113,30 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 222, 236, 0.08)',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  planBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: Colors.accentBorder,
+    backgroundColor: 'rgba(0, 222, 236, 0.1)',
+  },
+  planBadgePlus: {
+    borderColor: 'rgba(232, 192, 96, 0.5)',
+    backgroundColor: 'rgba(232, 192, 96, 0.1)',
+  },
+  planBadgeText: {
+    color: Colors.accent,
+    fontSize: 9,
+    fontWeight: '700',
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
+  },
+  planBadgeTextPlus: {
+    color: Colors.cardGold,
   },
 });

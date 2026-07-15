@@ -56,10 +56,14 @@ export interface Crew {
   players: CrewMember[];
 }
 
+export type Plan = 'free' | 'premium' | 'premium_plus';
+
 export interface AppUser {
   uid: string;
   email: string;
   displayName?: string;
   photoURL?: string;
   friends: string[];
+  plan?: Plan;
+  planRenewsAt?: string;
 }

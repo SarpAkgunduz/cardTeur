@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import {
   User,
   onAuthStateChanged,
@@ -8,10 +8,14 @@ import {
   sendPasswordResetEmail,
 } from 'firebase/auth';
 import { auth } from '../firebase';
+import { userApi } from '../services/api/userApi';
+import type { Plan } from '../services/api/types';
 
 interface AuthContextType {
   currentUser: User | null;
   loading: boolean;
+  plan: Plan;
+  refreshProfile: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<User>;
   signOut: () => Promise<void>;
@@ -23,14 +27,33 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [plan, setPlan] = useState<Plan>('free');
+
+  const refreshProfile = useCallback(async () => {
+    if (!auth.currentUser) {
+      setPlan('free');
+      return;
+    }
+    try {
+      const me = await userApi.getMe();
+      setPlan(me.plan ?? 'free');
+    } catch {
+      setPlan('free');
+    }
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       setLoading(false);
+      if (user) {
+        refreshProfile();
+      } else {
+        setPlan('free');
+      }
     });
     return unsubscribe;
-  }, []);
+  }, [refreshProfile]);
 
   const signIn = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
@@ -50,7 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, loading, signIn, signUp, signOut, resetPassword }}>
+    <AuthContext.Provider value={{ currentUser, loading, plan, refreshProfile, signIn, signUp, signOut, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

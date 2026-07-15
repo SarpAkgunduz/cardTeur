@@ -18,6 +18,10 @@ const ko: typeof en = {
     crew: '크루',
     friends: '친구',
   },
+  pricing: {
+    premiumName: 'Premium',
+    premiumPlusName: 'Premium+',
+  },
   auth: {
     loginSubtitle: '계정에 로그인하세요',
     signupSubtitle: 'CardTeur 로스터에 참여하세요',

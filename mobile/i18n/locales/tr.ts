@@ -18,6 +18,10 @@ const tr: typeof en = {
     crew: 'Ekip',
     friends: 'Arkadaşlar',
   },
+  pricing: {
+    premiumName: 'Premium',
+    premiumPlusName: 'Premium+',
+  },
   auth: {
     loginSubtitle: 'Hesabına giriş yap',
     signupSubtitle: 'CardTeur kadrosuna katıl',
