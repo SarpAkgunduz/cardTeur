@@ -33,6 +33,7 @@ const GoogleSignInButton: React.FC = () => {
       });
       const redirect = searchParams.get('redirect');
       const inviteMatch = redirect?.match(/^\/invite\/(.+)$/);
+      let redirectTo = redirect || '/';
       if (inviteMatch) {
         const inviterUid = inviteMatch[1];
         try {
@@ -40,9 +41,14 @@ const GoogleSignInButton: React.FC = () => {
         } catch {
           // Already friends/requested or user not found — non-fatal
         }
-        navigate('/friends');
+        redirectTo = '/friends';
+      }
+      if (isNewUser) {
+        // Genuinely new account — route through /welcome so the sign-up
+        // conversion fires. Returning users go straight to their destination.
+        navigate('/welcome', { state: { verifiedSignup: true, redirectTo } });
       } else {
-        navigate(redirect || '/');
+        navigate(redirectTo);
       }
     } catch (err: any) {
       if (err?.code === 'auth/popup-closed-by-user') {

@@ -68,6 +68,7 @@ const SignupPage = () => {
       const redirect = searchParams.get('redirect');
       // If the redirect is an invite link, send the friend request while the token is fresh
       const inviteMatch = redirect?.match(/^\/invite\/(.+)$/);
+      let redirectTo = redirect || '/';
       if (inviteMatch) {
         const inviterUid = inviteMatch[1];
         try {
@@ -75,10 +76,11 @@ const SignupPage = () => {
         } catch {
           // Already friends/requested or user not found — non-fatal
         }
-        navigate('/friends');
-      } else {
-        navigate(redirect || '/');
+        redirectTo = '/friends';
       }
+      // Route through /welcome first so the Google Ads sign-up conversion only
+      // fires for a real, freshly-created account — never on a direct URL visit.
+      navigate('/welcome', { state: { verifiedSignup: true, redirectTo } });
     } catch (err: any) {
       if (err?.code === 'auth/email-already-in-use') {
         setError(t('auth.emailInUse'));
