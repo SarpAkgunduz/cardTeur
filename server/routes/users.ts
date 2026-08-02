@@ -72,6 +72,7 @@ router.delete('/account', requireAuth, async (req: Request, res: Response) => {
     await admin.auth().deleteUser(uid);
     res.json({ success: true });
   } catch (err) {
+    console.error('[DELETE /api/users/account]', err);
     res.status(500).json({ error: 'Failed to delete account' });
   }
 });
