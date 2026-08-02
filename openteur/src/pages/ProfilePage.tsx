@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { updatePassword, EmailAuthProvider, reauthenticateWithCredential, deleteUser } from 'firebase/auth';
+import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 import { useAuth } from '../contexts/AuthContext';
 import { apiRequest } from '../services/api/apiClient';
 import ToastNotification from '../components/ToastNotification';
@@ -161,8 +161,10 @@ const ProfilePage = () => {
     if (!currentUser) return;
     setDeletingAccount(true);
     try {
+      // The backend already deletes the Firebase Auth user via the Admin SDK —
+      // calling the client-side deleteUser() here too would just fail, since
+      // the account is already gone by the time this request resolves.
       await apiRequest('/users/account', { method: 'DELETE' });
-      await deleteUser(currentUser);
       await signOut();
       navigate('/login');
     } catch {
