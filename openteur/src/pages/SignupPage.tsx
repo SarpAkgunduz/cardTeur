@@ -16,7 +16,7 @@ const SignupPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { signUp } = useAuth();
+  const { signUp, refreshProfile } = useAuth();
   const { startTutorial } = useTutorial();
   const { t } = useTranslation();
 
@@ -65,6 +65,9 @@ const SignupPage = () => {
         method: 'POST',
         body: JSON.stringify({ displayName }),
       });
+      // The register call above is what actually creates the Mongo user doc —
+      // refresh here so `profile`/`plan` are populated before we land on /welcome.
+      await refreshProfile();
       const redirect = searchParams.get('redirect');
       // If the redirect is an invite link, send the friend request while the token is fresh
       const inviteMatch = redirect?.match(/^\/invite\/(.+)$/);

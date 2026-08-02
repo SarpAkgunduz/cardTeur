@@ -9,7 +9,7 @@ import './GoogleSignInButton.css';
 const GoogleSignInButton: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { signInWithGoogle } = useAuth();
+  const { signInWithGoogle, refreshProfile } = useAuth();
   const { startTutorial } = useTutorial();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -31,6 +31,10 @@ const GoogleSignInButton: React.FC = () => {
           photoURL: user.photoURL || '',
         }),
       });
+      // Same race as email/password signup — refresh once the Mongo doc is guaranteed to exist.
+      if (isNewUser) {
+        await refreshProfile();
+      }
       const redirect = searchParams.get('redirect');
       const inviteMatch = redirect?.match(/^\/invite\/(.+)$/);
       let redirectTo = redirect || '/';
