@@ -208,6 +208,7 @@ const tr: typeof en = {
     teamAFormation: 'A Takımı Formasyonu',
     teamBFormation: 'B Takımı Formasyonu',
     applyFormation: 'Formasyonu Uygula',
+    balanceTeams: 'Takımları Dengele',
     bench: 'Yedek Kulübesi',
     benchEmpty: 'Yedek kulübesinde oyuncu yok',
     addToTeam: '{{team}} Takımına ekle',

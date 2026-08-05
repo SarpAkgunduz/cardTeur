@@ -208,6 +208,7 @@ const de: typeof en = {
     teamAFormation: 'Formation Team A',
     teamBFormation: 'Formation Team B',
     applyFormation: 'Formation anwenden',
+    balanceTeams: 'Teams ausbalancieren',
     bench: 'Bank',
     benchEmpty: 'Keine Spieler auf der Bank',
     addToTeam: 'Zu Team {{team}} hinzufügen',

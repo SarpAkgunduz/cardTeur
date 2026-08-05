@@ -208,6 +208,7 @@ const pl: typeof en = {
     teamAFormation: 'Formacja drużyny A',
     teamBFormation: 'Formacja drużyny B',
     applyFormation: 'Zastosuj formację',
+    balanceTeams: 'Wyrównaj drużyny',
     bench: 'Ławka',
     benchEmpty: 'Brak zawodników na ławce',
     addToTeam: 'Dodaj do drużyny {{team}}',

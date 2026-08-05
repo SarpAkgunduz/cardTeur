@@ -206,6 +206,7 @@ export default {
     teamAFormation: 'Team A Formation',
     teamBFormation: 'Team B Formation',
     applyFormation: 'Apply Formation',
+    balanceTeams: 'Balance Teams',
     bench: 'Bench',
     benchEmpty: 'No players on bench',
     addToTeam: 'Add to Team {{team}}',

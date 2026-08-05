@@ -208,6 +208,7 @@ const ja: typeof en = {
     teamAFormation: 'Aチームのフォーメーション',
     teamBFormation: 'Bチームのフォーメーション',
     applyFormation: 'フォーメーションを適用',
+    balanceTeams: 'チームのバランスを取る',
     bench: 'ベンチ',
     benchEmpty: 'ベンチに選手がいません',
     addToTeam: '{{team}}チームに追加',

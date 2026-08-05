@@ -208,6 +208,7 @@ const zh: typeof en = {
     teamAFormation: 'A 队阵型',
     teamBFormation: 'B 队阵型',
     applyFormation: '应用阵型',
+    balanceTeams: '平衡球队',
     bench: '替补席',
     benchEmpty: '替补席上没有球员',
     addToTeam: '添加到 {{team}} 队',

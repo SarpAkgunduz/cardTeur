@@ -192,6 +192,53 @@ const MatchPage = () => {
     setSavedMatchId(null);
   };
 
+  // Re-splits the players currently on the two rosters (bench untouched) into
+  // balanced teams by overall rating, then reassigns them to formation slots.
+  // Needed because bench/team edits after the initial Apply Formation don't
+  // re-balance on their own — this gives an explicit manual trigger for that.
+  const handleBalance = () => {
+    const activePlayers = [...leftPlayers, ...rightPlayers];
+    if (activePlayers.length === 0) return;
+
+    const sorted = [...activePlayers].sort((a, b) => computeOverall(b) - computeOverall(a));
+    const half = Math.ceil(sorted.length / 2);
+    const seedLeft: any[] = [];
+    const seedRight: any[] = [];
+    // Snake draft (A,B,B,A,...) keeps team strength balanced
+    sorted.forEach((p, i) => {
+      const pickA = i % 4 === 0 || i % 4 === 3;
+      if (pickA && seedLeft.length < half) seedLeft.push(p);
+      else if (seedRight.length < sorted.length - half) seedRight.push(p);
+      else if (seedLeft.length < half) seedLeft.push(p);
+    });
+
+    const set = getFormationSet(playerCount);
+    const chosenA = set.find(f => f.name === formationA) ?? set[0];
+    const chosenB = set.find(f => f.name === formationB) ?? set[0];
+
+    const orderedLeft  = smartAssign(seedLeft, chosenA.slots);
+    const orderedRight = smartAssign(seedRight, chosenB.slots);
+
+    setLeftPlayers(orderedLeft);
+    setRightPlayers(orderedRight);
+    setRoleOverridesA({});
+    setRoleOverridesB({});
+
+    const newPosA: Record<string, { x: number; y: number }> = {};
+    const newPosB: Record<string, { x: number; y: number }> = {};
+    orderedLeft.forEach((p, i) => {
+      const slot = chosenA.slots[i] ?? { x: 50, y: 50 };
+      newPosA[p._id ?? p.id] = { x: slot.x, y: slot.y };
+    });
+    orderedRight.forEach((p, i) => {
+      const slot = chosenB.slots[i] ?? { x: 50, y: 50 };
+      newPosB[p._id ?? p.id] = { x: slot.x, y: 100 - slot.y };
+    });
+    setPositionsA(newPosA);
+    setPositionsB(newPosB);
+    setSavedMatchId(null);
+  };
+
   const handleMoveA = (id: string, x: number, y: number) =>
     setPositionsA(prev => ({ ...prev, [id]: { x, y } }));
   const handleMoveB = (id: string, x: number, y: number) =>
@@ -671,6 +718,8 @@ const MatchPage = () => {
                   onChangeTeam={id => handleChangeTeam(id, 'A')}
                   onBench={id => handleBench(id, 'A')}
                   onChangeRole={(id, role) => handleChangeRole(id, role, 'A')}
+                  onBalance={pitchMode ? handleBalance : undefined}
+                  balanceLabel={t('match.balanceTeams')}
                 />
                 {pitchMode && renderTeamRoster('A', leftPlayers, rolesA, roleOverridesA, allRolesA)}
               </div>
@@ -690,6 +739,8 @@ const MatchPage = () => {
                   onChangeTeam={id => handleChangeTeam(id, 'B')}
                   onBench={id => handleBench(id, 'B')}
                   onChangeRole={(id, role) => handleChangeRole(id, role, 'B')}
+                  onBalance={pitchMode ? handleBalance : undefined}
+                  balanceLabel={t('match.balanceTeams')}
                 />
                 {pitchMode && renderTeamRoster('B', rightPlayers, rolesB, roleOverridesB, allRolesB)}
               </div>

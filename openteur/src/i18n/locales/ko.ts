@@ -208,6 +208,7 @@ const ko: typeof en = {
     teamAFormation: 'A팀 포메이션',
     teamBFormation: 'B팀 포메이션',
     applyFormation: '포메이션 적용',
+    balanceTeams: '팀 밸런스 조정',
     bench: '벤치',
     benchEmpty: '벤치에 선수가 없습니다',
     addToTeam: '{{team}}팀에 추가',

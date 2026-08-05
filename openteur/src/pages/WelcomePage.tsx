@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import './ThankYouPage.css';
@@ -16,16 +16,22 @@ const WelcomePage = () => {
 
   // Only a real post-signup redirect carries this router state (see SignupPage's
   // navigate('/welcome', { state: { verifiedSignup: true, redirectTo } })). A direct
-  // visit to /welcome has no state, so the conversion event below never fires for it.
+  // visit to /welcome has no state — it never shows content or fires the conversion,
+  // it just bounces away immediately.
+  const state = (location.state || {}) as WelcomeState;
+  const [verified] = useState(() => state.verifiedSignup === true);
+
   useEffect(() => {
-    const state = (location.state || {}) as WelcomeState;
     const redirectTo = state.redirectTo || '/';
 
-    if (state.verifiedSignup) {
-      // Google Ads sign-up conversion snippet goes here once a conversion ID exists —
-      // e.g. gtag('event', 'conversion', { send_to: 'AW-XXXXXXXXX/XXXXXXXXXXX' }).
-      console.log('[welcome] verified post-signup landing — ready for conversion tracking');
+    if (!verified) {
+      navigate(redirectTo, { replace: true });
+      return;
     }
+
+    // Google Ads sign-up conversion snippet goes here once a conversion ID exists —
+    // e.g. gtag('event', 'conversion', { send_to: 'AW-XXXXXXXXX/XXXXXXXXXXX' }).
+    console.log('[welcome] verified post-signup landing — ready for conversion tracking');
 
     const timer = setTimeout(() => {
       navigate(redirectTo, { replace: true });
@@ -34,6 +40,8 @@ const WelcomePage = () => {
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (!verified) return null;
 
   return (
     <div className="page-wrapper">

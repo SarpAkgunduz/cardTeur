@@ -208,6 +208,7 @@ const az: typeof en = {
     teamAFormation: 'A Komandası Formasiyası',
     teamBFormation: 'B Komandası Formasiyası',
     applyFormation: 'Formasiyanı Tətbiq Et',
+    balanceTeams: 'Komandaları Tarazla',
     bench: 'Ehtiyat',
     benchEmpty: 'Ehtiyatda oyunçu yoxdur',
     addToTeam: '{{team}} Komandasına əlavə et',

@@ -208,6 +208,7 @@ const ru: typeof en = {
     teamAFormation: 'Формация команды A',
     teamBFormation: 'Формация команды B',
     applyFormation: 'Применить формацию',
+    balanceTeams: 'Сбалансировать команды',
     bench: 'Скамейка',
     benchEmpty: 'На скамейке нет игроков',
     addToTeam: 'Добавить в команду {{team}}',

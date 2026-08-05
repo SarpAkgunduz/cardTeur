@@ -34,12 +34,14 @@ interface FootballPitchProps {
   onChangeTeam: (playerId: string) => void;
   onBench?: (playerId: string) => void;
   onChangeRole: (playerId: string, newRole: string) => void;
+  onBalance?: () => void;
+  balanceLabel?: string;
 }
 
 const FootballPitch = ({
   players, teamLabel, teamOvr, teamStaminaOvr,
   isTeamB = false, formationRoles, readOnly = false,
-  onMove, onChangeTeam, onBench, onChangeRole,
+  onMove, onChangeTeam, onBench, onChangeRole, onBalance, balanceLabel,
 }: FootballPitchProps) => {
   const pitchRef = useRef<HTMLDivElement>(null);
   const [ctxMenu, setCtxMenu] = useState<ContextMenuState | null>(null);
@@ -126,6 +128,13 @@ const FootballPitch = ({
           </div>
         </div>
       </div>
+
+      {onBalance && !readOnly && (
+        <button type="button" className="fp-balance-btn" onClick={onBalance}>
+          <i className="bi bi-arrow-left-right" />
+          {balanceLabel ?? 'Balance Teams'}
+        </button>
+      )}
 
       {/* Vertical pitch */}
       <div className="fp-pitch" ref={pitchRef}>
