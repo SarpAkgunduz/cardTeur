@@ -79,7 +79,7 @@ const ja: typeof en = {
     friends: 'フレンド',
   },
   auth: {
-    loginTitle: 'コマンダー<accent>コンソール</accent>',
+    loginTitle: 'お<accent>かえりなさい</accent>',
     loginSub: '続行するにはログインしてください',
     signupTitle: 'アカウントを<accent>作成</accent>',
     signupSub: 'チームに参加するには登録してください',

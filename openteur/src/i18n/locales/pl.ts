@@ -79,7 +79,7 @@ const pl: typeof en = {
     friends: 'Znajomi',
   },
   auth: {
-    loginTitle: 'Konsola <accent>Dowódcy</accent>',
+    loginTitle: 'Witaj <accent>Ponownie</accent>',
     loginSub: 'Zaloguj się, aby kontynuować',
     signupTitle: 'Utwórz <accent>konto</accent>',
     signupSub: 'Zarejestruj się, aby dołączyć do drużyny',

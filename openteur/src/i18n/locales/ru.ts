@@ -79,7 +79,7 @@ const ru: typeof en = {
     friends: 'Друзья',
   },
   auth: {
-    loginTitle: 'Консоль <accent>командира</accent>',
+    loginTitle: 'Добро <accent>Пожаловать</accent>',
     loginSub: 'Войдите, чтобы продолжить',
     signupTitle: 'Создать <accent>аккаунт</accent>',
     signupSub: 'Зарегистрируйтесь, чтобы присоединиться к команде',

@@ -79,7 +79,7 @@ const az: typeof en = {
     friends: 'Dostlar',
   },
   auth: {
-    loginTitle: 'Komandir <accent>Pultu</accent>',
+    loginTitle: 'Yenidən <accent>Xoş Gəldin</accent>',
     loginSub: 'Davam etmək üçün daxil ol',
     signupTitle: 'Hesab <accent>Yarat</accent>',
     signupSub: 'Komandaya qoşulmaq üçün qeydiyyatdan keç',

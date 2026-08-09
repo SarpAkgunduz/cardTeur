@@ -77,7 +77,7 @@ export default {
     friends: 'Friends',
   },
   auth: {
-    loginTitle: "Commander's <accent>Console</accent>",
+    loginTitle: 'Welcome <accent>Back</accent>',
     loginSub: 'Authenticate to proceed',
     signupTitle: 'Create <accent>Account</accent>',
     signupSub: 'Register to join the squad',

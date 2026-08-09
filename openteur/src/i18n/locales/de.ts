@@ -79,7 +79,7 @@ const de: typeof en = {
     friends: 'Freunde',
   },
   auth: {
-    loginTitle: 'Kommando<accent>zentrale</accent>',
+    loginTitle: 'Willkommen <accent>Zurück</accent>',
     loginSub: 'Zum Fortfahren anmelden',
     signupTitle: 'Konto <accent>erstellen</accent>',
     signupSub: 'Registriere dich, um dem Team beizutreten',

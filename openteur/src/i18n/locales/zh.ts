@@ -79,7 +79,7 @@ const zh: typeof en = {
     friends: '好友',
   },
   auth: {
-    loginTitle: '指挥官<accent>控制台</accent>',
+    loginTitle: '欢迎<accent>回来</accent>',
     loginSub: '登录以继续',
     signupTitle: '创建<accent>账户</accent>',
     signupSub: '注册加入球队',

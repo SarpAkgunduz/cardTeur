@@ -79,7 +79,7 @@ const ko: typeof en = {
     friends: '친구',
   },
   auth: {
-    loginTitle: '커맨더 <accent>콘솔</accent>',
+    loginTitle: '어서 <accent>오세요</accent>',
     loginSub: '계속하려면 로그인하세요',
     signupTitle: '계정 <accent>만들기</accent>',
     signupSub: '팀에 합류하려면 가입하세요',

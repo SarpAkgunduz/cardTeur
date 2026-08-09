@@ -79,7 +79,7 @@ const tr: typeof en = {
     friends: 'Arkadaşlar',
   },
   auth: {
-    loginTitle: 'Komutan <accent>Konsolu</accent>',
+    loginTitle: 'Tekrar <accent>Hoş Geldin</accent>',
     loginSub: 'Devam etmek için giriş yap',
     signupTitle: 'Hesap <accent>Oluştur</accent>',
     signupSub: 'Kadroya katılmak için kayıt ol',
