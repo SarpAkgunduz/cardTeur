@@ -29,9 +29,11 @@ const WelcomePage = () => {
       return;
     }
 
-    // Google Ads sign-up conversion snippet goes here once a conversion ID exists —
-    // e.g. gtag('event', 'conversion', { send_to: 'AW-XXXXXXXXX/XXXXXXXXXXX' }).
-    console.log('[welcome] verified post-signup landing — ready for conversion tracking');
+    // Fire the "Kaydolma işlemi" Google Ads conversion. Guarded with ?. in case
+    // gtag.js failed to load (ad blocker, network issue) — signup itself still works either way.
+    (window as any).gtag?.('event', 'conversion', {
+      send_to: 'AW-18366594122/eI75CNid1N4cEMr477VE',
+    });
 
     const timer = setTimeout(() => {
       navigate(redirectTo, { replace: true });
