@@ -29,10 +29,14 @@ const WelcomePage = () => {
       return;
     }
 
-    // Fire the "Kaydolma işlemi" Google Ads conversion. Guarded with ?. in case
-    // gtag.js failed to load (ad blocker, network issue) — signup itself still works either way.
+    // Fire the "Kaydolma işlemi (2)" Google Ads conversion (manual code method —
+    // the earlier URL-triggered conversion action never fired because this is an
+    // SPA route change, not a real page load). Guarded with ?. in case gtag.js
+    // failed to load (ad blocker, network issue) — signup itself still works either way.
     (window as any).gtag?.('event', 'conversion', {
-      send_to: 'AW-18366594122/eI75CNid1N4cEMr477VE',
+      send_to: 'AW-18366594122/w-DACPqDmuIcEMr477VE',
+      value: 1.0,
+      currency: 'TRY',
     });
 
     const timer = setTimeout(() => {
