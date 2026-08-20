@@ -320,14 +320,14 @@ const PlayersPage = () => {
 
         <div className="players-page__view-tabs">
           <button
-            className={`btn btn-ct ${viewMode === 'edit' ? 'active-mode' : ''}`}
+            className={`btn btn-ct players-page__view-tab ${viewMode === 'edit' ? 'players-page__view-tab--active' : ''}`}
             onClick={() => setViewMode('edit')}
           >
             <i className="bi bi-pencil-fill" style={{ marginRight: 8 }}></i>
             {t('players.viewEdit')}
           </button>
           <button
-            className={`btn btn-ct ${viewMode === 'byPosition' ? 'active-mode' : ''}`}
+            className={`btn btn-ct players-page__view-tab ${viewMode === 'byPosition' ? 'players-page__view-tab--active' : ''}`}
             onClick={() => setViewMode('byPosition')}
           >
             <i className="bi bi-diagram-3-fill" style={{ marginRight: 8 }}></i>

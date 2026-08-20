@@ -12,6 +12,21 @@
   padding-bottom: 20px;
 }
 
+/* Selected view tab: a clear "you are here" state, not the red cancel/destructive
+   look .active-mode uses elsewhere (Compare/Edit/Delete mode toggles). */
+.players-page__view-tab--active {
+  background: rgba(0, 222, 236, 0.16);
+  color: #00deec;
+  border-color: #00deec;
+  box-shadow: 0 0 12px rgba(0, 222, 236, 0.25);
+}
+
+.players-page__view-tab--active:hover {
+  background: rgba(0, 222, 236, 0.24);
+  border-color: #00deec;
+  color: #00deec;
+}
+
 .players-page__title {
   min-width: 0;
   transform: translateX(clamp(-90px, -6vw, -36px));

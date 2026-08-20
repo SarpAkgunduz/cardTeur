@@ -322,7 +322,7 @@ const AddPlayerForm = () => {
               <div className="form-submit-row">
                 <button type="submit" className="btn btn-ct">
                   <i className={`bi ${isEditMode ? 'bi-pencil-fill' : 'bi-person-plus-fill'} me-2`}></i>
-                  {isEditMode ? t('players.editPlayer') : t('players.addPlayer')}
+                  {isEditMode ? t('common.save') : t('players.addPlayer')}
                 </button>
               </div>
             </div>
