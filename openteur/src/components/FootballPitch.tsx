@@ -1,4 +1,5 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
+import { resolveCardImage } from '../utils/cardImage';
 import './FootballPitch.css';
 
 export interface PitchPlayer {
@@ -31,7 +32,7 @@ interface FootballPitchProps {
   formationRoles: string[];           // all slot roles available in this team's formation
   readOnly?: boolean;                 // disables drag and context menu (for match previews)
   onMove: (id: string, x: number, y: number) => void;
-  onChangeTeam: (playerId: string) => void;
+  onChangeTeam?: (playerId: string) => void;
   onBench?: (playerId: string) => void;
   onChangeRole: (playerId: string, newRole: string) => void;
   onBalance?: () => void;
@@ -99,7 +100,7 @@ const FootballPitch = ({
       </div>
       <div className="pitch-card__photo">
         {player.cardImage
-          ? <img src={player.cardImage} alt={player.name} draggable={false} />
+          ? <img src={resolveCardImage(player.cardImage)} alt={player.name} draggable={false} loading="lazy" decoding="async" />
           : <span className="pitch-card__initial">{(player.name || '?')[0].toUpperCase()}</span>
         }
       </div>
@@ -163,14 +164,18 @@ const FootballPitch = ({
           >
             <div className="fp-ctx-menu__title">{ctxMenu.playerName}</div>
 
-            <div className="fp-ctx-menu__section-label">Move to</div>
-            <button
-              className="fp-ctx-menu__item fp-ctx-menu__item--team"
-              onClick={() => { onChangeTeam(ctxMenu.playerId); setCtxMenu(null); }}
-            >
-              <i className="bi bi-arrow-left-right" />
-              Team {isTeamB ? 'A' : 'B'}
-            </button>
+            {(onChangeTeam || onBench) && (
+              <div className="fp-ctx-menu__section-label">Move to</div>
+            )}
+            {onChangeTeam && (
+              <button
+                className="fp-ctx-menu__item fp-ctx-menu__item--team"
+                onClick={() => { onChangeTeam(ctxMenu.playerId); setCtxMenu(null); }}
+              >
+                <i className="bi bi-arrow-left-right" />
+                Team {isTeamB ? 'A' : 'B'}
+              </button>
+            )}
             {onBench && (
               <button
                 className="fp-ctx-menu__item fp-ctx-menu__item--bench"

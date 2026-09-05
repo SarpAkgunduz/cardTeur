@@ -8,10 +8,12 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { signIn } = useAuth();
+  const { signIn, resetPassword } = useAuth();
   const { t } = useTranslation();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -24,6 +26,7 @@ const LoginPage = () => {
 
     setIsSubmitting(true);
     setError('');
+    setNotice('');
     try {
       await signIn(email, password);
       // PublicRoute handles redirect once Firebase auth state propagates to context
@@ -34,6 +37,25 @@ const LoginPage = () => {
     }
   };
 
+  const handleResetPassword = async () => {
+    if (!email) {
+      setNotice('');
+      setError(t('auth.resetNeedsEmail'));
+      return;
+    }
+    setIsResetting(true);
+    setError('');
+    setNotice('');
+    try {
+      await resetPassword(email);
+      setNotice(t('auth.resetSent', { email }));
+    } catch {
+      setError(t('auth.resetFailed'));
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   return (
     <div className="ct-login-wrap">
       <div className="ct-login-box">
@@ -41,6 +63,7 @@ const LoginPage = () => {
         <p className="ct-login-sub">{t('auth.loginSub')}</p>
         <form onSubmit={handleLogin}>
           {error && <div className="ct-login-error">{error}</div>}
+          {notice && <div className="ct-login-notice">{notice}</div>}
           <div className="ct-login-field">
             <label className="ct-login-label">{t('common.email')}</label>
             <input
@@ -63,6 +86,14 @@ const LoginPage = () => {
           </div>
           <button className="ct-login-btn" type="submit" disabled={isSubmitting}>
             {isSubmitting ? t('auth.loggingIn') : t('auth.loginBtn')}
+          </button>
+          <button
+            type="button"
+            className="ct-login-forgot"
+            onClick={handleResetPassword}
+            disabled={isResetting}
+          >
+            {t('auth.forgotPassword')}
           </button>
         </form>
         <div className="ct-google-divider"><span>{t('common.or')}</span></div>

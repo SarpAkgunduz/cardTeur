@@ -103,7 +103,6 @@
   height: 330px;
   border: 1px solid rgba(0, 222, 236, 0.22);
   border-radius: 0;
-  clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);
   background:
     radial-gradient(circle at 50% 28%, rgba(0, 222, 236, 0.18), transparent 34%),
     linear-gradient(162deg, #07111a 0%, #14253a 46%, #101b2a 100%);
@@ -254,7 +253,6 @@
 .random-tier-card {
   min-height: 210px;
   border-radius: 0;
-  clip-path: polygon(0 0, 100% 0, 100% 84%, 86% 100%, 0 100%);
   border: 1px solid rgba(255, 255, 255, 0.18);
   position: relative;
   overflow: hidden;

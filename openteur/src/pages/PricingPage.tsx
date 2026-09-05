@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import BackButton from '../components/BackButton';
 import ToastNotification from '../components/ToastNotification';
@@ -74,7 +75,9 @@ function detectCountryCode(): string | undefined {
 
 const PricingPage = () => {
   const { t } = useTranslation();
-  const { plan } = useAuth();
+  const navigate = useNavigate();
+  const { currentUser, plan } = useAuth();
+  const isSignedIn = Boolean(currentUser);
   const [view, setView] = useState<'plans' | 'referrals'>('plans');
   const [interval, setInterval] = useState<BillingInterval>('monthly');
   const [loadingTier, setLoadingTier] = useState<PaidTier | null>(null);
@@ -102,12 +105,14 @@ const PricingPage = () => {
 
   // Auto-apply a code captured on signup (?ref=CODE stored by SignupPage)
   useEffect(() => {
+    if (!isSignedIn) return;
     const stored = localStorage.getItem(REFERRAL_STORAGE_KEY);
     if (stored) {
       setReferralInput(stored);
       checkReferral(stored);
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSignedIn]);
 
   const loadReferralOverview = () => {
     setReferralOverviewLoading(true);
@@ -118,9 +123,9 @@ const PricingPage = () => {
   };
 
   useEffect(() => {
-    if (plan !== 'free') loadReferralOverview();
+    if (isSignedIn && plan !== 'free') loadReferralOverview();
     else setReferralOverviewLoading(false);
-  }, [plan]);
+  }, [plan, isSignedIn]);
 
   const handleGenerateReferral = async () => {
     setGeneratingReferral(true);
@@ -197,13 +202,20 @@ const PricingPage = () => {
   ];
 
   const handleChoose = async (tier: PaidTier) => {
+    // Signed-out visitors land here from the public pricing page — checkout needs an
+    // account, so send them through signup and bring them back.
+    if (!isSignedIn) {
+      navigate(`/signup?redirect=${encodeURIComponent('/pricing')}`);
+      return;
+    }
     setLoadingTier(tier);
     try {
       const referralCode = referralStatus === 'valid' ? referralInput : undefined;
       const result = await billingApi.checkout({ tier, interval, countryCode, referralCode });
-      if (result.provider === 'paddle' && result.token) {
+      if (result.token) {
         const paddle = await getPaddle();
         if (!paddle) {
+          // getPaddle() logs the specific missing/invalid env var to the console.
           setToastMsg(t('pricing.checkoutFailed'));
           setShowToast(true);
           return;
@@ -219,7 +231,7 @@ const PricingPage = () => {
       } else if (result.url) {
         window.location.href = result.url;
       } else {
-        setToastMsg(t('pricing.checkoutStarted'));
+        setToastMsg(t('pricing.checkoutFailed'));
         setShowToast(true);
       }
     } catch (err) {
@@ -261,20 +273,22 @@ const PricingPage = () => {
             <h2 className="page-title">{t('pricing.title')}</h2>
           </div>
 
-          <div className="pricing-view-tabs">
-            <button
-              className={`btn btn-ct ${view === 'plans' ? 'active-mode' : ''}`}
-              onClick={() => setView('plans')}
-            >
-              {t('pricing.plansTab')}
-            </button>
-            <button
-              className={`btn btn-ct ${view === 'referrals' ? 'active-mode' : ''}`}
-              onClick={() => setView('referrals')}
-            >
-              {t('pricing.referralsTab')}
-            </button>
-          </div>
+          {isSignedIn && (
+            <div className="pricing-view-tabs">
+              <button
+                className={`btn btn-ct ${view === 'plans' ? 'active-mode' : ''}`}
+                onClick={() => setView('plans')}
+              >
+                {t('pricing.plansTab')}
+              </button>
+              <button
+                className={`btn btn-ct ${view === 'referrals' ? 'active-mode' : ''}`}
+                onClick={() => setView('referrals')}
+              >
+                {t('pricing.referralsTab')}
+              </button>
+            </div>
+          )}
 
           {view === 'plans' && (
             <>
@@ -293,7 +307,7 @@ const PricingPage = () => {
                 </button>
               </div>
 
-              <div className="pricing-referral">
+              <div className="pricing-referral" hidden={!isSignedIn}>
                 <input
                   type="text"
                   className="pricing-referral__input"

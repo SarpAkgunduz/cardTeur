@@ -71,19 +71,17 @@ const Navbar = () => {
           <div className="ct-nav__logo" onClick={() => navigate('/')}>
             CardTeur
           </div>
-          {loggedIn && (
-            <div className="ct-nav__links">
-              {NAV_LINKS.map(({ path, labelKey }) => (
-                <button
-                  key={path}
-                  className={`ct-nav__link ${isActive(path) ? 'ct-nav__link--active' : ''}`}
-                  onClick={() => navigate(path)}
-                >
-                  {t(labelKey)}
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="ct-nav__links">
+            {(loggedIn ? NAV_LINKS : NAV_LINKS.filter(l => l.path === '/pricing')).map(({ path, labelKey }) => (
+              <button
+                key={path}
+                className={`ct-nav__link ${isActive(path) ? 'ct-nav__link--active' : ''}`}
+                onClick={() => navigate(path)}
+              >
+                {t(labelKey)}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="ct-nav__right">
