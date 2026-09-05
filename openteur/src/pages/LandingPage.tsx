@@ -50,14 +50,14 @@ const MATCH_DEMO_FORMATION = getFormationSet(5)[0];
 const MATCH_DEMO_ROLES = [...new Set(MATCH_DEMO_FORMATION.slots.map(s => s.role))];
 
 const DEMO_SQUAD: DemoSquadPlayer[] = [
-  { id: 'demo-1', name: 'Kaan',  preferredPosition: 'GK', offensiveOverall: 32, defensiveOverall: 58, athleticismOverall: 66, gkOverall: 78, stamina: 62, cardImage: '/assets/player1.webp' },
-  { id: 'demo-2', name: 'Deniz', preferredPosition: 'CB', offensiveOverall: 46, defensiveOverall: 81, athleticismOverall: 72, stamina: 75, cardImage: '/assets/player2.webp' },
+  { id: 'demo-1', name: 'Kenji',  preferredPosition: 'GK', offensiveOverall: 32, defensiveOverall: 58, athleticismOverall: 66, gkOverall: 78, stamina: 62, cardImage: '/assets/player1.webp' },
+  { id: 'demo-2', name: 'Mateo', preferredPosition: 'CB', offensiveOverall: 46, defensiveOverall: 81, athleticismOverall: 72, stamina: 75, cardImage: '/assets/player2.webp' },
   { id: 'demo-3', name: 'Emre',  preferredPosition: 'CM', offensiveOverall: 74, defensiveOverall: 63, athleticismOverall: 77, stamina: 82, cardImage: '/assets/player3.webp' },
-  { id: 'demo-4', name: 'Baran', preferredPosition: 'CM', offensiveOverall: 69, defensiveOverall: 58, athleticismOverall: 84, stamina: 88, cardImage: '/assets/player4.webp' },
-  { id: 'demo-5', name: 'Yusuf', preferredPosition: 'ST', offensiveOverall: 86, defensiveOverall: 41, athleticismOverall: 79, stamina: 71, cardImage: '/assets/player5.webp' },
-  { id: 'demo-6', name: 'Arda',  preferredPosition: 'LW', offensiveOverall: 78, defensiveOverall: 44, athleticismOverall: 88, stamina: 80, cardImage: '/assets/player6.webp' },
-  { id: 'demo-7', name: 'Mert',  preferredPosition: 'CB', offensiveOverall: 39, defensiveOverall: 74, athleticismOverall: 68, stamina: 70, cardImage: '/assets/player8.webp' },
-  { id: 'demo-8', name: 'Efe',   preferredPosition: 'CM', offensiveOverall: 66, defensiveOverall: 61, athleticismOverall: 73, stamina: 77, cardImage: '/assets/player9.webp' },
+  { id: 'demo-4', name: 'Luca', preferredPosition: 'CM', offensiveOverall: 69, defensiveOverall: 58, athleticismOverall: 84, stamina: 88, cardImage: '/assets/player4.webp' },
+  { id: 'demo-5', name: 'Diego', preferredPosition: 'ST', offensiveOverall: 86, defensiveOverall: 41, athleticismOverall: 79, stamina: 71, cardImage: '/assets/player5.webp' },
+  { id: 'demo-6', name: 'Noah',  preferredPosition: 'LW', offensiveOverall: 78, defensiveOverall: 44, athleticismOverall: 88, stamina: 80, cardImage: '/assets/player6.webp' },
+  { id: 'demo-7', name: 'Omar',  preferredPosition: 'CB', offensiveOverall: 39, defensiveOverall: 74, athleticismOverall: 68, stamina: 70, cardImage: '/assets/player8.webp' },
+  { id: 'demo-8', name: 'Yusuf',   preferredPosition: 'CM', offensiveOverall: 66, defensiveOverall: 61, athleticismOverall: 73, stamina: 77, cardImage: '/assets/player9.webp' },
 ];
 
 const DEMO_BY_ID: Record<string, DemoSquadPlayer> = Object.fromEntries(
@@ -125,16 +125,33 @@ const LandingPage = () => {
     { number: '03', title: t('landing.step3Title'), text: t('landing.step3Text') },
   ];
 
+  // Mirrors the real Player document: the visitor edits the same sub-stats the app
+  // stores, and the overalls/tier are derived from them exactly as usePlayerForm does.
   const [demoPosition, setDemoPosition] = useState('ST');
-  const [demoOff, setDemoOff] = useState(74);
-  const [demoDef, setDemoDef] = useState(56);
-  const [demoAth, setDemoAth] = useState(81);
-  const [demoRef, setDemoRef] = useState(78);
-  const [demoHan, setDemoHan] = useState(71);
-  const [demoDiv, setDemoDiv] = useState(74);
+  const [demoStats, setDemoStats] = useState({
+    dribbling: 82, shotAccuracy: 78, shotSpeed: 74, headers: 63,
+    longPass: 66, shortPass: 77, ballControl: 84, positioning: 79, vision: 71,
+    tackling: 46, interceptions: 52, marking: 44, defensiveIQ: 55,
+    speed: 88, strength: 69, stamina: 80,
+    diving: 74, handling: 71, kicking: 66, reflexes: 79, gkPositioning: 73, gkSpeed: 64,
+  });
+
+  const setDemoStat = (key: keyof typeof demoStats, value: number) =>
+    setDemoStats(prev => ({ ...prev, [key]: value }));
 
   const demoIsGK = demoPosition === 'GK';
-  const demoGkOverall = calculateAverage([demoRef, demoHan, demoDiv]);
+
+  const demoOff = calculateAverage([
+    demoStats.dribbling, demoStats.shotAccuracy, demoStats.shotSpeed, demoStats.headers,
+    demoStats.ballControl, demoStats.vision, demoStats.positioning, demoStats.longPass, demoStats.shortPass,
+  ]);
+  const demoDef = calculateAverage([demoStats.tackling, demoStats.interceptions, demoStats.marking]);
+  const demoAth = calculateAverage([demoStats.speed, demoStats.strength, demoStats.stamina]);
+  const demoGkOverall = calculateAverage([
+    demoStats.diving, demoStats.handling, demoStats.kicking,
+    demoStats.reflexes, demoStats.gkPositioning, demoStats.gkSpeed,
+  ]);
+
   const demoTier = computeCardTitle({
     offensiveOverall: demoOff,
     defensiveOverall: demoDef,
@@ -143,17 +160,66 @@ const LandingPage = () => {
     isGK: demoIsGK,
   });
 
-  const demoStatFields = demoIsGK
-    ? [
-        { key: 'ref', label: t('stats.reflexes'), value: demoRef, setter: setDemoRef, modifier: 'ath' },
-        { key: 'han', label: t('stats.handling'), value: demoHan, setter: setDemoHan, modifier: 'off' },
-        { key: 'div', label: t('stats.diving'),   value: demoDiv, setter: setDemoDiv, modifier: 'def' },
-      ]
+  const demoStatGroups = demoIsGK
+    ? [{
+        id: 'gk' as const,
+        label: t('playerForm.goalkeeper'),
+        overall: demoGkOverall,
+        modifier: 'ath',
+        fields: [
+          { key: 'diving' as const,        label: t('stats.diving') },
+          { key: 'handling' as const,      label: t('stats.handling') },
+          { key: 'kicking' as const,       label: t('stats.kicking') },
+          { key: 'reflexes' as const,      label: t('stats.reflexes') },
+          { key: 'gkPositioning' as const, label: t('stats.gkPositioning') },
+          { key: 'gkSpeed' as const,       label: t('stats.gkSpeed') },
+        ],
+      }]
     : [
-        { key: 'off', label: t('playerForm.offensive'),    value: demoOff, setter: setDemoOff, modifier: 'off' },
-        { key: 'def', label: t('playerForm.defensive'),    value: demoDef, setter: setDemoDef, modifier: 'def' },
-        { key: 'ath', label: t('playerForm.athleticism'),  value: demoAth, setter: setDemoAth, modifier: 'ath' },
+        {
+          id: 'offensive' as const,
+          label: t('playerForm.offensive'),
+          overall: demoOff,
+          modifier: 'off',
+          fields: [
+            { key: 'dribbling' as const,    label: t('stats.dribbling') },
+            { key: 'shotAccuracy' as const, label: t('stats.shotAccuracy') },
+            { key: 'shotSpeed' as const,    label: t('stats.shotSpeed') },
+            { key: 'headers' as const,      label: t('stats.headers') },
+            { key: 'longPass' as const,     label: t('stats.longPass') },
+            { key: 'shortPass' as const,    label: t('stats.shortPass') },
+            { key: 'ballControl' as const,  label: t('stats.ballControl') },
+            { key: 'positioning' as const,  label: t('stats.positioning') },
+            { key: 'vision' as const,       label: t('stats.vision') },
+          ],
+        },
+        {
+          id: 'defensive' as const,
+          label: t('playerForm.defensive'),
+          overall: demoDef,
+          modifier: 'def',
+          fields: [
+            { key: 'tackling' as const,      label: t('stats.tackling') },
+            { key: 'interceptions' as const, label: t('stats.interceptions') },
+            { key: 'marking' as const,       label: t('stats.marking') },
+            { key: 'defensiveIQ' as const,   label: t('stats.defensiveIQ') },
+          ],
+        },
+        {
+          id: 'athleticism' as const,
+          label: t('playerForm.athleticism'),
+          overall: demoAth,
+          modifier: 'ath',
+          fields: [
+            { key: 'speed' as const,    label: t('stats.speed') },
+            { key: 'strength' as const, label: t('stats.strength') },
+            { key: 'stamina' as const,  label: t('stats.stamina') },
+          ],
+        },
       ];
+
+  const [demoTab, setDemoTab] = useState<string>('offensive');
+  const activeDemoGroup = demoStatGroups.find(g => g.id === demoTab) ?? demoStatGroups[0];
 
   // Interactive match demo — mirrors MatchPage's pitch/bench state so visitors get
   // the real drag, role-change and substitution behaviour before signing up.
@@ -298,19 +364,33 @@ const LandingPage = () => {
             <p className="landing__builder-text">{t('landing.cardBuilderText')}</p>
 
             <div className="landing__builder-controls">
-              {demoStatFields.map(field => (
+              <div className="landing__stat-tabs">
+                {demoStatGroups.map(group => (
+                  <button
+                    key={group.id}
+                    type="button"
+                    className={`landing__stat-tab ${activeDemoGroup.id === group.id ? 'active' : ''}`}
+                    onClick={() => setDemoTab(group.id)}
+                  >
+                    {group.label}
+                    <span className="landing__stat-tab-ovr">{group.overall}</span>
+                  </button>
+                ))}
+              </div>
+
+              {activeDemoGroup.fields.map(field => (
                 <div className="landing__builder-field" key={field.key}>
                   <label>
                     <span>{field.label}</span>
-                    <span className="landing__builder-val">{field.value}</span>
+                    <span className="landing__builder-val">{demoStats[field.key]}</span>
                   </label>
                   <input
                     type="range"
-                    min={30}
+                    min={0}
                     max={99}
-                    value={field.value}
-                    onChange={e => field.setter(Number(e.target.value))}
-                    className={`landing__slider landing__slider--${field.modifier}`}
+                    value={demoStats[field.key]}
+                    onChange={e => setDemoStat(field.key, Number(e.target.value))}
+                    className={`landing__slider landing__slider--${activeDemoGroup.modifier}`}
                   />
                 </div>
               ))}
@@ -321,7 +401,10 @@ const LandingPage = () => {
                     key={pos}
                     type="button"
                     className={`landing__pos-btn ${demoPosition === pos ? 'active' : ''}`}
-                    onClick={() => setDemoPosition(pos)}
+                    onClick={() => {
+                      setDemoPosition(pos);
+                      setDemoTab(pos === 'GK' ? 'gk' : 'offensive');
+                    }}
                   >
                     {pos}
                   </button>
@@ -344,9 +427,9 @@ const LandingPage = () => {
               defensiveOverall={demoDef}
               athleticismOverall={demoAth}
               gkOverall={demoGkOverall}
-              reflexes={demoRef}
-              handling={demoHan}
-              diving={demoDiv}
+              reflexes={demoStats.reflexes}
+              handling={demoStats.handling}
+              diving={demoStats.diving}
               cardImage="/assets/player20.webp"
               cardTitle={demoTier}
             />

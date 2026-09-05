@@ -718,3 +718,50 @@
     transform: translateX(90px) rotate(9deg) scale(0.85);
   }
 }
+
+.landing__stat-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.landing__stat-tab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(36, 59, 90, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(215, 230, 242, 0.7);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  padding: 7px 11px;
+  cursor: pointer;
+  transition: border-color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    background 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.landing__stat-tab:hover {
+  color: #d7e6f2;
+  border-color: rgba(0, 222, 236, 0.35);
+}
+
+.landing__stat-tab.active {
+  color: #00deec;
+  border-color: rgba(0, 222, 236, 0.6);
+  background: rgba(0, 222, 236, 0.1);
+}
+
+.landing__stat-tab-ovr {
+  font-size: 0.8rem;
+  font-weight: 900;
+  color: #00deec;
+}
+
+.landing__stat-tab:not(.active) .landing__stat-tab-ovr {
+  color: rgba(215, 230, 242, 0.85);
+}
