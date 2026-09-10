@@ -12,7 +12,6 @@ This tracks what's built in code vs. what only **you** can do (accounts, keys, d
 - Limit enforcement on create routes: players (`PLAN_LIMIT_PLAYERS`), crews (`PLAN_LIMIT_CREWS`), friends (`PLAN_LIMIT_FRIENDS`); match history read-window filter on `GET /api/matches`.
 - `models/Referral.ts` + `services/referralService.ts` + `routes/referrals.ts` (`GET/POST /api/referrals`).
 - Billing layer `services/billing/` (Paddle implemented via REST; iyzico structured stub) + `routes/billing.ts` (`POST /api/billing/checkout`, `POST /api/billing/webhook/paddle`, `.../iyzico`), mounted with raw-body parsing for webhooks.
-- R2 image upload already wired (`routes/uploads.ts` + `services/r2Service.ts`) and a migration script (`scripts/migrateImagesToR2.ts`).
 
 **Frontend**
 - `plan` loaded into `AuthContext` (`plan`, `limits`, `profile`, `refreshProfile`).
@@ -26,17 +25,7 @@ This tracks what's built in code vs. what only **you** can do (accounts, keys, d
 ## 🔧 Must be done by you
 
 ### 1. Cloudflare R2 (image storage — do first, cuts cost now)
-- Create an R2 bucket (e.g. `cardteur-images`) and an API token in the Cloudflare dashboard.
-- Add a public custom domain for the bucket (e.g. `images.cardteur.com`).
-- Set env vars in `server/.env` **and** Railway:
-  ```
-  R2_ACCOUNT_ID=...
-  R2_ACCESS_KEY_ID=...
-  R2_SECRET_ACCESS_KEY=...
-  R2_BUCKET=cardteur-images
-  R2_PUBLIC_URL=https://images.cardteur.com
-  ```
-- Run the migration once: `cd server && npx ts-node scripts/migrateImagesToR2.ts`
+Not a monetization item — full build status and to-do list moved to `IMAGE_STORAGE_PLAN.md`.
 
 ### 2. Paddle (international payments)
 - ✅ **Sandbox catalog created** (2026-07-13) — 2 products, 4 prices (Premium $3/mo & $30/yr, Premium+ $5/mo & $50/yr, each with GB/IE/AU currency overrides), 2 referral discounts (50% off first month, 30% off first year, `restrict_to` locked to the correct interval's prices), 7-day card-required trial on every price. All IDs are already in `server/.env`. `paddle.ts` already picks the right discount by `interval` — no code change needed there anymore.
@@ -86,4 +75,4 @@ This tracks what's built in code vs. what only **you** can do (accounts, keys, d
 ## Notes
 - No database migration needed for existing users — `plan` defaults to `free`, `referralRewardMonths` to `0`.
 - Nothing here charges anyone until the provider keys above are set; without them, `POST /api/billing/checkout` returns a clear "not configured" error.
-- The full design rationale lives in `MONETIZATION_PLAN.md`.
+- The full design rationale lives in `MONETIZATION_PLAN.md`. Image storage (Cloudflare R2) is a separate, non-monetization concern — see `IMAGE_STORAGE_PLAN.md`.

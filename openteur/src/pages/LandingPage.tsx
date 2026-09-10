@@ -51,6 +51,17 @@ const MATCH_DEMO_OVR = Math.round(
 );
 const MATCH_DEMO_ROLES = [...new Set(MATCH_DEMO_FORMATION.slots.map(s => s.role))];
 
+// Individual sub-stats, not broad categories — voters nudge specific stats
+// (e.g. +3 Dribbling), matching how a real card is edited in AddPlayerForm.
+type VoteStatKey = 'dribbling' | 'shortPass' | 'tackling' | 'stamina';
+const VOTE_STAT_KEYS: VoteStatKey[] = ['dribbling', 'shortPass', 'tackling', 'stamina'];
+const VOTE_TEAMMATES: Array<{ id: string; name: string; base: Record<VoteStatKey, number> }> = [
+  { id: 'deniz', name: 'Deniz', base: { dribbling: 68, shortPass: 72, tackling: 65, stamina: 70 } },
+  { id: 'baran', name: 'Baran', base: { dribbling: 74, shortPass: 58, tackling: 52, stamina: 80 } },
+];
+
+const clampVoteStep = (value: number) => Math.max(-3, Math.min(3, value));
+
 const SHOWCASE_CARDS = [
   {
     _id: 'landing-gold',
@@ -108,8 +119,29 @@ const LandingPage = () => {
   const demoOverall = Math.round((demoOff + demoDef + demoAth) / 3);
   const demoTier = demoOverall >= 80 ? 'gold' : demoOverall >= 65 ? 'silver' : 'bronze';
 
+  const emptyVoteDeltas = () =>
+    Object.fromEntries(VOTE_TEAMMATES.map(p => [p.id, Object.fromEntries(VOTE_STAT_KEYS.map(k => [k, 0]))])) as Record<
+      string,
+      Record<VoteStatKey, number>
+    >;
+  const [votingDeltas, setVotingDeltas] = useState<Record<string, Record<VoteStatKey, number>>>(emptyVoteDeltas);
+  const [votesSubmitted, setVotesSubmitted] = useState(false);
+
+  const handleVoteStep = (playerId: string, stat: VoteStatKey, direction: 1 | -1) => {
+    setVotingDeltas(prev => ({
+      ...prev,
+      [playerId]: { ...prev[playerId], [stat]: clampVoteStep(prev[playerId][stat] + direction) },
+    }));
+  };
+
+  const handleResetVotes = () => {
+    setVotingDeltas(emptyVoteDeltas());
+    setVotesSubmitted(false);
+  };
+
   const featuresReveal = useRevealOnScroll<HTMLElement>();
   const stepsReveal = useRevealOnScroll<HTMLElement>();
+  const votingReveal = useRevealOnScroll<HTMLElement>();
   const builderReveal = useRevealOnScroll<HTMLElement>();
   const matchPreviewReveal = useRevealOnScroll<HTMLElement>();
   const bottomReveal = useRevealOnScroll<HTMLElement>();
@@ -180,6 +212,131 @@ const LandingPage = () => {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* ── Voting system (flagship feature) ── */}
+        <section
+          ref={votingReveal.ref}
+          className={`landing__section landing__reveal landing__voting ${votingReveal.visible ? 'is-visible' : ''}`}
+        >
+          <div className="landing__voting-intro">
+            <span className="landing__badge">{t('landing.votingBadge')}</span>
+            <h2 className="landing__builder-title">{t('landing.votingTitle')}</h2>
+            <p className="landing__builder-text landing__voting-text">{t('landing.votingText')}</p>
+          </div>
+
+          <div className="landing__voting-points">
+            <div className="landing__voting-point">
+              <i className="bi bi-lightning-charge-fill"></i>
+              <div>
+                <h4>{t('landing.votingPoint1Title')}</h4>
+                <p>{t('landing.votingPoint1Text')}</p>
+              </div>
+            </div>
+            <div className="landing__voting-point">
+              <i className="bi bi-person-badge-fill"></i>
+              <div>
+                <h4>{t('landing.votingPoint2Title')}</h4>
+                <p>{t('landing.votingPoint2Text')}</p>
+              </div>
+            </div>
+            <div className="landing__voting-point">
+              <i className="bi bi-graph-up-arrow"></i>
+              <div>
+                <h4>{t('landing.votingPoint3Title')}</h4>
+                <p>{t('landing.votingPoint3Text')}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="landing__voting-demo">
+            {VOTE_TEAMMATES.map(player => {
+              const deltas = votingDeltas[player.id];
+              return (
+                <div key={player.id} className="landing__voting-card">
+                  <div className="landing__voting-card__header">
+                    <span className="landing__voting-card__name">{player.name}</span>
+                  </div>
+                  {VOTE_STAT_KEYS.map(stat => {
+                    const delta = deltas[stat];
+                    return (
+                      <div key={stat} className="landing__voting-stat">
+                        <span className="landing__voting-stat__label">{t(`stats.${stat}`)}</span>
+                        <div className="landing__voting-stepper">
+                          <button
+                            type="button"
+                            className="landing__voting-stepper__btn"
+                            disabled={votesSubmitted || delta <= -3}
+                            onClick={() => handleVoteStep(player.id, stat, -1)}
+                            aria-label={`-1 ${stat}`}
+                          >
+                            <i className="bi bi-dash"></i>
+                          </button>
+                          <span
+                            className={`landing__voting-stepper__val ${delta > 0 ? 'positive' : delta < 0 ? 'negative' : ''}`}
+                          >
+                            {delta > 0 ? '+' : ''}{delta}
+                          </span>
+                          <button
+                            type="button"
+                            className="landing__voting-stepper__btn"
+                            disabled={votesSubmitted || delta >= 3}
+                            onClick={() => handleVoteStep(player.id, stat, 1)}
+                            aria-label={`+1 ${stat}`}
+                          >
+                            <i className="bi bi-plus"></i>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {votesSubmitted && (
+                    <div className="landing__voting-result">
+                      {VOTE_STAT_KEYS.map(stat => {
+                        const delta = deltas[stat];
+                        const newVal = Math.max(1, Math.min(99, player.base[stat] + delta));
+                        return (
+                          <div key={stat} className="landing__voting-result__row">
+                            <span>{t(`stats.${stat}`)}</span>
+                            <span className="landing__voting-result__stats">
+                              {player.base[stat]} <i className="bi bi-arrow-right"></i> {newVal}
+                              <span className={`landing__voting-result__delta ${delta >= 0 ? 'positive' : 'negative'}`}>
+                                {delta >= 0 ? '+' : ''}{delta}
+                              </span>
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="landing__voting-actions">
+            {!votesSubmitted ? (
+              <button className="landing__cta" onClick={() => setVotesSubmitted(true)}>
+                {t('landing.votingSubmitCta')}
+                <i className="bi bi-check2"></i>
+              </button>
+            ) : (
+              <>
+                <span className="landing__voting-success">
+                  <i className="bi bi-stars"></i> {t('landing.votingSuccessMsg')}
+                </span>
+                <button className="landing__cta landing__cta--ghost" onClick={handleResetVotes}>
+                  {t('landing.votingResetCta')}
+                </button>
+              </>
+            )}
+          </div>
+
+          <button className="landing__cta landing__voting-main-cta" onClick={() => navigate('/signup')}>
+            {t('landing.votingCta')}
+            <i className="bi bi-arrow-right"></i>
+          </button>
         </section>
 
         {/* ── Build your own card (interactive demo) ── */}

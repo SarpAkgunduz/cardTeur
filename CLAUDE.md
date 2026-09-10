@@ -23,7 +23,7 @@
 - Read relevant files before making changes.
 - Stick to dark theme colors for CSS changes.
 - Ask if the request is ambiguous or context is unclear.
-- Always write comments in English — applies to both code committed to the codebase and code snippets shared in conversation. Never write inline comments in any other language.
+- Always write comments in English — applies to both code committed to the codebase and code snippets shared in conversation. Never write inline comments in any other language. Translate any non-English comments encountered while editing a file.
 - Keep mode buttons mutually exclusive — activating one closes the others.
 - Inline edit always supports `Enter` = save, `Escape` = cancel.
 - Extract logic to a custom hook or helper file when a view file grows too large or holds unrelated concerns. Readability beats saving lines.
@@ -49,6 +49,9 @@
 - Check `cardTeur/stylepreset/` for colors and styles when adding new UI elements.
 - Required fields on forms: add `*` to label, show a toast listing missing fields on failed submit (e.g. "please fill these fields: Name, Position"). Never submit without required fields.
 - Animations: use CSS `transition`/`keyframes`, durations 0.3–0.5s, `cubic-bezier` easing. Keep subtle and consistent.
+- Keep state at the nearest common ancestor (lift state up) — use Context only when the tree is genuinely deep.
+- Don't manipulate child state from a parent via `useImperativeHandle` + `ref`.
+- Control Bootstrap components with the `show` prop instead of conditional mounting, so their animations still work.
 
 ### Page responsibilities (do not mix concerns)
 | Page | Owns |
@@ -60,6 +63,8 @@
 | `FriendsPage` (`/friends`) | Two tabs: My Friends (client-side filter), Add Friend (exact UID/email lookup) |
 | `ProfilePage` (`/profile`) | Display name, photo, password, Account ID (copyable Firebase UID), danger zone |
 | `InvitePage` (`/invite/:inviterUid`) | Auto-adds inviter as friend after login/signup |
+
+`AdminRoute.tsx` exists in the codebase but is not wired into `App.tsx` — don't assume role-based routing is active unless you also wire up its usage.
 
 ---
 
@@ -123,7 +128,7 @@
 - `conversationId` is set to the Firebase `uid` at initialize time (iyzico's equivalent of Paddle's `custom_data`) and read back via `subscription.retrieve` in the webhook handler — **not verified against a live sandbox**, confirm iyzico actually echoes it back before relying on it in production.
 - Webhook verification pattern is deliberately "retrieve to confirm": iyzico has no HMAC secret like Paddle's, so `verifyAndParse` only reads a reference code off the raw webhook body (field name guessed — `subscriptionReferenceCode`/`iyziReferenceCode`/`referenceCode`, unverified), then calls `subscription.retrieve` and trusts iyzico's authoritative response instead of the webhook payload directly.
 - **Before going live**: create a real iyzico sandbox account, confirm the actual webhook payload shape, confirm `conversationId` round-trips, and decide how/where to collect identity number + build the `formHtml` frontend rendering.
-- Full original design rationale (tiers, pricing, referral discount mechanics, R2 image migration, mobile IAP plan) lives in `MONETIZATION_PLAN.md`; build status / manual to-do list lives in `MONETIZATION_HANDOFF.md` — both at repo root. Read those before making further billing changes, they're more detailed than this section.
+- Full original design rationale (tiers, pricing, referral discount mechanics, mobile IAP plan) lives in `MONETIZATION_PLAN.md`; build status / manual to-do list lives in `MONETIZATION_HANDOFF.md` — both at repo root. R2 image migration is a separate, non-monetization concern documented in `IMAGE_STORAGE_PLAN.md`. Read the relevant one(s) before making further billing or image-storage changes — they're more detailed than this section.
 
 ### Env vars this subsystem needs (not yet in `server/.env`)
 ```
@@ -226,7 +231,7 @@ npm test
 npm run build          # from repo root
 npx wrangler deploy
 ```
-Merging to `main` also triggers automatic Cloudflare deployment via GitHub App.
+Config lives in `wrangler.jsonc` at repo root — `assets.directory` points at `openteur/dist`, so Cloudflare serves the Vite build output from there. Root `npm run deploy` runs the full build then `wrangler deploy` in one step. Merging to `main` also triggers automatic Cloudflare deployment via GitHub App.
 
 ### Backend → Railway
 ```bash
@@ -256,6 +261,8 @@ VITE_FIREBASE_STORAGE_BUCKET=...
 VITE_FIREBASE_MESSAGING_SENDER_ID=...
 VITE_FIREBASE_APP_ID=...
 ```
+
+`apiClient.ts` resolves its API base URL as `VITE_API_BASE_URL || 'https://cardteur-production.up.railway.app/api'` — so it silently falls back to production if the env var isn't set. To point the frontend at a local backend, add `VITE_API_BASE_URL=http://localhost:5002/api` to an uncommitted `openteur/.env.development.local`.
 
 ### Railway service variables
 `MONGO_URI`, `RESEND_API_KEY`, `SMTP_FROM`, `FIREBASE_SERVICE_ACCOUNT` (full JSON contents of `serviceAccountKey.json`).
@@ -289,6 +296,7 @@ VITE_FIREBASE_APP_ID=...
 
 ## Testing
 
+- `e2e/global-setup.ts` signs in through the real Firebase login form and writes `auth-state.json`, which authenticated tests reuse.
 - API tests under `e2e/tests/api-tests/`; frontend tests under `e2e/tests/frontend-tests/`.
 - When changing player fields or page selectors, update both API and frontend tests (they use concrete IDs like `#name`, `#preferredPosition`, `#speed`).
 - Test edge cases and error paths — e.g. required field missing → expect the specific error toast.
@@ -307,3 +315,10 @@ VITE_FIREBASE_APP_ID=...
 | `connect ECONNREFUSED 127.0.0.1:587` | Old nodemailer code still running | Restart server |
 | Firebase Admin fails to init | `serviceAccountKey.json` missing | Download from Firebase Console → Project Settings → Service Accounts |
 | `Cannot find module 'resend'` | Not installed | `cd server && npm install resend` |
+| Resend email not arriving | Free-plan sender restrictions (see below) | Verify recipient is allowed, or use a verified domain sender |
+| Resend request times out / hangs | Sandbox or CI has no outbound network access to Resend's API | Test email sending from a local machine with real network access, not the sandbox |
+| `Unable to fetch data. The request could not be resolved.` | Network can't reach `api.resend.com` — firewall/corporate network | Switch to a hotspot or VPN; Resend needs outbound HTTPS to `api.resend.com` |
+| `fetch failed` calling the Resend API | Node < 18 (no native `fetch`) | Check `node --version` ≥ 18 |
+
+### Resend free-plan constraints
+On Resend's free plan, `SMTP_FROM` (`onboarding@resend.dev`) can only send to the account owner's own verified email unless a custom sending domain is verified in Resend. There's also a hard cap of 3,000 emails/month and 100/day regardless of recipient. Keep this in mind when debugging "email not received" reports — it's often a plan limitation, not a code bug.

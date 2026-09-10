@@ -5,27 +5,6 @@ applyTo: "**"
 
 # Copilot Behavior Rules
 
-## Don't
-- Add comments, docstrings, or JSDoc unless explicitly asked
-- Refactor existing code — only make the requested change
-- Extend the user's idea or add adjacent improvements without asking first
-- Create helper functions or abstraction layers for one-time operations
-- Add unnecessary try/catch on top of existing error handling
-- Write validation code for scenarios that don't exist
-- Remove Bootstrap or other libraries and rewrite from scratch without being asked
-- Add a feature to a page that already has a dedicated page for it (e.g. don't put email editing in AddPlayerForm when CrewPage owns that concern)
+Consolidated into `CLAUDE.md` at the repo root (## Behavior rules: Don't / Do / Requires confirmation) — read that instead, it's the maintained source.
 
-## Do
-- Read the relevant files before making changes, understand the existing code
-- Use `multi_replace_string_in_file` when there are multiple independent changes
-- Stick to dark theme colors for CSS changes
-- If the request is ambiguous or you are not fully sure about the context, ask the user before implementing
-- Always write comments in English regardless of the language used elsewhere in the codebase. Translate any non-English comments encountered during edits.
-- When mode buttons are mutually exclusive, close all other modes when one is activated
-- When implementing inline edit, always support keyboard shortcuts: Enter to save, Escape to cancel
-
-## Requires confirmation
-- Deleting files
-- `git push`, `git reset --hard`, `git push --force`
-- Database schema changes
-- Moving an idea beyond the exact requested scope
+One Copilot-tool-specific note that doesn't belong in `CLAUDE.md`: use `multi_replace_string_in_file` when making multiple independent changes in one turn.
