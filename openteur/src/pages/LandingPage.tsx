@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation, Trans } from 'react-i18next';
 import Card from '../components/Card';
 import FootballPitch, { PitchPlayer } from '../components/FootballPitch';
 import '../components/FootballPitch.css';
 import { getFormationSet } from '../data/formations';
+import { calculateAverage, computeCardTitle, computeOverall } from '../utils/playerRating';
 import './LandingPage.css';
 
 // Reveals a section with a rise/fade transition the first time it scrolls into view.
@@ -31,25 +32,48 @@ function useRevealOnScroll<T extends HTMLElement>() {
 
 const DEMO_POSITIONS = ['ST', 'CM', 'CB', 'GK'];
 
+// Demo squad carries the same fields a real Player document does, so the landing
+// preview can run the exact rating helpers the app uses instead of faking numbers.
+interface DemoSquadPlayer {
+  id: string;
+  name: string;
+  preferredPosition: string;
+  offensiveOverall: number;
+  defensiveOverall: number;
+  athleticismOverall: number;
+  gkOverall?: number;
+  stamina: number;
+  cardImage: string;
+}
+
 const MATCH_DEMO_FORMATION = getFormationSet(5)[0];
-const MATCH_DEMO_NAMES = ['Kaan', 'Deniz', 'Emre', 'Baran', 'Yusuf'];
-const MATCH_DEMO_PLAYERS: PitchPlayer[] = MATCH_DEMO_FORMATION.slots.map((slot, i) => ({
-  id: `landing-demo-${i}`,
-  name: MATCH_DEMO_NAMES[i] ?? `Player ${i + 1}`,
-  role: slot.role,
-  overall: 64 + ((i * 7) % 28),
-  cardImage: `/assets/player${(i % 36) + 1}.png`,
-  x: slot.x,
-  y: slot.y,
-  offOvr: 58 + i * 6,
-  defOvr: 52 + i * 5,
-  athOvr: 68 + i * 4,
-  stamOvr: 74,
-}));
-const MATCH_DEMO_OVR = Math.round(
-  MATCH_DEMO_PLAYERS.reduce((sum, p) => sum + p.overall, 0) / MATCH_DEMO_PLAYERS.length
-);
 const MATCH_DEMO_ROLES = [...new Set(MATCH_DEMO_FORMATION.slots.map(s => s.role))];
+
+const DEMO_SQUAD: DemoSquadPlayer[] = [
+  { id: 'demo-1', name: 'Kenji',  preferredPosition: 'GK', offensiveOverall: 32, defensiveOverall: 58, athleticismOverall: 66, gkOverall: 78, stamina: 62, cardImage: '/assets/player1.webp' },
+  { id: 'demo-2', name: 'Mateo', preferredPosition: 'CB', offensiveOverall: 46, defensiveOverall: 81, athleticismOverall: 72, stamina: 75, cardImage: '/assets/player2.webp' },
+  { id: 'demo-3', name: 'Emre',  preferredPosition: 'CM', offensiveOverall: 74, defensiveOverall: 63, athleticismOverall: 77, stamina: 82, cardImage: '/assets/player3.webp' },
+  { id: 'demo-4', name: 'Luca', preferredPosition: 'CM', offensiveOverall: 69, defensiveOverall: 58, athleticismOverall: 84, stamina: 88, cardImage: '/assets/player4.webp' },
+  { id: 'demo-5', name: 'Diego', preferredPosition: 'ST', offensiveOverall: 86, defensiveOverall: 41, athleticismOverall: 79, stamina: 71, cardImage: '/assets/player5.webp' },
+  { id: 'demo-6', name: 'Noah',  preferredPosition: 'LW', offensiveOverall: 78, defensiveOverall: 44, athleticismOverall: 88, stamina: 80, cardImage: '/assets/player6.webp' },
+  { id: 'demo-7', name: 'Omar',  preferredPosition: 'CB', offensiveOverall: 39, defensiveOverall: 74, athleticismOverall: 68, stamina: 70, cardImage: '/assets/player8.webp' },
+  { id: 'demo-8', name: 'Yusuf',   preferredPosition: 'CM', offensiveOverall: 66, defensiveOverall: 61, athleticismOverall: 73, stamina: 77, cardImage: '/assets/player9.webp' },
+];
+
+const DEMO_BY_ID: Record<string, DemoSquadPlayer> = Object.fromEntries(
+  DEMO_SQUAD.map(p => [p.id, p])
+);
+
+const DEMO_STARTER_IDS = DEMO_SQUAD.slice(0, MATCH_DEMO_FORMATION.slots.length).map(p => p.id);
+const DEMO_BENCH_IDS = DEMO_SQUAD.slice(MATCH_DEMO_FORMATION.slots.length).map(p => p.id);
+
+const DEMO_START_POSITIONS: Record<string, { x: number; y: number }> = Object.fromEntries(
+  DEMO_STARTER_IDS.map((id, i) => [id, { x: MATCH_DEMO_FORMATION.slots[i].x, y: MATCH_DEMO_FORMATION.slots[i].y }])
+);
+
+const DEMO_START_ROLES: Record<string, string> = Object.fromEntries(
+  DEMO_STARTER_IDS.map((id, i) => [id, MATCH_DEMO_FORMATION.slots[i].role])
+);
 
 // Individual sub-stats, not broad categories — voters nudge specific stats
 // (e.g. +3 Dribbling), matching how a real card is edited in AddPlayerForm.
@@ -70,7 +94,7 @@ const SHOWCASE_CARDS = [
     offensiveOverall: 91,
     defensiveOverall: 45,
     athleticismOverall: 88,
-    cardImage: '/assets/player7.png',
+    cardImage: '/assets/player7.webp',
     cardTitle: 'gold',
   },
   {
@@ -80,7 +104,7 @@ const SHOWCASE_CARDS = [
     offensiveOverall: 74,
     defensiveOverall: 71,
     athleticismOverall: 76,
-    cardImage: '/assets/player12.png',
+    cardImage: '/assets/player12.webp',
     cardTitle: 'silver',
   },
   {
@@ -90,7 +114,7 @@ const SHOWCASE_CARDS = [
     offensiveOverall: 48,
     defensiveOverall: 66,
     athleticismOverall: 58,
-    cardImage: '/assets/player3.png',
+    cardImage: '/assets/player3.webp',
     cardTitle: 'bronze',
   },
 ];
@@ -112,12 +136,159 @@ const LandingPage = () => {
     { number: '03', title: t('landing.step3Title'), text: t('landing.step3Text') },
   ];
 
+  // Mirrors the real Player document: the visitor edits the same sub-stats the app
+  // stores, and the overalls/tier are derived from them exactly as usePlayerForm does.
   const [demoPosition, setDemoPosition] = useState('ST');
-  const [demoOff, setDemoOff] = useState(74);
-  const [demoDef, setDemoDef] = useState(56);
-  const [demoAth, setDemoAth] = useState(81);
-  const demoOverall = Math.round((demoOff + demoDef + demoAth) / 3);
-  const demoTier = demoOverall >= 80 ? 'gold' : demoOverall >= 65 ? 'silver' : 'bronze';
+  const [demoStats, setDemoStats] = useState({
+    dribbling: 82, shotAccuracy: 78, shotSpeed: 74, headers: 63,
+    longPass: 66, shortPass: 77, ballControl: 84, positioning: 79, vision: 71,
+    tackling: 46, interceptions: 52, marking: 44, defensiveIQ: 55,
+    speed: 88, strength: 69, stamina: 80,
+    diving: 74, handling: 71, kicking: 66, reflexes: 79, gkPositioning: 73, gkSpeed: 64,
+  });
+
+  const setDemoStat = (key: keyof typeof demoStats, value: number) =>
+    setDemoStats(prev => ({ ...prev, [key]: value }));
+
+  const demoIsGK = demoPosition === 'GK';
+
+  const demoOff = calculateAverage([
+    demoStats.dribbling, demoStats.shotAccuracy, demoStats.shotSpeed, demoStats.headers,
+    demoStats.ballControl, demoStats.vision, demoStats.positioning, demoStats.longPass, demoStats.shortPass,
+  ]);
+  const demoDef = calculateAverage([demoStats.tackling, demoStats.interceptions, demoStats.marking]);
+  const demoAth = calculateAverage([demoStats.speed, demoStats.strength, demoStats.stamina]);
+  const demoGkOverall = calculateAverage([
+    demoStats.diving, demoStats.handling, demoStats.kicking,
+    demoStats.reflexes, demoStats.gkPositioning, demoStats.gkSpeed,
+  ]);
+
+  const demoTier = computeCardTitle({
+    offensiveOverall: demoOff,
+    defensiveOverall: demoDef,
+    athleticismOverall: demoAth,
+    gkOverall: demoGkOverall,
+    isGK: demoIsGK,
+  });
+
+  const demoStatGroups = demoIsGK
+    ? [{
+        id: 'gk' as const,
+        label: t('playerForm.goalkeeper'),
+        overall: demoGkOverall,
+        modifier: 'ath',
+        fields: [
+          { key: 'diving' as const,        label: t('stats.diving') },
+          { key: 'handling' as const,      label: t('stats.handling') },
+          { key: 'kicking' as const,       label: t('stats.kicking') },
+          { key: 'reflexes' as const,      label: t('stats.reflexes') },
+          { key: 'gkPositioning' as const, label: t('stats.gkPositioning') },
+          { key: 'gkSpeed' as const,       label: t('stats.gkSpeed') },
+        ],
+      }]
+    : [
+        {
+          id: 'offensive' as const,
+          label: t('playerForm.offensive'),
+          overall: demoOff,
+          modifier: 'off',
+          fields: [
+            { key: 'dribbling' as const,    label: t('stats.dribbling') },
+            { key: 'shotAccuracy' as const, label: t('stats.shotAccuracy') },
+            { key: 'shotSpeed' as const,    label: t('stats.shotSpeed') },
+            { key: 'headers' as const,      label: t('stats.headers') },
+            { key: 'longPass' as const,     label: t('stats.longPass') },
+            { key: 'shortPass' as const,    label: t('stats.shortPass') },
+            { key: 'ballControl' as const,  label: t('stats.ballControl') },
+            { key: 'positioning' as const,  label: t('stats.positioning') },
+            { key: 'vision' as const,       label: t('stats.vision') },
+          ],
+        },
+        {
+          id: 'defensive' as const,
+          label: t('playerForm.defensive'),
+          overall: demoDef,
+          modifier: 'def',
+          fields: [
+            { key: 'tackling' as const,      label: t('stats.tackling') },
+            { key: 'interceptions' as const, label: t('stats.interceptions') },
+            { key: 'marking' as const,       label: t('stats.marking') },
+            { key: 'defensiveIQ' as const,   label: t('stats.defensiveIQ') },
+          ],
+        },
+        {
+          id: 'athleticism' as const,
+          label: t('playerForm.athleticism'),
+          overall: demoAth,
+          modifier: 'ath',
+          fields: [
+            { key: 'speed' as const,    label: t('stats.speed') },
+            { key: 'strength' as const, label: t('stats.strength') },
+            { key: 'stamina' as const,  label: t('stats.stamina') },
+          ],
+        },
+      ];
+
+  const [demoTab, setDemoTab] = useState<string>('offensive');
+  const activeDemoGroup = demoStatGroups.find(g => g.id === demoTab) ?? demoStatGroups[0];
+
+  // Interactive match demo — mirrors MatchPage's pitch/bench state so visitors get
+  // the real drag, role-change and substitution behaviour before signing up.
+  const [demoPitchIds, setDemoPitchIds] = useState<string[]>(DEMO_STARTER_IDS);
+  const [demoBenchIds, setDemoBenchIds] = useState<string[]>(DEMO_BENCH_IDS);
+  const [demoPositions, setDemoPositions] = useState(DEMO_START_POSITIONS);
+  const [demoRoles, setDemoRoles] = useState(DEMO_START_ROLES);
+
+  const demoPitchPlayers: PitchPlayer[] = useMemo(
+    () => demoPitchIds.map(id => {
+      const p = DEMO_BY_ID[id];
+      const role = demoRoles[id] ?? p.preferredPosition;
+      return {
+        id,
+        name: p.name,
+        role,
+        overall: Math.round(computeOverall(p, role)),
+        cardImage: p.cardImage,
+        x: demoPositions[id]?.x ?? 50,
+        y: demoPositions[id]?.y ?? 50,
+        offOvr: p.offensiveOverall,
+        defOvr: p.defensiveOverall,
+        athOvr: p.athleticismOverall,
+        stamOvr: p.stamina,
+      };
+    }),
+    [demoPitchIds, demoPositions, demoRoles]
+  );
+
+  const demoTeamOvr = demoPitchPlayers.length
+    ? Math.round(demoPitchPlayers.reduce((sum, p) => sum + p.overall, 0) / demoPitchPlayers.length)
+    : 0;
+  const demoTeamStamina = demoPitchPlayers.length
+    ? Math.round(demoPitchPlayers.reduce((sum, p) => sum + p.stamOvr, 0) / demoPitchPlayers.length)
+    : 0;
+
+  const handleDemoMove = (id: string, x: number, y: number) =>
+    setDemoPositions(prev => ({ ...prev, [id]: { x, y } }));
+
+  const handleDemoRole = (id: string, role: string) =>
+    setDemoRoles(prev => ({ ...prev, [id]: role }));
+
+  const handleDemoBench = (id: string) => {
+    setDemoPitchIds(prev => prev.filter(p => p !== id));
+    setDemoBenchIds(prev => (prev.includes(id) ? prev : [...prev, id]));
+  };
+
+  const handleDemoAddFromBench = (id: string) => {
+    if (demoPitchIds.length >= MATCH_DEMO_FORMATION.slots.length) return;
+    const takenSlots = new Set(
+      demoPitchIds.map(pid => `${demoPositions[pid]?.x},${demoPositions[pid]?.y}`)
+    );
+    const freeSlot = MATCH_DEMO_FORMATION.slots.find(slot => !takenSlots.has(`${slot.x},${slot.y}`));
+    setDemoBenchIds(prev => prev.filter(p => p !== id));
+    setDemoPitchIds(prev => [...prev, id]);
+    setDemoPositions(prev => ({ ...prev, [id]: { x: freeSlot?.x ?? 50, y: freeSlot?.y ?? 50 } }));
+    setDemoRoles(prev => ({ ...prev, [id]: freeSlot?.role ?? DEMO_BY_ID[id].preferredPosition }));
+  };
 
   const emptyVoteDeltas = () =>
     Object.fromEntries(VOTE_TEAMMATES.map(p => [p.id, Object.fromEntries(VOTE_STAT_KEYS.map(k => [k, 0]))])) as Record<
@@ -350,48 +521,36 @@ const LandingPage = () => {
             <p className="landing__builder-text">{t('landing.cardBuilderText')}</p>
 
             <div className="landing__builder-controls">
-              <div className="landing__builder-field">
-                <label>
-                  <span>{t('playerForm.offensive')}</span>
-                  <span className="landing__builder-val">{demoOff}</span>
-                </label>
-                <input
-                  type="range"
-                  min={30}
-                  max={99}
-                  value={demoOff}
-                  onChange={e => setDemoOff(Number(e.target.value))}
-                  className="landing__slider landing__slider--off"
-                />
+              <div className="landing__stat-tabs">
+                {demoStatGroups.map(group => (
+                  <button
+                    key={group.id}
+                    type="button"
+                    className={`landing__stat-tab ${activeDemoGroup.id === group.id ? 'active' : ''}`}
+                    onClick={() => setDemoTab(group.id)}
+                  >
+                    {group.label}
+                    <span className="landing__stat-tab-ovr">{group.overall}</span>
+                  </button>
+                ))}
               </div>
-              <div className="landing__builder-field">
-                <label>
-                  <span>{t('playerForm.defensive')}</span>
-                  <span className="landing__builder-val">{demoDef}</span>
-                </label>
-                <input
-                  type="range"
-                  min={30}
-                  max={99}
-                  value={demoDef}
-                  onChange={e => setDemoDef(Number(e.target.value))}
-                  className="landing__slider landing__slider--def"
-                />
-              </div>
-              <div className="landing__builder-field">
-                <label>
-                  <span>{t('playerForm.athleticism')}</span>
-                  <span className="landing__builder-val">{demoAth}</span>
-                </label>
-                <input
-                  type="range"
-                  min={30}
-                  max={99}
-                  value={demoAth}
-                  onChange={e => setDemoAth(Number(e.target.value))}
-                  className="landing__slider landing__slider--ath"
-                />
-              </div>
+
+              {activeDemoGroup.fields.map(field => (
+                <div className="landing__builder-field" key={field.key}>
+                  <label>
+                    <span>{field.label}</span>
+                    <span className="landing__builder-val">{demoStats[field.key]}</span>
+                  </label>
+                  <input
+                    type="range"
+                    min={0}
+                    max={99}
+                    value={demoStats[field.key]}
+                    onChange={e => setDemoStat(field.key, Number(e.target.value))}
+                    className={`landing__slider landing__slider--${activeDemoGroup.modifier}`}
+                  />
+                </div>
+              ))}
 
               <div className="landing__builder-positions">
                 {DEMO_POSITIONS.map(pos => (
@@ -399,7 +558,10 @@ const LandingPage = () => {
                     key={pos}
                     type="button"
                     className={`landing__pos-btn ${demoPosition === pos ? 'active' : ''}`}
-                    onClick={() => setDemoPosition(pos)}
+                    onClick={() => {
+                      setDemoPosition(pos);
+                      setDemoTab(pos === 'GK' ? 'gk' : 'offensive');
+                    }}
                   >
                     {pos}
                   </button>
@@ -421,7 +583,11 @@ const LandingPage = () => {
               offensiveOverall={demoOff}
               defensiveOverall={demoDef}
               athleticismOverall={demoAth}
-              cardImage="/assets/player20.png"
+              gkOverall={demoGkOverall}
+              reflexes={demoStats.reflexes}
+              handling={demoStats.handling}
+              diving={demoStats.diving}
+              cardImage="/assets/player20.webp"
               cardTitle={demoTier}
             />
           </div>
@@ -434,16 +600,57 @@ const LandingPage = () => {
         >
           <div className="landing__match-preview-pitch">
             <FootballPitch
-              players={MATCH_DEMO_PLAYERS}
+              players={demoPitchPlayers}
               teamLabel="A"
-              teamOvr={MATCH_DEMO_OVR}
-              teamStaminaOvr={76}
+              teamOvr={demoTeamOvr}
+              teamStaminaOvr={demoTeamStamina}
               formationRoles={MATCH_DEMO_ROLES}
-              readOnly
-              onMove={() => {}}
-              onChangeTeam={() => {}}
-              onChangeRole={() => {}}
+              onMove={handleDemoMove}
+              onBench={handleDemoBench}
+              onChangeRole={handleDemoRole}
             />
+
+            <div className="landing__bench">
+              <div className="landing__bench-header">
+                <i className="bi bi-person-lines-fill" />
+                {t('match.bench')}
+                {demoBenchIds.length > 0 && (
+                  <span className="landing__bench-count">{demoBenchIds.length}</span>
+                )}
+              </div>
+              {demoBenchIds.length === 0 ? (
+                <p className="landing__bench-empty">{t('match.benchEmpty')}</p>
+              ) : (
+                <div className="landing__bench-list">
+                  {demoBenchIds.map(id => {
+                    const p = DEMO_BY_ID[id];
+                    return (
+                      <div className="landing__bench-row" key={id}>
+                        <div className="landing__bench-info">
+                          <span className="landing__bench-name">{p.name}</span>
+                          <span className="landing__bench-pos">{p.preferredPosition}</span>
+                        </div>
+                        <span className="landing__bench-ovr">{Math.round(computeOverall(p))}</span>
+                        <button
+                          type="button"
+                          className="landing__bench-btn"
+                          onClick={() => handleDemoAddFromBench(id)}
+                          disabled={demoPitchIds.length >= MATCH_DEMO_FORMATION.slots.length}
+                          title={t('match.addToTeam', { team: 'A' })}
+                        >
+                          <i className="bi bi-plus-lg" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <p className="landing__pitch-hint">
+              <i className="bi bi-info-circle" />
+              {t('match.pitchHint')}
+            </p>
           </div>
           <div className="landing__match-preview-copy">
             <span className="landing__badge">{t('landing.matchPreviewBadge')}</span>

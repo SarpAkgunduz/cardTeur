@@ -12,11 +12,11 @@ interface LinkedUserSource {
   photoURL?: string;
 }
 
-const PLAYER_PHOTO_COUNT = 43;
+const PLAYER_PHOTO_COUNT = 42;
 
 export function usePlayerDisplay() {
   const playerPhotoOptions = useMemo(
-    () => Array.from({ length: PLAYER_PHOTO_COUNT }, (_, index) => `/assets/player${index + 1}.png`),
+    () => Array.from({ length: PLAYER_PHOTO_COUNT }, (_, index) => `/assets/player${index + 1}.webp`),
     []
   );
 

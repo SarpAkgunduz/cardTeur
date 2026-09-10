@@ -7,15 +7,13 @@ import type { StatField } from '../components/StatGrid';
 import { apiRequest } from '../services/api/apiClient';
 import { useAuth } from '../contexts/AuthContext';
 import { usePlayers } from '../contexts/PlayerContext';
+import { calculateAverage, computeCardTitle } from '../utils/playerRating';
 
 export interface UserOption {
   uid: string;
   displayName: string;
   photoURL?: string;
 }
-
-const calculateAverage = (stats: number[]) =>
-  stats.length ? Math.round(stats.reduce((a, b) => a + b, 0) / stats.length) : 0;
 
 export function usePlayerForm() {
   const { t } = useTranslation();
@@ -149,19 +147,13 @@ export function usePlayerForm() {
 
   const isGK = preferredPosition === 'GK';
 
-  // Card title
-  let cardTitle: 'bronze' | 'silver' | 'gold' | 'platinum' = 'bronze';
-  if (isGK) {
-    if (gkOverall >= 90) cardTitle = 'platinum';
-    else if (gkOverall >= 85) cardTitle = 'gold';
-    else if (gkOverall >= 60) cardTitle = 'silver';
-  } else {
-    const defScore = (defensiveOverall + athleticismOverall) / 2;
-    const offScore = (offensiveOverall + athleticismOverall) / 2;
-    if (defScore >= 90 || offScore >= 90) cardTitle = 'platinum';
-    else if (defScore >= 85 || offScore >= 85) cardTitle = 'gold';
-    else if (defScore >= 60 || offScore >= 60) cardTitle = 'silver';
-  }
+  const cardTitle = computeCardTitle({
+    offensiveOverall,
+    defensiveOverall,
+    athleticismOverall,
+    gkOverall,
+    isGK,
+  });
 
   // Stat field groups
   const gkFields: StatField[] = [

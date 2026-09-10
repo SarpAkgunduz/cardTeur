@@ -4,15 +4,18 @@
 // Writes .env.production.local, which Vite loads automatically during `vite build`
 // (production mode) with higher priority than .env — no effect on `vite dev`.
 //
-// vite.config.ts sets envDir: '../' (Vite looks for .env files one directory up
-// from openteur/, i.e. the repo root) — this script must write there too, not into
-// openteur/ itself, or Vite silently never sees it.
+// Written into openteur/ — Vite's default envDir is the project root, which is where
+// .env and .env.development.local already live.
 //
 // Also writes VITE_PADDLE_CLIENT_TOKEN/VITE_PADDLE_ENV here rather than relying on
 // a Cloudflare dashboard build variable — Cloudflare Workers Builds env vars aren't
 // addable in this account currently, and Paddle client-side tokens are designed to
 // be public in browser code (like a Stripe publishable key), so hardcoding the
-// sandbox one is safe. Swap in a real production client token once Paddle prod is live.
+// sandbox one is safe. These are written on EVERY branch including main: without
+// them the production bundle has no client token, getPaddle() bails out and
+// PricingPage can only ever show the "checkout failed" toast.
+// Set PADDLE_CLIENT_TOKEN (and optionally PADDLE_ENV) in the build environment to
+// override the sandbox default once Paddle production is live.
 import { writeFileSync } from 'fs';
 import path from 'path';
 
@@ -23,17 +26,23 @@ const apiUrl = isMain
   ? 'https://cardteur-production.up.railway.app/api'
   : 'https://cardteur-development.up.railway.app/api';
 
-// TODO: replace with a real production client-side token once Paddle production is set up.
 const PADDLE_SANDBOX_CLIENT_TOKEN = 'test_aa2429491cbc014b23bf36de842';
 
-const lines = [`VITE_API_BASE_URL=${apiUrl}`];
-if (!isMain) {
-  lines.push(`VITE_PADDLE_CLIENT_TOKEN=${PADDLE_SANDBOX_CLIENT_TOKEN}`);
-  lines.push('VITE_PADDLE_ENV=sandbox');
-}
+const paddleToken = process.env.PADDLE_CLIENT_TOKEN || PADDLE_SANDBOX_CLIENT_TOKEN;
+const paddleEnv = process.env.PADDLE_ENV || (paddleToken.startsWith('live_') ? 'production' : 'sandbox');
 
-const targetPath = path.resolve(process.cwd(), '..', '.env.production.local');
+const lines = [
+  `VITE_API_BASE_URL=${apiUrl}`,
+  `VITE_PADDLE_CLIENT_TOKEN=${paddleToken}`,
+  `VITE_PADDLE_ENV=${paddleEnv}`,
+];
+
+const targetPath = path.resolve(process.cwd(), '.env.production.local');
 writeFileSync(targetPath, lines.join('\n') + '\n');
 
 console.log(`[set-branch-api-url] branch=${branch ?? '(none — defaulting to production)'} -> VITE_API_BASE_URL=${apiUrl}`);
+console.log(`[set-branch-api-url] paddle env=${paddleEnv} token=${paddleToken.slice(0, 5)}…`);
+if (isMain && paddleEnv !== 'production') {
+  console.warn('[set-branch-api-url] WARNING: production build is using a Paddle SANDBOX token — real payments will not be taken.');
+}
 console.log(`[set-branch-api-url] wrote ${targetPath}`);

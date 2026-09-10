@@ -10,12 +10,11 @@ const router = Router();
 router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
   const uid = (req as any).uid as string;
   const email = (req as any).email as string | undefined;
-  const { tier, interval, referralCode, countryCode, iyzico } = req.body as {
+  const { tier, interval, referralCode, countryCode } = req.body as {
     tier?: PaidTier;
     interval?: BillingInterval;
     referralCode?: string;
     countryCode?: string;
-    iyzico?: { name: string; surname: string; identityNumber: string; gsmNumber?: string };
   };
 
   if (tier !== 'premium' && tier !== 'premium_plus') {
@@ -34,7 +33,7 @@ router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
   }
 
   try {
-    const result = await startCheckout(provider, { uid, email, tier, interval: resolvedInterval, referralCode, iyzico });
+    const result = await startCheckout(provider, { uid, email, tier, interval: resolvedInterval, referralCode });
     res.json(result);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Checkout failed';
@@ -89,6 +88,5 @@ async function handleWebhook(provider: ProviderName, req: Request, res: Response
 }
 
 router.post('/webhook/paddle', (req, res) => handleWebhook('paddle', req, res));
-router.post('/webhook/iyzico', (req, res) => handleWebhook('iyzico', req, res));
 
 export default router;

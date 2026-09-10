@@ -1,17 +1,17 @@
 import User from '../../models/User';
 import { redeemReferral, grantReferrerReward } from '../referralService';
 import { paddleAdapter } from './paddle';
-import { iyzicoAdapter } from './iyzico';
 import { BillingAdapter, CheckoutParams, CheckoutResult, ParsedSubscriptionEvent } from './types';
 
-export type ProviderName = 'paddle' | 'iyzico';
+export type ProviderName = 'paddle';
 
-export function getAdapter(provider: ProviderName): BillingAdapter {
-  return provider === 'iyzico' ? iyzicoAdapter : paddleAdapter;
+export function getAdapter(_provider?: ProviderName): BillingAdapter {
+  return paddleAdapter;
 }
 
-export function providerForRegion(countryCode?: string): ProviderName {
-  return (countryCode ?? '').toUpperCase() === 'TR' ? 'iyzico' : 'paddle';
+// Paddle is the only provider. TR used to route to iyzico; see services/billing/iyzico.ts.
+export function providerForRegion(_countryCode?: string): ProviderName {
+  return 'paddle';
 }
 
 export async function startCheckout(provider: ProviderName, params: CheckoutParams): Promise<CheckoutResult> {

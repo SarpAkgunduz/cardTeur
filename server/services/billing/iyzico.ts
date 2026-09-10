@@ -1,3 +1,10 @@
+// DISABLED: billing runs on Paddle only. The iyzico adapter was never verified
+// against a live sandbox (unconfirmed webhook payload shape, no identity-number
+// collection in the UI, formHtml checkout the frontend never rendered), so the
+// whole implementation is parked here rather than deleted.
+export {};
+
+/*
 import Iyzipay from 'iyzipay';
 import { Plan } from '../../config/plans';
 import { BillingAdapter, CheckoutParams, CheckoutResult, ParsedSubscriptionEvent } from './types';
@@ -152,3 +159,5 @@ export const iyzicoAdapter: BillingAdapter = {
     };
   },
 };
+
+*/

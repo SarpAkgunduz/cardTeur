@@ -125,3 +125,34 @@
 .ct-login-signup-link span:hover {
   color: #8ff5ff;
 }
+
+.ct-login-notice {
+  background: rgba(0, 222, 236, 0.1);
+  border: 1px solid rgba(0, 222, 236, 0.4);
+  color: #00deec;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.ct-login-forgot {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  background: none;
+  border: none;
+  color: rgba(215, 230, 242, 0.65);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: color 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.ct-login-forgot:hover:not(:disabled) {
+  color: #00deec;
+}
+
+.ct-login-forgot:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

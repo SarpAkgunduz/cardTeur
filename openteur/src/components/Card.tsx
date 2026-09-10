@@ -1,4 +1,5 @@
 import React from 'react';
+import { resolveCardImage } from '../utils/cardImage';
 import './Card.css';
 
 export interface CardProps {
@@ -103,7 +104,7 @@ const Card: React.FC<CardProps> = ({
 
       {/* Player image */}
       <div className="ct-player-card__image-area">
-        <img src={cardImage} alt={name} />
+        <img src={resolveCardImage(cardImage)} alt={name} loading="lazy" decoding="async" />
       </div>
 
       {/* Bottom: Name + Divider + Stats */}

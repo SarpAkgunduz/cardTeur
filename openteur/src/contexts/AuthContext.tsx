@@ -7,6 +7,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   getAdditionalUserInfo,
+  sendPasswordResetEmail,
   signOut as firebaseSignOut,
 } from 'firebase/auth';
 import { auth } from '../firebase';
@@ -24,6 +25,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<User>;
   signInWithGoogle: () => Promise<{ user: User; isNewUser: boolean }>;
+  resetPassword: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -60,6 +62,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return unsubscribe;
   }, [refreshProfile]);
 
+  const resetPassword = async (email: string) => {
+    await sendPasswordResetEmail(auth, email);
+  };
+
   const signIn = async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
   };
@@ -91,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const limits = PLAN_LIMITS[plan] ?? PLAN_LIMITS.free;
 
   return (
-    <AuthContext.Provider value={{ currentUser, loading, profile, plan, limits, refreshProfile, signIn, signUp, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ currentUser, loading, profile, plan, limits, refreshProfile, signIn, signUp, signInWithGoogle, resetPassword, signOut }}>
       {children}
     </AuthContext.Provider>
   );

@@ -112,14 +112,7 @@ const App = () => {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/pricing"
-          element={
-            <PrivateRoute>
-              <PricingPage />
-            </PrivateRoute>
-          }
-        />
+        <Route path="/pricing" element={<PricingPage />} />
         <Route path="/invite/:inviterUid" element={<InvitePage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />

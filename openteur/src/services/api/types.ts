@@ -101,7 +101,7 @@ export interface ReferralOverview {
 }
 
 export interface CheckoutResult {
-  provider: 'paddle' | 'iyzico';
+  provider: 'paddle';
   url?: string;
   token?: string;
 }

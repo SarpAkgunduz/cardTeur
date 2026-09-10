@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { Plan } from '../config/plans';
 
-export type BillingProvider = 'paddle' | 'iyzico';
+export type BillingProvider = 'paddle';
 
 export interface IUser extends Document {
   uid: string;
@@ -28,7 +28,7 @@ const UserSchema = new Schema<IUser>({
   friendRequests: { type: [String], default: [], index: true },
   plan: { type: String, enum: ['free', 'premium', 'premium_plus'], default: 'free' },
   planRenewsAt: { type: Date },
-  billingProvider: { type: String, enum: ['paddle', 'iyzico'] },
+  billingProvider: { type: String, enum: ['paddle'] },
   billingCustomerId: { type: String },
   billingSubscriptionId: { type: String },
   referralRewardMonths: { type: Number, default: 0 },

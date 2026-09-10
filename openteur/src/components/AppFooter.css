@@ -62,3 +62,25 @@
   color: #00deec;
   text-decoration: underline;
 }
+
+@media (max-width: 768px) {
+  .ct-footer {
+    height: auto;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    overflow: visible;
+  }
+
+  .ct-footer__status {
+    display: none;
+  }
+
+  .ct-footer__legal {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1rem;
+    white-space: normal;
+  }
+}

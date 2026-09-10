@@ -202,3 +202,24 @@
   background: rgba(255, 107, 107, 0.2);
   color: #ff6b6b;
 }
+
+@media (max-width: 640px) {
+  .cp-stats-header,
+  .cp-stats-row {
+    grid-template-columns: minmax(0, 1fr) 38px 38px 38px 20px;
+    gap: 3px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  .cp-stats-name {
+    gap: 5px;
+    min-width: 0;
+  }
+
+  .cp-stats-name span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

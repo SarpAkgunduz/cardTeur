@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import BackButton from '../components/BackButton';
 import Dropdown from '../components/Dropdown';
 import FootballPitch, { PitchPlayer } from '../components/FootballPitch';
+import { toNum, computeOverall } from '../utils/playerRating';
 import MatchDetailsModal from '../components/MatchDetailsModal';
 import ToastNotification from '../components/ToastNotification';
 import { usePlayers } from '../contexts/PlayerContext';
@@ -52,26 +53,6 @@ const MatchPage = () => {
     setToastMsg(msg);
     setToastVariant(variant);
     setShowToast(true);
-  };
-
-  const toNum = (v: any) => {
-    if (v === null || v === undefined || v === '') return 0;
-    const n = parseFloat(typeof v === 'string' ? v.replace(/[^\d.-]/g, '') : String(v));
-    return Number.isFinite(n) ? n : 0;
-  };
-
-  const isGoalkeeper = (p: any, role?: string): boolean =>
-    String(role ?? p.preferredPosition ?? '').toUpperCase().includes('GK');
-
-  const computeOverall = (p: any, role?: string): number => {
-    const gkOverall = toNum(p.gkOverall);
-    if (isGoalkeeper(p, role) && gkOverall > 0) return gkOverall;
-
-    const v1 = toNum(p.offensiveOverall ?? p.offensive);
-    const v2 = toNum(p.defensiveOverall ?? p.defensive);
-    const v3 = toNum(p.athleticismOverall ?? p.athleticism);
-    const parts = [v1, v2, v3].filter(x => x > 0);
-    return (v1 + v2 + v3) / (parts.length || 3);
   };
 
   const mergePlayers = (items: any[]): any[] => {
