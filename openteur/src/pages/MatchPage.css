@@ -10,7 +10,7 @@
 }
 
 .match-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-weight: 900;
   font-style: italic;
   font-size: 2.5rem;
@@ -89,7 +89,7 @@
 }
 
 .mode-button h2 {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 0.1em;

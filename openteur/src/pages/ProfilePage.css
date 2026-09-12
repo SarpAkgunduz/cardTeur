@@ -18,7 +18,7 @@
 }
 
 .profile-page__title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.6rem;
   font-weight: 800;
   color: #fff;
@@ -47,7 +47,7 @@
 }
 
 .profile-page__card-label {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.2em;
@@ -156,7 +156,7 @@
   padding: 0.6rem 0.9rem;
   color: #fff;
   font-size: 0.9rem;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   outline: none;
   transition: border-color 0.2s ease, background 0.2s ease;
 }

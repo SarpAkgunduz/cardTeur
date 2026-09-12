@@ -4,8 +4,8 @@
 // Writes .env.production.local, which Vite loads automatically during `vite build`
 // (production mode) with higher priority than .env — no effect on `vite dev`.
 //
-// Written into openteur/ — Vite's default envDir is the project root, which is where
-// .env and .env.development.local already live.
+// Written into the repo root — vite.config.ts sets envDir to the repo root (shared
+// with mobile/server), so that's where .env.development and .env.production also live.
 //
 // Also writes VITE_PADDLE_CLIENT_TOKEN/VITE_PADDLE_ENV here rather than relying on
 // a Cloudflare dashboard build variable — Cloudflare Workers Builds env vars aren't
@@ -37,7 +37,7 @@ const lines = [
   `VITE_PADDLE_ENV=${paddleEnv}`,
 ];
 
-const targetPath = path.resolve(process.cwd(), '.env.production.local');
+const targetPath = path.resolve(process.cwd(), '..', '.env.production.local');
 writeFileSync(targetPath, lines.join('\n') + '\n');
 
 console.log(`[set-branch-api-url] branch=${branch ?? '(none — defaulting to production)'} -> VITE_API_BASE_URL=${apiUrl}`);

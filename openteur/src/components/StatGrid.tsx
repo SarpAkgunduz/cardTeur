@@ -16,19 +16,19 @@ const StatGrid = ({ fields, style }: StatGridProps) => (
   <div className="stat-grid" style={style}>
     {fields.map(({ id, label, value, setter }) => (
       <div className="stat-field" key={id}>
-        <label htmlFor={id}>{label}</label>
+        <label htmlFor={id}>
+          <span>{label}</span>
+          <span className="stat-field__val">{value}</span>
+        </label>
         <input
           id={id}
-          type="number"
+          type="range"
           min={0}
           max={100}
-          className="stat-input"
+          className="stat-slider"
           value={value}
           onChange={(e) => setter(Math.min(100, Math.max(0, +e.target.value)))}
         />
-        <div className="stat-bar-track">
-          <div className="stat-bar-fill" style={{ width: `${value}%` }} />
-        </div>
       </div>
     ))}
   </div>

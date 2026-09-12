@@ -1,17 +1,17 @@
-@font-face {
-  font-family: 'Cyberform';
-  src: url('/cyberform-font/CyberformDemo.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+/* Site-wide font token. Exo 2 has verified full Turkish + German glyph
+   coverage (unlike the old 'Cyberform' demo font, which was missing
+   ş/ğ/İ/Ş/Ğ). :lang() overrides below swap in a CJK-appropriate font for
+   Japanese/Chinese, since Exo 2 has no CJK glyphs. */
+:root {
+  --font-display: 'Exo 2', sans-serif;
 }
 
-@font-face {
-  font-family: 'Cyberform';
-  src: url('/cyberform-font/CyberformDemo-Oblique.otf') format('opentype');
-  font-weight: 400;
-  font-style: oblique;
-  font-display: swap;
+:lang(ja) {
+  --font-display: 'Noto Sans JP', 'Exo 2', sans-serif;
+}
+
+:lang(zh) {
+  --font-display: 'Noto Sans SC', 'Exo 2', sans-serif;
 }
 
 /* Global Page Wrapper — background transparent, shell handles bg */
@@ -19,7 +19,7 @@
   min-height: calc(100vh - 64px); /* minus nav */
   padding: 24px;
   color: #f7f5fd;
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font-display);
 }
 
 /* Page Container - Centers content */
@@ -52,7 +52,7 @@
   color: #00deec;
   font-size: var(--page-title-size, 1.8rem);
   font-weight: 400;
-  font-family: 'Cyberform', 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-style: normal;
   text-transform: uppercase;
   letter-spacing: 0.16em;
@@ -81,7 +81,7 @@
   border: 1px solid rgba(0, 222, 236, 0.35);
   padding: 8px 20px;
   border-radius: 0;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -136,7 +136,7 @@
   text-align: center;
   font-size: 1.5rem;
   color: rgba(0, 222, 236, 0.5);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-top: 50px;

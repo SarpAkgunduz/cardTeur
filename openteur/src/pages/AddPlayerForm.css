@@ -27,7 +27,7 @@
 .form-section-header span {
   margin: 0;
   color: white;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.2em;
@@ -65,12 +65,23 @@
 }
 
 .stat-field label {
-  font-family: 'Space Grotesk', sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-display);
   font-size: 0.6rem;
   font-weight: 700;
   color: rgba(0, 222, 236, 0.7);
   text-transform: uppercase;
   letter-spacing: 0.2em;
+}
+
+.stat-field__val {
+  color: #00deec;
+  font-weight: 900;
+  font-size: 0.85rem;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 .optional-label {
@@ -91,7 +102,7 @@
   color: #f7f5fd !important;
   padding: 8px 12px !important;
   font-size: 0.95rem !important;
-  font-family: 'Manrope', sans-serif !important;
+  font-family: var(--font-display) !important;
   transition: border-color 0.2s !important;
 }
 
@@ -112,39 +123,42 @@
   color: white;
 }
 
-/* Number stat input — compact */
-.stat-input {
+/* Stat slider — same look as the landing page's card-builder demo */
+.stat-slider {
+  -webkit-appearance: none;
+  appearance: none;
   width: 100%;
-  background: rgba(26, 43, 66, 0.8);
-  border: 1px solid rgba(0, 222, 236, 0.2);
-  border-radius: 0;
-  color: white;
-  padding: 7px 10px;
-  font-size: 1rem;
-  font-weight: 600;
-  text-align: center;
-  transition: border-color 0.2s;
-}
-
-.stat-input:focus {
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.12);
   outline: none;
-  border-color: rgba(0, 222, 236, 0.6);
-  background: rgba(26, 43, 66, 1);
+  cursor: pointer;
 }
 
-/* Stat value bar under input */
-.stat-bar-track {
-  height: 3px;
-  background: rgba(0, 222, 236, 0.12);
-  border-radius: 0;
-  margin-top: 4px;
-  overflow: hidden;
+.stat-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #00deec;
+  box-shadow: 0 0 10px rgba(0, 222, 236, 0.6);
+  cursor: pointer;
+  transition: transform 0.15s ease;
 }
 
-.stat-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, rgba(0, 222, 236, 0.5), #00deec);
-  transition: width 0.3s ease;
+.stat-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.stat-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 50%;
+  background: #00deec;
+  box-shadow: 0 0 10px rgba(0, 222, 236, 0.6);
+  cursor: pointer;
 }
 
 /* Player image preview */
@@ -304,7 +318,7 @@
 
 /* Stat sub-header label */
 .stat-subheader {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.6rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.35);
@@ -336,7 +350,7 @@
 }
 
 .overall-badge .badge-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.6rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.4);
@@ -346,7 +360,7 @@
 }
 
 .overall-badge .badge-value {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 2.4rem;
   font-weight: 900;
   color: #00deec;
@@ -354,7 +368,7 @@
 }
 
 .overall-badge .badge-label {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.6rem;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.35);
@@ -380,7 +394,7 @@
   margin-bottom: -1px;
   padding: 8px 18px;
   color: rgba(255, 255, 255, 0.4);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -406,7 +420,7 @@
   gap: 8px;
   padding: 6px 16px;
   border-radius: 0;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -499,7 +513,7 @@
 
 .photo-selector__title {
   color: #fff;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -530,7 +544,7 @@
   border-radius: 0;
   background: rgba(0, 222, 236, 0.1);
   color: #00deec;
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.84rem;
   font-weight: 700;
   cursor: pointer;
@@ -604,7 +618,7 @@
 
 .photo-modal__eyebrow {
   color: rgba(0, 222, 236, 0.72);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -614,7 +628,7 @@
 .photo-modal__title {
   margin: 3px 0 0;
   color: #fff;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -819,14 +833,6 @@
   gap: 4px;
 }
 
-.stat-field label {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
 /* Dark themed inputs */
 .form-control-dark,
 .form-select-dark {
@@ -854,43 +860,6 @@
 .form-select-dark option {
   background: #0D2137;
   color: white;
-}
-
-/* Number stat input — compact */
-.stat-input {
-  width: 100%;
-  background: rgba(10, 25, 41, 0.7);
-  border: 1px solid rgba(74, 124, 155, 0.3);
-  border-radius: 8px;
-  color: white;
-  padding: 7px 10px;
-  font-size: 1rem;
-  font-weight: 600;
-  text-align: center;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.stat-input:focus {
-  outline: none;
-  border-color: #5a94b8;
-  box-shadow: 0 0 0 3px rgba(90, 148, 184, 0.15);
-  background: rgba(10, 25, 41, 0.9);
-}
-
-/* Stat value bar under input */
-.stat-bar-track {
-  height: 3px;
-  background: rgba(74, 124, 155, 0.2);
-  border-radius: 2px;
-  margin-top: 4px;
-  overflow: hidden;
-}
-
-.stat-bar-fill {
-  height: 100%;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #4A7C9B, #64B5F6);
-  transition: width 0.3s ease;
 }
 
 /* Player image preview */

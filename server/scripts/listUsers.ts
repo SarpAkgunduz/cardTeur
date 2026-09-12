@@ -2,7 +2,9 @@ import path from 'path';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 
-dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
+// Env files live at the repo root now (shared with openteur/mobile), picked by NODE_ENV.
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
+dotenv.config({ path: path.resolve(__dirname, '..', '..', envFile) });
 
 import User, { IUser } from '../models/User';
 
@@ -40,7 +42,7 @@ async function main() {
 
   const uri = process.env.MONGO_URI;
   if (!uri) {
-    console.error('MONGO_URI is not set in server/.env');
+    console.error('MONGO_URI is not set in the root .env.development/.env.production file');
     process.exit(1);
   }
 

@@ -35,7 +35,7 @@
 
 .mdm-header h3 {
   margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.2rem;
   font-weight: 800;
   color: #ffffff;
@@ -61,7 +61,7 @@
 }
 
 .mdm-field label {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.6rem;
   font-weight: 700;
   color: rgba(0, 222, 236, 0.7);
@@ -78,7 +78,7 @@
   border: 1px solid rgba(0, 222, 236, 0.2);
   border-radius: 6px;
   color: #ffffff;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.9rem;
   padding: 10px 14px;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;

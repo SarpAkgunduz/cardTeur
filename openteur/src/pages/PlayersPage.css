@@ -110,7 +110,7 @@
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   text-transform: uppercase;
   display: flex;
   flex-direction: column;
@@ -257,7 +257,7 @@
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   text-transform: uppercase;
   display: flex;
   flex-direction: column;

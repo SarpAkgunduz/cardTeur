@@ -22,7 +22,7 @@
 }
 
 .ct-nav__logo {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.3rem;
   font-weight: 900;
   font-style: italic;
@@ -40,7 +40,7 @@
 }
 
 .ct-nav__link {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.25em;
@@ -130,7 +130,7 @@
   background: transparent;
   border: none;
   color: rgba(247, 245, 253, 0.85);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -155,7 +155,7 @@
   width: auto;
   min-width: 30px;
   padding: 0 9px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -184,7 +184,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -208,7 +208,7 @@
 }
 
 .ct-nav__user-chip {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -235,7 +235,7 @@
 }
 
 .ct-nav__logout {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -260,7 +260,7 @@
 }
 
 .ct-nav__btn-login {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -279,7 +279,7 @@
 }
 
 .ct-nav__btn-signup {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -346,7 +346,7 @@
 
 /* Each mobile link has a large tap target (min 48px via padding) */
 .ct-nav__mobile-link {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.2em;
@@ -377,7 +377,7 @@
 }
 
 .ct-nav__mobile-logout {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.15em;

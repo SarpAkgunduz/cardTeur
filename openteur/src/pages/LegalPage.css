@@ -6,7 +6,7 @@
 .legal-page__updated {
   display: block;
   color: rgba(255, 255, 255, 0.5);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.78rem;
   letter-spacing: 0.05em;
   margin-bottom: 28px;
@@ -27,7 +27,7 @@
   border-left: 3px solid #00deec;
   border-radius: 0 8px 8px 0;
   color: #00deec;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.08em;

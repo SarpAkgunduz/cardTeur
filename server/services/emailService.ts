@@ -1,7 +1,9 @@
 import { Resend } from 'resend';
 import dotenv from 'dotenv';
 import path from 'path';
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+// Env files live at the repo root now (shared with openteur/mobile), picked by NODE_ENV.
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
+dotenv.config({ path: path.resolve(__dirname, '..', '..', envFile) });
 
 export interface MatchPlayer {
   name: string;

@@ -19,7 +19,7 @@
   border: 1px solid rgba(0, 222, 236, 0.35);
   background: rgba(0, 222, 236, 0.08);
   color: #00deec;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -28,7 +28,7 @@
 
 .landing__hero-title {
   color: white;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(2.2rem, 4.5vw, 3.6rem);
   font-weight: 900;
   font-style: italic;
@@ -66,7 +66,7 @@
   background: rgba(0, 222, 236, 0.14);
   color: #00deec;
   border-radius: 0;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.15em;
@@ -185,7 +185,7 @@
 
 .landing__section-title {
   color: #00deec;
-  font-family: 'Cyberform', 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.4rem;
   font-weight: 400;
   text-transform: uppercase;
@@ -245,7 +245,7 @@
 
 .landing__feature-title {
   color: white;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -283,7 +283,7 @@
 .landing__step-number {
   display: block;
   color: rgba(0, 222, 236, 0.35);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 2.6rem;
   font-weight: 900;
   font-style: italic;
@@ -298,7 +298,7 @@
 
 .landing__step-title {
   color: white;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -328,7 +328,7 @@
 
 .landing__bottom-title {
   color: white;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(1.5rem, 3vw, 2.2rem);
   font-weight: 900;
   font-style: italic;
@@ -362,7 +362,7 @@
   border: 1px solid rgba(0, 222, 236, 0.35);
   background: rgba(0, 222, 236, 0.08);
   color: #00deec;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -371,7 +371,7 @@
 
 .landing__builder-title {
   color: white;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: clamp(1.6rem, 3vw, 2.3rem);
   font-weight: 900;
   font-style: italic;
@@ -426,7 +426,7 @@
   justify-content: space-between;
   align-items: center;
   color: rgba(247, 245, 253, 0.8);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -485,7 +485,7 @@
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: transparent;
   color: rgba(247, 245, 253, 0.7);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -581,7 +581,7 @@
 
 .landing__voting-point h4 {
   color: white;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: 0.03em;
@@ -620,7 +620,7 @@
 
 .landing__voting-card__name {
   color: white;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -750,7 +750,7 @@
   align-items: center;
   gap: 8px;
   color: #00deec;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.9rem;
 }
@@ -787,7 +787,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 1px;
@@ -856,7 +856,7 @@
 }
 
 .landing__bench-ovr {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 900;
   color: #00deec;
@@ -998,7 +998,7 @@
   background: rgba(36, 59, 90, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: rgba(215, 230, 242, 0.7);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.7px;

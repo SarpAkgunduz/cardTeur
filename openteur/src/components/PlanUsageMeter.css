@@ -6,7 +6,7 @@
   background: rgba(36, 59, 90, 0.75);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 999px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   color: rgba(255, 255, 255, 0.85);
   flex: 0 0 auto;
 }

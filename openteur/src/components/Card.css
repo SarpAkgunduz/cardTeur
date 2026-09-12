@@ -12,7 +12,7 @@
   overflow: hidden;
   cursor: default;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  font-family: 'Space Grotesk', 'Segoe UI', 'Arial Narrow', Arial, sans-serif;
+  font-family: var(--font-display), 'Segoe UI', 'Arial Narrow', Arial, sans-serif;
   user-select: none;
 }
 

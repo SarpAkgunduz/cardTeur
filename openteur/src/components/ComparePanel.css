@@ -4,7 +4,7 @@
   backdrop-filter: blur(12px);
   border-left: 1px solid rgba(0, 222, 236, 0.18);
   color: #f7f5fd;
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font-display);
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
 }
 
@@ -18,7 +18,7 @@
 
 .compare-panel .offcanvas-title {
   color: #ffffff;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -68,7 +68,7 @@
 .compare-panel .recharts-polar-angle-axis-tick text {
   fill: #a0b4c8;
   font-size: 0.78rem;
-  font-family: 'Manrope', sans-serif;
+  font-family: var(--font-display);
 }
 
 .compare-panel .recharts-polar-radius-axis-tick text {
@@ -178,7 +178,7 @@
   font-size: 0.8rem;
   font-weight: 800;
   color: #fff;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.02em;
 }
 

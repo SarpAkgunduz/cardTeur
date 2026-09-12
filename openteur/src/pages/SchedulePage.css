@@ -30,7 +30,7 @@
   color: #00deec;
   border: 1px solid rgba(0, 222, 236, 0.35);
   border-radius: 0;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.78rem;
   letter-spacing: 0.15em;

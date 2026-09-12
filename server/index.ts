@@ -4,7 +4,11 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+// Env files live at the repo root now (shared with openteur/mobile), picked by NODE_ENV.
+// On Railway this file won't exist — real production vars come from Railway's own
+// dashboard injection into process.env, which dotenv.config() never overrides.
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
+dotenv.config({ path: path.resolve(__dirname, '..', envFile) });
 
 const app: Application = express();
 

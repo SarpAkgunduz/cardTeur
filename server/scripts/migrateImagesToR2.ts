@@ -17,7 +17,9 @@ import User from '../models/User';
 import Player from '../models/Player';
 import { uploadImageToR2, isDataUrl } from '../services/r2Service';
 
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+// Env files live at the repo root now (shared with openteur/mobile), picked by NODE_ENV.
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development';
+dotenv.config({ path: path.resolve(__dirname, '..', '..', envFile) });
 
 async function migrateUsers(): Promise<void> {
   const cursor = User.find({ photoURL: /^data:/ }).cursor();
