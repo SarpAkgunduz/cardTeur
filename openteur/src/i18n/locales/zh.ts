@@ -428,6 +428,8 @@ const zh: typeof en = {
     selectParticipants: '选择参与者',
     selectParticipantsHint: '选择本轮投票中将被评分的球员。',
     participantsCount: '已选择 {{count}} 人',
+    selectAll: '全选',
+    deselectAll: '取消全选',
   },
   support: {
     title: '支持与常见问题',

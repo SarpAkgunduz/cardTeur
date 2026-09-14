@@ -428,6 +428,8 @@ const pl: typeof en = {
     selectParticipants: 'Wybierz uczestników',
     selectParticipantsHint: 'Wybierz, kto zostanie oceniony w tej sesji głosowania.',
     participantsCount: 'Wybrano: {{count}}',
+    selectAll: 'Zaznacz wszystkich',
+    deselectAll: 'Odznacz wszystkich',
   },
   support: {
     title: 'Wsparcie i FAQ',

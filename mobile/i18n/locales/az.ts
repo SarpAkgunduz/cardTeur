@@ -234,6 +234,8 @@ const az: typeof en = {
     selectParticipantsHint: 'Bu səsvermə sessiyasında kimin qiymətləndiriləcəyini seçin.',
     participantsCount: '{{count}} seçildi',
     noPlayersYet: 'Hələ oyunçu yoxdur.',
+    selectAll: 'Hamısını Seç',
+    deselectAll: 'Hamısını Ləğv Et',
   },
   voting: {
     title: 'Komandanı Qiymətləndir',

@@ -234,6 +234,8 @@ const ko: typeof en = {
     selectParticipantsHint: '이번 투표 세션에서 평가할 선수를 선택하세요.',
     participantsCount: '{{count}}명 선택됨',
     noPlayersYet: '아직 선수가 없습니다.',
+    selectAll: '전체 선택',
+    deselectAll: '전체 선택 해제',
   },
   voting: {
     title: '팀원 투표하기',

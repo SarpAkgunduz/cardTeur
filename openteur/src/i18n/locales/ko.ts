@@ -428,6 +428,8 @@ const ko: typeof en = {
     selectParticipants: '참가자 선택',
     selectParticipantsHint: '이번 투표 세션에서 평가할 선수를 선택하세요.',
     participantsCount: '{{count}}명 선택됨',
+    selectAll: '전체 선택',
+    deselectAll: '전체 선택 해제',
   },
   support: {
     title: '지원 및 자주 묻는 질문',

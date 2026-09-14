@@ -234,6 +234,8 @@ const zh: typeof en = {
     selectParticipantsHint: '选择本轮投票中将被评分的球员。',
     participantsCount: '已选择 {{count}} 人',
     noPlayersYet: '暂无球员。',
+    selectAll: '全选',
+    deselectAll: '取消全选',
   },
   voting: {
     title: '为你的战队投票',

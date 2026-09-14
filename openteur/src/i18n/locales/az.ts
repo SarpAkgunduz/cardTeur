@@ -428,6 +428,8 @@ const az: typeof en = {
     selectParticipants: 'İştirakçıları Seçin',
     selectParticipantsHint: 'Bu səsvermə sessiyasında kimin qiymətləndiriləcəyini seçin.',
     participantsCount: '{{count}} seçildi',
+    selectAll: 'Hamısını Seç',
+    deselectAll: 'Hamısını Ləğv Et',
   },
   support: {
     title: 'Dəstək və Tez-tez Verilən Suallar',

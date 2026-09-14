@@ -205,11 +205,32 @@
 }
 
 .participant-modal-header h3 {
+  flex: 1;
   margin: 0;
   font-family: var(--font-display);
   font-size: 1.15rem;
   font-weight: 800;
   color: #fff;
+}
+
+.participant-modal-selectall {
+  flex-shrink: 0;
+  background: rgba(0, 222, 236, 0.08);
+  border: 1px solid rgba(0, 222, 236, 0.3);
+  border-radius: 6px;
+  color: #00deec;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.participant-modal-selectall:hover {
+  background: rgba(0, 222, 236, 0.18);
+  border-color: rgba(0, 222, 236, 0.5);
 }
 
 .participant-modal-subtitle {

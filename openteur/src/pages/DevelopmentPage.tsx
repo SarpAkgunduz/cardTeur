@@ -139,6 +139,13 @@ const DevelopmentPage = () => {
     ));
   };
 
+  const toggleSelectAll = () => {
+    const roster = pickingCrew?.players ?? [];
+    setParticipantIds(prev => (
+      prev.length === roster.length ? [] : roster.map(player => player._id)
+    ));
+  };
+
   const handleStartVoting = async (crew: Crew) => {
     if (participantIds.length === 0) return;
     setSavingCrewId(crew._id);
@@ -253,6 +260,13 @@ const DevelopmentPage = () => {
             <div className="participant-modal-header">
               <i className="bi bi-hand-thumbs-up"></i>
               <h3>{t('development.selectParticipants')}</h3>
+              {(pickingCrew.players ?? []).length > 0 && (
+                <button type="button" className="participant-modal-selectall" onClick={toggleSelectAll}>
+                  {participantIds.length === (pickingCrew.players ?? []).length
+                    ? t('development.deselectAll')
+                    : t('development.selectAll')}
+                </button>
+              )}
             </div>
             <p className="participant-modal-subtitle">{t('development.selectParticipantsHint')}</p>
 

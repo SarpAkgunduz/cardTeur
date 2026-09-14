@@ -234,6 +234,8 @@ const de: typeof en = {
     selectParticipantsHint: 'Wähle aus, wer in dieser Abstimmungsrunde bewertet wird.',
     participantsCount: '{{count}} ausgewählt',
     noPlayersYet: 'Noch keine Spieler.',
+    selectAll: 'Alle auswählen',
+    deselectAll: 'Alle abwählen',
   },
   voting: {
     title: 'Bewerte dein Team',

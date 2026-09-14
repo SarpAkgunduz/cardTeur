@@ -428,6 +428,8 @@ const tr: typeof en = {
     selectParticipants: 'Katılımcıları Seç',
     selectParticipantsHint: 'Bu oylama oturumunda kimlerin değerlendirileceğini seçin.',
     participantsCount: '{{count}} seçildi',
+    selectAll: 'Tümünü Seç',
+    deselectAll: 'Tümünü Kaldır',
   },
   support: {
     title: 'Destek ve SSS',

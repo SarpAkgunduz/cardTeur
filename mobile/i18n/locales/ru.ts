@@ -234,6 +234,8 @@ const ru: typeof en = {
     selectParticipantsHint: 'Выберите, кого будут оценивать в этой сессии голосования.',
     participantsCount: 'Выбрано: {{count}}',
     noPlayersYet: 'Пока нет игроков.',
+    selectAll: 'Выбрать всех',
+    deselectAll: 'Снять выбор со всех',
   },
   voting: {
     title: 'Оцени свою команду',

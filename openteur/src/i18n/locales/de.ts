@@ -428,6 +428,8 @@ const de: typeof en = {
     selectParticipants: 'Teilnehmer auswählen',
     selectParticipantsHint: 'Wähle aus, wer in dieser Abstimmungsrunde bewertet wird.',
     participantsCount: '{{count}} ausgewählt',
+    selectAll: 'Alle auswählen',
+    deselectAll: 'Alle abwählen',
   },
   support: {
     title: 'Support & FAQ',

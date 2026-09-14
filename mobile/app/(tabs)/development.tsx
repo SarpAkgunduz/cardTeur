@@ -152,6 +152,13 @@ export default function DevelopmentScreen() {
     ));
   };
 
+  const toggleSelectAll = () => {
+    const roster = pickerCrew?.players ?? [];
+    setParticipantIds(prev => (
+      prev.length === roster.length ? [] : roster.map(player => player._id)
+    ));
+  };
+
   const handleStartVoting = async (crew: DevCrew) => {
     if (participantIds.length === 0) return;
     setSavingId(crew._id);
@@ -275,6 +282,15 @@ export default function DevelopmentScreen() {
             <View style={styles.pickerHeader}>
               <Ionicons name="thumbs-up-outline" size={18} color={Colors.accent} />
               <Text style={styles.pickerTitle}>{t('development.selectParticipants')}</Text>
+              {(pickerCrew?.players ?? []).length > 0 && (
+                <TouchableOpacity style={styles.selectAllBtn} onPress={toggleSelectAll}>
+                  <Text style={styles.selectAllBtnText}>
+                    {participantIds.length === (pickerCrew?.players ?? []).length
+                      ? t('development.deselectAll')
+                      : t('development.selectAll')}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
             <Text style={styles.pickerHint}>{t('development.selectParticipantsHint')}</Text>
 
@@ -502,9 +518,25 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   pickerTitle: {
+    flex: 1,
     color: Colors.textPrimary,
     fontSize: FontSizes.lg,
     fontWeight: '700',
+  },
+  selectAllBtn: {
+    flexShrink: 0,
+    paddingVertical: 5,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: Colors.accentBorder,
+    backgroundColor: Colors.accentDim,
+  },
+  selectAllBtnText: {
+    color: Colors.accent,
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
   },
   pickerHint: {
     color: Colors.textMuted,

@@ -234,6 +234,8 @@ const pl: typeof en = {
     selectParticipantsHint: 'Wybierz, kto zostanie oceniony w tej sesji głosowania.',
     participantsCount: 'Wybrano: {{count}}',
     noPlayersYet: 'Brak zawodników.',
+    selectAll: 'Zaznacz wszystkich',
+    deselectAll: 'Odznacz wszystkich',
   },
   voting: {
     title: 'Oceń swoją ekipę',

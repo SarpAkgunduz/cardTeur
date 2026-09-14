@@ -428,6 +428,8 @@ const ru: typeof en = {
     selectParticipants: 'Выбрать участников',
     selectParticipantsHint: 'Выберите, кого будут оценивать в этой сессии голосования.',
     participantsCount: 'Выбрано: {{count}}',
+    selectAll: 'Выбрать всех',
+    deselectAll: 'Снять выбор со всех',
   },
   support: {
     title: 'Поддержка и часто задаваемые вопросы',

@@ -428,6 +428,8 @@ const ja: typeof en = {
     selectParticipants: '参加者を選択',
     selectParticipantsHint: 'この投票セッションで評価する選手を選んでください。',
     participantsCount: '{{count}}人選択中',
+    selectAll: 'すべて選択',
+    deselectAll: 'すべて解除',
   },
   support: {
     title: 'サポートとよくある質問',

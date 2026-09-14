@@ -234,6 +234,8 @@ const tr: typeof en = {
     selectParticipantsHint: 'Bu oylama oturumunda kimlerin değerlendirileceğini seçin.',
     participantsCount: '{{count}} seçildi',
     noPlayersYet: 'Henüz oyuncu yok.',
+    selectAll: 'Tümünü Seç',
+    deselectAll: 'Tümünü Kaldır',
   },
   voting: {
     title: 'Ekibini Oyla',

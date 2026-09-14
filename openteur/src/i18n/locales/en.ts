@@ -426,6 +426,8 @@ export default {
     selectParticipants: 'Select Participants',
     selectParticipantsHint: 'Choose who will be rated in this voting session.',
     participantsCount: '{{count}} selected',
+    selectAll: 'Select All',
+    deselectAll: 'Deselect All',
   },
   support: {
     title: 'Support & FAQ',

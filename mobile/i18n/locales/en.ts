@@ -232,6 +232,8 @@ export default {
     selectParticipantsHint: 'Choose who will be rated in this voting session.',
     participantsCount: '{{count}} selected',
     noPlayersYet: 'No players yet.',
+    selectAll: 'Select All',
+    deselectAll: 'Deselect All',
   },
   voting: {
     title: 'Vote on Your Crew',

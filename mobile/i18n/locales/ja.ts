@@ -234,6 +234,8 @@ const ja: typeof en = {
     selectParticipantsHint: 'この投票セッションで評価する選手を選んでください。',
     participantsCount: '{{count}}人選択中',
     noPlayersYet: 'まだ選手がいません。',
+    selectAll: 'すべて選択',
+    deselectAll: 'すべて解除',
   },
   voting: {
     title: 'チームメイトに投票',
