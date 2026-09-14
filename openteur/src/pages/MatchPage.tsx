@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import BackButton from '../components/BackButton';
 import Dropdown from '../components/Dropdown';
@@ -48,6 +49,7 @@ const MatchPage = () => {
   const [toastMsg, setToastMsg]           = useState('');
   const [toastVariant, setToastVariant]   = useState<'success' | 'danger'>('success');
   const [showToast, setShowToast]         = useState(false);
+  const [votingPromptSessionId, setVotingPromptSessionId] = useState<string | null>(null);
 
   const showToastMsg = (msg: string, variant: 'success' | 'danger' = 'success') => {
     setToastMsg(msg);
@@ -365,6 +367,8 @@ const MatchPage = () => {
       y: isTeamB
         ? (positions[p._id ?? p.id]?.y ?? 50)
         : (positions[p._id ?? p.id]?.y ?? 50),
+      playerId: p._id ?? p.id,
+      linkedUserId: p.linkedUserId,
     })),
   });
 
@@ -376,6 +380,10 @@ const MatchPage = () => {
   const allRolesA = [...new Set(rolesA)];
   const allRolesB = [...new Set(rolesB)];
 
+  // Only a real crew selection identifies a Crew document — the 'ALL'
+  // pseudo-option (no crew filter) has nothing to attach to a Match.
+  const crewIdPayload = selectedCrewId && selectedCrewId !== 'ALL' ? selectedCrewId : undefined;
+
   const handleSave = async () => {
     if (!pitchMode) return;
     try {
@@ -383,7 +391,7 @@ const MatchPage = () => {
       const teamB = buildTeamPayload(rightPlayers, positionsB, rolesB, roleOverridesB, chosenFormationB?.name ?? '', true);
       const saved = await apiRequest<{ _id: string }>('/matches', {
         method: 'POST',
-        body: JSON.stringify({ teamA, teamB }),
+        body: JSON.stringify({ teamA, teamB, crewId: crewIdPayload }),
       });
       setSavedMatchId(saved._id);
       showToastMsg(t('match.savedToast'));
@@ -401,17 +409,20 @@ const MatchPage = () => {
       if (!matchId) {
         const saved = await apiRequest<{ _id: string }>('/matches', {
           method: 'POST',
-          body: JSON.stringify({ teamA, teamB }),
+          body: JSON.stringify({ teamA, teamB, crewId: crewIdPayload }),
         });
         matchId = saved._id;
         setSavedMatchId(matchId);
       }
-      // Then announce (sends emails + marks announced)
-      const result = await apiRequest<{ sent: any[] }>(`/matches/${matchId}/announce`, {
+      // Then announce (sends emails + marks announced, and may auto-open a voting session)
+      const result = await apiRequest<{ sent: any[]; votingSessionId?: string }>(`/matches/${matchId}/announce`, {
         method: 'POST',
         body: JSON.stringify(details),
       });
       showToastMsg(t('match.announcedToast', { count: result.sent.length }));
+      if (result.votingSessionId) {
+        setVotingPromptSessionId(result.votingSessionId);
+      }
     } catch (err: any) {
       showToastMsg(t('match.announceFailed', { message: err.message }), 'danger');
     }
@@ -606,6 +617,25 @@ const MatchPage = () => {
       <div className="page-container match-page-container">
         <div className="content-card match-content-card">
         <ToastNotification show={showToast} message={toastMsg} onClose={() => setShowToast(false)} variant={toastVariant} />
+        {votingPromptSessionId && (
+          <div className="match-voting-prompt" role="alert">
+            <span>{t('match.votingSessionOpened')}</span>
+            <Link
+              to={`/voting/${votingPromptSessionId}`}
+              className="btn-ct match-voting-prompt__cta"
+            >
+              {t('match.votingSessionCta')}
+            </Link>
+            <button
+              type="button"
+              className="match-voting-prompt__dismiss"
+              aria-label={t('common.dismiss')}
+              onClick={() => setVotingPromptSessionId(null)}
+            >
+              <i className="bi bi-x" />
+            </button>
+          </div>
+        )}
 
         {showIncompleteWarning && (
           <div className="mdm-backdrop">

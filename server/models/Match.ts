@@ -7,6 +7,12 @@ export interface MatchPlayerDoc {
   role: string;
   x: number;
   y: number;
+  // Reference back to the real Player document (and, if linked, the User)
+  // this roster snapshot came from — needed so voting sessions know exactly
+  // who's being rated. Optional because historical matches saved before this
+  // field existed won't have it. See VOTING_SYSTEM_PLAN.md section 2.
+  playerId?: mongoose.Types.ObjectId;
+  linkedUserId?: string;
 }
 
 export interface MatchTeamDoc {
@@ -18,6 +24,7 @@ export interface MatchTeamDoc {
 
 export interface MatchDoc extends Document {
   ownerUid: string;
+  crewId?: mongoose.Types.ObjectId;
   location: string;
   date: string;
   time: string;
@@ -35,6 +42,8 @@ const MatchPlayerSchema = new Schema<MatchPlayerDoc>(
     role: { type: String, required: true },
     x: { type: Number, required: true },
     y: { type: Number, required: true },
+    playerId: { type: Schema.Types.ObjectId, ref: 'Player' },
+    linkedUserId: { type: String },
   },
   { _id: false },
 );
@@ -52,6 +61,10 @@ const MatchTeamSchema = new Schema<MatchTeamDoc>(
 const MatchSchema = new Schema<MatchDoc>(
   {
     ownerUid: { type: String, required: true, index: true },
+    // Which crew this match was built from, used by the voting auto-trigger
+    // to look up that crew's votingSettings. Optional — the formation builder
+    // can be used with no crew selected ("ALL" players).
+    crewId: { type: Schema.Types.ObjectId, ref: 'Crew' },
     location: { type: String, default: '' },
     date: { type: String, default: '' },
     time: { type: String, default: '' },

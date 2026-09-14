@@ -1348,3 +1348,41 @@
     position: static;
   }
 }
+
+.match-voting-prompt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(36, 59, 90, 0.75);
+  border-left: 3px solid #00deec;
+  border-radius: 0 8px 8px 0;
+  padding: 12px 16px;
+  margin-bottom: 1.5rem;
+  color: #f7f5fd;
+  animation: match-voting-prompt-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.match-voting-prompt__cta {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.match-voting-prompt__dismiss {
+  background: none;
+  border: none;
+  color: rgba(247, 245, 253, 0.6);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.match-voting-prompt__dismiss:hover {
+  color: #f7f5fd;
+}
+
+@keyframes match-voting-prompt-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -42,6 +42,7 @@ import crewRoutes from './routes/crews';
 import uploadsRoutes from './routes/uploads';
 import referralRoutes from './routes/referrals';
 import billingRoutes from './routes/billing';
+import votingRoutes from './routes/voting';
 app.use('/api/players', playerRoutes);
 app.use('/api/matches', matchesRoutes);
 app.use('/api/users', userRoutes);
@@ -49,6 +50,7 @@ app.use('/api/crews', crewRoutes);
 app.use('/api/uploads', uploadsRoutes);
 app.use('/api/referrals', referralRoutes);
 app.use('/api/billing', billingRoutes);
+app.use('/api', votingRoutes);
 
 const PORT = process.env.PORT || 5002;
 

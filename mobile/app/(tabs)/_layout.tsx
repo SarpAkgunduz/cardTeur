@@ -21,6 +21,7 @@ export default function TabLayout() {
     { name: 'preview', title: t('nav.preview'), icon: 'eye-outline', iconFocused: 'eye' },
     { name: 'crew', title: t('nav.crew'), icon: 'shield-outline', iconFocused: 'shield' },
     { name: 'friends', title: t('nav.friends'), icon: 'person-add-outline', iconFocused: 'person-add' },
+    { name: 'development', title: t('nav.development'), icon: 'trending-up-outline', iconFocused: 'trending-up' },
   ];
 
   return (

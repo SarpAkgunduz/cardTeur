@@ -40,6 +40,7 @@ function RootNavigator() {
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="player/add" options={{ presentation: 'modal', headerShown: false }} />
       <Stack.Screen name="player/[id]" options={{ presentation: 'modal', headerShown: false }} />
+      <Stack.Screen name="voting/[sessionId]" options={{ headerShown: false }} />
     </Stack>
   );
 }

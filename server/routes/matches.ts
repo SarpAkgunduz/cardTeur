@@ -3,6 +3,7 @@ import { requireAuth } from '../middleware/auth';
 import Match from '../models/Match';
 import { sendMatchAnnouncement } from '../services/emailService';
 import { getUserLimits } from '../services/planService';
+import { createSessionFromMatch } from '../services/votingService';
 
 const router = Router();
 router.use(requireAuth);
@@ -29,13 +30,14 @@ router.get('/', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   try {
     const uid = (req as any).uid;
-    const { location, date, time, teamA, teamB } = req.body;
+    const { location, date, time, teamA, teamB, crewId } = req.body;
     if (!teamA || !teamB) {
       res.status(400).json({ error: 'teamA and teamB are required' });
       return;
     }
     const match = await Match.create({
       ownerUid: uid,
+      crewId: crewId || undefined,
       location: location ?? '',
       date: date ?? '',
       time: time ?? '',
@@ -71,7 +73,18 @@ router.post('/:id/announce', async (req: Request, res: Response) => {
       leftTeam: match.teamA.players,
       rightTeam: match.teamB.players,
     });
-    res.json({ success: true, matchId: match._id, ...result });
+
+    // If this match's crew has voting auto-trigger on, open a session now
+    // that the roster is final. Never let a voting hiccup fail the announce.
+    let votingSessionId: string | undefined;
+    try {
+      const session = await createSessionFromMatch(match, uid);
+      votingSessionId = session ? String(session._id) : undefined;
+    } catch (votingErr) {
+      console.error('[matches/announce] failed to auto-create voting session', votingErr);
+    }
+
+    res.json({ success: true, matchId: match._id, votingSessionId, ...result });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     res.status(500).json({ error: 'Failed to announce match', detail: message });

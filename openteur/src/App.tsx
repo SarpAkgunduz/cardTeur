@@ -24,6 +24,7 @@ import SupportPage from './pages/SupportPage';
 import ThankYouPage from './pages/ThankYouPage';
 import WelcomePage from './pages/WelcomePage';
 import DevelopmentPage from './pages/DevelopmentPage';
+import VotingPage from './pages/VotingPage';
 import PrivateRoute from './components/routes/PrivateRoute';
 import PublicRoute from './components/routes/PublicRoute';
 import Navbar from './components/Navbar';
@@ -109,6 +110,14 @@ const App = () => {
           element={
             <PrivateRoute>
               <SchedulePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/voting/:sessionId"
+          element={
+            <PrivateRoute>
+              <VotingPage />
             </PrivateRoute>
           }
         />
