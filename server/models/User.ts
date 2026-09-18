@@ -17,6 +17,11 @@ export interface IUser extends Document {
   billingSubscriptionId?: string;
   referralRewardMonths: number;
   createdAt: Date;
+  // Manually granted, permanent plan override — set only via a direct
+  // database write, never through any API route. When present, this wins
+  // over `plan` everywhere plan/limits are resolved, and billing webhooks
+  // skip this user entirely so a Paddle event can never downgrade them.
+  lifetimePlan?: Plan;
 }
 
 const UserSchema = new Schema<IUser>({
@@ -33,6 +38,7 @@ const UserSchema = new Schema<IUser>({
   billingSubscriptionId: { type: String },
   referralRewardMonths: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
+  lifetimePlan: { type: String, enum: ['free', 'premium', 'premium_plus'] },
 });
 
 export default mongoose.model<IUser>('User', UserSchema);

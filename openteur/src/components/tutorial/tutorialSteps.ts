@@ -78,6 +78,13 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     textKey: 'tutorial.friendsText',
   },
   {
+    id: 'development',
+    route: '/development',
+    target: '[data-tutorial="development-hero"]',
+    titleKey: 'tutorial.developmentTitle',
+    textKey: 'tutorial.developmentText',
+  },
+  {
     id: 'done',
     route: '/',
     titleKey: 'tutorial.doneTitle',

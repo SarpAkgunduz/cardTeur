@@ -24,6 +24,12 @@ export async function applySubscriptionEvent(
 ): Promise<void> {
   if (!event.uid) return;
 
+  // Accounts with a manually granted lifetimePlan are frozen against billing
+  // webhooks entirely — a Paddle renewal/cancellation/update must never be
+  // able to touch their plan or billing fields.
+  const existing = await User.findOne({ uid: event.uid }, { lifetimePlan: 1 }).lean();
+  if (existing?.lifetimePlan) return;
+
   const update: Record<string, unknown> = {
     plan: event.plan ?? 'free',
     billingProvider: provider,

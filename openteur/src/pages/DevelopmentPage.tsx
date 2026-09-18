@@ -29,6 +29,24 @@ interface VotingSessionSummary {
   closesAt: string;
 }
 
+interface CrewVotingStats {
+  totalSessions: number;
+  closedSessions: number;
+  totalVotesCast: number;
+  avgParticipationPct: number;
+  mostImproved: Array<{ playerId: string; name: string; totalImprovement: number }>;
+}
+
+interface MyVotingSession {
+  _id: string;
+  crewId: string;
+  crewName: string;
+  closesAt: string;
+  participantCount: number;
+}
+
+type DevTab = 'leader' | 'player';
+
 const DevelopmentPage = () => {
   const { t } = useTranslation();
   const { currentUser } = useAuth();
@@ -39,10 +57,15 @@ const DevelopmentPage = () => {
 
   const [votingSettings, setVotingSettings] = useState<Record<string, CrewVotingSettings>>({});
   const [activeVotingSessions, setActiveVotingSessions] = useState<Record<string, VotingSessionSummary | null>>({});
+  const [votingStats, setVotingStats] = useState<Record<string, CrewVotingStats>>({});
   const [savingCrewId, setSavingCrewId] = useState<string | null>(null);
   const [settingsOpenCrewId, setSettingsOpenCrewId] = useState<string | null>(null);
   const [pickingCrewId, setPickingCrewId] = useState<string | null>(null);
   const [participantIds, setParticipantIds] = useState<string[]>([]);
+
+  const [mySessions, setMySessions] = useState<MyVotingSession[]>([]);
+  const [mySessionsLoading, setMySessionsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<DevTab>('leader');
 
   const [toastMsg, setToastMsg] = useState('');
   const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
@@ -56,11 +79,21 @@ const DevelopmentPage = () => {
       .then(setCrews)
       .catch(() => showMsg(t('match.loadCrewsFailed'), 'danger'))
       .finally(() => setLoading(false));
+
+    apiRequest<MyVotingSession[]>('/voting-sessions/mine')
+      .then(setMySessions)
+      .catch(() => {})
+      .finally(() => setMySessionsLoading(false));
   }, [t]);
 
   const leaderCrews = crews.filter(crew =>
     crew.ownerUid === currentUser?.uid || (crew.editorUids ?? []).includes(currentUser?.uid ?? '')
   );
+  const hasLeaderCrews = leaderCrews.length > 0;
+
+  useEffect(() => {
+    if (!hasLeaderCrews) setActiveTab('player');
+  }, [hasLeaderCrews]);
 
   useEffect(() => {
     leaderCrews.forEach(crew => {
@@ -72,6 +105,13 @@ const DevelopmentPage = () => {
       if (!(crew._id in activeVotingSessions)) {
         apiRequest<VotingSessionSummary | null>(`/crews/${crew._id}/voting-sessions/active`)
           .then(session => setActiveVotingSessions(prev => ({ ...prev, [crew._id]: session })))
+          .catch(() => {});
+      }
+      if (!(crew._id in votingStats)) {
+        // 403s silently for crews whose owner isn't on Premium+ — the panel
+        // only ever appears for a paying crew leader, per design.
+        apiRequest<CrewVotingStats>(`/crews/${crew._id}/voting-stats`)
+          .then(stats => setVotingStats(prev => ({ ...prev, [crew._id]: stats })))
           .catch(() => {});
       }
     });
@@ -165,6 +205,7 @@ const DevelopmentPage = () => {
   };
 
   const pickingCrew = leaderCrews.find(crew => crew._id === pickingCrewId) ?? null;
+  const MEDALS = ['🥇', '🥈', '🥉'];
 
   return (
     <div className="page-wrapper">
@@ -175,18 +216,77 @@ const DevelopmentPage = () => {
             <h2 className="page-title">{t('development.title')}</h2>
           </div>
 
+          <section className="development-hero" data-tutorial="development-hero">
+            <span className="development-hero__badge">
+              <i className="bi bi-graph-up-arrow"></i> {t('development.heroBadge')}
+            </span>
+            <h3 className="development-hero__title">{t('development.heroTitle')}</h3>
+            <p className="development-hero__text">{t('development.heroText')}</p>
+          </section>
+
           {loading && <p className="crew-empty">{t('common.loading')}</p>}
-          {!loading && leaderCrews.length === 0 && (
-            <p className="crew-empty">{t('crew.createBeforeAssign')}</p>
+
+          {!loading && hasLeaderCrews && (
+            <div className="development-tabs" data-tutorial="development-tabs">
+              <div
+                className="development-tabs__indicator"
+                style={{ transform: `translateX(${activeTab === 'leader' ? '0%' : '100%'})` }}
+              />
+              <button
+                type="button"
+                className={`development-tabs__btn ${activeTab === 'leader' ? 'development-tabs__btn--active' : ''}`}
+                onClick={() => setActiveTab('leader')}
+              >
+                <i className="bi bi-shield-fill-check"></i> {t('development.leaderTab')}
+              </button>
+              <button
+                type="button"
+                className={`development-tabs__btn ${activeTab === 'player' ? 'development-tabs__btn--active' : ''}`}
+                onClick={() => setActiveTab('player')}
+              >
+                <i className="bi bi-hand-thumbs-up-fill"></i> {t('development.playerTab')}
+              </button>
+            </div>
           )}
 
-          {!loading && leaderCrews.length > 0 && (
+          {!loading && (!hasLeaderCrews || activeTab === 'player') && (
+            <div className="development-player-view">
+              {mySessionsLoading && <p className="crew-empty">{t('common.loading')}</p>}
+              {!mySessionsLoading && mySessions.length === 0 && (
+                <div className="development-empty-state">
+                  <i className="bi bi-hourglass"></i>
+                  <p>{t('development.noOpenSessions')}</p>
+                </div>
+              )}
+              {!mySessionsLoading && mySessions.length > 0 && (
+                <div className="player-sessions-grid">
+                  {mySessions.map((session, idx) => (
+                    <div key={session._id} className="player-session-card" style={{ animationDelay: `${idx * 0.06}s` }}>
+                      <div className="player-session-card__crew">
+                        <i className="bi bi-people-fill"></i> {session.crewName}
+                      </div>
+                      <div className="player-session-card__meta">
+                        {t('crew.votingSessionOpenUntil', { date: new Date(session.closesAt).toLocaleString() })}
+                      </div>
+                      <Link to={`/voting/${session._id}`} className="btn-ct player-session-card__cta">
+                        <i className="bi bi-hand-thumbs-up"></i> {t('match.votingSessionCta')}
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {!loading && hasLeaderCrews && activeTab === 'leader' && (
             <>
+              {!hasLeaderCrews && <p className="crew-empty">{t('crew.createBeforeAssign')}</p>}
               <h3 className="development-teams-title">{t('development.teamsTitle')}</h3>
               <div className="development-teams-grid">
                 {leaderCrews.map((crew, idx) => {
                   const settings = votingSettings[crew._id];
                   const activeSession = activeVotingSessions[crew._id];
+                  const stats = votingStats[crew._id];
                   const isSaving = savingCrewId === crew._id;
                   const isSettingsOpen = settingsOpenCrewId === crew._id;
                   return (
@@ -232,6 +332,37 @@ const DevelopmentPage = () => {
                         </div>
                       </div>
 
+                      {stats && (
+                        <div className="team-card__stats">
+                          <div className="team-card__stats-grid">
+                            <div className="stat-tile">
+                              <span className="stat-tile__value">{stats.totalSessions}</span>
+                              <span className="stat-tile__label">{t('development.statsSessionsLabel')}</span>
+                            </div>
+                            <div className="stat-tile">
+                              <span className="stat-tile__value">{stats.totalVotesCast}</span>
+                              <span className="stat-tile__label">{t('development.statsVotesLabel')}</span>
+                            </div>
+                            <div className="stat-tile">
+                              <span className="stat-tile__value">{stats.avgParticipationPct}%</span>
+                              <span className="stat-tile__label">{t('development.statsParticipationLabel')}</span>
+                            </div>
+                          </div>
+                          {stats.mostImproved.length > 0 && (
+                            <div className="team-card__leaderboard">
+                              <span className="team-card__leaderboard-title">{t('development.statsMostImprovedLabel')}</span>
+                              {stats.mostImproved.map((entry, i) => (
+                                <div key={entry.playerId} className="team-card__leaderboard-row">
+                                  <span className="team-card__leaderboard-medal">{MEDALS[i]}</span>
+                                  <span className="team-card__leaderboard-name">{entry.name}</span>
+                                  <span className="team-card__leaderboard-delta">+{entry.totalImprovement}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
                       <div className="team-card__body">
                         {activeSession && activeSession.status === 'open' ? (
                           <div className="team-card__active">
@@ -240,8 +371,13 @@ const DevelopmentPage = () => {
                             <Link to={`/voting/${activeSession._id}`} className="btn-ct">{t('crew.votingSessionView')}</Link>
                           </div>
                         ) : (
-                          <button className="btn-ct team-card__start-btn" onClick={() => openPicker(crew._id)}>
-                            <i className="bi bi-hand-thumbs-up"></i> {t('crew.votingSessionStart')}
+                          <button className="team-card__start-cta" onClick={() => openPicker(crew._id)}>
+                            <span className="team-card__start-cta-icon"><i className="bi bi-hand-thumbs-up-fill"></i></span>
+                            <span className="team-card__start-cta-text">
+                              <span className="team-card__start-cta-title">{t('crew.votingSessionStart')}</span>
+                              <span className="team-card__start-cta-sub">{t('development.startVotingHint')}</span>
+                            </span>
+                            <i className="bi bi-arrow-right team-card__start-cta-arrow"></i>
                           </button>
                         )}
                       </div>

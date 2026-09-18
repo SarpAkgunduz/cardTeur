@@ -59,6 +59,28 @@ router.get('/crews/:crewId/voting-sessions/active', async (req: Request, res: Re
   }
 });
 
+// GET /api/crews/:crewId/voting-stats — leader-only analytics, Premium+ (crew owner's plan)
+router.get('/crews/:crewId/voting-stats', async (req: Request, res: Response) => {
+  const uid = (req as any).uid;
+  try {
+    const stats = await votingService.getCrewVotingStats(String(req.params.crewId), uid);
+    res.json(stats);
+  } catch (err) {
+    handleError(res, err, 'Failed to fetch voting analytics');
+  }
+});
+
+// GET /api/voting-sessions/mine — every open voting session across all of this user's crews
+router.get('/voting-sessions/mine', async (req: Request, res: Response) => {
+  const uid = (req as any).uid;
+  try {
+    const sessions = await votingService.getActiveSessionsForUser(uid);
+    res.json(sessions);
+  } catch (err) {
+    handleError(res, err, 'Failed to fetch your voting sessions');
+  }
+});
+
 // GET /api/voting-sessions/:id — session detail + participant player info, for VotingPage
 router.get('/voting-sessions/:id', async (req: Request, res: Response) => {
   const uid = (req as any).uid;
