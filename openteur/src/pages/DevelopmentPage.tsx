@@ -45,6 +45,14 @@ interface MyVotingSession {
   participantCount: number;
 }
 
+interface PendingMvpAward {
+  _id: string;
+  playerId: string;
+  playerName: string;
+  statOptions: readonly string[];
+  createdAt: string;
+}
+
 type DevTab = 'leader' | 'player';
 
 const DevelopmentPage = () => {
@@ -67,6 +75,14 @@ const DevelopmentPage = () => {
   const [mySessionsLoading, setMySessionsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<DevTab>('leader');
 
+  const [mvpPickingCrewId, setMvpPickingCrewId] = useState<string | null>(null);
+  const [mvpSelectedPlayerId, setMvpSelectedPlayerId] = useState<string | null>(null);
+  const [mvpSaving, setMvpSaving] = useState(false);
+
+  const [mvpAwards, setMvpAwards] = useState<PendingMvpAward[]>([]);
+  const [mvpAwardsLoading, setMvpAwardsLoading] = useState(true);
+  const [claimingAwardId, setClaimingAwardId] = useState<string | null>(null);
+
   const [toastMsg, setToastMsg] = useState('');
   const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
   const [showToast, setShowToast] = useState(false);
@@ -84,6 +100,11 @@ const DevelopmentPage = () => {
       .then(setMySessions)
       .catch(() => {})
       .finally(() => setMySessionsLoading(false));
+
+    apiRequest<PendingMvpAward[]>('/mvp-awards/mine')
+      .then(setMvpAwards)
+      .catch(() => {})
+      .finally(() => setMvpAwardsLoading(false));
   }, [t]);
 
   const leaderCrews = crews.filter(crew =>
@@ -204,7 +225,51 @@ const DevelopmentPage = () => {
     }
   };
 
+  const openMvpPicker = (crewId: string) => {
+    setMvpPickingCrewId(crewId);
+    setMvpSelectedPlayerId(null);
+  };
+
+  const closeMvpPicker = () => {
+    setMvpPickingCrewId(null);
+    setMvpSelectedPlayerId(null);
+  };
+
+  const handleAwardMvp = async (crew: Crew) => {
+    if (!mvpSelectedPlayerId) return;
+    setMvpSaving(true);
+    try {
+      await apiRequest(`/crews/${crew._id}/mvp`, {
+        method: 'POST',
+        body: JSON.stringify({ playerId: mvpSelectedPlayerId }),
+      });
+      showMsg(t('development.mvpAwarded'));
+      closeMvpPicker();
+    } catch {
+      showMsg(t('development.mvpAwardFailed'), 'danger');
+    } finally {
+      setMvpSaving(false);
+    }
+  };
+
+  const handleClaimMvp = async (award: PendingMvpAward, stat: string) => {
+    setClaimingAwardId(award._id);
+    try {
+      await apiRequest(`/mvp-awards/${award._id}/claim`, {
+        method: 'POST',
+        body: JSON.stringify({ stat }),
+      });
+      setMvpAwards(prev => prev.filter(a => a._id !== award._id));
+      showMsg(t('development.mvpClaimed', { stat: t(`stats.${stat}`) }));
+    } catch {
+      showMsg(t('development.mvpClaimFailed'), 'danger');
+    } finally {
+      setClaimingAwardId(null);
+    }
+  };
+
   const pickingCrew = leaderCrews.find(crew => crew._id === pickingCrewId) ?? null;
+  const mvpPickingCrew = leaderCrews.find(crew => crew._id === mvpPickingCrewId) ?? null;
   const MEDALS = ['🥇', '🥈', '🥉'];
 
   return (
@@ -251,6 +316,34 @@ const DevelopmentPage = () => {
 
           {!loading && (!hasLeaderCrews || activeTab === 'player') && (
             <div className="development-player-view">
+              {!mvpAwardsLoading && mvpAwards.length > 0 && (
+                <div className="mvp-awards-list">
+                  {mvpAwards.map((award, idx) => (
+                    <div key={award._id} className="mvp-award-card" style={{ animationDelay: `${idx * 0.06}s` }}>
+                      <div className="mvp-award-card__header">
+                        <i className="bi bi-trophy-fill"></i>
+                        <span>{t('development.mvpAwardTitle', { name: award.playerName })}</span>
+                      </div>
+                      <p className="mvp-award-card__hint">{t('development.mvpAwardHint')}</p>
+                      <div className="mvp-award-card__stats">
+                        {award.statOptions.map(stat => (
+                          <button
+                            type="button"
+                            key={stat}
+                            className="mvp-award-card__stat-btn"
+                            disabled={claimingAwardId === award._id}
+                            onClick={() => handleClaimMvp(award, stat)}
+                          >
+                            {claimingAwardId === award._id
+                              ? <span className="spinner-border spinner-border-sm" />
+                              : <>+1 {t(`stats.${stat}`)}</>}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
               {mySessionsLoading && <p className="crew-empty">{t('common.loading')}</p>}
               {!mySessionsLoading && mySessions.length === 0 && (
                 <div className="development-empty-state">
@@ -380,6 +473,9 @@ const DevelopmentPage = () => {
                             <i className="bi bi-arrow-right team-card__start-cta-arrow"></i>
                           </button>
                         )}
+                        <button type="button" className="team-card__mvp-btn" onClick={() => openMvpPicker(crew._id)}>
+                          <i className="bi bi-trophy-fill"></i> {t('development.selectMvp')}
+                        </button>
                       </div>
                     </div>
                   );
@@ -452,6 +548,63 @@ const DevelopmentPage = () => {
                   {savingCrewId === pickingCrew._id
                     ? <span className="spinner-border spinner-border-sm" />
                     : t('crew.votingSessionStart')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {mvpPickingCrew && (
+        <div className="participant-modal-backdrop" onClick={closeMvpPicker}>
+          <div className="participant-modal-panel" onClick={e => e.stopPropagation()}>
+            <div className="participant-modal-header">
+              <i className="bi bi-trophy-fill"></i>
+              <h3>{t('development.selectMvp')}</h3>
+            </div>
+            <p className="participant-modal-subtitle">{t('development.selectMvpHint')}</p>
+
+            {(mvpPickingCrew.players ?? []).length === 0 && (
+              <p className="crew-empty">{t('crew.noPlayersYet')}</p>
+            )}
+
+            <div className="participant-grid">
+              {(mvpPickingCrew.players ?? []).map(player => {
+                const selected = mvpSelectedPlayerId === player._id;
+                const avatar = getPlayerCardImage(player);
+                return (
+                  <button
+                    type="button"
+                    key={player._id}
+                    className={`participant-card ${selected ? 'participant-card--selected' : ''}`}
+                    onClick={() => setMvpSelectedPlayerId(player._id)}
+                  >
+                    <div className="participant-card__avatar">
+                      {avatar ? <img src={avatar} alt={player.name} /> : <i className="bi bi-person-fill"></i>}
+                    </div>
+                    <span className="participant-card__name">{player.name}</span>
+                    {selected && (
+                      <span className="participant-card__badge">
+                        <i className="bi bi-check-lg"></i>
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="participant-modal-footer">
+              <div className="participant-modal-actions">
+                <button type="button" className="crew-edit-btn crew-edit-btn--cancel" onClick={closeMvpPicker}>
+                  {t('common.cancel')}
+                </button>
+                <button
+                  type="button"
+                  className="btn-ct"
+                  onClick={() => handleAwardMvp(mvpPickingCrew)}
+                  disabled={!mvpSelectedPlayerId || mvpSaving}
+                >
+                  {mvpSaving ? <span className="spinner-border spinner-border-sm" /> : t('development.selectMvp')}
                 </button>
               </div>
             </div>

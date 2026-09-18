@@ -182,8 +182,9 @@
 
 .development-teams-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 18px;
+  width: 100%;
 }
 
 .team-card {
@@ -663,4 +664,86 @@
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+/* -- MVP select button (leader) -- */
+.team-card__mvp-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(255, 215, 0, 0.08);
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  border-radius: 8px;
+  color: #ffd23f;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.team-card__mvp-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 215, 0, 0.6);
+  box-shadow: 0 8px 20px rgba(255, 215, 0, 0.15);
+}
+
+/* -- MVP claim cards (player) -- */
+.mvp-awards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.mvp-award-card {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(26, 43, 66, 0.6));
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  border-radius: 12px;
+  padding: 16px;
+  animation: teamCardIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mvp-award-card__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #ffd23f;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.mvp-award-card__hint {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.82rem;
+  margin-bottom: 12px;
+}
+
+.mvp-award-card__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mvp-award-card__stat-btn {
+  padding: 8px 14px;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 20px;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), background 0.2s ease, border-color 0.2s ease;
+}
+
+.mvp-award-card__stat-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  background: rgba(255, 215, 0, 0.22);
+  border-color: rgba(255, 215, 0, 0.6);
 }
