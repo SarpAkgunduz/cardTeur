@@ -57,7 +57,7 @@ const DEMO_SQUAD: DemoSquadPlayer[] = [
   { id: 'demo-5', name: 'Diego', preferredPosition: 'ST', offensiveOverall: 86, defensiveOverall: 41, athleticismOverall: 79, stamina: 71, cardImage: '/assets/player5.webp' },
   { id: 'demo-6', name: 'Noah',  preferredPosition: 'LW', offensiveOverall: 78, defensiveOverall: 44, athleticismOverall: 88, stamina: 80, cardImage: '/assets/player6.webp' },
   { id: 'demo-7', name: 'Omar',  preferredPosition: 'CB', offensiveOverall: 39, defensiveOverall: 74, athleticismOverall: 68, stamina: 70, cardImage: '/assets/player8.webp' },
-  { id: 'demo-8', name: 'Yusuf',   preferredPosition: 'CM', offensiveOverall: 66, defensiveOverall: 61, athleticismOverall: 73, stamina: 77, cardImage: '/assets/player9.webp' },
+  { id: 'demo-8', name: 'Wei',   preferredPosition: 'CM', offensiveOverall: 66, defensiveOverall: 61, athleticismOverall: 73, stamina: 77, cardImage: '/assets/player9.webp' },
 ];
 
 const DEMO_BY_ID: Record<string, DemoSquadPlayer> = Object.fromEntries(
@@ -80,8 +80,8 @@ const DEMO_START_ROLES: Record<string, string> = Object.fromEntries(
 type VoteStatKey = 'dribbling' | 'shortPass' | 'tackling' | 'stamina';
 const VOTE_STAT_KEYS: VoteStatKey[] = ['dribbling', 'shortPass', 'tackling', 'stamina'];
 const VOTE_TEAMMATES: Array<{ id: string; name: string; base: Record<VoteStatKey, number> }> = [
-  { id: 'deniz', name: 'Deniz', base: { dribbling: 68, shortPass: 72, tackling: 65, stamina: 70 } },
-  { id: 'baran', name: 'Baran', base: { dribbling: 74, shortPass: 58, tackling: 52, stamina: 80 } },
+  { id: 'deniz', name: 'Minjun', base: { dribbling: 68, shortPass: 72, tackling: 65, stamina: 70 } },
+  { id: 'baran', name: 'Ivan', base: { dribbling: 74, shortPass: 58, tackling: 52, stamina: 80 } },
 ];
 
 const clampVoteStep = (value: number) => Math.max(-3, Math.min(3, value));
@@ -99,7 +99,7 @@ const SHOWCASE_CARDS = [
   },
   {
     _id: 'landing-silver',
-    name: 'Alberto',
+    name: 'Kwame',
     preferredPosition: 'CM',
     offensiveOverall: 74,
     defensiveOverall: 71,

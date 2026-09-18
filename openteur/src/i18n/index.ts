@@ -10,6 +10,8 @@ import ru from './locales/ru';
 import zh from './locales/zh';
 import ko from './locales/ko';
 import ja from './locales/ja';
+import es from './locales/es';
+import it from './locales/it';
 
 export const LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -21,6 +23,8 @@ export const LANGUAGES = [
   { code: 'zh', label: '中文' },
   { code: 'ko', label: '한국어' },
   { code: 'ja', label: '日本語' },
+  { code: 'es', label: 'Español' },
+  { code: 'it', label: 'Italiano' },
 ];
 
 i18n
@@ -37,6 +41,8 @@ i18n
       zh: { translation: zh },
       ko: { translation: ko },
       ja: { translation: ja },
+      es: { translation: es },
+      it: { translation: it },
     },
     fallbackLng: 'en',
     supportedLngs: LANGUAGES.map(l => l.code),
