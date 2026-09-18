@@ -105,7 +105,7 @@ const Navbar = () => {
                     onClick={() => { i18n.changeLanguage(lang.code); setLangOpen(false); }}
                   >
                     <span className="ct-nav__lang-code">{lang.code.toUpperCase()}</span>
-                    {lang.label}
+                    <span lang={lang.code}>{lang.label}</span>
                   </button>
                 ))}
               </div>
