@@ -12,6 +12,7 @@ import ko from './locales/ko';
 import ja from './locales/ja';
 import es from './locales/es';
 import it from './locales/it';
+import fr from './locales/fr';
 
 export const LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -25,6 +26,7 @@ export const LANGUAGES = [
   { code: 'ja', label: '日本語' },
   { code: 'es', label: 'Español' },
   { code: 'it', label: 'Italiano' },
+  { code: 'fr', label: 'Français' },
 ];
 
 i18n
@@ -43,6 +45,7 @@ i18n
       ja: { translation: ja },
       es: { translation: es },
       it: { translation: it },
+      fr: { translation: fr },
     },
     fallbackLng: 'en',
     supportedLngs: LANGUAGES.map(l => l.code),

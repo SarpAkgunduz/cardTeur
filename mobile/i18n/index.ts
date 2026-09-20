@@ -12,6 +12,7 @@ import ko from './locales/ko';
 import ja from './locales/ja';
 import es from './locales/es';
 import it from './locales/it';
+import fr from './locales/fr';
 
 export const LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -25,6 +26,7 @@ export const LANGUAGES = [
   { code: 'ja', label: '日本語' },
   { code: 'es', label: 'Español' },
   { code: 'it', label: 'Italiano' },
+  { code: 'fr', label: 'Français' },
 ];
 
 const STORAGE_KEY = 'ct_lang';
@@ -75,6 +77,7 @@ export const initI18n = (): Promise<typeof i18n> => {
           ja: { translation: ja },
           es: { translation: es },
           it: { translation: it },
+          fr: { translation: fr },
         },
         lng,
         fallbackLng: 'en',
