@@ -260,59 +260,6 @@
   margin: 0;
 }
 
-/* ── Steps ── */
-.landing__steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-.landing__step {
-  background: rgba(36, 59, 90, 0.6);
-  border: 1px solid rgba(0, 222, 236, 0.2);
-  padding: 32px 26px;
-  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.landing__step:hover {
-  border-color: rgba(0, 222, 236, 0.6);
-  background: rgba(0, 222, 236, 0.06);
-  transform: translateY(-4px);
-}
-
-.landing__step-number {
-  display: block;
-  color: rgba(0, 222, 236, 0.35);
-  font-family: var(--font-display);
-  font-size: 2.6rem;
-  font-weight: 900;
-  font-style: italic;
-  line-height: 1;
-  margin-bottom: 14px;
-  transition: color 0.35s ease;
-}
-
-.landing__step:hover .landing__step-number {
-  color: #00deec;
-}
-
-.landing__step-title {
-  color: white;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  margin: 0 0 10px;
-}
-
-.landing__step-text {
-  color: rgba(247, 245, 253, 0.7);
-  font-size: 0.9rem;
-  line-height: 1.65;
-  margin: 0;
-}
-
 /* ── Bottom CTA ── */
 .landing__bottom-cta {
   margin: 60px 0 40px;
@@ -965,8 +912,7 @@
 }
 
 @media (max-width: 640px) {
-  .landing__features,
-  .landing__steps {
+  .landing__features {
     grid-template-columns: 1fr;
   }
 

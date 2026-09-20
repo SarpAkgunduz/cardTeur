@@ -15,6 +15,20 @@ interface MatchDetailsModalProps {
   onAnnounce: (details: { location: string; date: string; time: string }) => Promise<void>;
 }
 
+// Same position buckets used on the roster preview page, reused here so the
+// WhatsApp text groups players exactly the way the rest of the app does.
+const POSITION_GROUPS: { key: string; labelKey: string; positions: string[] }[] = [
+  { key: 'att', labelKey: 'preview.attackers', positions: ['ST', 'CF', 'LW', 'RW', 'SS', 'FW', 'LS', 'RS'] },
+  { key: 'mid', labelKey: 'preview.midfielders', positions: ['CM', 'CDM', 'CAM', 'LM', 'RM', 'DM', 'AM'] },
+  { key: 'def', labelKey: 'preview.defenders', positions: ['CB', 'LB', 'RB', 'LWB', 'RWB', 'SW', 'WB'] },
+  { key: 'gk', labelKey: 'preview.goalkeepers', positions: ['GK'] },
+];
+
+function groupForPosition(position?: string) {
+  const p = (position ?? '').toUpperCase();
+  return POSITION_GROUPS.find((g) => g.positions.includes(p)) ?? POSITION_GROUPS[1]; // default: midfielders
+}
+
 const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
   leftTeam,
   rightTeam,
@@ -30,23 +44,64 @@ const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
 
   const emailCount = [...leftTeam, ...rightTeam].filter((p) => p.email).length;
 
-  const handleAnnounce = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const validateFields = () => {
     const missing: string[] = [];
     if (!location.trim()) missing.push(t('mdm.location'));
     if (!date) missing.push(t('mdm.date'));
     if (!time) missing.push(t('mdm.time'));
     if (missing.length > 0) {
       setError(t('auth.fillFields', { fields: missing.join(', ') }));
-      return;
+      return false;
     }
     setError('');
+    return true;
+  };
+
+  const handleAnnounce = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateFields()) return;
     setSending(true);
     try {
       await onAnnounce({ location, date, time });
     } finally {
       setSending(false);
     }
+  };
+
+  // Builds a WhatsApp-friendly plain-text version of the same announcement the
+  // email sends — same header/details/roster-by-position structure, using
+  // WhatsApp's own *bold* / _italic_ markup in place of HTML.
+  const buildWhatsAppText = () => {
+    const renderTeam = (team: MatchPlayer[], label: string) => {
+      const lines: string[] = [`*${label}*`];
+      for (const group of POSITION_GROUPS) {
+        const players = team.filter((p) => groupForPosition(p.preferredPosition).key === group.key);
+        if (players.length === 0) continue;
+        lines.push(`_${t(group.labelKey)}_`);
+        for (const p of players) {
+          lines.push(`• ${p.name}${p.preferredPosition ? ` (${p.preferredPosition})` : ''}`);
+        }
+      }
+      return lines.join('\n');
+    };
+
+    return [
+      `⚽ *CardTeur* — ${t('mdm.waHeader')}`,
+      '',
+      `📍 ${t('mdm.location')}: ${location}`,
+      `📅 ${t('mdm.date')}: ${date}`,
+      `🕐 ${t('mdm.time')}: ${time}`,
+      '',
+      renderTeam(leftTeam, t('match.teamA', { defaultValue: 'Team A' })),
+      '',
+      renderTeam(rightTeam, t('match.teamB', { defaultValue: 'Team B' })),
+    ].join('\n');
+  };
+
+  const handleShareWhatsapp = () => {
+    if (!validateFields()) return;
+    const text = buildWhatsAppText();
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -111,6 +166,16 @@ const MatchDetailsModal: React.FC<MatchDetailsModalProps> = ({
           </div>
 
           {error && <p className="mdm-error">{error}</p>}
+
+          <button
+            type="button"
+            className="btn btn-ct mdm-whatsapp-btn"
+            onClick={handleShareWhatsapp}
+            disabled={sending}
+          >
+            <i className="bi bi-whatsapp"></i>
+            {t('mdm.shareWhatsapp')}
+          </button>
 
           <div className="mdm-actions">
             <button

@@ -105,11 +105,30 @@
   margin-bottom: 14px;
 }
 
+.mdm-whatsapp-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 18px;
+  background: rgba(37, 211, 102, 0.12);
+  border: 1px solid rgba(37, 211, 102, 0.4);
+  color: #25d366;
+  transition: all 0.25s ease;
+}
+
+.mdm-whatsapp-btn:hover:not(:disabled) {
+  background: rgba(37, 211, 102, 0.22);
+  border-color: #25d366;
+  box-shadow: 0 0 14px rgba(37, 211, 102, 0.25);
+}
+
 .mdm-actions {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
-  margin-top: 24px;
+  margin-top: 14px;
 }
 
 .mdm-spinner {

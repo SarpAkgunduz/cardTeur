@@ -130,12 +130,6 @@ const LandingPage = () => {
     { icon: 'bi-people-fill', title: t('landing.featureCrewTitle'), text: t('landing.featureCrewText') },
   ];
 
-  const steps = [
-    { number: '01', title: t('landing.step1Title'), text: t('landing.step1Text') },
-    { number: '02', title: t('landing.step2Title'), text: t('landing.step2Text') },
-    { number: '03', title: t('landing.step3Title'), text: t('landing.step3Text') },
-  ];
-
   // Mirrors the real Player document: the visitor edits the same sub-stats the app
   // stores, and the overalls/tier are derived from them exactly as usePlayerForm does.
   const [demoPosition, setDemoPosition] = useState('ST');
@@ -311,7 +305,6 @@ const LandingPage = () => {
   };
 
   const featuresReveal = useRevealOnScroll<HTMLElement>();
-  const stepsReveal = useRevealOnScroll<HTMLElement>();
   const votingReveal = useRevealOnScroll<HTMLElement>();
   const builderReveal = useRevealOnScroll<HTMLElement>();
   const matchPreviewReveal = useRevealOnScroll<HTMLElement>();
@@ -361,25 +354,6 @@ const LandingPage = () => {
                 <i className={`bi ${feature.icon} landing__feature-icon`}></i>
                 <h3 className="landing__feature-title">{feature.title}</h3>
                 <p className="landing__feature-text">{feature.text}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── How it works ── */}
-        <section
-          ref={stepsReveal.ref}
-          className={`landing__section landing__reveal ${stepsReveal.visible ? 'is-visible' : ''}`}
-        >
-          <div className="landing__section-header">
-            <h2 className="landing__section-title">{t('landing.howTitle')}</h2>
-          </div>
-          <div className="landing__steps">
-            {steps.map(step => (
-              <div key={step.number} className="landing__step">
-                <span className="landing__step-number">{step.number}</span>
-                <h3 className="landing__step-title">{step.title}</h3>
-                <p className="landing__step-text">{step.text}</p>
               </div>
             ))}
           </div>
