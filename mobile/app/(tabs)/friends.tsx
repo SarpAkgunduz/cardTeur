@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTutorial } from '../../contexts/TutorialContext';
 import ScreenHeader from '../../components/ScreenHeader';
+import GuestLockedScreen from '../../components/GuestLockedScreen';
 import Toast from '../../components/Toast';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { userApi } from '../../services/api/userApi';
@@ -45,11 +46,15 @@ export default function FriendsScreen() {
   };
 
   useEffect(() => {
+    if (currentUser?.isAnonymous) {
+      setLoading(false);
+      return;
+    }
     userApi.getMe()
       .then(setMyUser)
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [currentUser]);
 
   const loadReferrals = () => {
     setReferralLoading(true);
@@ -60,9 +65,10 @@ export default function FriendsScreen() {
   };
 
   useEffect(() => {
+    if (currentUser?.isAnonymous) return;
     if (plan !== 'free') loadReferrals();
     else setReferralLoading(false);
-  }, [plan]);
+  }, [plan, currentUser]);
 
   const handleGenerateReferral = async () => {
     setGenerating(true);
@@ -139,6 +145,10 @@ export default function FriendsScreen() {
   };
 
   const isAlreadyFriend = (uid: string) => myFriends.includes(uid);
+
+  if (currentUser?.isAnonymous) {
+    return <GuestLockedScreen featureName={t('nav.friends')} />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>

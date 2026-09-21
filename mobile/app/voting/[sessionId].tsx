@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
 import ScreenHeader from '../../components/ScreenHeader';
+import GuestLockedScreen from '../../components/GuestLockedScreen';
 import Toast from '../../components/Toast';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { votingApi, type VotingSessionDetail, type ParticipantPlayer } from '../../services/api/votingApi';
@@ -122,6 +123,10 @@ export default function VotingScreen() {
       </View>
     );
   };
+
+  if (currentUser?.isAnonymous) {
+    return <GuestLockedScreen featureName={t('voting.title')} />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>

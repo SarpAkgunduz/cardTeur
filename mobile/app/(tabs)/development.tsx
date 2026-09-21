@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
 import ScreenHeader from '../../components/ScreenHeader';
+import GuestLockedScreen from '../../components/GuestLockedScreen';
 import Toast from '../../components/Toast';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { apiRequest } from '../../services/api/apiClient';
@@ -72,11 +73,15 @@ export default function DevelopmentScreen() {
     setToast({ visible: true, message, variant });
 
   useEffect(() => {
+    if (currentUser?.isAnonymous) {
+      setLoading(false);
+      return;
+    }
     apiRequest<DevCrew[]>('/crews')
       .then(setCrews)
       .catch(() => setError(t('development.loadFailed')))
       .finally(() => setLoading(false));
-  }, []);
+  }, [currentUser]);
 
   const leaderCrews = crews.filter(crew =>
     crew.ownerUid === currentUser?.uid || (crew.editorUids ?? []).includes(currentUser?.uid ?? '')
@@ -175,6 +180,10 @@ export default function DevelopmentScreen() {
   };
 
   const pickerCrew = leaderCrews.find(crew => crew._id === pickerCrewId) ?? null;
+
+  if (currentUser?.isAnonymous) {
+    return <GuestLockedScreen featureName={t('nav.development')} />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>

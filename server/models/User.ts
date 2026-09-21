@@ -5,9 +5,15 @@ export type BillingProvider = 'paddle';
 
 export interface IUser extends Document {
   uid: string;
-  email: string;
+  // Absent for a guest (anonymous Firebase) account that hasn't claimed a
+  // real identity yet — see isAnonymous below.
+  email?: string;
   displayName: string;
   photoURL?: string;
+  // True for a Firebase Anonymous Auth session ("Uygulamayı Keşfet"). Same
+  // uid carries through account claiming (signup/Google link), so this just
+  // flips to false in place rather than the doc being recreated.
+  isAnonymous?: boolean;
   friends: string[];
   friendRequests: string[];
   plan: Plan;
@@ -26,9 +32,12 @@ export interface IUser extends Document {
 
 const UserSchema = new Schema<IUser>({
   uid: { type: String, required: true, unique: true },
-  email: { type: String, required: true, unique: true },
+  // sparse: many guest accounts can share "no email" without tripping the
+  // unique index — it only applies once a document actually has one.
+  email: { type: String, unique: true, sparse: true },
   displayName: { type: String, required: true },
   photoURL: { type: String },
+  isAnonymous: { type: Boolean, default: false },
   friends: { type: [String], default: [] },
   friendRequests: { type: [String], default: [], index: true },
   plan: { type: String, enum: ['free', 'premium', 'premium_plus'], default: 'free' },

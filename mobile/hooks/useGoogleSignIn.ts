@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
-import { GoogleAuthProvider, signInWithCredential, getAdditionalUserInfo } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithCredential, linkWithCredential, getAdditionalUserInfo } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
 import { auth } from '../firebase';
 import { apiRequest } from '../services/api/apiClient';
@@ -36,7 +36,13 @@ export function useGoogleSignIn(onSuccess?: (isNewUser: boolean) => void) {
   const handleCredential = async (idToken: string) => {
     try {
       const credential = GoogleAuthProvider.credential(idToken);
-      const result = await signInWithCredential(auth, credential);
+      // A guest (anonymous) session claiming via Google links onto the
+      // SAME Firebase user rather than signing into a separate one, so
+      // the uid — and every card/match already built as a guest — stays
+      // intact.
+      const result = auth.currentUser?.isAnonymous
+        ? await linkWithCredential(auth.currentUser, credential)
+        : await signInWithCredential(auth, credential);
       const isNewUser = getAdditionalUserInfo(result)?.isNewUser ?? false;
       const user = result.user;
       await apiRequest('/users/register', {
@@ -47,8 +53,13 @@ export function useGoogleSignIn(onSuccess?: (isNewUser: boolean) => void) {
         }),
       });
       onSuccess?.(isNewUser);
-    } catch {
-      setError(t('auth.googleFailed'));
+    } catch (err) {
+      const code = (err as { code?: string })?.code;
+      if (code === 'auth/credential-already-in-use') {
+        setError(t('guest.claimEmailInUse'));
+      } else {
+        setError(t('auth.googleFailed'));
+      }
     } finally {
       setLoading(false);
     }

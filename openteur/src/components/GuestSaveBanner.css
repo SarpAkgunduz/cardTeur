@@ -1,0 +1,68 @@
+.gsb-bar {
+  position: sticky;
+  top: 0;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 222, 236, 0.1);
+  border-bottom: 1px solid rgba(0, 222, 236, 0.3);
+  padding: 10px 20px;
+  animation: gsbSlideDown 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gsb-bar i.bi-shield-exclamation {
+  color: #00deec;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.gsb-text {
+  color: rgba(247, 245, 253, 0.85);
+  font-size: 0.82rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.gsb-cta {
+  background: #00deec;
+  border: none;
+  border-radius: 6px;
+  color: #0d1f33;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 7px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.gsb-cta:hover {
+  background: #33e5f0;
+}
+
+.gsb-dismiss {
+  background: transparent;
+  border: none;
+  color: rgba(247, 245, 253, 0.5);
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.gsb-dismiss:hover {
+  color: #ffffff;
+}
+
+@keyframes gsbSlideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .gsb-text {
+    font-size: 0.75rem;
+  }
+}

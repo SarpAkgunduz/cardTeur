@@ -384,6 +384,11 @@ const MatchPage = () => {
   // pseudo-option (no crew filter) has nothing to attach to a Match.
   const crewIdPayload = selectedCrewId && selectedCrewId !== 'ALL' ? selectedCrewId : undefined;
 
+  // Warn early if the selected roster can't fill the chosen formation size,
+  // instead of only finding out once the pitch is short of players.
+  const neededPlayers = playerCount * 2;
+  const poolShortfall = selectedCrewId ? Math.max(0, neededPlayers - playersPool.length) : 0;
+
   const handleSave = async () => {
     if (!pitchMode) return;
     try {
@@ -489,6 +494,13 @@ const MatchPage = () => {
           options={formationSet.map(f => ({ value: f.name, label: f.name.toUpperCase() }))}
         />
       </div>
+
+      {poolShortfall > 0 && (
+        <p className="match-setting-warning">
+          <i className="bi bi-exclamation-triangle-fill" />
+          {t('match.notEnoughPlayersWarning', { have: playersPool.length, need: neededPlayers, missing: poolShortfall })}
+        </p>
+      )}
 
       <button className="match-apply-btn" onClick={applyFormation} disabled={playersPool.length === 0}>
         {t('match.applyFormation')}

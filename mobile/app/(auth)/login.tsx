@@ -13,7 +13,9 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTutorial } from '../../contexts/TutorialContext';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { useGoogleSignIn } from '../../hooks/useGoogleSignIn';
 
@@ -23,9 +25,23 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const { signIn, resetPassword } = useAuth();
+  const { signIn, resetPassword, signInAsGuest } = useAuth();
+  const { startTutorial } = useTutorial();
   const router = useRouter();
+  const [exploreLoading, setExploreLoading] = useState(false);
   const google = useGoogleSignIn(() => router.replace('/(tabs)/roster'));
+
+  const handleExplore = async () => {
+    if (exploreLoading) return;
+    setExploreLoading(true);
+    try {
+      await signInAsGuest();
+      startTutorial();
+      router.replace('/(tabs)/roster');
+    } catch {
+      setExploreLoading(false);
+    }
+  };
 
   const handleForgotPassword = async () => {
     if (!email.trim()) {
@@ -140,6 +156,22 @@ export default function LoginScreen() {
               <Text style={styles.signupText}>
                 {t('auth.noAccount')} <Text style={styles.signupAccent}>{t('auth.signUpLink')}</Text>
               </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.exploreBtn, exploreLoading && styles.btnDisabled]}
+              onPress={handleExplore}
+              disabled={exploreLoading}
+              activeOpacity={0.8}
+            >
+              {exploreLoading
+                ? <ActivityIndicator color={Colors.accent} />
+                : (
+                  <Text style={styles.exploreBtnText}>
+                    <Ionicons name="compass-outline" size={14} color={Colors.accent} /> {t('auth.exploreCta')}
+                  </Text>
+                )
+              }
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -287,5 +319,20 @@ const styles = StyleSheet.create({
   signupAccent: {
     color: Colors.accent,
     fontWeight: '700',
+  },
+  exploreBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: Spacing.lg,
+    paddingVertical: Spacing.sm + 2,
+    borderWidth: 1,
+    borderColor: Colors.accentBorder,
+    borderStyle: 'dashed',
+  },
+  exploreBtnText: {
+    color: Colors.accent,
+    fontWeight: '700',
+    fontSize: FontSizes.sm,
+    letterSpacing: 0.5,
   },
 });

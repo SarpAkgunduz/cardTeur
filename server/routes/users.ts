@@ -13,21 +13,36 @@ const router: Router = Router();
 router.post('/register', requireAuth, async (req: Request, res: Response) => {
   const { displayName, photoURL } = req.body;
   const uid = (req as any).uid as string;
-  const email = (req as any).email as string;
-  const resolvedName = displayName || email.split('@')[0];
+  // A Firebase Anonymous Auth token carries no email — that's how we know
+  // this call is provisioning a guest ("Uygulamayı Keşfet") rather than a
+  // real signup.
+  const email = (req as any).email as string | undefined;
+  const isAnonymous = !email;
+  const resolvedName = displayName || (email ? email.split('@')[0] : 'Misafir');
 
   try {
     const existing = await User.findOne({ uid });
     if (existing) {
+      let changed = false;
       if (!existing.photoURL && photoURL) {
         existing.photoURL = photoURL;
-        await existing.save();
+        changed = true;
       }
+      // Claiming a previously-guest account: the token now carries a real
+      // email (signup or Google link just happened on the same uid) — fold
+      // it into the existing doc instead of creating a second one.
+      if (email && existing.isAnonymous) {
+        existing.email = email;
+        existing.isAnonymous = false;
+        if (displayName) existing.displayName = displayName;
+        changed = true;
+      }
+      if (changed) await existing.save();
       res.json(existing);
       return;
     }
 
-    const user = await User.create({ uid, email, displayName: resolvedName, photoURL });
+    const user = await User.create({ uid, email, displayName: resolvedName, photoURL, isAnonymous });
     res.status(201).json(user);
   } catch (err) {
     res.status(500).json({ error: 'Failed to register user' });
@@ -81,7 +96,7 @@ router.delete('/account', requireAuth, async (req: Request, res: Response) => {
 router.get('/me', requireAuth, async (req: Request, res: Response) => {
   const uid = (req as any).uid as string;
   try {
-    const user = await User.findOne({ uid }).select('uid email displayName photoURL plan planRenewsAt');
+    const user = await User.findOne({ uid }).select('uid email displayName photoURL plan planRenewsAt isAnonymous');
     if (!user) { res.status(404).json({ error: 'User not found' }); return; }
     res.json(user);
   } catch (err) {

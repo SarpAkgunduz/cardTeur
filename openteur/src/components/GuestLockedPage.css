@@ -1,0 +1,55 @@
+.glp-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 24px 16px;
+}
+
+.glp-card {
+  background: rgba(36, 59, 90, 0.75);
+  border: 1px solid rgba(0, 222, 236, 0.2);
+  border-radius: 14px;
+  padding: 48px 40px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+}
+
+.glp-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: rgba(0, 222, 236, 0.1);
+  border: 1px solid rgba(0, 222, 236, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.glp-icon i {
+  font-size: 1.6rem;
+  color: #00deec;
+}
+
+.glp-title {
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0 0 10px;
+}
+
+.glp-text {
+  color: rgba(247, 245, 253, 0.6);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  margin: 0 0 26px;
+}
+
+.glp-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}

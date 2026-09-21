@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { PlayerProvider } from './contexts/PlayerContext';
 import { TutorialProvider } from './contexts/TutorialContext';
@@ -30,20 +31,20 @@ import PublicRoute from './components/routes/PublicRoute';
 import Navbar from './components/Navbar';
 import AppFooter from './components/AppFooter';
 import TutorialOverlay from './components/tutorial/TutorialOverlay';
+import GuestSaveBanner from './components/GuestSaveBanner';
+import GuestExitIntentModal from './components/GuestExitIntentModal';
 
 const HomeRoute = () => {
   const { currentUser } = useAuth();
   return currentUser ? <HomePage /> : <LandingPage />;
 };
 
-const App = () => {
+const AppRoutes = () => {
+  const { t } = useTranslation();
   return (
-    <AuthProvider>
-    <Router>
-      <PlayerProvider>
-      <TutorialProvider>
       <div className="ct-app-shell">
         <Navbar />
+        <GuestSaveBanner />
         <div className="ct-app-content">
           <Routes>
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
@@ -60,7 +61,7 @@ const App = () => {
         <Route
           path="/crew"
           element={
-            <PrivateRoute>
+            <PrivateRoute requireClaimed featureName={t('nav.crew')}>
               <CrewPage />
             </PrivateRoute>
           }
@@ -92,7 +93,7 @@ const App = () => {
         <Route
           path="/profile"
           element={
-            <PrivateRoute>
+            <PrivateRoute requireClaimed featureName={t('nav.profile')}>
               <ProfilePage />
             </PrivateRoute>
           }
@@ -100,7 +101,7 @@ const App = () => {
         <Route
           path="/friends"
           element={
-            <PrivateRoute>
+            <PrivateRoute requireClaimed featureName={t('nav.friends')}>
               <FriendsPage />
             </PrivateRoute>
           }
@@ -108,7 +109,7 @@ const App = () => {
         <Route
           path="/schedule"
           element={
-            <PrivateRoute>
+            <PrivateRoute requireClaimed featureName={t('nav.schedule')}>
               <SchedulePage />
             </PrivateRoute>
           }
@@ -116,7 +117,7 @@ const App = () => {
         <Route
           path="/voting/:sessionId"
           element={
-            <PrivateRoute>
+            <PrivateRoute requireClaimed featureName={t('voting.title')}>
               <VotingPage />
             </PrivateRoute>
           }
@@ -132,7 +133,7 @@ const App = () => {
         <Route
           path="/development"
           element={
-            <PrivateRoute>
+            <PrivateRoute requireClaimed featureName={t('nav.development')}>
               <DevelopmentPage />
             </PrivateRoute>
           }
@@ -141,7 +142,18 @@ const App = () => {
         </div>
         <AppFooter />
         <TutorialOverlay />
+        <GuestExitIntentModal />
       </div>
+  );
+};
+
+const App = () => {
+  return (
+    <AuthProvider>
+    <Router>
+      <PlayerProvider>
+      <TutorialProvider>
+        <AppRoutes />
       </TutorialProvider>
       </PlayerProvider>
     </Router>

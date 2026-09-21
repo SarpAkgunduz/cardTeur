@@ -47,6 +47,9 @@ export default {
     emailInUse: 'Email già in uso.',
     signupFailed: 'Impossibile creare l’account. Riprova.',
     googleFailed: 'Accesso con Google non riuscito. Riprova.',
+    exploreCta: "Esplora l'App",
+    displayName: "Nome Visualizzato",
+    displayNamePh: "Il tuo nome visualizzato",
   },
   tutorial: {
     skip: 'Salta il tour',
@@ -246,5 +249,18 @@ export default {
     updateVote: 'Aggiorna Voto',
     voteSubmitted: 'Voto inviato!',
     voteFailed: 'Impossibile inviare il voto.',
+  },
+  guest: {
+    defaultName: "Ospite",
+    claimTitle: "Salva i Tuoi Progressi",
+    claimText: "Crea un account gratuito per conservare tutto ciò che hai creato — niente va perso, diventa semplicemente tuo.",
+    claimSaveCta: "Crea Account",
+    claimEmailInUse: "Quell'email è già registrata. Accedi con quella, oppure usa un'email diversa per mantenere questa sessione.",
+    lockedTitle: "Crea un account per sbloccare {{feature}}",
+    lockedText: "La creazione delle carte e la preparazione delle partite sono aperte a tutti — questa funzione richiede un account reale e salvato.",
+    bannerText: "Hai creato {{count}} carta/e come ospite — scompariranno se disinstalli l'app.",
+    bannerModalTitle: "Non Perdere le Tue Carte",
+    exitModalTitle: "Salvare prima di uscire?",
+    exitModalText: "Salva le tue carte ora — bastano pochi secondi.",
   },
 };

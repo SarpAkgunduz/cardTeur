@@ -49,6 +49,9 @@ const de: typeof en = {
     emailInUse: 'E-Mail wird bereits verwendet.',
     signupFailed: 'Konto konnte nicht erstellt werden. Bitte erneut versuchen.',
     googleFailed: 'Google-Anmeldung fehlgeschlagen. Bitte erneut versuchen.',
+    exploreCta: "App Entdecken",
+    displayName: "Anzeigename",
+    displayNamePh: "Dein Anzeigename",
   },
   tutorial: {
     skip: 'Tour überspringen',
@@ -248,6 +251,19 @@ const de: typeof en = {
     updateVote: 'Stimme aktualisieren',
     voteSubmitted: 'Stimme abgegeben!',
     voteFailed: 'Stimme konnte nicht abgegeben werden.',
+  },
+  guest: {
+    defaultName: "Gast",
+    claimTitle: "Speichere Deinen Fortschritt",
+    claimText: "Erstelle ein kostenloses Konto, um alles zu behalten, was du erstellt hast — nichts geht verloren, es wird einfach deins.",
+    claimSaveCta: "Konto Erstellen",
+    claimEmailInUse: "Diese E-Mail ist bereits registriert. Melde dich stattdessen damit an oder verwende eine andere E-Mail, um diese Sitzung zu behalten.",
+    lockedTitle: "Erstelle ein Konto, um {{feature}} freizuschalten",
+    lockedText: "Kartenerstellung und Spielvorbereitung stehen allen offen — diese Funktion benötigt ein echtes, gespeichertes Konto.",
+    bannerText: "Du hast {{count}} Karte(n) als Gast erstellt — sie verschwinden, wenn du die App deinstallierst.",
+    bannerModalTitle: "Verliere Deine Karten Nicht",
+    exitModalTitle: "Vor dem Verlassen speichern?",
+    exitModalText: "Speichere deine Karten jetzt — es dauert nur ein paar Sekunden.",
   },
 };
 

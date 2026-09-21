@@ -49,6 +49,9 @@ const tr: typeof en = {
     emailInUse: 'Bu e-posta zaten kullanımda.',
     signupFailed: 'Hesap oluşturulamadı. Lütfen tekrar dene.',
     googleFailed: 'Google girişi başarısız oldu. Lütfen tekrar dene.',
+    exploreCta: "Uygulamayı Keşfet",
+    displayName: "Görünen Ad",
+    displayNamePh: "Görünen adın",
   },
   tutorial: {
     skip: 'Turu atla',
@@ -248,6 +251,19 @@ const tr: typeof en = {
     updateVote: 'Oyu Güncelle',
     voteSubmitted: 'Oy gönderildi!',
     voteFailed: 'Oy gönderilemedi.',
+  },
+  guest: {
+    defaultName: "Misafir",
+    claimTitle: "İlerlemeni Kaydet",
+    claimText: "Oluşturduğun her şeyi kaybetmemek için ücretsiz bir hesap oluştur — hiçbir şey kaybolmaz, sadece senin olur.",
+    claimSaveCta: "Hesap Oluştur",
+    claimEmailInUse: "Bu e-posta zaten kayıtlı. Onun yerine bu hesapla giriş yap, ya da bu oturumu korumak için farklı bir e-posta kullan.",
+    lockedTitle: "{{feature}} özelliğinin kilidini açmak için hesap oluştur",
+    lockedText: "Kart oluşturma ve maç kurma herkese açık — bu özellik gerçek, kayıtlı bir hesap gerektiriyor.",
+    bannerText: "Misafir olarak {{count}} kart oluşturdun — uygulamayı silersen kaybolurlar.",
+    bannerModalTitle: "Kartlarını Kaybetme",
+    exitModalTitle: "Kaydetmeden mi gidiyorsun?",
+    exitModalText: "Kartlarını şimdi kaydet — sadece birkaç saniye sürer.",
   },
 };
 

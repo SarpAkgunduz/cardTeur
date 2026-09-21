@@ -102,6 +102,28 @@
   box-shadow: none;
 }
 
+.landing__cta:disabled,
+.landing__cta--ghost:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.landing__cta--text {
+  border: none;
+  background: transparent;
+  color: rgba(247, 245, 253, 0.55);
+  padding: 14px 12px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.landing__cta--text:hover {
+  color: #f7f5fd;
+  box-shadow: none;
+  transform: none;
+}
+
 /* ── Hero cards ── */
 .landing__hero-cards {
   position: relative;

@@ -988,6 +988,25 @@
   background: #1a2b42;
 }
 
+.match-setting-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 2px 0 0;
+  padding: 9px 12px;
+  background: rgba(240, 173, 78, 0.1);
+  border: 1px solid rgba(240, 173, 78, 0.35);
+  border-radius: 7px;
+  color: #f0ad4e;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.match-setting-warning i {
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
 .match-apply-btn {
   width: 100%;
   padding: 10px 0;

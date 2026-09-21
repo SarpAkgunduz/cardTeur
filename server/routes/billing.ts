@@ -21,6 +21,14 @@ router.post('/checkout', requireAuth, async (req: Request, res: Response) => {
     res.status(400).json({ error: 'Invalid tier' });
     return;
   }
+  // A guest (anonymous) account has no email on its token — Paddle needs one,
+  // and we don't want a purchase tied to an identity that can vanish if the
+  // browser data is cleared. The client is expected to prompt account
+  // claiming before ever reaching this call; this is the server-side backstop.
+  if (!email) {
+    res.status(403).json({ error: 'Please create an account before subscribing.', code: 'ACCOUNT_REQUIRED' });
+    return;
+  }
   const resolvedInterval: BillingInterval = interval === 'annual' ? 'annual' : 'monthly';
   const provider = providerForRegion(countryCode);
 

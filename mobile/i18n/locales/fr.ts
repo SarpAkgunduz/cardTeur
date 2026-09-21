@@ -49,6 +49,9 @@ const fr: typeof en = {
     emailInUse: 'E-mail déjà utilisé.',
     signupFailed: 'Échec de la création du compte. Veuillez réessayer.',
     googleFailed: 'Échec de la connexion Google. Veuillez réessayer.',
+    exploreCta: "Explorer l'Application",
+    displayName: "Nom d'Affichage",
+    displayNamePh: "Votre nom d'affichage",
   },
   tutorial: {
     skip: 'Passer la visite',
@@ -248,6 +251,19 @@ const fr: typeof en = {
     updateVote: 'Mettre à Jour le Vote',
     voteSubmitted: 'Vote envoyé !',
     voteFailed: "Échec de l'envoi du vote.",
+  },
+  guest: {
+    defaultName: "Invité",
+    claimTitle: "Sauvegardez Votre Progression",
+    claimText: "Créez un compte gratuit pour conserver tout ce que vous avez créé — rien n'est perdu, ça devient simplement à vous.",
+    claimSaveCta: "Créer un Compte",
+    claimEmailInUse: "Cet e-mail est déjà enregistré. Connectez-vous plutôt avec, ou utilisez un e-mail différent pour conserver cette session.",
+    lockedTitle: "Créez un compte pour débloquer {{feature}}",
+    lockedText: "La création de cartes et la préparation de match sont ouvertes à tous — cette fonctionnalité nécessite un compte réel et enregistré.",
+    bannerText: "Vous avez créé {{count}} carte(s) en tant qu'invité — elles disparaîtront si vous désinstallez l'application.",
+    bannerModalTitle: "Ne Perdez Pas Vos Cartes",
+    exitModalTitle: "Sauvegarder avant de partir ?",
+    exitModalText: "Sauvegardez vos cartes maintenant — cela ne prend que quelques secondes.",
   },
 };
 

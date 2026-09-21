@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import BackButton from '../components/BackButton';
 import ToastNotification from '../components/ToastNotification';
+import ClaimAccountModal from '../components/ClaimAccountModal';
 import { useAuth } from '../contexts/AuthContext';
 import { billingApi, referralApi } from '../services';
 import type { BillingInterval, PaidTier, Plan, ReferralOverview } from '../services/api/types';
@@ -88,6 +89,8 @@ const PricingPage = () => {
   const [referralOverview, setReferralOverview] = useState<ReferralOverview | null>(null);
   const [referralOverviewLoading, setReferralOverviewLoading] = useState(true);
   const [generatingReferral, setGeneratingReferral] = useState(false);
+  const [showClaimModal, setShowClaimModal] = useState(false);
+  const [pendingClaimTier, setPendingClaimTier] = useState<PaidTier | null>(null);
 
   const checkReferral = async (code: string) => {
     if (!code) {
@@ -206,6 +209,14 @@ const PricingPage = () => {
     // account, so send them through signup and bring them back.
     if (!isSignedIn) {
       navigate(`/signup?redirect=${encodeURIComponent('/pricing')}`);
+      return;
+    }
+    // A guest (anonymous) session is still "signed in", but Paddle checkout
+    // needs a real, recoverable identity — prompt to claim right here so
+    // they don't lose their place on this page.
+    if (currentUser?.isAnonymous) {
+      setPendingClaimTier(tier);
+      setShowClaimModal(true);
       return;
     }
     setLoadingTier(tier);
@@ -447,6 +458,15 @@ const PricingPage = () => {
         onClose={() => setShowToast(false)}
         variant="info"
       />
+
+      {showClaimModal && (
+        <ClaimAccountModal
+          onClose={() => { setShowClaimModal(false); setPendingClaimTier(null); }}
+          onClaimed={() => { if (pendingClaimTier) handleChoose(pendingClaimTier); }}
+          titleKey="guest.pricingModalTitle"
+          textKey="guest.claimText"
+        />
+      )}
     </div>
   );
 };

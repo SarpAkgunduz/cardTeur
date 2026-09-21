@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTutorial } from '../../contexts/TutorialContext';
 import ScreenHeader from '../../components/ScreenHeader';
+import GuestLockedScreen from '../../components/GuestLockedScreen';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { crewApi } from '../../services/api/crewApi';
 import type { Crew } from '../../services/api/types';
@@ -27,11 +28,19 @@ export default function CrewScreen() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
+    if (currentUser?.isAnonymous) {
+      setLoading(false);
+      return;
+    }
     crewApi.getAll()
       .then(setCrews)
       .catch(() => setError(t('crew.loadFailed')))
       .finally(() => setLoading(false));
-  }, []);
+  }, [currentUser]);
+
+  if (currentUser?.isAnonymous) {
+    return <GuestLockedScreen featureName={t('nav.crew')} />;
+  }
 
   return (
     <SafeAreaView style={styles.container}>

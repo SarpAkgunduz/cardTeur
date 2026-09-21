@@ -49,6 +49,9 @@ const zh: typeof en = {
     emailInUse: '该邮箱已被使用。',
     signupFailed: '账户创建失败，请重试。',
     googleFailed: 'Google 登录失败，请重试。',
+    exploreCta: "探索应用",
+    displayName: "显示名称",
+    displayNamePh: "你的显示名称",
   },
   tutorial: {
     skip: '跳过导览',
@@ -248,6 +251,19 @@ const zh: typeof en = {
     updateVote: '更新投票',
     voteSubmitted: '投票已提交！',
     voteFailed: '提交投票失败。',
+  },
+  guest: {
+    defaultName: "访客",
+    claimTitle: "保存你的进度",
+    claimText: "创建一个免费账户以保留你所创建的一切——什么都不会丢失，一切都将真正属于你。",
+    claimSaveCta: "创建账户",
+    claimEmailInUse: "该邮箱已被注册。请改用该邮箱登录，或使用其他邮箱以保留此会话。",
+    lockedTitle: "创建账户以解锁{{feature}}",
+    lockedText: "卡片创建和比赛设置对所有人开放——此功能需要真实的已保存账户。",
+    bannerText: "你以访客身份创建了 {{count}} 张卡片——卸载应用后它们将消失。",
+    bannerModalTitle: "不要丢失你的卡片",
+    exitModalTitle: "离开前要保存吗？",
+    exitModalText: "现在保存你的卡片——只需几秒钟。",
   },
 };
 

@@ -49,6 +49,9 @@ const ja: typeof en = {
     emailInUse: 'このメールアドレスはすでに使用されています。',
     signupFailed: 'アカウントを作成できませんでした。もう一度お試しください。',
     googleFailed: 'Googleログインに失敗しました。もう一度お試しください。',
+    exploreCta: "アプリを探索",
+    displayName: "表示名",
+    displayNamePh: "表示名を入力",
   },
   tutorial: {
     skip: 'ツアーをスキップ',
@@ -248,6 +251,19 @@ const ja: typeof en = {
     updateVote: '投票を更新',
     voteSubmitted: '投票を送信しました！',
     voteFailed: '投票の送信に失敗しました。',
+  },
+  guest: {
+    defaultName: "ゲスト",
+    claimTitle: "進捗を保存しよう",
+    claimText: "作成したものをすべて保持するために無料アカウントを作成しましょう — 何も失われず、そのままあなたのものになります。",
+    claimSaveCta: "アカウントを作成",
+    claimEmailInUse: "そのメールアドレスは既に登録されています。代わりにそのアカウントでログインするか、このセッションを保持するために別のメールアドレスを使用してください。",
+    lockedTitle: "{{feature}}のロックを解除するにはアカウントを作成してください",
+    lockedText: "カード作成と試合設定は誰でも利用できます — この機能には実際の保存されたアカウントが必要です。",
+    bannerText: "ゲストとして{{count}}枚のカードを作成しました — アプリをアンインストールすると消えてしまいます。",
+    bannerModalTitle: "カードを失わないで",
+    exitModalTitle: "退出する前に保存しますか？",
+    exitModalText: "今すぐカードを保存しましょう — 数秒で完了します。",
   },
 };
 

@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { PlayerProvider } from '../contexts/PlayerContext';
 import { TutorialProvider } from '../contexts/TutorialContext';
 import TutorialOverlay from '../components/tutorial/TutorialOverlay';
+import GuestReminderModal from '../components/GuestReminderModal';
 import { Colors } from '../constants/theme';
 import { initI18n } from '../i18n';
 
@@ -21,7 +22,9 @@ function RootNavigator() {
 
     if (!currentUser && !inAuthGroup) {
       router.replace('/(auth)/login');
-    } else if (currentUser && inAuthGroup) {
+    } else if (currentUser && !currentUser.isAnonymous && inAuthGroup) {
+      // Only a real (claimed) account bounces out of the auth group — a
+      // guest must still be able to reach /login and /signup to claim.
       router.replace('/(tabs)/roster');
     }
   }, [currentUser, loading, segments]);
@@ -68,6 +71,7 @@ export default function RootLayout() {
           <View style={{ flex: 1 }}>
             <RootNavigator />
             <TutorialOverlay />
+            <GuestReminderModal />
           </View>
         </TutorialProvider>
       </PlayerProvider>

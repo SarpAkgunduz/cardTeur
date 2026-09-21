@@ -49,6 +49,9 @@ const ko: typeof en = {
     emailInUse: '이미 사용 중인 이메일입니다.',
     signupFailed: '계정을 생성하지 못했습니다. 다시 시도하세요.',
     googleFailed: 'Google 로그인에 실패했습니다. 다시 시도하세요.',
+    exploreCta: "앱 둘러보기",
+    displayName: "표시 이름",
+    displayNamePh: "표시할 이름",
   },
   tutorial: {
     skip: '투어 건너뛰기',
@@ -248,6 +251,19 @@ const ko: typeof en = {
     updateVote: '투표 수정',
     voteSubmitted: '투표가 제출되었습니다!',
     voteFailed: '투표 제출에 실패했습니다.',
+  },
+  guest: {
+    defaultName: "게스트",
+    claimTitle: "진행 상황 저장하기",
+    claimText: "만든 모든 것을 지키려면 무료 계정을 만드세요 — 아무것도 사라지지 않고, 그대로 당신의 것이 됩니다.",
+    claimSaveCta: "계정 만들기",
+    claimEmailInUse: "이 이메일은 이미 등록되어 있습니다. 대신 해당 계정으로 로그인하거나, 이 세션을 유지하려면 다른 이메일을 사용하세요.",
+    lockedTitle: "{{feature}} 잠금을 해제하려면 계정을 만드세요",
+    lockedText: "카드 제작과 경기 구성은 누구나 이용할 수 있습니다 — 이 기능은 실제 저장된 계정이 필요합니다.",
+    bannerText: "게스트로 {{count}}개의 카드를 만들었습니다 — 앱을 삭제하면 사라집니다.",
+    bannerModalTitle: "카드를 잃지 마세요",
+    exitModalTitle: "나가기 전에 저장할까요?",
+    exitModalText: "지금 카드를 저장하세요 — 몇 초밖에 걸리지 않습니다.",
   },
 };
 

@@ -1,0 +1,203 @@
+.cam-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  animation: camFadeIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  padding: 16px;
+}
+
+.cam-panel {
+  position: relative;
+  background: rgba(26, 43, 66, 0.97);
+  border: 1px solid rgba(0, 222, 236, 0.25);
+  border-radius: 14px;
+  padding: 36px 40px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  animation: camSlideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  max-height: 92vh;
+  overflow-y: auto;
+}
+
+.cam-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: rgba(247, 245, 253, 0.5);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 6px;
+  transition: color 0.2s ease;
+}
+
+.cam-close:hover {
+  color: #ffffff;
+}
+
+.cam-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding-right: 20px;
+}
+
+.cam-header i {
+  font-size: 1.4rem;
+  color: #00deec;
+}
+
+.cam-header h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.cam-subtitle {
+  color: rgba(247, 245, 253, 0.65);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  margin: 0 0 22px;
+}
+
+.cam-error {
+  background: rgba(255, 107, 107, 0.12);
+  border: 1px solid rgba(255, 107, 107, 0.35);
+  color: #ff6b6b;
+  font-size: 0.8rem;
+  padding: 9px 12px;
+  border-radius: 7px;
+  margin-bottom: 14px;
+}
+
+.cam-field {
+  margin-bottom: 12px;
+}
+
+.cam-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 7px;
+  color: #ffffff;
+  padding: 11px 13px;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.cam-input:focus {
+  outline: none;
+  border-color: #00deec;
+}
+
+.cam-input::placeholder {
+  color: rgba(247, 245, 253, 0.4);
+}
+
+.cam-submit-btn {
+  width: 100%;
+  background: #00deec;
+  border: none;
+  border-radius: 7px;
+  color: #0d1f33;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  padding: 12px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: all 0.2s ease;
+}
+
+.cam-submit-btn:hover:not(:disabled) {
+  background: #33e5f0;
+  box-shadow: 0 0 16px rgba(0, 222, 236, 0.35);
+}
+
+.cam-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cam-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0;
+  color: rgba(247, 245, 253, 0.4);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.cam-divider::before,
+.cam-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cam-google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #ffffff;
+  border: none;
+  border-radius: 7px;
+  padding: 11px;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: #1f1f1f;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cam-google-btn:hover:not(:disabled) {
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.25);
+}
+
+.cam-google-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.cam-google-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.cam-footnote {
+  margin: 16px 0 0;
+  font-size: 0.72rem;
+  color: rgba(247, 245, 253, 0.4);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.cam-footnote strong {
+  color: rgba(247, 245, 253, 0.6);
+}
+
+@keyframes camFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes camSlideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}

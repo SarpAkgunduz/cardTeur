@@ -9,7 +9,10 @@ interface PublicRouteProps {
 const PublicRoute: React.FC<PublicRouteProps> = ({ children }) => {
   const { currentUser } = useAuth();
   const [searchParams] = useSearchParams();
-  if (currentUser) {
+  // A guest (anonymous) session still needs to reach /login and /signup —
+  // that's exactly how they claim their account — so only a *real* signed-in
+  // user gets bounced away from these pages.
+  if (currentUser && !currentUser.isAnonymous) {
     const redirect = searchParams.get('redirect');
     return <Navigate to={redirect?.startsWith('/') ? redirect : '/'} replace />;
   }

@@ -47,6 +47,9 @@ export default {
     emailInUse: 'Este correo electrónico ya está en uso.',
     signupFailed: 'No se pudo crear la cuenta. Inténtalo de nuevo.',
     googleFailed: 'Error al iniciar sesión con Google. Inténtalo de nuevo.',
+    exploreCta: "Explorar la App",
+    displayName: "Nombre a Mostrar",
+    displayNamePh: "Tu nombre a mostrar",
   },
   tutorial: {
     skip: 'Saltar recorrido',
@@ -246,5 +249,18 @@ export default {
     updateVote: 'Actualizar Voto',
     voteSubmitted: '¡Voto enviado!',
     voteFailed: 'No se pudo enviar el voto.',
+  },
+  guest: {
+    defaultName: "Invitado",
+    claimTitle: "Guarda Tu Progreso",
+    claimText: "Crea una cuenta gratuita para conservar todo lo que has creado — nada se pierde, simplemente se vuelve tuyo.",
+    claimSaveCta: "Crear Cuenta",
+    claimEmailInUse: "Ese correo ya está registrado. Inicia sesión con él, o usa un correo diferente para conservar esta sesión.",
+    lockedTitle: "Crea una cuenta para desbloquear {{feature}}",
+    lockedText: "La creación de cartas y la preparación de partidos están abiertas a todos — esta función necesita una cuenta real y guardada.",
+    bannerText: "Has creado {{count}} carta(s) como invitado — desaparecerán si desinstalas la app.",
+    bannerModalTitle: "No Pierdas Tus Cartas",
+    exitModalTitle: "¿Guardar antes de irte?",
+    exitModalText: "Guarda tus cartas ahora — solo toma unos segundos.",
   },
 };

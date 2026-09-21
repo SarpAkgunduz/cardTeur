@@ -49,6 +49,9 @@ const az: typeof en = {
     emailInUse: 'Bu e-poçt artıq istifadə olunur.',
     signupFailed: 'Hesab yaradıla bilmədi. Yenidən cəhd et.',
     googleFailed: 'Google girişi uğursuz oldu. Yenidən cəhd et.',
+    exploreCta: "Tətbiqi Kəşf Et",
+    displayName: "Görünən Ad",
+    displayNamePh: "Görünən adın",
   },
   tutorial: {
     skip: 'Turu keç',
@@ -248,6 +251,19 @@ const az: typeof en = {
     updateVote: 'Səsi Yenilə',
     voteSubmitted: 'Səs göndərildi!',
     voteFailed: 'Səs göndərilə bilmədi.',
+  },
+  guest: {
+    defaultName: "Qonaq",
+    claimTitle: "İrəliləyişini Saxla",
+    claimText: "Yaratdığın hər şeyi itirməmək üçün pulsuz hesab yarat — heç nə itmir, sadəcə sənin olur.",
+    claimSaveCta: "Hesab Yarat",
+    claimEmailInUse: "Bu e-poçt artıq qeydiyyatdan keçib. Onun əvəzinə bu hesabla daxil ol, ya da bu sessiyanı saxlamaq üçün fərqli e-poçt istifadə et.",
+    lockedTitle: "{{feature}} xüsusiyyətinin kilidini açmaq üçün hesab yarat",
+    lockedText: "Kart yaratma və matç qurma hər kəsə açıqdır — bu xüsusiyyət həqiqi, saxlanmış hesab tələb edir.",
+    bannerText: "Qonaq olaraq {{count}} kart yaratdın — tətbiqi silsən itəcəklər.",
+    bannerModalTitle: "Kartlarını İtirmə",
+    exitModalTitle: "Saxlamadan gedirsən?",
+    exitModalText: "Kartlarını indi saxla — bir neçə saniyə çəkir.",
   },
 };
 

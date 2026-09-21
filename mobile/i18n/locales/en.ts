@@ -47,6 +47,9 @@ export default {
     emailInUse: 'Email already in use.',
     signupFailed: 'Failed to create account. Please try again.',
     googleFailed: 'Google sign-in failed. Please try again.',
+    exploreCta: "Explore the App",
+    displayName: "Display Name",
+    displayNamePh: "Your display name",
   },
   tutorial: {
     skip: 'Skip tour',
@@ -246,5 +249,18 @@ export default {
     updateVote: 'Update Vote',
     voteSubmitted: 'Vote submitted!',
     voteFailed: 'Failed to submit vote.',
+  },
+  guest: {
+    defaultName: "Guest",
+    claimTitle: "Save Your Progress",
+    claimText: "Create a free account to keep everything you've built — nothing is lost, it just becomes yours.",
+    claimSaveCta: "Create Account",
+    claimEmailInUse: "That email is already registered. Log in with it instead, or use a different email to keep this session.",
+    lockedTitle: "Create an account to unlock {{feature}}",
+    lockedText: "Card building and match setup are open to everyone — this feature needs a real, saved account.",
+    bannerText: "You've created {{count}} card(s) as a guest — they'll disappear if you uninstall the app.",
+    bannerModalTitle: "Don't Lose Your Cards",
+    exitModalTitle: "Save before you go?",
+    exitModalText: "Save your cards now — it only takes a few seconds.",
   },
 };

@@ -19,6 +19,7 @@ import { useTutorial } from '../../contexts/TutorialContext';
 import PlayerCard from '../../components/PlayerCard';
 import ComparePanel from '../../components/ComparePanel';
 import ScreenHeader from '../../components/ScreenHeader';
+import GuestSaveBanner from '../../components/GuestSaveBanner';
 import Toast from '../../components/Toast';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import type { Player, CreatePlayerDto } from '../../services/api/types';
@@ -222,6 +223,7 @@ export default function RosterScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ScreenHeader title={t('roster.title')} right={headerRight} showHelp />
+      <GuestSaveBanner />
 
       {mode !== 'none' && (
         <View style={styles.modeBanner}>

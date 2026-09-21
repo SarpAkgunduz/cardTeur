@@ -6,6 +6,8 @@ import FootballPitch, { PitchPlayer } from '../components/FootballPitch';
 import '../components/FootballPitch.css';
 import { getFormationSet } from '../data/formations';
 import { calculateAverage, computeCardTitle, computeOverall } from '../utils/playerRating';
+import { useAuth } from '../contexts/AuthContext';
+import { useTutorial } from '../contexts/TutorialContext';
 import './LandingPage.css';
 
 // Reveals a section with a rise/fade transition the first time it scrolls into view.
@@ -122,6 +124,21 @@ const SHOWCASE_CARDS = [
 const LandingPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { signInAsGuest } = useAuth();
+  const { startTutorial } = useTutorial();
+  const [exploreLoading, setExploreLoading] = useState(false);
+
+  const handleExplore = async () => {
+    if (exploreLoading) return;
+    setExploreLoading(true);
+    try {
+      await signInAsGuest();
+      startTutorial();
+      navigate('/manage');
+    } catch {
+      setExploreLoading(false);
+    }
+  };
 
   const features = [
     { icon: 'bi-person-badge-fill', title: t('landing.featureCardsTitle'), text: t('landing.featureCardsText') },
@@ -326,7 +343,11 @@ const LandingPage = () => {
                 {t('landing.getStarted')}
                 <i className="bi bi-arrow-right"></i>
               </button>
-              <button className="landing__cta landing__cta--ghost" onClick={() => navigate('/login')}>
+              <button className="landing__cta landing__cta--ghost" onClick={handleExplore} disabled={exploreLoading}>
+                <i className="bi bi-compass"></i>
+                {exploreLoading ? t('common.loading') : t('landing.exploreCta')}
+              </button>
+              <button className="landing__cta landing__cta--text" onClick={() => navigate('/login')}>
                 {t('nav.login')}
               </button>
             </div>

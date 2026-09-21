@@ -49,6 +49,9 @@ const pl: typeof en = {
     emailInUse: 'Ten e-mail jest już używany.',
     signupFailed: 'Nie udało się utworzyć konta. Spróbuj ponownie.',
     googleFailed: 'Logowanie przez Google nie powiodło się. Spróbuj ponownie.',
+    exploreCta: "Odkryj Aplikację",
+    displayName: "Wyświetlana Nazwa",
+    displayNamePh: "Twoja wyświetlana nazwa",
   },
   tutorial: {
     skip: 'Pomiń wycieczkę',
@@ -248,6 +251,19 @@ const pl: typeof en = {
     updateVote: 'Zaktualizuj głos',
     voteSubmitted: 'Głos wysłany!',
     voteFailed: 'Nie udało się wysłać głosu.',
+  },
+  guest: {
+    defaultName: "Gość",
+    claimTitle: "Zapisz Swój Postęp",
+    claimText: "Utwórz darmowe konto, aby zachować wszystko, co stworzyłeś — nic nie ginie, po prostu staje się twoje.",
+    claimSaveCta: "Utwórz Konto",
+    claimEmailInUse: "Ten e-mail jest już zarejestrowany. Zaloguj się nim zamiast tego, lub użyj innego e-maila, aby zachować tę sesję.",
+    lockedTitle: "Utwórz konto, aby odblokować {{feature}}",
+    lockedText: "Tworzenie kart i ustawianie meczu są otwarte dla wszystkich — ta funkcja wymaga prawdziwego, zapisanego konta.",
+    bannerText: "Utworzyłeś {{count}} kart(y) jako gość — znikną, jeśli odinstalujesz aplikację.",
+    bannerModalTitle: "Nie Trać Swoich Kart",
+    exitModalTitle: "Zapisać przed wyjściem?",
+    exitModalText: "Zapisz swoje karty teraz — zajmie to tylko kilka sekund.",
   },
 };
 

@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTutorial } from '../../contexts/TutorialContext';
+import { apiRequest } from '../../services/api/apiClient';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { useGoogleSignIn } from '../../hooks/useGoogleSignIn';
 
@@ -49,10 +50,19 @@ export default function SignupScreen() {
     setError('');
     try {
       await signUp(email.trim(), password);
+      try {
+        await apiRequest('/users/register', {
+          method: 'POST',
+          body: JSON.stringify({ displayName: email.trim().split('@')[0] }),
+        });
+      } catch {
+        // Non-fatal — the profile still resolves on the next refreshProfile() call.
+      }
       startTutorial();
       router.replace('/(tabs)/roster');
-    } catch (err: any) {
-      if (err?.code === 'auth/email-already-in-use') {
+    } catch (err) {
+      const code = (err as { code?: string })?.code;
+      if (code === 'auth/email-already-in-use' || code === 'auth/credential-already-in-use') {
         setError(t('auth.emailInUse'));
       } else {
         setError(t('auth.signupFailed'));
