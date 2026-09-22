@@ -1,16 +1,19 @@
 import User from '../../models/User';
 import { redeemReferral, grantReferrerReward } from '../referralService';
 import { paddleAdapter } from './paddle';
-import { BillingAdapter, CheckoutParams, CheckoutResult, ParsedSubscriptionEvent } from './types';
+import { revenuecatAdapter } from './revenuecat';
+import { BillingAdapter, CheckoutParams, CheckoutResult, ParsedSubscriptionEvent, ProviderName } from './types';
 
-export type ProviderName = 'paddle';
+export type { ProviderName } from './types';
 
-export function getAdapter(_provider?: ProviderName): BillingAdapter {
-  return paddleAdapter;
+export function getAdapter(provider: ProviderName = 'paddle'): BillingAdapter {
+  return provider === 'revenuecat' ? revenuecatAdapter : paddleAdapter;
 }
 
-// Paddle is the only provider. TR used to route to iyzico; see services/billing/iyzico.ts.
-export function providerForRegion(_countryCode?: string): ProviderName {
+// Web checkout always goes through Paddle (TR used to route to iyzico; see
+// services/billing/iyzico.ts). Mobile never calls this — it picks
+// 'revenuecat' implicitly by going through the App Store on-device.
+export function providerForRegion(_countryCode?: string): 'paddle' {
   return 'paddle';
 }
 
@@ -23,10 +26,11 @@ export async function applySubscriptionEvent(
   event: ParsedSubscriptionEvent
 ): Promise<void> {
   if (!event.uid) return;
+  if (event.type === 'noop') return;
 
   // Accounts with a manually granted lifetimePlan are frozen against billing
-  // webhooks entirely — a Paddle renewal/cancellation/update must never be
-  // able to touch their plan or billing fields.
+  // webhooks entirely — a renewal/cancellation/update from any provider must
+  // never be able to touch their plan or billing fields.
   const existing = await User.findOne({ uid: event.uid }, { lifetimePlan: 1 }).lean();
   if (existing?.lifetimePlan) return;
 

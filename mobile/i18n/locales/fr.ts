@@ -49,6 +49,7 @@ const fr: typeof en = {
     emailInUse: 'E-mail déjà utilisé.',
     signupFailed: 'Échec de la création du compte. Veuillez réessayer.',
     googleFailed: 'Échec de la connexion Google. Veuillez réessayer.',
+    appleFailed: "Échec de la connexion Apple. Veuillez réessayer.",
     exploreCta: "Explorer l'Application",
     displayName: "Nom d'Affichage",
     displayNamePh: "Votre nom d'affichage",

@@ -49,6 +49,7 @@ const az: typeof en = {
     emailInUse: 'Bu e-poçt artıq istifadə olunur.',
     signupFailed: 'Hesab yaradıla bilmədi. Yenidən cəhd et.',
     googleFailed: 'Google girişi uğursuz oldu. Yenidən cəhd et.',
+    appleFailed: "Apple girişi uğursuz oldu. Yenidən cəhd et.",
     exploreCta: "Tətbiqi Kəşf Et",
     displayName: "Görünən Ad",
     displayNamePh: "Görünən adın",

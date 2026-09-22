@@ -13,10 +13,12 @@ import {
   ScrollView,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import { useAuth } from '../contexts/AuthContext';
 import { apiRequest } from '../services/api/apiClient';
 import { Colors, Spacing, FontSizes } from '../constants/theme';
 import { useGoogleSignIn } from '../hooks/useGoogleSignIn';
+import { useAppleSignIn } from '../hooks/useAppleSignIn';
 
 interface ClaimAccountModalProps {
   visible: boolean;
@@ -40,6 +42,11 @@ export default function ClaimAccountModal({ visible, onClose, onClaimed, titleKe
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const google = useGoogleSignIn(async () => {
+    await refreshProfile();
+    onClaimed?.();
+    onClose();
+  });
+  const apple = useAppleSignIn(async () => {
     await refreshProfile();
     onClaimed?.();
     onClose();
@@ -102,9 +109,9 @@ export default function ClaimAccountModal({ visible, onClose, onClaimed, titleKe
               <Text style={styles.title}>{t(titleKey ?? 'guest.claimTitle')}</Text>
               <Text style={styles.text}>{t(textKey ?? 'guest.claimText')}</Text>
 
-              {(error || google.error) ? (
+              {(error || google.error || apple.error) ? (
                 <View style={styles.errorBox}>
-                  <Text style={styles.errorText}>{error || google.error}</Text>
+                  <Text style={styles.errorText}>{error || google.error || apple.error}</Text>
                 </View>
               ) : null}
 
@@ -187,6 +194,16 @@ export default function ClaimAccountModal({ visible, onClose, onClaimed, titleKe
                   : <Text style={styles.googleBtnText}>{t('auth.googleBtn')}</Text>
                 }
               </TouchableOpacity>
+
+              {apple.available && (
+                <AppleAuthentication.AppleAuthenticationButton
+                  buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
+                  buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE}
+                  cornerRadius={0}
+                  style={styles.appleBtn}
+                  onPress={apple.signIn}
+                />
+              )}
 
               <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
                 <Text style={styles.closeBtnText}>{t('common.cancel')}</Text>
@@ -296,6 +313,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.05)',
     padding: Spacing.md,
     alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  appleBtn: {
+    height: 48,
   },
   googleBtnText: {
     color: Colors.textPrimary,

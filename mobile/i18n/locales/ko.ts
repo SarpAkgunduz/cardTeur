@@ -49,6 +49,7 @@ const ko: typeof en = {
     emailInUse: '이미 사용 중인 이메일입니다.',
     signupFailed: '계정을 생성하지 못했습니다. 다시 시도하세요.',
     googleFailed: 'Google 로그인에 실패했습니다. 다시 시도하세요.',
+    appleFailed: "Apple 로그인에 실패했습니다. 다시 시도하세요.",
     exploreCta: "앱 둘러보기",
     displayName: "표시 이름",
     displayNamePh: "표시할 이름",

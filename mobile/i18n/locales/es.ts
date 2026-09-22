@@ -47,6 +47,7 @@ export default {
     emailInUse: 'Este correo electrónico ya está en uso.',
     signupFailed: 'No se pudo crear la cuenta. Inténtalo de nuevo.',
     googleFailed: 'Error al iniciar sesión con Google. Inténtalo de nuevo.',
+    appleFailed: "Error al iniciar sesión con Apple. Inténtalo de nuevo.",
     exploreCta: "Explorar la App",
     displayName: "Nombre a Mostrar",
     displayNamePh: "Tu nombre a mostrar",

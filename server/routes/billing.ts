@@ -96,5 +96,9 @@ async function handleWebhook(provider: ProviderName, req: Request, res: Response
 }
 
 router.post('/webhook/paddle', (req, res) => handleWebhook('paddle', req, res));
+// Mobile subscriptions (Apple/Google IAP via RevenueCat) land here instead —
+// see services/billing/revenuecat.ts. Same raw-body parsing already covers
+// this whole /api/billing/webhook/* prefix (see index.ts).
+router.post('/webhook/revenuecat', (req, res) => handleWebhook('revenuecat', req, res));
 
 export default router;

@@ -49,6 +49,7 @@ const ja: typeof en = {
     emailInUse: 'このメールアドレスはすでに使用されています。',
     signupFailed: 'アカウントを作成できませんでした。もう一度お試しください。',
     googleFailed: 'Googleログインに失敗しました。もう一度お試しください。',
+    appleFailed: "Appleログインに失敗しました。もう一度お試しください。",
     exploreCta: "アプリを探索",
     displayName: "表示名",
     displayNamePh: "表示名を入力",

@@ -47,6 +47,7 @@ export default {
     emailInUse: 'Email already in use.',
     signupFailed: 'Failed to create account. Please try again.',
     googleFailed: 'Google sign-in failed. Please try again.',
+    appleFailed: "Apple sign-in failed. Please try again.",
     exploreCta: "Explore the App",
     displayName: "Display Name",
     displayNamePh: "Your display name",

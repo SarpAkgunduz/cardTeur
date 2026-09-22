@@ -12,11 +12,13 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTutorial } from '../../contexts/TutorialContext';
 import { apiRequest } from '../../services/api/apiClient';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { useGoogleSignIn } from '../../hooks/useGoogleSignIn';
+import { useAppleSignIn } from '../../hooks/useAppleSignIn';
 
 export default function SignupScreen() {
   const { t } = useTranslation();
@@ -30,6 +32,10 @@ export default function SignupScreen() {
   const router = useRouter();
   const google = useGoogleSignIn(isNewUser => {
     if (isNewUser) startTutorial();
+    router.replace('/(tabs)/roster');
+  });
+  const apple = useAppleSignIn(() => {
+    startTutorial();
     router.replace('/(tabs)/roster');
   });
 
@@ -80,9 +86,9 @@ export default function SignupScreen() {
             <Text style={styles.title}>{t('auth.signupTitle')}</Text>
             <Text style={styles.subtitle}>{t('auth.signupSubtitle')}</Text>
 
-            {(error || google.error) ? (
+            {(error || google.error || apple.error) ? (
               <View style={styles.errorBox}>
-                <Text style={styles.errorText}>{error || google.error}</Text>
+                <Text style={styles.errorText}>{error || google.error || apple.error}</Text>
               </View>
             ) : null}
 
@@ -153,6 +159,16 @@ export default function SignupScreen() {
                 : <Text style={styles.googleBtnText}>{t('auth.googleBtn')}</Text>
               }
             </TouchableOpacity>
+
+            {apple.available && (
+              <AppleAuthentication.AppleAuthenticationButton
+                buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_UP}
+                buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.WHITE_OUTLINE}
+                cornerRadius={0}
+                style={styles.appleBtn}
+                onPress={apple.signIn}
+              />
+            )}
 
             <TouchableOpacity style={styles.loginLink} onPress={() => router.back()}>
               <Text style={styles.loginText}>
@@ -247,6 +263,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.05)',
     padding: Spacing.md,
     alignItems: 'center' as const,
+    marginBottom: Spacing.sm,
+  },
+  appleBtn: {
+    height: 48,
     marginBottom: Spacing.lg,
   },
   googleBtnText: {

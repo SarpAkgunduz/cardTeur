@@ -49,6 +49,7 @@ const tr: typeof en = {
     emailInUse: 'Bu e-posta zaten kullanımda.',
     signupFailed: 'Hesap oluşturulamadı. Lütfen tekrar dene.',
     googleFailed: 'Google girişi başarısız oldu. Lütfen tekrar dene.',
+    appleFailed: "Apple ile giriş başarısız oldu. Lütfen tekrar dene.",
     exploreCta: "Uygulamayı Keşfet",
     displayName: "Görünen Ad",
     displayNamePh: "Görünen adın",

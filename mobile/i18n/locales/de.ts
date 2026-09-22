@@ -49,6 +49,7 @@ const de: typeof en = {
     emailInUse: 'E-Mail wird bereits verwendet.',
     signupFailed: 'Konto konnte nicht erstellt werden. Bitte erneut versuchen.',
     googleFailed: 'Google-Anmeldung fehlgeschlagen. Bitte erneut versuchen.',
+    appleFailed: "Apple-Anmeldung fehlgeschlagen. Bitte erneut versuchen.",
     exploreCta: "App Entdecken",
     displayName: "Anzeigename",
     displayNamePh: "Dein Anzeigename",

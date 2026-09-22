@@ -1,5 +1,7 @@
 import { Plan } from '../../config/plans';
 
+export type ProviderName = 'paddle' | 'revenuecat';
+
 export type BillingInterval = 'monthly' | 'annual';
 export type PaidTier = 'premium' | 'premium_plus';
 
@@ -12,12 +14,17 @@ export interface CheckoutParams {
 }
 
 export interface CheckoutResult {
-  provider: 'paddle';
+  provider: ProviderName;
   url?: string;
   token?: string;
 }
 
-export type SubscriptionEventType = 'activated' | 'updated' | 'canceled';
+// 'noop' is for a webhook event that verified fine but requires no change on
+// our side (e.g. RevenueCat's CANCELLATION — auto-renew was turned off but
+// access continues until the period actually ends at EXPIRATION). Kept
+// distinct from `null` (= failed verification / reject the request) so a
+// legitimate event we intentionally ignore doesn't look like a bad webhook.
+export type SubscriptionEventType = 'activated' | 'updated' | 'canceled' | 'noop';
 
 export interface ParsedSubscriptionEvent {
   type: SubscriptionEventType;
@@ -36,7 +43,10 @@ export interface ChangePlanParams {
 }
 
 export interface BillingAdapter {
-  readonly provider: 'paddle';
+  readonly provider: ProviderName;
+  // Mobile (RevenueCat/StoreKit) purchases happen entirely on-device — there
+  // is no server-initiated checkout, so that adapter throws if this is ever
+  // called instead of silently returning something meaningless.
   createCheckout(params: CheckoutParams): Promise<CheckoutResult>;
   verifyAndParse(
     rawBody: Buffer,

@@ -49,6 +49,7 @@ const zh: typeof en = {
     emailInUse: '该邮箱已被使用。',
     signupFailed: '账户创建失败，请重试。',
     googleFailed: 'Google 登录失败，请重试。',
+    appleFailed: "Apple 登录失败，请重试。",
     exploreCta: "探索应用",
     displayName: "显示名称",
     displayNamePh: "你的显示名称",

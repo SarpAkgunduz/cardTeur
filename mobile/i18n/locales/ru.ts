@@ -49,6 +49,7 @@ const ru: typeof en = {
     emailInUse: 'Этот email уже используется.',
     signupFailed: 'Не удалось создать аккаунт. Попробуйте снова.',
     googleFailed: 'Вход через Google не удался. Попробуйте снова.',
+    appleFailed: "Вход через Apple не удался. Попробуйте снова.",
     exploreCta: "Исследовать Приложение",
     displayName: "Отображаемое Имя",
     displayNamePh: "Ваше отображаемое имя",

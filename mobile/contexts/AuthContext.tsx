@@ -6,7 +6,9 @@ import {
   createUserWithEmailAndPassword,
   signInAnonymously,
   linkWithCredential,
+  signInWithCredential,
   EmailAuthProvider,
+  OAuthProvider,
   signOut as firebaseSignOut,
   sendPasswordResetEmail,
 } from 'firebase/auth';
@@ -25,6 +27,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<User>;
   signInAsGuest: () => Promise<User>;
+  signInWithApple: (identityToken: string, rawNonce: string, displayName?: string) => Promise<User>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
 }
@@ -94,6 +97,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return credential.user;
   };
 
+  // `identityToken` and `rawNonce` come from AppleAuthentication.signInAsync()
+  // (see hooks/useAppleSignIn.ts) — the raw nonce lets Firebase verify the
+  // token actually belongs to this sign-in attempt. A guest claiming via
+  // Apple links onto the SAME Firebase user rather than signing into a
+  // separate one, so the uid — and everything already built as a guest —
+  // carries forward.
+  const signInWithApple = async (identityToken: string, rawNonce: string, displayName?: string): Promise<User> => {
+    const provider = new OAuthProvider('apple.com');
+    const credential = provider.credential({ idToken: identityToken, rawNonce });
+    const result = auth.currentUser?.isAnonymous
+      ? await linkWithCredential(auth.currentUser, credential)
+      : await signInWithCredential(auth, credential);
+    if (displayName) {
+      try {
+        await apiRequest('/users/register', {
+          method: 'POST',
+          body: JSON.stringify({ displayName }),
+        });
+      } catch {
+        // Non-fatal — refreshProfile will pick up the doc on its next call.
+      }
+    }
+    return result.user;
+  };
+
   const signOut = async () => {
     await firebaseSignOut(auth);
   };
@@ -106,7 +134,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <AuthContext.Provider
-      value={{ currentUser, loading, plan, isGuest, refreshProfile, signIn, signUp, signInAsGuest, signOut, resetPassword }}
+      value={{ currentUser, loading, plan, isGuest, refreshProfile, signIn, signUp, signInAsGuest, signInWithApple, signOut, resetPassword }}
     >
       {children}
     </AuthContext.Provider>

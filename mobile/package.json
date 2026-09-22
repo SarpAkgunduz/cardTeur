@@ -6,6 +6,7 @@
     "@expo/vector-icons": "^15.0.2",
     "@react-native-async-storage/async-storage": "2.2.0",
     "expo": "57.0.9",
+    "expo-apple-authentication": "~57.0.2",
     "expo-auth-session": "57.0.5",
     "expo-constants": "57.0.18",
     "expo-crypto": "57.0.1",

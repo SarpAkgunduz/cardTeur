@@ -49,6 +49,7 @@ const pl: typeof en = {
     emailInUse: 'Ten e-mail jest już używany.',
     signupFailed: 'Nie udało się utworzyć konta. Spróbuj ponownie.',
     googleFailed: 'Logowanie przez Google nie powiodło się. Spróbuj ponownie.',
+    appleFailed: "Logowanie przez Apple nie powiodło się. Spróbuj ponownie.",
     exploreCta: "Odkryj Aplikację",
     displayName: "Wyświetlana Nazwa",
     displayNamePh: "Twoja wyświetlana nazwa",
