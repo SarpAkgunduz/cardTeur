@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useTutorial } from '../../contexts/TutorialContext';
-import { TUTORIAL_STEPS } from './tutorialSteps';
 import './TutorialOverlay.css';
 
 interface SpotlightRect {
@@ -20,14 +19,14 @@ const FIND_INTERVAL_MS = 120;
 const FIND_MAX_TRIES = 25;
 
 const TutorialOverlay = () => {
-  const { active, stepIndex, totalSteps, closeTutorial, nextStep, prevStep } = useTutorial();
+  const { active, stepIndex, totalSteps, steps, closeTutorial, nextStep, prevStep } = useTutorial();
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const [rect, setRect] = useState<SpotlightRect | null>(null);
   const [searching, setSearching] = useState(false);
 
-  const step = TUTORIAL_STEPS[stepIndex];
+  const step = steps[stepIndex];
 
   const measure = useCallback((el: Element): SpotlightRect => {
     const r = el.getBoundingClientRect();

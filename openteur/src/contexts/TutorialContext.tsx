@@ -1,10 +1,12 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { TUTORIAL_STEPS } from '../components/tutorial/tutorialSteps';
+import React, { createContext, useContext, useState, useCallback, useMemo } from 'react';
+import { TUTORIAL_STEPS, TutorialStep } from '../components/tutorial/tutorialSteps';
+import { useAuth } from './AuthContext';
 
 interface TutorialContextType {
   active: boolean;
   stepIndex: number;
   totalSteps: number;
+  steps: TutorialStep[];
   startTutorial: () => void;
   closeTutorial: () => void;
   nextStep: () => void;
@@ -14,8 +16,17 @@ interface TutorialContextType {
 const TutorialContext = createContext<TutorialContextType | null>(null);
 
 export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isGuest } = useAuth();
   const [active, setActive] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
+
+  // A guest (unregistered) account can't open a claimed-only page, so its
+  // tour skips those steps entirely instead of navigating to a page that
+  // just shows a "create an account" screen.
+  const steps = useMemo(
+    () => (isGuest ? TUTORIAL_STEPS.filter(step => !step.guestLocked) : TUTORIAL_STEPS),
+    [isGuest]
+  );
 
   const startTutorial = useCallback(() => {
     setStepIndex(0);
@@ -29,13 +40,13 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const nextStep = useCallback(() => {
     setStepIndex(prev => {
-      if (prev >= TUTORIAL_STEPS.length - 1) {
+      if (prev >= steps.length - 1) {
         setActive(false);
         return 0;
       }
       return prev + 1;
     });
-  }, []);
+  }, [steps.length]);
 
   const prevStep = useCallback(() => {
     setStepIndex(prev => Math.max(0, prev - 1));
@@ -46,7 +57,8 @@ export const TutorialProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       value={{
         active,
         stepIndex,
-        totalSteps: TUTORIAL_STEPS.length,
+        totalSteps: steps.length,
+        steps,
         startTutorial,
         closeTutorial,
         nextStep,

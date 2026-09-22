@@ -5,6 +5,10 @@ export interface TutorialStep {
   targetId?: string;
   titleKey: string;
   textKey: string;
+  // Set on a step whose screen requires a claimed (non-guest) account —
+  // it's skipped for guests, who would otherwise be shown the locked-screen
+  // instead of the real content the step is pointing at.
+  guestLocked?: boolean;
 }
 
 export const TUTORIAL_STEPS: TutorialStep[] = [
@@ -57,6 +61,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     id: 'crew',
+    guestLocked: true,
     route: '/(tabs)/crew',
     pathname: '/crew',
     targetId: 'crew-list',
@@ -65,6 +70,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     id: 'friends',
+    guestLocked: true,
     route: '/(tabs)/friends',
     pathname: '/friends',
     targetId: 'friends-tabs',

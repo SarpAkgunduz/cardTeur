@@ -13,7 +13,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { Colors, FontSizes, Spacing } from '../../constants/theme';
 import { useTutorial } from '../../contexts/TutorialContext';
-import { TUTORIAL_STEPS } from './tutorialSteps';
 
 interface SpotlightRect {
   top: number;
@@ -31,7 +30,7 @@ const DIM_COLOR = 'rgba(8, 15, 26, 0.85)';
 
 export default function TutorialOverlay() {
   const { t } = useTranslation();
-  const { active, stepIndex, totalSteps, closeTutorial, nextStep, prevStep, getTarget } =
+  const { active, stepIndex, totalSteps, steps, closeTutorial, nextStep, prevStep, getTarget } =
     useTutorial();
   const router = useRouter();
   const pathname = usePathname();
@@ -40,7 +39,7 @@ export default function TutorialOverlay() {
   const [searching, setSearching] = useState(false);
   const glow = useRef(new Animated.Value(0)).current;
 
-  const step = TUTORIAL_STEPS[stepIndex];
+  const step = steps[stepIndex];
 
   // Reset the spotlight as soon as the step changes
   useEffect(() => {

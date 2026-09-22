@@ -4,6 +4,10 @@ export interface TutorialStep {
   target?: string;
   titleKey: string;
   textKey: string;
+  // Set on a step whose page requires a claimed (non-guest) account —
+  // it's skipped for guests, who would otherwise be shown the locked-page
+  // screen instead of the real content the step is pointing at.
+  guestLocked?: boolean;
 }
 
 export const TUTORIAL_STEPS: TutorialStep[] = [
@@ -58,6 +62,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     id: 'schedule',
+    guestLocked: true,
     route: '/schedule',
     target: '[data-tutorial="schedule-list"]',
     titleKey: 'tutorial.scheduleTitle',
@@ -65,6 +70,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     id: 'crew',
+    guestLocked: true,
     route: '/crew',
     target: '[data-tutorial="crew-add"]',
     titleKey: 'tutorial.crewTitle',
@@ -72,6 +78,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     id: 'friends',
+    guestLocked: true,
     route: '/friends',
     target: '[data-tutorial="friends-tabs"]',
     titleKey: 'tutorial.friendsTitle',
@@ -79,6 +86,7 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
   },
   {
     id: 'development',
+    guestLocked: true,
     route: '/development',
     target: '[data-tutorial="development-hero"]',
     titleKey: 'tutorial.developmentTitle',
