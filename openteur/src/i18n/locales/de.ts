@@ -45,6 +45,7 @@ const de: typeof en = {
     heroSub: 'CardTeur erstellt Karten im FIFA-Stil für die Freunde, mit denen du wirklich spielst, teilt faire Teams ein und organisiert den Spieltag. Du musst nur noch auflaufen.',
     getStarted: 'Loslegen',
     exploreCta: "App Entdecken",
+    exploreFailed: "Gastsitzung konnte nicht gestartet werden. Bitte versuche es gleich noch einmal.",
     featuresTitle: 'Alles für den Spielabend',
     featureCardsTitle: 'Karten für deine Jungs',
     featureCardsText: 'Erstelle eine Karte für jeden in deiner Truppe — Werte, Position und Stufe, die zeigen, wie er wirklich spielt.',

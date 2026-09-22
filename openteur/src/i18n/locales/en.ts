@@ -43,6 +43,7 @@ export default {
     heroSub: 'CardTeur makes FIFA-style cards for the friends you actually play with, splits fair teams and sorts out match day. You just turn up and play.',
     getStarted: 'Get Started',
     exploreCta: "Explore the App",
+    exploreFailed: "Couldn't start a guest session. Please try again in a moment.",
     featuresTitle: 'Everything Match Night Needs',
     featureCardsTitle: 'Cards For Your Mates',
     featureCardsText: 'Make a card for everyone in your crew — stats, position and tier that reflect how they actually play.',

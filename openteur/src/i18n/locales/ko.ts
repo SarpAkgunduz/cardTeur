@@ -45,6 +45,7 @@ const ko: typeof en = {
     heroSub: 'CardTeur는 실제로 같이 공을 차는 친구들의 FIFA 스타일 카드를 만들고, 팀을 공평하게 나누고, 경기 날을 정리해 줍니다. 당신은 그냥 나와서 뛰기만 하면 됩니다.',
     getStarted: '시작하기',
     exploreCta: "앱 둘러보기",
+    exploreFailed: "게스트 세션을 시작할 수 없습니다. 잠시 후 다시 시도해 주세요.",
     featuresTitle: '경기 있는 날 필요한 모든 것',
     featureCardsTitle: '친구들을 위한 카드',
     featureCardsText: '팀의 모든 사람에게 카드를 만들어 주세요 — 실제 플레이를 반영한 능력치, 포지션, 등급까지.',

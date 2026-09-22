@@ -43,6 +43,7 @@ export default {
     heroSub: 'CardTeur crea cartas estilo FIFA para los amigos con los que realmente juegas, arma equipos equilibrados y organiza el día del partido. Tú solo preséntate y juega.',
     getStarted: 'Empezar',
     exploreCta: "Explorar la App",
+    exploreFailed: "No se pudo iniciar la sesión de invitado. Inténtalo de nuevo en un momento.",
     featuresTitle: 'Todo Lo Que Necesita Tu Noche de Partido',
     featureCardsTitle: 'Cartas Para Tus Amigos',
     featureCardsText: 'Crea una carta para cada miembro de tu equipo — estadísticas, posición y nivel que reflejan cómo juegan realmente.',

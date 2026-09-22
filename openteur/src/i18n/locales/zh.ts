@@ -45,6 +45,7 @@ const zh: typeof en = {
     heroSub: 'CardTeur 为你真正一起踢球的朋友制作 FIFA 风格球星卡，公平分队并安排好比赛日，你只管到场开踢。',
     getStarted: '立即开始',
     exploreCta: "探索应用",
+    exploreFailed: "无法开始访客会话，请稍后重试。",
     featuresTitle: '球局之夜所需的一切',
     featureCardsTitle: '给球友的球星卡',
     featureCardsText: '为班底里的每个人做一张卡——能力值、位置和等级，真实反映他在场上的表现。',

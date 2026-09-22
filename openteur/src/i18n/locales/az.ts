@@ -45,6 +45,7 @@ const az: typeof en = {
     heroSub: 'CardTeur hər həftə birlikdə top oynadığın dostların üçün FIFA tərzli kartlar hazırlayır, komandaları ədalətli bölür və oyun gününü təşkil edir. Sən sadəcə meydana çıx.',
     getStarted: 'Başla',
     exploreCta: "Tətbiqi Kəşf Et",
+    exploreFailed: "Qonaq sessiyası başladıla bilmədi. Bir az sonra yenidən cəhd et.",
     featuresTitle: 'Oyun Axşamı Üçün Hər Şey',
     featureCardsTitle: 'Dostların Üçün Kartlar',
     featureCardsText: 'Komandandakı hər kəs üçün kart yarat — meydanda həqiqətən necə oynadığını əks etdirən statlar, mövqe və səviyyə.',

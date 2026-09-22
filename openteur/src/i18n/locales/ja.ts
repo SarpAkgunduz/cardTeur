@@ -45,6 +45,7 @@ const ja: typeof en = {
     heroSub: 'CardTeurは実際に一緒にボールを蹴る友だちのFIFA風カードを作り、チームを公平に分け、試合の日を段取りします。あなたはグラウンドに出るだけです。',
     getStarted: 'はじめる',
     exploreCta: "アプリを見てみる",
+    exploreFailed: "ゲストセッションを開始できませんでした。しばらくしてからもう一度お試しください。",
     featuresTitle: '試合の日に必要なすべて',
     featureCardsTitle: '仲間のためのカード',
     featureCardsText: 'チームの一人ひとりにカードを作りましょう — 実際のプレーを映したスタッツ、ポジション、ティア。',

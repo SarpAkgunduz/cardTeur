@@ -8,6 +8,7 @@ import { getFormationSet } from '../data/formations';
 import { calculateAverage, computeCardTitle, computeOverall } from '../utils/playerRating';
 import { useAuth } from '../contexts/AuthContext';
 import { useTutorial } from '../contexts/TutorialContext';
+import ToastNotification from '../components/ToastNotification';
 import './LandingPage.css';
 
 // Reveals a section with a rise/fade transition the first time it scrolls into view.
@@ -127,15 +128,18 @@ const LandingPage = () => {
   const { signInAsGuest } = useAuth();
   const { startTutorial } = useTutorial();
   const [exploreLoading, setExploreLoading] = useState(false);
+  const [exploreError, setExploreError] = useState('');
 
   const handleExplore = async () => {
     if (exploreLoading) return;
     setExploreLoading(true);
+    setExploreError('');
     try {
       await signInAsGuest();
       startTutorial();
       navigate('/manage');
     } catch {
+      setExploreError(t('landing.exploreFailed'));
       setExploreLoading(false);
     }
   };
@@ -672,6 +676,13 @@ const LandingPage = () => {
           </button>
         </section>
       </div>
+
+      <ToastNotification
+        show={!!exploreError}
+        message={exploreError}
+        onClose={() => setExploreError('')}
+        variant="danger"
+      />
     </div>
   );
 };

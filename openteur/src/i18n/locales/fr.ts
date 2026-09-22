@@ -45,6 +45,7 @@ const fr: typeof en = {
     heroSub: "CardTeur crée des cartes façon FIFA pour les amis avec qui vous jouez vraiment, répartit des équipes équilibrées et organise le jour du match. Vous n'avez qu'à venir jouer.",
     getStarted: 'Commencer',
     exploreCta: "Explorer l'Application",
+    exploreFailed: "Impossible de démarrer la session invité. Réessayez dans un instant.",
     featuresTitle: 'Tout Ce Qu\'il Faut Pour Le Match',
     featureCardsTitle: 'Des Cartes Pour Vos Potes',
     featureCardsText: 'Créez une carte pour chaque membre de votre équipe — des stats, un poste et un niveau qui reflètent vraiment leur jeu.',

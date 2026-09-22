@@ -46,3 +46,5 @@ build/
 MONETIZATION_PLAN.md
 # Staged for deletion (original PNGs replaced by WebP) — safe to remove
 _to_delete/
+
+grant_lifetime.cjs

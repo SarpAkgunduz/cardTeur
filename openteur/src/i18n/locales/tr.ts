@@ -45,6 +45,7 @@ const tr: typeof en = {
     heroSub: 'CardTeur, her hafta birlikte topa vurduğun arkadaşların için FIFA tarzı kartlar hazırlar; takımları adil böler ve maç gününü organize eder. Sen sadece sahaya çık.',
     getStarted: 'Hemen Başla',
     exploreCta: "Uygulamayı Keşfet",
+    exploreFailed: "Misafir oturumu başlatılamadı. Lütfen birazdan tekrar dene.",
     featuresTitle: 'Maç Akşamının Tüm İhtiyaçları',
     featureCardsTitle: 'Arkadaşların İçin Kartlar',
     featureCardsText: 'Ekibindeki her arkadaşın için bir kart oluştur — sahada gerçekten nasıl oynadığını yansıtan statlar, mevki ve seviye.',

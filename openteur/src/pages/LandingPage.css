@@ -110,17 +110,22 @@
 }
 
 .landing__cta--text {
-  border: none;
+  border: 1px solid rgba(247, 245, 253, 0.18);
   background: transparent;
-  color: rgba(247, 245, 253, 0.55);
-  padding: 14px 12px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  color: rgba(247, 245, 253, 0.7);
+  text-decoration: none;
 }
 
 .landing__cta--text:hover {
+  border-color: rgba(247, 245, 253, 0.4);
+  background: rgba(255, 255, 255, 0.05);
   color: #f7f5fd;
   box-shadow: none;
+}
+
+.landing__cta--text:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
   transform: none;
 }
 
