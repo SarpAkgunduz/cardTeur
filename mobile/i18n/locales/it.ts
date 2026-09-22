@@ -260,7 +260,5 @@ export default {
     lockedText: "La creazione delle carte e la preparazione delle partite sono aperte a tutti — questa funzione richiede un account reale e salvato.",
     bannerText: "Hai creato {{count}} carta/e come ospite — scompariranno se disinstalli l'app.",
     bannerModalTitle: "Non Perdere le Tue Carte",
-    exitModalTitle: "Salvare prima di uscire?",
-    exitModalText: "Salva le tue carte ora — bastano pochi secondi.",
   },
 };

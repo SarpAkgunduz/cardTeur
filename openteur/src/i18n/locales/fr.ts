@@ -501,8 +501,6 @@ const fr: typeof en = {
     lockedText: "La création de cartes et la préparation de match sont ouvertes à tous — cette fonctionnalité nécessite un compte réel et enregistré.",
     bannerText: "Vous avez créé {{count}} carte(s) en tant qu'invité — elles disparaîtront si vous effacez les données de votre navigateur.",
     bannerModalTitle: "Ne Perdez Pas Vos Cartes",
-    exitModalTitle: "Vous partez déjà ?",
-    exitModalText: "Sauvegardez vos cartes avant de partir — cela ne prend que quelques secondes.",
     pricingModalTitle: "Créez un Compte pour Vous Abonner",
   },
 };

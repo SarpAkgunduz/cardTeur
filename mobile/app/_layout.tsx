@@ -6,7 +6,6 @@ import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { PlayerProvider } from '../contexts/PlayerContext';
 import { TutorialProvider } from '../contexts/TutorialContext';
 import TutorialOverlay from '../components/tutorial/TutorialOverlay';
-import GuestReminderModal from '../components/GuestReminderModal';
 import { Colors } from '../constants/theme';
 import { initI18n } from '../i18n';
 
@@ -71,7 +70,6 @@ export default function RootLayout() {
           <View style={{ flex: 1 }}>
             <RootNavigator />
             <TutorialOverlay />
-            <GuestReminderModal />
           </View>
         </TutorialProvider>
       </PlayerProvider>

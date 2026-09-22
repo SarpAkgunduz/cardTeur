@@ -499,8 +499,6 @@ export default {
     lockedText: "La creazione delle carte e l'organizzazione delle partite sono aperte a tutti — questa funzione richiede un account reale e salvato.",
     bannerText: "Hai creato {{count}} carta/e come ospite — spariranno se cancelli i dati del browser.",
     bannerModalTitle: "Non Perdere le Tue Carte",
-    exitModalTitle: "Vai già via?",
-    exitModalText: "Salva le tue carte prima di andare via — bastano pochi secondi.",
     pricingModalTitle: "Crea un Account per Abbonarti",
   },
 };

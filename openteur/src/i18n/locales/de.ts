@@ -501,8 +501,6 @@ const de: typeof en = {
     lockedText: "Kartenerstellung und Spielaufbau stehen allen offen — diese Funktion braucht ein echtes, gespeichertes Konto.",
     bannerText: "Du hast als Gast {{count}} Karte(n) erstellt — sie verschwinden, wenn du deine Browserdaten löschst.",
     bannerModalTitle: "Verliere Deine Karten Nicht",
-    exitModalTitle: "Gehst du schon?",
-    exitModalText: "Speichere deine Karten, bevor du gehst — dauert nur ein paar Sekunden.",
     pricingModalTitle: "Erstelle ein Konto, um zu Abonnieren",
   },
 };

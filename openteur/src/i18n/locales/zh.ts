@@ -501,8 +501,6 @@ const zh: typeof en = {
     lockedText: "创建球员卡和组建比赛对所有人开放——此功能需要一个真实、已保存的账号。",
     bannerText: "你以访客身份创建了 {{count}} 张球员卡——清除浏览器数据后它们会消失。",
     bannerModalTitle: "别丢失你的球员卡",
-    exitModalTitle: "这就要走了吗？",
-    exitModalText: "离开前保存你的球员卡——只需几秒钟。",
     pricingModalTitle: "创建账号以订阅",
   },
 };

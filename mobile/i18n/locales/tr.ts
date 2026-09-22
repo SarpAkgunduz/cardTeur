@@ -262,8 +262,6 @@ const tr: typeof en = {
     lockedText: "Kart oluşturma ve maç kurma herkese açık — bu özellik gerçek, kayıtlı bir hesap gerektiriyor.",
     bannerText: "Misafir olarak {{count}} kart oluşturdun — uygulamayı silersen kaybolurlar.",
     bannerModalTitle: "Kartlarını Kaybetme",
-    exitModalTitle: "Kaydetmeden mi gidiyorsun?",
-    exitModalText: "Kartlarını şimdi kaydet — sadece birkaç saniye sürer.",
   },
 };
 

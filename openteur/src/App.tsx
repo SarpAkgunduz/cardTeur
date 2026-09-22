@@ -32,7 +32,6 @@ import Navbar from './components/Navbar';
 import AppFooter from './components/AppFooter';
 import TutorialOverlay from './components/tutorial/TutorialOverlay';
 import GuestSaveBanner from './components/GuestSaveBanner';
-import GuestExitIntentModal from './components/GuestExitIntentModal';
 
 const HomeRoute = () => {
   const { currentUser } = useAuth();
@@ -142,7 +141,6 @@ const AppRoutes = () => {
         </div>
         <AppFooter />
         <TutorialOverlay />
-        <GuestExitIntentModal />
       </div>
   );
 };

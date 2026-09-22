@@ -499,8 +499,6 @@ export default {
     lockedText: "Card building and match setup are open to everyone — this feature needs a real, saved account.",
     bannerText: "You've created {{count}} card(s) as a guest — they'll disappear if you clear your browser data.",
     bannerModalTitle: "Don't Lose Your Cards",
-    exitModalTitle: "Leaving already?",
-    exitModalText: "Save your cards before you go — it only takes a few seconds.",
     pricingModalTitle: "Create an Account to Subscribe",
   },
 };

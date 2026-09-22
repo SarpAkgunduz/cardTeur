@@ -501,8 +501,6 @@ const pl: typeof en = {
     lockedText: "Tworzenie kart i ustawianie meczu są otwarte dla wszystkich — ta funkcja wymaga prawdziwego, zapisanego konta.",
     bannerText: "Jako gość utworzyłeś {{count}} kart(y) — znikną, jeśli wyczyścisz dane przeglądarki.",
     bannerModalTitle: "Nie Trać Swoich Kart",
-    exitModalTitle: "Już wychodzisz?",
-    exitModalText: "Zapisz swoje karty zanim wyjdziesz — zajmie to tylko kilka sekund.",
     pricingModalTitle: "Utwórz Konto, Aby Subskrybować",
   },
 };

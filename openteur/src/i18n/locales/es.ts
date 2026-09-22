@@ -499,8 +499,6 @@ export default {
     lockedText: "Crear cartas y organizar partidos están abiertos para todos — esta función necesita una cuenta real y guardada.",
     bannerText: "Has creado {{count}} carta(s) como invitado — desaparecerán si borras los datos de tu navegador.",
     bannerModalTitle: "No Pierdas Tus Cartas",
-    exitModalTitle: "¿Ya te vas?",
-    exitModalText: "Guarda tus cartas antes de irte — solo toma unos segundos.",
     pricingModalTitle: "Crea una Cuenta para Suscribirte",
   },
 };

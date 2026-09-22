@@ -501,8 +501,6 @@ const ko: typeof en = {
     lockedText: "카드 만들기와 경기 구성은 누구에게나 열려 있습니다 — 이 기능은 실제 저장된 계정이 필요합니다.",
     bannerText: "게스트로 {{count}}개의 카드를 만들었습니다 — 브라우저 데이터를 지우면 사라집니다.",
     bannerModalTitle: "카드를 잃지 마세요",
-    exitModalTitle: "벌써 나가시나요?",
-    exitModalText: "나가기 전에 카드를 저장하세요 — 몇 초밖에 걸리지 않습니다.",
     pricingModalTitle: "구독하려면 계정을 만드세요",
   },
 };

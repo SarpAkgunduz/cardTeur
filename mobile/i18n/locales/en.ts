@@ -260,7 +260,5 @@ export default {
     lockedText: "Card building and match setup are open to everyone — this feature needs a real, saved account.",
     bannerText: "You've created {{count}} card(s) as a guest — they'll disappear if you uninstall the app.",
     bannerModalTitle: "Don't Lose Your Cards",
-    exitModalTitle: "Save before you go?",
-    exitModalText: "Save your cards now — it only takes a few seconds.",
   },
 };

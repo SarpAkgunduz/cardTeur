@@ -501,8 +501,6 @@ const az: typeof en = {
     lockedText: "Kart yaratma və matç qurma hər kəsə açıqdır — bu funksiya həqiqi, saxlanmış hesab tələb edir.",
     bannerText: "Qonaq olaraq {{count}} kart yaratdın — brauzer məlumatlarını silsən itəcəklər.",
     bannerModalTitle: "Kartlarını İtirmə",
-    exitModalTitle: "Artıq gedirsən?",
-    exitModalText: "Getmədən əvvəl kartlarını saxla — bir neçə saniyə çəkir.",
     pricingModalTitle: "Abunə Olmaq Üçün Hesab Yarat",
   },
 };

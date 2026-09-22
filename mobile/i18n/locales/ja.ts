@@ -262,8 +262,6 @@ const ja: typeof en = {
     lockedText: "カード作成と試合設定は誰でも利用できます — この機能には実際の保存されたアカウントが必要です。",
     bannerText: "ゲストとして{{count}}枚のカードを作成しました — アプリをアンインストールすると消えてしまいます。",
     bannerModalTitle: "カードを失わないで",
-    exitModalTitle: "退出する前に保存しますか？",
-    exitModalText: "今すぐカードを保存しましょう — 数秒で完了します。",
   },
 };
 

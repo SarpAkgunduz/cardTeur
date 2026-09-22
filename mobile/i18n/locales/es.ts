@@ -260,7 +260,5 @@ export default {
     lockedText: "La creación de cartas y la preparación de partidos están abiertas a todos — esta función necesita una cuenta real y guardada.",
     bannerText: "Has creado {{count}} carta(s) como invitado — desaparecerán si desinstalas la app.",
     bannerModalTitle: "No Pierdas Tus Cartas",
-    exitModalTitle: "¿Guardar antes de irte?",
-    exitModalText: "Guarda tus cartas ahora — solo toma unos segundos.",
   },
 };

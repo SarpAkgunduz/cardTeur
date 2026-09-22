@@ -262,8 +262,6 @@ const zh: typeof en = {
     lockedText: "卡片创建和比赛设置对所有人开放——此功能需要真实的已保存账户。",
     bannerText: "你以访客身份创建了 {{count}} 张卡片——卸载应用后它们将消失。",
     bannerModalTitle: "不要丢失你的卡片",
-    exitModalTitle: "离开前要保存吗？",
-    exitModalText: "现在保存你的卡片——只需几秒钟。",
   },
 };
 

@@ -262,8 +262,6 @@ const de: typeof en = {
     lockedText: "Kartenerstellung und Spielvorbereitung stehen allen offen — diese Funktion benötigt ein echtes, gespeichertes Konto.",
     bannerText: "Du hast {{count}} Karte(n) als Gast erstellt — sie verschwinden, wenn du die App deinstallierst.",
     bannerModalTitle: "Verliere Deine Karten Nicht",
-    exitModalTitle: "Vor dem Verlassen speichern?",
-    exitModalText: "Speichere deine Karten jetzt — es dauert nur ein paar Sekunden.",
   },
 };
 

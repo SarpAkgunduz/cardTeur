@@ -262,8 +262,6 @@ const ko: typeof en = {
     lockedText: "카드 제작과 경기 구성은 누구나 이용할 수 있습니다 — 이 기능은 실제 저장된 계정이 필요합니다.",
     bannerText: "게스트로 {{count}}개의 카드를 만들었습니다 — 앱을 삭제하면 사라집니다.",
     bannerModalTitle: "카드를 잃지 마세요",
-    exitModalTitle: "나가기 전에 저장할까요?",
-    exitModalText: "지금 카드를 저장하세요 — 몇 초밖에 걸리지 않습니다.",
   },
 };
 
