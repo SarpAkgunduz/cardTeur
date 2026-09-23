@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View, ActivityIndicator } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
 import { PlayerProvider } from '../contexts/PlayerContext';
 import { TutorialProvider } from '../contexts/TutorialContext';
@@ -63,16 +64,18 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthProvider>
-      <PlayerProvider>
-        <TutorialProvider>
-          <StatusBar style="light" />
-          <View style={{ flex: 1 }}>
-            <RootNavigator />
-            <TutorialOverlay />
-          </View>
-        </TutorialProvider>
-      </PlayerProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <PlayerProvider>
+          <TutorialProvider>
+            <StatusBar style="light" />
+            <View style={{ flex: 1 }}>
+              <RootNavigator />
+              <TutorialOverlay />
+            </View>
+          </TutorialProvider>
+        </PlayerProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }

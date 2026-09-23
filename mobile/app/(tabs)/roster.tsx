@@ -30,7 +30,7 @@ type RandomTier = 'bronze' | 'silver' | 'gold';
 const RANDOM_TIERS: Array<{ id: RandomTier; label: string; range: [number, number] }> = [
   { id: 'bronze', label: 'Bronze', range: [41, 59] },
   { id: 'silver', label: 'Silver', range: [60, 84] },
-  { id: 'gold', label: 'Gold', range: [85, 89] },
+  { id: 'gold', label: 'Gold', range: [85, 99] },
 ];
 
 const RANDOM_POSITIONS = ['CB', 'RB', 'LB', 'CDM', 'CM', 'CAM', 'RW', 'LW', 'ST', 'LM', 'RM'];
@@ -281,9 +281,9 @@ export default function RosterScreen() {
                     {t(`roster.${tier.id}`)}
                   </Text>
                   <Text style={styles.tierRange}>{tier.range[0]}-{tier.range[1]} OVR</Text>
-                  <Text style={styles.tierAction}>
-                    {generatingTier === tier.id ? t('roster.generating') : t('roster.unlock')}
-                  </Text>
+                  {generatingTier === tier.id && (
+                    <ActivityIndicator size="small" color={Colors.accent} style={styles.tierSpinner} />
+                  )}
                 </TouchableOpacity>
               ))}
             </View>
@@ -438,12 +438,8 @@ const styles = StyleSheet.create({
     fontSize: 10,
     marginBottom: 8,
   },
-  tierAction: {
-    color: Colors.accent,
-    fontSize: FontSizes.xs,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
+  tierSpinner: {
+    marginTop: 4,
   },
   modalClose: {
     padding: Spacing.sm,

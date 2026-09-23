@@ -5,10 +5,10 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
-  SafeAreaView,
   Image,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTutorial } from '../../contexts/TutorialContext';

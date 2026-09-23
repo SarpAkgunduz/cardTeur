@@ -20,6 +20,8 @@ import { useTutorial } from '../../contexts/TutorialContext';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { useGoogleSignIn } from '../../hooks/useGoogleSignIn';
 import { useAppleSignIn } from '../../hooks/useAppleSignIn';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 export default function LoginScreen() {
   const { t } = useTranslation();
@@ -77,7 +79,8 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <LanguageSwitcher />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.flex}
@@ -149,10 +152,14 @@ export default function LoginScreen() {
               disabled={!google.ready || google.loading}
               activeOpacity={0.8}
             >
-              {google.loading
-                ? <ActivityIndicator color={Colors.textPrimary} />
-                : <Text style={styles.googleBtnText}>{t('auth.googleBtn')}</Text>
-              }
+              {google.loading ? (
+                <ActivityIndicator color={Colors.textPrimary} />
+              ) : (
+                <View style={styles.googleBtnContent}>
+                  <Ionicons name="logo-google" size={18} color={Colors.textPrimary} />
+                  <Text style={styles.googleBtnText}>{t('auth.googleBtn')}</Text>
+                </View>
+              )}
             </TouchableOpacity>
 
             {apple.available && (
@@ -189,7 +196,7 @@ export default function LoginScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -319,6 +326,12 @@ const styles = StyleSheet.create({
   appleBtn: {
     height: 48,
     marginBottom: Spacing.lg,
+  },
+  googleBtnContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
   },
   googleBtnText: {
     color: Colors.textPrimary,

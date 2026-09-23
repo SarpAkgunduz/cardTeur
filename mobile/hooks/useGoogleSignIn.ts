@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import * as Google from 'expo-auth-session/providers/google';
+import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import { GoogleAuthProvider, signInWithCredential, linkWithCredential, getAdditionalUserInfo } from 'firebase/auth';
 import { useTranslation } from 'react-i18next';
@@ -13,9 +14,24 @@ export function useGoogleSignIn(onSuccess?: (isNewUser: boolean) => void) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Google's iOS OAuth client requires the redirect to land on its own
+  // "reversed client ID" URL scheme (com.googleusercontent.apps.<id>), not
+  // our app's own "cardteurmobile" scheme — using the wrong one is exactly
+  // what produces Google's "Error 400: invalid_request ... doesn't comply
+  // with Google's OAuth 2.0 policy" on-device. That scheme must also be
+  // registered in app.json's `scheme` array so iOS routes the redirect back
+  // into the app at all.
+  const iosClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ?? '';
+  const iosReversedScheme = iosClientId
+    ? `com.googleusercontent.apps.${iosClientId.replace('.apps.googleusercontent.com', '')}`
+    : undefined;
+
   const [request, response, promptAsync] = Google.useAuthRequest({
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
-    iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
+    iosClientId: iosClientId || undefined,
+    redirectUri: iosReversedScheme
+      ? AuthSession.makeRedirectUri({ scheme: iosReversedScheme })
+      : undefined,
   });
 
   useEffect(() => {

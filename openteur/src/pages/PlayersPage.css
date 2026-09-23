@@ -334,20 +334,25 @@
   letter-spacing: 0.12em;
 }
 
-.random-tier-card__range,
-.random-tier-card__action {
+.random-tier-card__range {
   font-size: 0.68rem;
   letter-spacing: 0.09em;
-}
-
-.random-tier-card__range {
   color: rgba(255, 255, 255, 0.46);
 }
 
-.random-tier-card__action {
-  margin-top: 4px;
-  color: currentColor;
-  font-weight: 800;
+.random-tier-card__spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-top: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: randomTierSpin 0.7s linear infinite;
+}
+
+@keyframes randomTierSpin {
+  to { transform: rotate(360deg); }
 }
 
 /* Responsive */

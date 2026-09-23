@@ -37,7 +37,7 @@ export default function ScreenHeader({ title, showBack = false, showHelp = false
           </TouchableOpacity>
         )}
       </View>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
       <View style={styles.right}>
         {isPremium && (
           <View
@@ -84,18 +84,22 @@ const styles = StyleSheet.create({
   },
   left: {
     flex: 1,
+    minWidth: 0,
     alignItems: 'flex-start',
   },
   title: {
+    flex: 1,
+    minWidth: 0,
     color: Colors.accent,
     fontSize: FontSizes.md,
     fontWeight: '700',
     letterSpacing: 2,
     textTransform: 'uppercase',
     textAlign: 'center',
+    marginHorizontal: 4,
   },
   right: {
-    flex: 1,
+    flexShrink: 0,
     alignItems: 'flex-end',
     flexDirection: 'row',
     justifyContent: 'flex-end',

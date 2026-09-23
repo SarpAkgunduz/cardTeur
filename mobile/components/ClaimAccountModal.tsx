@@ -12,6 +12,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useAuth } from '../contexts/AuthContext';
@@ -189,10 +190,14 @@ export default function ClaimAccountModal({ visible, onClose, onClaimed, titleKe
                 disabled={!google.ready || google.loading}
                 activeOpacity={0.8}
               >
-                {google.loading
-                  ? <ActivityIndicator color={Colors.textPrimary} />
-                  : <Text style={styles.googleBtnText}>{t('auth.googleBtn')}</Text>
-                }
+                {google.loading ? (
+                  <ActivityIndicator color={Colors.textPrimary} />
+                ) : (
+                  <View style={styles.googleBtnContent}>
+                    <Ionicons name="logo-google" size={18} color={Colors.textPrimary} />
+                    <Text style={styles.googleBtnText}>{t('auth.googleBtn')}</Text>
+                  </View>
+                )}
               </TouchableOpacity>
 
               {apple.available && (
@@ -317,6 +322,12 @@ const styles = StyleSheet.create({
   },
   appleBtn: {
     height: 48,
+  },
+  googleBtnContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
   },
   googleBtnText: {
     color: Colors.textPrimary,

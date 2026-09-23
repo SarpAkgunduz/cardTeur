@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useAuth } from '../../contexts/AuthContext';
@@ -19,6 +20,8 @@ import { apiRequest } from '../../services/api/apiClient';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import { useGoogleSignIn } from '../../hooks/useGoogleSignIn';
 import { useAppleSignIn } from '../../hooks/useAppleSignIn';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 export default function SignupScreen() {
   const { t } = useTranslation();
@@ -79,7 +82,8 @@ export default function SignupScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <LanguageSwitcher />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.box}>
@@ -154,10 +158,14 @@ export default function SignupScreen() {
               disabled={!google.ready || google.loading}
               activeOpacity={0.8}
             >
-              {google.loading
-                ? <ActivityIndicator color={Colors.textPrimary} />
-                : <Text style={styles.googleBtnText}>{t('auth.googleBtn')}</Text>
-              }
+              {google.loading ? (
+                <ActivityIndicator color={Colors.textPrimary} />
+              ) : (
+                <View style={styles.googleBtnContent}>
+                  <Ionicons name="logo-google" size={18} color={Colors.textPrimary} />
+                  <Text style={styles.googleBtnText}>{t('auth.googleBtn')}</Text>
+                </View>
+              )}
             </TouchableOpacity>
 
             {apple.available && (
@@ -178,7 +186,7 @@ export default function SignupScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -268,6 +276,12 @@ const styles = StyleSheet.create({
   appleBtn: {
     height: 48,
     marginBottom: Spacing.lg,
+  },
+  googleBtnContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
   },
   googleBtnText: {
     color: Colors.textPrimary,

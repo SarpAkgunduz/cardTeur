@@ -29,6 +29,9 @@
       "expo-font",
       "expo-apple-authentication"
     ],
-    "scheme": "cardteurmobile"
+    "scheme": [
+      "cardteurmobile",
+      "com.googleusercontent.apps.676936962470-8t3lld5kal2pr3t68eqd4bvf9g0c68sn"
+    ]
   }
 }

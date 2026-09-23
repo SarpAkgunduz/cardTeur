@@ -5,9 +5,9 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
-  SafeAreaView,
   Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { usePlayers } from '../../contexts/PlayerContext';
 import { useTutorial } from '../../contexts/TutorialContext';

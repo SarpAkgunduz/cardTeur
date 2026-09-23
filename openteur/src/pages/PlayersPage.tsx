@@ -38,7 +38,7 @@ type RandomTier = 'bronze' | 'silver' | 'gold';
 const RANDOM_TIERS: Array<{ id: RandomTier; label: string; range: [number, number] }> = [
   { id: 'bronze', label: 'Bronze', range: [41, 59] },
   { id: 'silver', label: 'Silver', range: [60, 84] },
-  { id: 'gold', label: 'Gold', range: [85, 89] },
+  { id: 'gold', label: 'Gold', range: [85, 99] },
 ];
 
 const RANDOM_POSITIONS = ['CB', 'RB', 'LB', 'CDM', 'CM', 'CAM', 'RW', 'LW', 'ST', 'LM', 'RM'];
@@ -530,9 +530,9 @@ const PlayersPage = () => {
                   <span className="random-tier-card__mark">?</span>
                   <span className="random-tier-card__name">{t(`players.${tier.id}`)}</span>
                   <span className="random-tier-card__range">{tier.range[0]}-{tier.range[1]} OVR</span>
-                  <span className="random-tier-card__action">
-                    {generatingTier === tier.id ? t('players.generating') : t('players.unlock')}
-                  </span>
+                  {generatingTier === tier.id && (
+                    <span className="random-tier-card__spinner" aria-label={t('players.generating')} />
+                  )}
                 </button>
               ))}
             </div>
