@@ -7,11 +7,13 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { PRESET_AVATARS } from '../../utils/cardImage';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { usePlayers } from '../../contexts/PlayerContext';
@@ -37,6 +39,7 @@ export default function EditPlayerScreen() {
   const [jerseyNumber, setJerseyNumber] = useState(String(player?.jerseyNumber ?? ''));
   const [marketValue, setMarketValue] = useState(String(player?.marketValue ?? ''));
   const [preferredPosition, setPreferredPosition] = useState(player?.preferredPosition ?? '');
+  const [cardImage, setCardImage] = useState(player?.cardImage ?? '');
   const [stats, setStats] = useState({
     dribbling: player?.dribbling ?? 50,
     shotAccuracy: player?.shotAccuracy ?? 50,
@@ -112,6 +115,7 @@ export default function EditPlayerScreen() {
         jerseyNumber: parseInt(jerseyNumber, 10),
         marketValue: marketValue ? parseFloat(marketValue) : undefined,
         preferredPosition,
+        cardImage,
         offensiveOverall, defensiveOverall, athleticismOverall, gkOverall,
         ...stats,
       });
@@ -223,6 +227,21 @@ export default function EditPlayerScreen() {
                 </TouchableOpacity>
               ))}
             </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t('playerForm.photo')}</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.photoRow}>
+              {PRESET_AVATARS.map((uri) => (
+                <TouchableOpacity
+                  key={uri}
+                  style={[styles.photoThumbWrap, cardImage === uri && styles.photoThumbWrapActive]}
+                  onPress={() => setCardImage(uri)}
+                >
+                  <Image source={{ uri }} style={styles.photoThumb} />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
 
           <View style={styles.section}>
@@ -380,6 +399,10 @@ const styles = StyleSheet.create({
   },
   row: { flexDirection: 'row', gap: Spacing.sm },
   halfField: { flex: 1 },
+  photoRow: { gap: Spacing.sm, paddingVertical: 4 },
+  photoThumbWrap: { width: 56, height: 56, borderWidth: 2, borderColor: Colors.border, padding: 2 },
+  photoThumbWrapActive: { borderColor: Colors.accent },
+  photoThumb: { width: '100%', height: '100%' },
   positionGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 4 },
   posBtn: {
     paddingVertical: 6,

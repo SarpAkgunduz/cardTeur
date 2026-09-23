@@ -102,10 +102,16 @@ const PlayerSchema: Schema<IPlayer> = new Schema({
 
 // cardTitle is derived from stats — never stored in DB
 PlayerSchema.virtual('cardTitle').get(function (this: IPlayer) {
+  // Gold now spans 85-99 (the "Gold" random-generation tier targets this
+  // whole range) — platinum's cutoff was 90, which put roughly half of
+  // every gold-generated card into platinum instead, showing the blue
+  // platinum frame on a card the player picked "Gold" to create. Raised so
+  // platinum stays a rarer, distinct tier above gold's own range rather than
+  // overlapping it.
   const isGK = this.preferredPosition === 'GK';
   if (isGK) {
     const gkOvr = this.gkOverall ?? 0;
-    if (gkOvr >= 90) return 'platinum';
+    if (gkOvr >= 95) return 'platinum';
     if (gkOvr >= 85) return 'gold';
     if (gkOvr >= 60) return 'silver';
     return 'bronze';
@@ -115,7 +121,7 @@ PlayerSchema.virtual('cardTitle').get(function (this: IPlayer) {
   const ath = this.athleticismOverall ?? 0;
   const offScore = (off + ath) / 2;
   const defScore = (def + ath) / 2;
-  if (offScore >= 90 || defScore >= 90) return 'platinum';
+  if (offScore >= 95 || defScore >= 95) return 'platinum';
   if (offScore >= 85 || defScore >= 85) return 'gold';
   if (offScore >= 60 || defScore >= 60) return 'silver';
   return 'bronze';

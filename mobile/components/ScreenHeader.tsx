@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { Colors, FontSizes, Spacing } from '../constants/theme';
 import { useTutorial } from '../contexts/TutorialContext';
 import { useAuth } from '../contexts/AuthContext';
+import ClaimAccountModal from './ClaimAccountModal';
 
 interface ScreenHeaderProps {
   title: string;
@@ -18,8 +19,14 @@ export default function ScreenHeader({ title, showBack = false, showHelp = false
   const { t } = useTranslation();
   const router = useRouter();
   const { startTutorial } = useTutorial();
-  const { plan } = useAuth();
+  const { plan, isGuest } = useAuth();
   const isPremium = plan === 'premium' || plan === 'premium_plus';
+  // A guest can otherwise only reach sign-up from the roster banner (after
+  // making a card) or a locked tab — this puts the same "claim your
+  // account" entry point on every screen's header, since ScreenHeader is
+  // shared across the whole app (including Match, where there was
+  // previously no way back to login/signup at all).
+  const [showClaimModal, setShowClaimModal] = useState(false);
 
   const handleHelp = () => {
     Alert.alert(t('tutorial.help'), t('tutorial.helpMsg'), [
@@ -39,6 +46,15 @@ export default function ScreenHeader({ title, showBack = false, showHelp = false
       </View>
       <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
       <View style={styles.right}>
+        {isGuest && (
+          <TouchableOpacity
+            onPress={() => setShowClaimModal(true)}
+            style={styles.guestBtn}
+            accessibilityLabel={t('guest.claimSaveCta')}
+          >
+            <Ionicons name="person-add-outline" size={13} color={Colors.accent} />
+          </TouchableOpacity>
+        )}
         {isPremium && (
           <View
             style={[
@@ -68,6 +84,7 @@ export default function ScreenHeader({ title, showBack = false, showHelp = false
           </TouchableOpacity>
         )}
       </View>
+      <ClaimAccountModal visible={showClaimModal} onClose={() => setShowClaimModal(false)} />
     </View>
   );
 }
@@ -83,8 +100,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
   },
   left: {
-    flex: 1,
-    minWidth: 0,
+    flexShrink: 0,
     alignItems: 'flex-start',
   },
   title: {
@@ -95,8 +111,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 2,
     textTransform: 'uppercase',
-    textAlign: 'center',
-    marginHorizontal: 4,
+    // Left-aligned rather than centered — with a wide `right` cluster (help
+    // button, plan badge, guest CTA), a centered title has less room on
+    // its right side than its left, so it wrapped/truncated ("Oyuncular"
+    // -> "Oyuncul...") well before it actually ran out of header width.
+    // Left-aligned, it only has to yield the same side the buttons are on.
+    textAlign: 'left',
+    marginLeft: 8,
+    marginRight: 4,
   },
   right: {
     flexShrink: 0,
@@ -109,6 +131,16 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   helpBtn: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    borderWidth: 1,
+    borderColor: Colors.accentBorder,
+    backgroundColor: 'rgba(0, 222, 236, 0.08)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  guestBtn: {
     width: 26,
     height: 26,
     borderRadius: 13,

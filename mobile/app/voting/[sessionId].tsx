@@ -5,13 +5,14 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
-  SafeAreaView,
   Image,
   TouchableOpacity,
   LayoutAnimation,
   Platform,
   UIManager,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { resolveCardImage } from '../../utils/cardImage';
 import { useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -162,7 +163,7 @@ export default function VotingScreen() {
             const isSubmitting = submittingId === player._id;
             const isClosed = session.status !== 'open';
             const isExpanded = expandedId === player._id;
-            const avatar = player.cardImage;
+            const avatar = resolveCardImage(player.cardImage);
 
             return (
               <View key={player._id} style={[styles.card, isExpanded && styles.cardExpanded]}>

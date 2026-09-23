@@ -14,6 +14,7 @@ import {
   Platform,
   UIManager,
 } from 'react-native';
+import { resolveCardImage } from '../../utils/cardImage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -309,7 +310,7 @@ export default function DevelopmentScreen() {
               )}
               {(pickerCrew?.players ?? []).map(player => {
                 const selected = participantIds.includes(player._id);
-                const avatar = player.linkedUserPhotoURL || player.cardImage;
+                const avatar = player.linkedUserPhotoURL || resolveCardImage(player.cardImage);
                 return (
                   <TouchableOpacity
                     key={player._id}

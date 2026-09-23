@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -18,90 +18,159 @@ import { useTutorial } from '../../contexts/TutorialContext';
 import ScreenHeader from '../../components/ScreenHeader';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import type { Player } from '../../services/api/types';
+import { PLAYER_COUNT_OPTIONS, getFormationNames, getFormationRows } from '../../data/formations';
+import { balanceIntoTeams, smartAssignSlots, computeTeamOverall } from '../../utils/matchAlgorithms';
 
-type Formation = '4-3-3' | '4-4-2' | '3-5-2' | '4-2-3-1' | '5-3-2';
-
-const FORMATIONS: Record<Formation, string[][]> = {
-  '4-3-3': [['GK'], ['RB', 'CB', 'CB', 'LB'], ['CM', 'CDM', 'CM'], ['RW', 'ST', 'LW']],
-  '4-4-2': [['GK'], ['RB', 'CB', 'CB', 'LB'], ['RM', 'CM', 'CM', 'LM'], ['ST', 'ST']],
-  '3-5-2': [['GK'], ['CB', 'CB', 'CB'], ['RM', 'CM', 'CDM', 'CM', 'LM'], ['ST', 'ST']],
-  '4-2-3-1': [['GK'], ['RB', 'CB', 'CB', 'LB'], ['CDM', 'CDM'], ['RW', 'CAM', 'LW'], ['ST']],
-  '5-3-2': [['GK'], ['RB', 'CB', 'CB', 'CB', 'LB'], ['CM', 'CDM', 'CM'], ['ST', 'ST']],
-};
+type TeamKey = 'A' | 'B';
 
 interface SlotState {
   position: string;
   player: Player | null;
 }
 
+function buildSlots(rows: string[][]): SlotState[] {
+  return rows.flatMap(row => row.map(pos => ({ position: pos, player: null })));
+}
+
 export default function MatchScreen() {
   const { t } = useTranslation();
   const { players, loading } = usePlayers();
   const { registerTarget } = useTutorial();
-  const [formation, setFormation] = useState<Formation>('4-3-3');
-  const [slots, setSlots] = useState<SlotState[]>([]);
+
+  // Web's match screen defaults to 8v8 — mirrored here so the two apps
+  // agree on the default squad size.
+  const [count, setCount] = useState<number>(8);
+  const [formationA, setFormationA] = useState<string>(getFormationNames(8)[0]);
+  const [formationB, setFormationB] = useState<string>(getFormationNames(8)[0]);
+  const [slotsA, setSlotsA] = useState<SlotState[]>([]);
+  const [slotsB, setSlotsB] = useState<SlotState[]>([]);
   const [applied, setApplied] = useState(false);
-  const [selectingSlot, setSelectingSlot] = useState<number | null>(null);
   const [formationLocked, setFormationLocked] = useState(false);
-  const [benchPlayers, setBenchPlayers] = useState<Player[]>([]);
-  const [slotActionIdx, setSlotActionIdx] = useState<number | null>(null);
+  const [bench, setBench] = useState<Player[]>([]);
 
-  const formationRows = FORMATIONS[formation];
+  const [addingTo, setAddingTo] = useState<{ team: TeamKey; idx: number } | null>(null);
+  const [slotAction, setSlotAction] = useState<{ team: TeamKey; idx: number } | null>(null);
 
-  const buildSlots = (f: Formation): SlotState[] =>
-    FORMATIONS[f].flatMap(row => row.map(pos => ({ position: pos, player: null })));
+  const rowsA = getFormationRows(count, formationA);
+  const rowsB = getFormationRows(count, formationB);
 
-  const handleApplyFormation = () => {
-    setSlots(buildSlots(formation));
+  const handleCountChange = (c: number) => {
+    if (formationLocked) return;
+    setCount(c);
+    setFormationA(getFormationNames(c)[0]);
+    setFormationB(getFormationNames(c)[0]);
+  };
+
+  // Splits the whole roster into two evenly matched teams (snake draft by
+  // overall — same algorithm web's "Balance Teams" uses) and slots each
+  // team into its own formation by positional fit. Anyone left over sits
+  // on the shared bench and can be swapped in manually afterward.
+  const handleBalanceTeams = () => {
+    const { teamA, teamB, bench: rest } = balanceIntoTeams(players, count);
+    const rolesA = rowsA.flat();
+    const rolesB = rowsB.flat();
+    const orderedA = smartAssignSlots(teamA, rolesA);
+    const orderedB = smartAssignSlots(teamB, rolesB);
+
+    setSlotsA(rolesA.map((pos, i) => ({ position: pos, player: orderedA[i] ?? null })));
+    setSlotsB(rolesB.map((pos, i) => ({ position: pos, player: orderedB[i] ?? null })));
+    setBench(rest);
     setApplied(true);
     setFormationLocked(true);
   };
 
   const handleReset = () => {
-    setSlots([]);
+    setSlotsA([]);
+    setSlotsB([]);
     setApplied(false);
     setFormationLocked(false);
-    setBenchPlayers([]);
-    setSlotActionIdx(null);
+    setBench([]);
+    setSlotAction(null);
+    setAddingTo(null);
   };
 
-  const handleBench = (idx: number) => {
+  const setSlots = (team: TeamKey, updater: (prev: SlotState[]) => SlotState[]) => {
+    if (team === 'A') setSlotsA(updater);
+    else setSlotsB(updater);
+  };
+
+  const handleBench = (team: TeamKey, idx: number) => {
+    const slots = team === 'A' ? slotsA : slotsB;
     const player = slots[idx]?.player;
     if (!player) return;
-    setBenchPlayers(prev => [...prev, player]);
-    setSlots(prev => prev.map((s, i) => i === idx ? { ...s, player: null } : s));
-    setSlotActionIdx(null);
+    setBench(prev => [...prev, player]);
+    setSlots(team, prev => prev.map((s, i) => i === idx ? { ...s, player: null } : s));
+    setSlotAction(null);
   };
 
   const handleAddFromBench = (player: Player) => {
-    const emptyIdx = slots.findIndex(s => !s.player);
-    if (emptyIdx < 0) return;
-    setSlots(prev => prev.map((s, i) => i === emptyIdx ? { ...s, player } : s));
-    setBenchPlayers(prev => prev.filter(p => p._id !== player._id));
+    if (!addingTo) return;
+    const { team, idx } = addingTo;
+    setSlots(team, prev => prev.map((s, i) => i === idx ? { ...s, player } : s));
+    setBench(prev => prev.filter(p => p._id !== player._id));
+    setAddingTo(null);
   };
 
-  const handleSlotPress = (idx: number) => {
-    setSelectingSlot(idx);
+  // Bench row's direct "Team A" / "Team B" buttons — fills that team's
+  // first empty slot without going through the picker modal (the modal
+  // path above is for tapping an empty slot directly and choosing who
+  // fills it).
+  const handleQuickAddToTeam = (player: Player, team: TeamKey) => {
+    const slots = team === 'A' ? slotsA : slotsB;
+    const idx = slots.findIndex(s => !s.player);
+    if (idx < 0) return;
+    setSlots(team, prev => prev.map((s, i) => i === idx ? { ...s, player } : s));
+    setBench(prev => prev.filter(p => p._id !== player._id));
   };
 
-  const assignPlayer = (player: Player) => {
-    if (selectingSlot === null) return;
-    setSlots(prev => prev.map((s, i) => i === selectingSlot ? { ...s, player } : s));
-    setSelectingSlot(null);
-  };
+  const teamOverallA = useMemo(() => computeTeamOverall(slotsA.map(s => s.player).filter(Boolean) as Player[]), [slotsA]);
+  const teamOverallB = useMemo(() => computeTeamOverall(slotsB.map(s => s.player).filter(Boolean) as Player[]), [slotsB]);
 
-  const clearSlot = (idx: number) => {
-    setSlots(prev => prev.map((s, i) => i === idx ? { ...s, player: null } : s));
-  };
-
-  const assignedIds = new Set(slots.filter(s => s.player).map(s => s.player!._id));
-  const availablePlayers = players.filter(p => !assignedIds.has(p._id));
-
-  const getSlotIdx = (rowIdx: number, colIdx: number): number => {
+  const getRowSlotIdx = (rows: string[][], rowIdx: number, colIdx: number): number => {
     let idx = 0;
-    for (let r = 0; r < rowIdx; r++) idx += formationRows[r].length;
+    for (let r = 0; r < rowIdx; r++) idx += rows[r].length;
     return idx + colIdx;
   };
+
+  const renderTeamPitch = (team: TeamKey, label: string, rows: string[][], slots: SlotState[], overall: number) => (
+    <View style={styles.pitch}>
+      <View style={styles.pitchHeader}>
+        <Text style={styles.pitchLabel}>{label}</Text>
+        {applied && <Text style={styles.pitchOvr}>OVR {overall}</Text>}
+      </View>
+      {rows.map((row, ri) => (
+        <View key={ri} style={styles.pitchRow}>
+          {row.map((pos, ci) => {
+            const idx = getRowSlotIdx(rows, ri, ci);
+            const slot = slots[idx];
+            return (
+              <TouchableOpacity
+                key={ci}
+                style={[styles.slot, slot?.player && styles.slotFilled]}
+                onPress={() => slot?.player ? setSlotAction({ team, idx }) : setAddingTo({ team, idx })}
+              >
+                {slot?.player ? (
+                  <>
+                    <Text style={styles.slotNumber}>{slot.player.jerseyNumber}</Text>
+                    <Text style={styles.slotName} numberOfLines={1}>{slot.player.name.split(' ')[0]}</Text>
+                    <Text style={styles.slotPos}>{pos}</Text>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.slotEmpty}>+</Text>
+                    <Text style={styles.slotPos}>{pos}</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      ))}
+    </View>
+  );
+
+  const activeSlots = slotAction ? (slotAction.team === 'A' ? slotsA : slotsB) : [];
+  const activeSlot = slotAction ? activeSlots[slotAction.idx] : null;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -112,16 +181,44 @@ export default function MatchScreen() {
           collapsable={false}
           ref={node => registerTarget('match-formation', node)}
         >
-          <Text style={styles.sectionLabel}>{t('match.formation')}</Text>
+          <Text style={styles.sectionLabel}>{t('match.squadSize')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.formationRow}>
-            {(Object.keys(FORMATIONS) as Formation[]).map(f => (
+            {PLAYER_COUNT_OPTIONS.map(c => (
               <TouchableOpacity
-                key={f}
-                style={[styles.formationBtn, formation === f && styles.formationBtnActive, formationLocked && styles.formationBtnLocked]}
-                onPress={() => !formationLocked && setFormation(f)}
+                key={c}
+                style={[styles.formationBtn, count === c && styles.formationBtnActive, formationLocked && styles.formationBtnLocked]}
+                onPress={() => handleCountChange(c)}
                 disabled={formationLocked}
               >
-                <Text style={[styles.formationBtnText, formation === f && styles.formationBtnTextActive]}>{f}</Text>
+                <Text style={[styles.formationBtnText, count === c && styles.formationBtnTextActive]}>{c}v{c}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          <Text style={styles.sectionLabel}>{t('match.teamAFormation')}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.formationRow}>
+            {getFormationNames(count).map(f => (
+              <TouchableOpacity
+                key={f}
+                style={[styles.formationBtn, formationA === f && styles.formationBtnActive, formationLocked && styles.formationBtnLocked]}
+                onPress={() => !formationLocked && setFormationA(f)}
+                disabled={formationLocked}
+              >
+                <Text style={[styles.formationBtnText, formationA === f && styles.formationBtnTextActive]}>{f}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+
+          <Text style={styles.sectionLabel}>{t('match.teamBFormation')}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.formationRow}>
+            {getFormationNames(count).map(f => (
+              <TouchableOpacity
+                key={f}
+                style={[styles.formationBtn, formationB === f && styles.formationBtnActive, formationLocked && styles.formationBtnLocked]}
+                onPress={() => !formationLocked && setFormationB(f)}
+                disabled={formationLocked}
+              >
+                <Text style={[styles.formationBtnText, formationB === f && styles.formationBtnTextActive]}>{f}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -129,69 +226,61 @@ export default function MatchScreen() {
 
         {!applied ? (
           <View collapsable={false} ref={node => registerTarget('match-apply', node)}>
-            <TouchableOpacity style={styles.applyBtn} onPress={handleApplyFormation}>
-              <Text style={styles.applyBtnText}>{t('match.applyFormation')}</Text>
+            <TouchableOpacity style={styles.applyBtn} onPress={handleBalanceTeams}>
+              <Ionicons name="shuffle" size={15} color={Colors.background} style={{ marginRight: 6 }} />
+              <Text style={styles.applyBtnText}>{t('match.balanceTeams')}</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
-            <Text style={styles.resetBtnText}>{t('match.reset')}</Text>
-          </TouchableOpacity>
-        )}
-
-        {applied && (
-          <View style={styles.pitch}>
-            <Text style={styles.pitchLabel}>{formation}</Text>
-            {formationRows.map((row, ri) => (
-              <View key={ri} style={styles.pitchRow}>
-                {row.map((pos, ci) => {
-                  const idx = getSlotIdx(ri, ci);
-                  const slot = slots[idx];
-                  return (
-                    <TouchableOpacity
-                      key={ci}
-                      style={[styles.slot, slot?.player && styles.slotFilled]}
-                      onPress={() => slot?.player ? setSlotActionIdx(idx) : handleSlotPress(idx)}
-                    >
-                      {slot?.player ? (
-                        <>
-                          <Text style={styles.slotNumber}>{slot.player.jerseyNumber}</Text>
-                          <Text style={styles.slotName} numberOfLines={1}>{slot.player.name.split(' ')[0]}</Text>
-                          <Text style={styles.slotPos}>{pos}</Text>
-                        </>
-                      ) : (
-                        <>
-                          <Text style={styles.slotEmpty}>+</Text>
-                          <Text style={styles.slotPos}>{pos}</Text>
-                        </>
-                      )}
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            ))}
+          <View style={styles.appliedActions}>
+            <TouchableOpacity style={[styles.applyBtn, styles.rebalanceBtn]} onPress={handleBalanceTeams}>
+              <Ionicons name="shuffle" size={15} color={Colors.background} style={{ marginRight: 6 }} />
+              <Text style={styles.applyBtnText}>{t('match.balanceTeams')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.resetBtn} onPress={handleReset}>
+              <Text style={styles.resetBtnText}>{t('match.reset')}</Text>
+            </TouchableOpacity>
           </View>
         )}
 
-        {applied && benchPlayers.length > 0 && (
+        {applied && (
+          <>
+            {renderTeamPitch('A', t('match.teamA'), rowsA, slotsA, teamOverallA)}
+            <View style={{ height: Spacing.md }} />
+            {renderTeamPitch('B', t('match.teamB'), rowsB, slotsB, teamOverallB)}
+          </>
+        )}
+
+        {applied && bench.length > 0 && (
           <View style={styles.bench}>
             <View style={styles.benchHeader}>
               <Ionicons name="person-remove-outline" size={13} color={Colors.textSecondary} />
               <Text style={styles.benchTitle}>{t('match.bench')}</Text>
-              <Text style={styles.benchCount}>{benchPlayers.length}</Text>
+              <Text style={styles.benchCount}>{bench.length}</Text>
             </View>
-            {benchPlayers.map(player => (
-              <TouchableOpacity
-                key={player._id}
-                style={styles.benchRow}
-                onPress={() => handleAddFromBench(player)}
-              >
+            {bench.map(player => (
+              <View key={player._id} style={styles.benchRow}>
                 <View style={styles.benchInfo}>
                   <Text style={styles.benchName}>{player.name}</Text>
                   <Text style={styles.benchPos}>{player.preferredPosition ?? '?'}</Text>
                 </View>
-                <Text style={styles.benchAdd}>{t('match.addBtn')}</Text>
-              </TouchableOpacity>
+                <View style={styles.benchAddRow}>
+                  <TouchableOpacity
+                    style={styles.benchAddBtn}
+                    onPress={() => handleQuickAddToTeam(player, 'A')}
+                    disabled={slotsA.every(s => s.player)}
+                  >
+                    <Text style={[styles.benchAdd, slotsA.every(s => s.player) && styles.benchAddDisabled]}>{t('match.teamA')}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.benchAddBtn}
+                    onPress={() => handleQuickAddToTeam(player, 'B')}
+                    disabled={slotsB.every(s => s.player)}
+                  >
+                    <Text style={[styles.benchAdd, slotsB.every(s => s.player) && styles.benchAddDisabled]}>{t('match.teamB')}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             ))}
           </View>
         )}
@@ -204,31 +293,22 @@ export default function MatchScreen() {
       </ScrollView>
 
       <Modal
-        visible={slotActionIdx !== null}
+        visible={slotAction !== null}
         transparent
         animationType="fade"
-        onRequestClose={() => setSlotActionIdx(null)}
+        onRequestClose={() => setSlotAction(null)}
       >
-        <Pressable style={styles.modalBackdrop} onPress={() => setSlotActionIdx(null)}>
+        <Pressable style={styles.modalBackdrop} onPress={() => setSlotAction(null)}>
           <Pressable style={styles.actionSheet} onPress={e => e.stopPropagation()}>
-            <Text style={styles.actionSheetTitle}>
-              {slotActionIdx !== null ? slots[slotActionIdx]?.player?.name ?? '' : ''}
-            </Text>
+            <Text style={styles.actionSheetTitle}>{activeSlot?.player?.name ?? ''}</Text>
             <TouchableOpacity
               style={styles.actionBtn}
-              onPress={() => { clearSlot(slotActionIdx!); setSlotActionIdx(null); }}
-            >
-              <Ionicons name="close-circle-outline" size={16} color={Colors.error} />
-              <Text style={[styles.actionBtnText, { color: Colors.error }]}>{t('match.removeFromLineup')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.actionBtn}
-              onPress={() => handleBench(slotActionIdx!)}
+              onPress={() => { if (slotAction) handleBench(slotAction.team, slotAction.idx); }}
             >
               <Ionicons name="person-remove-outline" size={16} color={Colors.textSecondary} />
               <Text style={styles.actionBtnText}>{t('match.sendToBench')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.modalClose} onPress={() => setSlotActionIdx(null)}>
+            <TouchableOpacity style={styles.modalClose} onPress={() => setSlotAction(null)}>
               <Text style={styles.modalCloseText}>{t('common.cancel')}</Text>
             </TouchableOpacity>
           </Pressable>
@@ -236,18 +316,18 @@ export default function MatchScreen() {
       </Modal>
 
       <Modal
-        visible={selectingSlot !== null}
+        visible={addingTo !== null}
         transparent
         animationType="slide"
-        onRequestClose={() => setSelectingSlot(null)}
+        onRequestClose={() => setAddingTo(null)}
       >
-        <Pressable style={styles.modalBackdrop} onPress={() => setSelectingSlot(null)}>
+        <Pressable style={styles.modalBackdrop} onPress={() => setAddingTo(null)}>
           <Pressable style={styles.modalContent} onPress={e => e.stopPropagation()}>
             <Text style={styles.modalTitle}>
-              {t('match.selectPlayerTitle', { position: selectingSlot !== null ? slots[selectingSlot]?.position : '' })}
+              {t('match.selectPlayerTitle', { position: addingTo ? (addingTo.team === 'A' ? slotsA : slotsB)[addingTo.idx]?.position : '' })}
             </Text>
             <FlatList
-              data={availablePlayers}
+              data={bench}
               keyExtractor={p => p._id}
               style={{ maxHeight: 400 }}
               renderItem={({ item }) => {
@@ -255,7 +335,7 @@ export default function MatchScreen() {
                   ? item.gkOverall
                   : Math.round((item.offensiveOverall + item.defensiveOverall + item.athleticismOverall) / 3);
                 return (
-                  <TouchableOpacity style={styles.playerOption} onPress={() => assignPlayer(item)}>
+                  <TouchableOpacity style={styles.playerOption} onPress={() => handleAddFromBench(item)}>
                     <Text style={styles.playerOptionOvr}>{overall}</Text>
                     <View style={styles.playerOptionInfo}>
                       <Text style={styles.playerOptionName}>{item.name}</Text>
@@ -268,7 +348,7 @@ export default function MatchScreen() {
                 <Text style={styles.emptyText}>{t('match.noAvailablePlayers')}</Text>
               }
             />
-            <TouchableOpacity style={styles.modalClose} onPress={() => setSelectingSlot(null)}>
+            <TouchableOpacity style={styles.modalClose} onPress={() => setAddingTo(null)}>
               <Text style={styles.modalCloseText}>{t('common.cancel')}</Text>
             </TouchableOpacity>
           </Pressable>
@@ -289,6 +369,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1.5,
     marginBottom: Spacing.sm,
+    marginTop: Spacing.sm,
   },
   formationSelector: { marginBottom: Spacing.md },
   formationRow: { flexDirection: 'row' },
@@ -308,9 +389,11 @@ const styles = StyleSheet.create({
   formationBtnText: { color: Colors.textSecondary, fontSize: FontSizes.sm, fontWeight: '700' },
   formationBtnTextActive: { color: Colors.accent },
   applyBtn: {
+    flexDirection: 'row',
     backgroundColor: Colors.accent,
     padding: Spacing.md,
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: Spacing.lg,
   },
   applyBtnText: {
@@ -320,12 +403,22 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.sm,
     textTransform: 'uppercase',
   },
+  appliedActions: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
+  rebalanceBtn: {
+    flex: 1,
+    marginBottom: Spacing.lg,
+  },
   resetBtn: {
+    flex: 1,
     backgroundColor: Colors.errorDim,
     borderWidth: 1,
     borderColor: Colors.error,
     padding: Spacing.md,
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: Spacing.lg,
   },
   resetBtnText: {
@@ -341,14 +434,26 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0,180,80,0.2)',
     padding: Spacing.md,
   },
+  pitchHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: Spacing.md,
+  },
   pitchLabel: {
     color: Colors.accent,
     fontSize: FontSizes.sm,
     fontWeight: '700',
     textAlign: 'center',
     letterSpacing: 2,
-    marginBottom: Spacing.md,
     textTransform: 'uppercase',
+  },
+  pitchOvr: {
+    color: Colors.textMuted,
+    fontSize: FontSizes.xs,
+    fontWeight: '700',
+    letterSpacing: 1,
+    marginLeft: Spacing.sm,
   },
   pitchRow: {
     flexDirection: 'row',
@@ -463,12 +568,22 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
+  benchAddRow: { flexDirection: 'row', gap: Spacing.sm },
+  benchAddBtn: {
+    borderWidth: 1,
+    borderColor: Colors.accentBorder,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+  },
   benchAdd: {
     color: Colors.accent,
     fontSize: FontSizes.xs,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.8,
+  },
+  benchAddDisabled: {
+    color: Colors.textMuted,
   },
   actionSheet: {
     backgroundColor: Colors.panelBgSolid,

@@ -313,11 +313,12 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   googleBtn: {
+    height: 48,
     borderWidth: 1,
-    borderColor: Colors.border,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    padding: Spacing.md,
+    borderColor: 'rgba(255,255,255,0.85)',
+    backgroundColor: 'transparent',
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: Spacing.sm,
   },
   appleBtn: {
@@ -330,10 +331,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   googleBtnText: {
-    color: Colors.textPrimary,
+    color: '#ffffff',
     fontWeight: '600',
-    fontSize: FontSizes.sm,
-    letterSpacing: 0.5,
+    fontSize: 17,
   },
   closeBtn: {
     alignItems: 'center',

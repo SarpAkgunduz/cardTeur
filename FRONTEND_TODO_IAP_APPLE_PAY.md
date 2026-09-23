@@ -59,4 +59,14 @@ and there's no product to charge for.
 
 ## Status
 Backend: done, type-checks clean.
-Frontend/mobile: not started.
+Frontend/mobile: mobile Account screen shipped (app/(tabs)/account.tsx) —
+profile editing, plan display with feature list, "Manage Subscription" App
+Store deep link, language switcher, sign out, and delete-account flow (mirrors
+web's ProfilePage). The paid-tier "Upgrade" button currently shows a
+"coming soon" alert instead of a real purchase flow, since `react-native-purchases`
+still isn't installed — that's still item 1 above. Once it's installed and
+`Purchases.purchasePackage(...)` is wired up, replace `handleUpgrade` in
+account.tsx with the real paywall flow instead of the alert.
+Also: the "Preview" tab was removed entirely (replaced by the "Account" tab)
+per product decision — mobile now has parity with web on squad-size/formation
+options, player card photos, and account management.

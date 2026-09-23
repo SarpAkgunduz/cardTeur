@@ -53,8 +53,11 @@ export const computeCardTitle = ({
   gkOverall = 0,
   isGK = false,
 }: TierInput): CardTier => {
+  // Kept in sync with server/models/Player.ts's cardTitle virtual — gold
+  // spans 85-99 (the "Gold" random-generation tier's full range), so
+  // platinum's cutoff sits above it instead of overlapping it.
   if (isGK) {
-    if (gkOverall >= 90) return 'platinum';
+    if (gkOverall >= 95) return 'platinum';
     if (gkOverall >= 85) return 'gold';
     if (gkOverall >= 60) return 'silver';
     return 'bronze';
@@ -62,7 +65,7 @@ export const computeCardTitle = ({
 
   const defScore = (defensiveOverall + athleticismOverall) / 2;
   const offScore = (offensiveOverall + athleticismOverall) / 2;
-  if (defScore >= 90 || offScore >= 90) return 'platinum';
+  if (defScore >= 95 || offScore >= 95) return 'platinum';
   if (defScore >= 85 || offScore >= 85) return 'gold';
   if (defScore >= 60 || offScore >= 60) return 'silver';
   return 'bronze';

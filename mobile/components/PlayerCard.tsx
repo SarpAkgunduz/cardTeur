@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { CardColors } from '../constants/theme';
+import { resolveCardImage } from '../utils/cardImage';
 
 export interface PlayerCardProps {
   _id: string;
@@ -112,7 +113,7 @@ export default function PlayerCard({
 
       <View style={styles.imageArea}>
         {cardImage ? (
-          <Image source={{ uri: cardImage }} style={styles.image} />
+          <Image source={{ uri: resolveCardImage(cardImage) }} style={styles.image} />
         ) : (
           <View style={[styles.image, styles.imageFallback]}>
             <Text style={{ color: tierColors.text, fontSize: 28, fontWeight: '900' }}>?</Text>

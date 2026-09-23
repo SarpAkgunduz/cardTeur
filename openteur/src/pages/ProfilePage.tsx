@@ -237,20 +237,24 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        {/* Account ID section */}
-        <div className="profile-page__card">
-          <div className="profile-page__card-header">
-            <span className="profile-page__card-label">{t('profile.accountId')}</span>
+        {/* Account ID section — an anonymous/guest session's uid isn't a
+            real, recoverable account identity, so showing it here as if it
+            were one is misleading; hide the whole card for guests. */}
+        {!currentUser?.isAnonymous && (
+          <div className="profile-page__card">
+            <div className="profile-page__card-header">
+              <span className="profile-page__card-label">{t('profile.accountId')}</span>
+            </div>
+            <p className="profile-page__id-desc">{t('profile.accountIdDesc')}</p>
+            <div className="profile-page__id-row">
+              <span className="profile-page__id-value">{currentUser?.uid}</span>
+              <button className="profile-page__id-copy-btn" onClick={handleCopyUid} title="Copy ID">
+                <i className={`bi ${uidCopied ? 'bi-check-lg' : 'bi-clipboard'}`} />
+                {uidCopied ? 'Copied!' : 'Copy'}
+              </button>
+            </div>
           </div>
-          <p className="profile-page__id-desc">{t('profile.accountIdDesc')}</p>
-          <div className="profile-page__id-row">
-            <span className="profile-page__id-value">{currentUser?.uid}</span>
-            <button className="profile-page__id-copy-btn" onClick={handleCopyUid} title="Copy ID">
-              <i className={`bi ${uidCopied ? 'bi-check-lg' : 'bi-clipboard'}`} />
-              {uidCopied ? 'Copied!' : 'Copy'}
-            </button>
-          </div>
-        </div>
+        )}
 
         {/* Password section */}
         <div className="profile-page__card">

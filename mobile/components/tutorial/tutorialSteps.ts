@@ -52,14 +52,6 @@ export const TUTORIAL_STEPS: TutorialStep[] = [
     textKey: 'tutorial.matchApplyText',
   },
   {
-    id: 'preview',
-    route: '/(tabs)/preview',
-    pathname: '/preview',
-    targetId: 'preview-list',
-    titleKey: 'tutorial.previewTitle',
-    textKey: 'tutorial.previewText',
-  },
-  {
     id: 'crew',
     guestLocked: true,
     route: '/(tabs)/crew',

@@ -315,17 +315,24 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: Spacing.md,
   },
+  // Matched as closely as possible to Apple's own SIGN_IN/SIGN_UP button
+  // just below (buttonStyle WHITE_OUTLINE) — Apple's button is a native,
+  // system-rendered control whose font/size/corner radius Apple does not
+  // allow customizing, so this is styled to LOOK the same (same height,
+  // white outline, white text, no letter-spacing, matching corner radius)
+  // rather than reusing shared style values.
   googleBtn: {
+    height: 48,
     borderWidth: 1,
-    borderColor: Colors.border,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    padding: Spacing.md,
+    borderColor: 'rgba(255,255,255,0.85)',
+    backgroundColor: 'transparent',
     alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: Spacing.sm,
   },
   appleBtn: {
     height: 48,
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
   googleBtnContent: {
     flexDirection: 'row',
@@ -334,10 +341,9 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   googleBtnText: {
-    color: Colors.textPrimary,
+    color: '#ffffff',
     fontWeight: '600',
-    fontSize: FontSizes.sm,
-    letterSpacing: 0.5,
+    fontSize: 17,
   },
   signupLink: {
     alignItems: 'center',

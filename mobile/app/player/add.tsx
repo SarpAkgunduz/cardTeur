@@ -7,16 +7,18 @@ import {
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
-  SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { usePlayers } from '../../contexts/PlayerContext';
 import ScreenHeader from '../../components/ScreenHeader';
 import Toast from '../../components/Toast';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
+import { PRESET_AVATARS } from '../../utils/cardImage';
 
 const POSITIONS = ['ST', 'LW', 'RW', 'CAM', 'CM', 'CDM', 'LB', 'RB', 'CB', 'GK', 'LM', 'RM'];
 
@@ -181,6 +183,21 @@ export default function AddPlayerScreen() {
           </View>
 
           <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{t('playerForm.photo')}</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.photoRow}>
+              {PRESET_AVATARS.map((uri) => (
+                <TouchableOpacity
+                  key={uri}
+                  style={[styles.photoThumbWrap, cardImage === uri && styles.photoThumbWrapActive]}
+                  onPress={() => setCardImage(uri)}
+                >
+                  <Image source={{ uri }} style={styles.photoThumb} />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+
+          <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t('playerForm.stats')}</Text>
 
             <View style={styles.tabRow}>
@@ -335,6 +352,24 @@ const styles = StyleSheet.create({
   },
   row: { flexDirection: 'row', gap: Spacing.sm },
   halfField: { flex: 1 },
+  photoRow: {
+    gap: Spacing.sm,
+    paddingVertical: 4,
+  },
+  photoThumbWrap: {
+    width: 56,
+    height: 56,
+    borderWidth: 2,
+    borderColor: Colors.border,
+    padding: 2,
+  },
+  photoThumbWrapActive: {
+    borderColor: Colors.accent,
+  },
+  photoThumb: {
+    width: '100%',
+    height: '100%',
+  },
   positionGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
