@@ -7,7 +7,7 @@
     "@react-native-async-storage/async-storage": "2.2.0",
     "expo": "57.0.9",
     "expo-apple-authentication": "~57.0.2",
-    "expo-audio": "~1.0.13",
+    "expo-audio": "~57.0.3",
     "expo-auth-session": "57.0.5",
     "expo-constants": "57.0.18",
     "expo-crypto": "57.0.1",
