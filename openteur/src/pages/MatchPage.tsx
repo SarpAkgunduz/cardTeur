@@ -13,6 +13,7 @@ import { apiRequest } from '../services/api/apiClient';
 import './MatchPage.css';
 import '../components/MatchDetailsModal.css';
 import { PLAYER_COUNT_OPTIONS, getFormationSet, smartAssign } from '../data/formations';
+import { playSound } from '../utils/sounds';
 
 interface CrewOption {
   _id: string;
@@ -220,6 +221,7 @@ const MatchPage = () => {
     setPositionsA(newPosA);
     setPositionsB(newPosB);
     setSavedMatchId(null);
+    playSound('complete');
   };
 
   const handleMoveA = (id: string, x: number, y: number) =>

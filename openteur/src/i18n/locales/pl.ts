@@ -352,6 +352,9 @@ const pl: typeof en = {
     confirmNewPasswordPh: 'Powtórz nowe hasło',
     dangerZone: 'Strefa zagrożenia',
     dangerDesc: 'Trwale usuwa Twoje konto i wszystkie powiązane dane. Tej operacji nie można cofnąć.',
+    settingsTitle: 'Ustawienia',
+    soundEffects: 'Efekty dźwiękowe',
+    soundEffectsHint: 'Odtwarzaj dźwięki przy odsłanianiu kart, ustawianiu meczu i innych czynnościach',
   },
   mdm: {
     title: 'Szczegóły meczu',

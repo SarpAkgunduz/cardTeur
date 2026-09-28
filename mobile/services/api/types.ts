@@ -52,7 +52,9 @@ export interface Crew {
   _id: string;
   name: string;
   ownerUid: string;
+  playerIds: string[];
   memberUids: string[];
+  editorUids: string[];
   players: CrewMember[];
 }
 

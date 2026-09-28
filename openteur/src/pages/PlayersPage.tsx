@@ -6,6 +6,7 @@ import Card from '../components/Card';
 import ComparePanel from '../components/ComparePanel';
 import ConfirmDialog from '../components/ConfirmDialog';
 import ToastNotification from '../components/ToastNotification';
+import type { SoundName } from '../utils/sounds';
 import UpgradeModal from '../components/UpgradeModal';
 import PlanUsageMeter from '../components/PlanUsageMeter';
 import { Player } from '../services';
@@ -74,6 +75,7 @@ const PlayersPage = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMsg, setToastMsg] = useState('');
   const [toastVariant, setToastVariant] = useState<'success' | 'danger'>('success');
+  const [toastSound, setToastSound] = useState<SoundName | undefined>(undefined);
   const navigate = useNavigate();
 
   // "By position" view state — mirrors the old PreviewPage: read-only roster
@@ -221,6 +223,7 @@ const PlayersPage = () => {
       const player = await createPlayer(buildRandomPlayer(tier));
       setToastMsg(t('players.generatedToast', { name: player.name }));
       setToastVariant('success');
+      setToastSound('achievement');
       setShowToast(true);
       setRandomPickerOpen(false);
     } catch (error) {
@@ -231,6 +234,7 @@ const PlayersPage = () => {
         console.error('Generate random player error:', error);
         setToastMsg(t('players.generateFailed'));
         setToastVariant('danger');
+        setToastSound(undefined);
         setShowToast(true);
       }
     } finally {
@@ -560,6 +564,7 @@ const PlayersPage = () => {
         message={toastMsg}
         onClose={() => setShowToast(false)}
         variant={toastVariant}
+        sound={toastSound}
       />
 
       <UpgradeModal

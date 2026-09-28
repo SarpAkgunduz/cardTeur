@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { useTutorial } from '../contexts/TutorialContext';
 import { apiRequest } from '../services/api/apiClient';
+import { playSound } from '../utils/sounds';
 import './GoogleSignInButton.css';
 
 const GoogleSignInButton: React.FC = () => {
@@ -47,6 +48,7 @@ const GoogleSignInButton: React.FC = () => {
         }
         redirectTo = '/friends';
       }
+      playSound('unlock');
       if (isNewUser) {
         // Genuinely new account — route through /welcome so the sign-up
         // conversion fires. Returning users go straight to their destination.

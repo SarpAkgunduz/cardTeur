@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   Linking,
+  Switch,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +20,7 @@ import { userApi } from '../../services/api/userApi';
 import ScreenHeader from '../../components/ScreenHeader';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
 import { PRESET_AVATARS, resolveCardImage } from '../../utils/cardImage';
+import { isSoundEnabled, loadSoundPreference, setSoundEnabled } from '../../utils/sounds';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import type { AppUser, Plan } from '../../services/api/types';
 
@@ -37,6 +39,16 @@ export default function AccountScreen() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [saveNotice, setSaveNotice] = useState<string | null>(null);
+  const [soundOn, setSoundOn] = useState(true);
+
+  useEffect(() => {
+    loadSoundPreference().then(setSoundOn);
+  }, []);
+
+  const handleToggleSound = async (value: boolean) => {
+    setSoundOn(value);
+    await setSoundEnabled(value);
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -210,6 +222,34 @@ export default function AccountScreen() {
               )}
             </View>
 
+            {/* Settings card — moved right under the profile card, above
+                Plan/Language, since it was getting lost below the (long)
+                plan feature list and users couldn't find it. */}
+            <View style={styles.card}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>{t('account.settingsTitle')}</Text>
+              </View>
+              <View style={styles.settingRow}>
+                <View style={styles.settingInfo}>
+                  <Text style={styles.settingLabel}>{t('account.soundEffects')}</Text>
+                  <Text style={styles.settingHint}>{t('account.soundEffectsHint')}</Text>
+                </View>
+                <Switch
+                  value={soundOn}
+                  onValueChange={handleToggleSound}
+                  trackColor={{ false: Colors.border, true: Colors.accentBorder }}
+                  thumbColor={soundOn ? Colors.accent : Colors.textMuted}
+                />
+              </View>
+              <View style={styles.settingDivider} />
+              <View style={styles.settingRow}>
+                <View style={styles.settingInfo}>
+                  <Text style={styles.settingLabel}>{t('account.language')}</Text>
+                </View>
+                <LanguageSwitcher floating={false} />
+              </View>
+            </View>
+
             {/* Plan card */}
             <View style={styles.card}>
               <View style={styles.sectionHeader}>
@@ -231,14 +271,6 @@ export default function AccountScreen() {
                   <Text style={styles.manageBtnText}>{t('account.manageSubscription')}</Text>
                 </TouchableOpacity>
               )}
-            </View>
-
-            {/* Language card */}
-            <View style={styles.card}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>{t('account.language')}</Text>
-              </View>
-              <LanguageSwitcher floating={false} />
             </View>
 
             {/* Sign out */}
@@ -420,6 +452,30 @@ const styles = StyleSheet.create({
   },
   sectionHeader: {
     marginBottom: Spacing.sm,
+  },
+  settingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  settingInfo: {
+    flex: 1,
+    marginRight: Spacing.md,
+  },
+  settingLabel: {
+    color: Colors.textPrimary,
+    fontSize: FontSizes.sm,
+    fontWeight: '700',
+  },
+  settingHint: {
+    color: Colors.textMuted,
+    fontSize: FontSizes.xs,
+    marginTop: 2,
+  },
+  settingDivider: {
+    height: 1,
+    backgroundColor: Colors.border,
+    marginVertical: Spacing.md,
   },
   sectionTitle: {
     color: Colors.accent,

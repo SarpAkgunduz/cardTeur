@@ -9,6 +9,7 @@ import { TutorialProvider } from '../contexts/TutorialContext';
 import TutorialOverlay from '../components/tutorial/TutorialOverlay';
 import { Colors } from '../constants/theme';
 import { initI18n } from '../i18n';
+import { loadSoundPreference } from '../utils/sounds';
 
 function RootNavigator() {
   const { currentUser, loading } = useAuth();
@@ -53,6 +54,9 @@ export default function RootLayout() {
 
   useEffect(() => {
     initI18n().then(() => setI18nReady(true));
+    // Loads the persisted sound-effects on/off preference once at startup
+    // so `playSound()` calls anywhere in the app respect it immediately.
+    loadSoundPreference();
   }, []);
 
   if (!i18nReady) {

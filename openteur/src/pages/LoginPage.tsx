@@ -4,6 +4,7 @@ import { useTranslation, Trans } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 import './LoginPage.css';
+import { playSound } from '../utils/sounds';
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,6 +30,7 @@ const LoginPage = () => {
     setNotice('');
     try {
       await signIn(email, password);
+      playSound('unlock');
       // PublicRoute handles redirect once Firebase auth state propagates to context
     } catch {
       setError(t('auth.loginFailed'));

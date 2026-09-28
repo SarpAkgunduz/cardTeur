@@ -7,6 +7,7 @@ import ToastNotification from '../components/ToastNotification';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { useNavigate } from 'react-router-dom';
 import { compressImageFile } from '../utils/imageCompression';
+import { isSoundEnabled, setSoundEnabled } from '../utils/sounds';
 import './ProfilePage.css';
 
 interface UserProfile {
@@ -23,6 +24,13 @@ const ProfilePage = () => {
 
   const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
   const [savingName, setSavingName] = useState(false);
+  const [soundOn, setSoundOn] = useState(isSoundEnabled());
+
+  const handleToggleSound = () => {
+    const next = !soundOn;
+    setSoundOn(next);
+    setSoundEnabled(next);
+  };
 
   const [photoPreview, setPhotoPreview] = useState<string>(currentUser?.photoURL || '');
   const [savedPhotoURL, setSavedPhotoURL] = useState<string>(currentUser?.photoURL || '');
@@ -255,6 +263,28 @@ const ProfilePage = () => {
             </div>
           </div>
         )}
+
+        {/* Settings section */}
+        <div className="profile-page__card">
+          <div className="profile-page__card-header">
+            <span className="profile-page__card-label">{t('profile.settingsTitle')}</span>
+          </div>
+          <div className="profile-page__setting-row">
+            <div>
+              <div className="profile-page__setting-label">{t('profile.soundEffects')}</div>
+              <div className="profile-page__setting-hint">{t('profile.soundEffectsHint')}</div>
+            </div>
+            <button
+              type="button"
+              className={`profile-page__switch${soundOn ? ' profile-page__switch--on' : ''}`}
+              role="switch"
+              aria-checked={soundOn}
+              onClick={handleToggleSound}
+            >
+              <span className="profile-page__switch-thumb" />
+            </button>
+          </div>
+        </div>
 
         {/* Password section */}
         <div className="profile-page__card">

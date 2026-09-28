@@ -20,6 +20,7 @@ import { Colors, Spacing, FontSizes } from '../../constants/theme';
 import type { Player } from '../../services/api/types';
 import { PLAYER_COUNT_OPTIONS, getFormationNames, getFormationRows } from '../../data/formations';
 import { balanceIntoTeams, smartAssignSlots, computeTeamOverall } from '../../utils/matchAlgorithms';
+import { playSound } from '../../utils/sounds';
 
 type TeamKey = 'A' | 'B';
 
@@ -77,6 +78,7 @@ export default function MatchScreen() {
     setBench(rest);
     setApplied(true);
     setFormationLocked(true);
+    playSound('complete');
   };
 
   const handleReset = () => {
@@ -121,6 +123,7 @@ export default function MatchScreen() {
     if (idx < 0) return;
     setSlots(team, prev => prev.map((s, i) => i === idx ? { ...s, player } : s));
     setBench(prev => prev.filter(p => p._id !== player._id));
+    playSound('select');
   };
 
   const teamOverallA = useMemo(() => computeTeamOverall(slotsA.map(s => s.player).filter(Boolean) as Player[]), [slotsA]);

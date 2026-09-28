@@ -352,6 +352,9 @@ const tr: typeof en = {
     confirmNewPasswordPh: 'Yeni şifreyi tekrar gir',
     dangerZone: 'Tehlikeli Bölge',
     dangerDesc: 'Hesabını ve tüm verilerini kalıcı olarak siler. Bu işlem geri alınamaz.',
+    settingsTitle: 'Ayarlar',
+    soundEffects: 'Ses Efektleri',
+    soundEffectsHint: 'Kart açılışı, maç kurulumu ve diğer işlemlerde ses çalsın',
   },
   mdm: {
     title: 'Maç Detayları',

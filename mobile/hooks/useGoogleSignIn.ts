@@ -45,6 +45,12 @@ export function useGoogleSignIn(onSuccess?: (isNewUser: boolean) => void) {
       }
       handleCredential(idToken);
     } else if (response.type === 'error' || response.type === 'dismiss') {
+      // Logged so a silent redirect failure (e.g. the native URL scheme
+      // from app.json not actually being in the installed build yet,
+      // which needs a fresh `npx expo run:ios --device`, not just a JS
+      // reload) shows up somewhere instead of just leaving the button spun
+      // forever on some other stuck state.
+      if (response.type === 'error') console.error('[useGoogleSignIn] auth response error:', response);
       setLoading(false);
     }
   }, [response]);
@@ -55,10 +61,26 @@ export function useGoogleSignIn(onSuccess?: (isNewUser: boolean) => void) {
       // A guest (anonymous) session claiming via Google links onto the
       // SAME Firebase user rather than signing into a separate one, so
       // the uid — and every card/match already built as a guest — stays
-      // intact.
-      const result = auth.currentUser?.isAnonymous
-        ? await linkWithCredential(auth.currentUser, credential)
-        : await signInWithCredential(auth, credential);
+      // intact. But if this Google account is already tied to a real,
+      // existing account, linking fails ("already in use") — that just
+      // means the person is logging back INTO that account rather than
+      // creating one, so fall back to a normal sign-in instead of leaving
+      // them stuck on an error with no way to actually log in.
+      let result;
+      if (auth.currentUser?.isAnonymous) {
+        try {
+          result = await linkWithCredential(auth.currentUser, credential);
+        } catch (err) {
+          const code = (err as { code?: string })?.code;
+          if (code === 'auth/credential-already-in-use' || code === 'auth/email-already-in-use') {
+            result = await signInWithCredential(auth, credential);
+          } else {
+            throw err;
+          }
+        }
+      } else {
+        result = await signInWithCredential(auth, credential);
+      }
       const isNewUser = getAdditionalUserInfo(result)?.isNewUser ?? false;
       const user = result.user;
       await apiRequest('/users/register', {
@@ -74,6 +96,7 @@ export function useGoogleSignIn(onSuccess?: (isNewUser: boolean) => void) {
       if (code === 'auth/credential-already-in-use') {
         setError(t('guest.claimEmailInUse'));
       } else {
+        console.error('[useGoogleSignIn] handleCredential failed:', code, err);
         setError(t('auth.googleFailed'));
       }
     } finally {
@@ -85,7 +108,17 @@ export function useGoogleSignIn(onSuccess?: (isNewUser: boolean) => void) {
     if (!request) return;
     setLoading(true);
     setError('');
-    promptAsync();
+    promptAsync().catch((err) => {
+      // promptAsync() itself can reject (rather than resolving with a
+      // {type:'error'} response the useEffect above would catch) — e.g.
+      // when the native redirect scheme registered in app.json isn't
+      // actually present in the installed build yet (needs a fresh
+      // `npx expo run:ios --device`, not just a JS/Metro reload). Without
+      // this the button just spun forever with nothing in the console.
+      console.error('[useGoogleSignIn] promptAsync rejected:', err);
+      setError(t('auth.googleFailed'));
+      setLoading(false);
+    });
   };
 
   return { signIn, loading, error, ready: !!request };

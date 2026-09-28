@@ -257,3 +257,56 @@
 .profile-page__delete-btn:hover:not(:disabled) {
   background: rgba(255, 107, 107, 0.2) !important;
 }
+/* Settings section — sound effects toggle */
+.profile-page__setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.profile-page__setting-label {
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.profile-page__setting-hint {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+.profile-page__switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.profile-page__switch--on {
+  background: rgba(0, 222, 236, 0.28);
+  border-color: rgba(0, 222, 236, 0.55);
+}
+
+.profile-page__switch-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.profile-page__switch--on .profile-page__switch-thumb {
+  transform: translateX(18px);
+  background: #00deec;
+}

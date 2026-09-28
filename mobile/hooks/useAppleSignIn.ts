@@ -61,6 +61,11 @@ export function useAppleSignIn(onSuccess?: () => void) {
       } else if (code === 'auth/credential-already-in-use') {
         setError(t('guest.claimEmailInUse'));
       } else {
+        // Logged so the real cause (e.g. auth/operation-not-allowed when
+        // the Apple provider isn't switched on in the Firebase console
+        // yet) is visible in the Metro/Xcode console instead of being
+        // hidden behind the generic translated message.
+        console.error('[useAppleSignIn] sign-in failed:', code, err);
         setError(t('auth.appleFailed'));
       }
     } finally {

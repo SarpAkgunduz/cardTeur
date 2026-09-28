@@ -352,6 +352,9 @@ const ko: typeof en = {
     confirmNewPasswordPh: '새 비밀번호 재입력',
     dangerZone: '위험 구역',
     dangerDesc: '계정과 관련된 모든 데이터가 영구적으로 삭제됩니다. 이 작업은 취소할 수 없습니다.',
+    settingsTitle: '설정',
+    soundEffects: '효과음',
+    soundEffectsHint: '카드 공개, 경기 설정 등 다양한 동작에서 소리를 재생합니다',
   },
   mdm: {
     title: '경기 상세정보',

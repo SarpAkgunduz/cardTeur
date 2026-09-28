@@ -352,6 +352,9 @@ const zh: typeof en = {
     confirmNewPasswordPh: '再次输入新密码',
     dangerZone: '危险区域',
     dangerDesc: '将永久删除你的账户及所有相关数据，此操作无法撤销。',
+    settingsTitle: '设置',
+    soundEffects: '音效',
+    soundEffectsHint: '在卡牌揭示、比赛设置等操作时播放声音',
   },
   mdm: {
     title: '比赛详情',

@@ -21,7 +21,9 @@ import ComparePanel from '../../components/ComparePanel';
 import ScreenHeader from '../../components/ScreenHeader';
 import GuestSaveBanner from '../../components/GuestSaveBanner';
 import Toast from '../../components/Toast';
+import type { SoundName } from '../../utils/sounds';
 import { Colors, Spacing, FontSizes } from '../../constants/theme';
+import { PRESET_AVATARS } from '../../utils/cardImage';
 import type { Player, CreatePlayerDto } from '../../services/api/types';
 
 type Mode = 'none' | 'edit' | 'delete' | 'compare';
@@ -38,14 +40,6 @@ const RANDOM_POSITIONS = ['CB', 'RB', 'LB', 'CDM', 'CM', 'CAM', 'RW', 'LW', 'ST'
 const randomInt = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 const randomFrom = <T,>(items: T[]) => items[randomInt(0, items.length - 1)];
 
-const PLAYER_PHOTOS = [
-  'https://api.dicebear.com/7.x/avataaars/png?seed=player1',
-  'https://api.dicebear.com/7.x/avataaars/png?seed=player2',
-  'https://api.dicebear.com/7.x/avataaars/png?seed=player3',
-  'https://api.dicebear.com/7.x/avataaars/png?seed=player4',
-  'https://api.dicebear.com/7.x/avataaars/png?seed=player5',
-];
-
 export default function RosterScreen() {
   const { t } = useTranslation();
   const { players, loading, error, deletePlayer, createPlayer } = usePlayers();
@@ -56,10 +50,10 @@ export default function RosterScreen() {
   const [showComparePanel, setShowComparePanel] = useState(false);
   const [randomPickerOpen, setRandomPickerOpen] = useState(false);
   const [generatingTier, setGeneratingTier] = useState<RandomTier | null>(null);
-  const [toast, setToast] = useState({ visible: false, message: '', variant: 'success' as 'success' | 'error' });
+  const [toast, setToast] = useState({ visible: false, message: '', variant: 'success' as 'success' | 'error', sound: undefined as SoundName | undefined });
 
-  const showToast = (message: string, variant: 'success' | 'error' = 'success') => {
-    setToast({ visible: true, message, variant });
+  const showToast = (message: string, variant: 'success' | 'error' = 'success', sound?: SoundName) => {
+    setToast({ visible: true, message, variant, sound });
   };
 
   const setActiveMode = (next: Mode) => {
@@ -121,7 +115,11 @@ export default function RosterScreen() {
     return {
       name: `${option.label} Player ${sequence}`,
       email: '',
-      cardImage: randomFrom(PLAYER_PHOTOS),
+      // Uses the app's own 42 preset card photos (same pool as the manual
+      // photo picker) — this used to pull random cartoon avatars from
+      // dicebear.com instead, which looked completely out of place on an
+      // otherwise realistic player card.
+      cardImage: randomFrom(PRESET_AVATARS),
       jerseyNumber: randomInt(1, 99),
       marketValue: target * 100000,
       preferredPosition: randomFrom(RANDOM_POSITIONS),
@@ -142,7 +140,7 @@ export default function RosterScreen() {
     setGeneratingTier(tier);
     try {
       const player = await createPlayer(buildRandomPlayer(tier));
-      showToast(t('roster.generatedToast', { name: player.name }));
+      showToast(t('roster.generatedToast', { name: player.name }), 'success', 'achievement');
       setRandomPickerOpen(false);
     } catch {
       showToast(t('roster.generateFailedToast'), 'error');
@@ -323,6 +321,7 @@ export default function RosterScreen() {
         visible={toast.visible}
         message={toast.message}
         variant={toast.variant}
+        sound={toast.sound}
         onHide={() => setToast(t => ({ ...t, visible: false }))}
       />
     </SafeAreaView>

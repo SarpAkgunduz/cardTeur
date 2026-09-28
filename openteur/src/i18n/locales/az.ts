@@ -352,6 +352,9 @@ const az: typeof en = {
     confirmNewPasswordPh: 'Yeni şifrəni təkrar daxil et',
     dangerZone: 'Təhlükəli Zona',
     dangerDesc: 'Hesabını və bütün əlaqəli məlumatlarını həmişəlik silir. Bu geri qaytarıla bilməz.',
+    settingsTitle: 'Ayarlar',
+    soundEffects: 'Səs Effektləri',
+    soundEffectsHint: 'Kart açılışı, matç qurulumu və digər əməliyyatlarda səs çalınsın',
   },
   mdm: {
     title: 'Matç Detalları',

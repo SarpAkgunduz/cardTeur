@@ -8,6 +8,7 @@ import { apiRequest } from '../services/api/apiClient';
 import ToastNotification from '../components/ToastNotification';
 import { usePlayerDisplay } from '../hooks/usePlayerDisplay';
 import { useCrewMembers } from '../hooks/useCrewMembers';
+import { playSound } from '../utils/sounds';
 import './CrewPage.css';
 
 interface Crew {
@@ -127,6 +128,7 @@ const CrewPage = () => {
     try {
       await apiRequest(`/crews/${id}`, { method: 'DELETE' });
       setCrews(prev => prev.filter(c => c._id !== id));
+      playSound('delete');
       flashSaved();
     } catch { showMsg('Failed to delete crew.', 'danger'); }
   };
@@ -136,6 +138,7 @@ const CrewPage = () => {
       const updated = await apiRequest<Crew>(`/crews/${crewId}/players/${playerId}`, { method: 'POST' });
       setCrews(prev => prev.map(c => c._id === crewId ? updated : c));
       setAddingPlayerToCrewId(null);
+      playSound('badge');
       const animKey = `${crewId}-${playerId}`;
       setAddedAnimation(prev => ({ ...prev, [animKey]: true }));
       setTimeout(() => setAddedAnimation(prev => { const n = { ...prev }; delete n[animKey]; return n; }), 900);

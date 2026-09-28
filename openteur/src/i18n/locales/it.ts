@@ -350,6 +350,9 @@ export default {
     confirmNewPasswordPh: 'Ripeti la nuova password',
     dangerZone: 'Zona Pericolosa',
     dangerDesc: 'Elimina permanentemente il tuo account e tutti i dati associati. Questa azione non può essere annullata.',
+    settingsTitle: 'Impostazioni',
+    soundEffects: 'Effetti sonori',
+    soundEffectsHint: 'Riproduce suoni per la rivelazione delle carte, la configurazione della partita e altre azioni',
   },
   mdm: {
     title: 'Dettagli Partita',

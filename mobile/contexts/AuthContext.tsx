@@ -106,9 +106,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInWithApple = async (identityToken: string, rawNonce: string, displayName?: string): Promise<User> => {
     const provider = new OAuthProvider('apple.com');
     const credential = provider.credential({ idToken: identityToken, rawNonce });
-    const result = auth.currentUser?.isAnonymous
-      ? await linkWithCredential(auth.currentUser, credential)
-      : await signInWithCredential(auth, credential);
+    let result;
+    if (auth.currentUser?.isAnonymous) {
+      try {
+        result = await linkWithCredential(auth.currentUser, credential);
+      } catch (err) {
+        // This Apple ID is already tied to a real, existing account — the
+        // guest isn't creating a new one, they're logging back into that
+        // one. Sign into it directly instead of surfacing a dead-end
+        // "already in use" error (the anonymous guest session/cards are
+        // left behind, same as switching accounts on web).
+        const code = (err as { code?: string })?.code;
+        if (code === 'auth/credential-already-in-use' || code === 'auth/email-already-in-use') {
+          result = await signInWithCredential(auth, credential);
+        } else {
+          throw err;
+        }
+      }
+    } else {
+      result = await signInWithCredential(auth, credential);
+    }
     if (displayName) {
       try {
         await apiRequest('/users/register', {

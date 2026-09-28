@@ -6,6 +6,7 @@ import { useTutorial } from '../contexts/TutorialContext';
 import { apiRequest } from '../services/api/apiClient';
 import GoogleSignInButton from '../components/GoogleSignInButton';
 import './SignupPage.css';
+import { playSound } from '../utils/sounds';
 
 const SignupPage = () => {
   const [displayName, setDisplayName] = useState('');
@@ -83,6 +84,7 @@ const SignupPage = () => {
       }
       // Route through /welcome first so the Google Ads sign-up conversion only
       // fires for a real, freshly-created account — never on a direct URL visit.
+      playSound('unlock');
       navigate('/welcome', { state: { verifiedSignup: true, redirectTo } });
     } catch (err: any) {
       if (err?.code === 'auth/email-already-in-use') {

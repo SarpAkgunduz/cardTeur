@@ -350,6 +350,9 @@ export default {
     confirmNewPasswordPh: 'Repeat new password',
     dangerZone: 'Danger Zone',
     dangerDesc: 'Permanently delete your account and all associated data. This cannot be undone.',
+    settingsTitle: 'Settings',
+    soundEffects: 'Sound Effects',
+    soundEffectsHint: 'Play sounds for card reveals, match setup, and other actions',
   },
   mdm: {
     title: 'Match Details',

@@ -352,6 +352,9 @@ const ja: typeof en = {
     confirmNewPasswordPh: '新しいパスワードを再入力',
     dangerZone: '危険ゾーン',
     dangerDesc: 'アカウントと関連するすべてのデータを完全に削除します。この操作は元に戻せません。',
+    settingsTitle: '設定',
+    soundEffects: '効果音',
+    soundEffectsHint: 'カード公開や試合セットアップなどの操作時にサウンドを再生します',
   },
   mdm: {
     title: '試合詳細',

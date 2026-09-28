@@ -20,6 +20,7 @@ import { apiRequest } from '../services/api/apiClient';
 import { Colors, Spacing, FontSizes } from '../constants/theme';
 import { useGoogleSignIn } from '../hooks/useGoogleSignIn';
 import { useAppleSignIn } from '../hooks/useAppleSignIn';
+import { playSound } from '../utils/sounds';
 
 interface ClaimAccountModalProps {
   visible: boolean;
@@ -35,7 +36,13 @@ interface ClaimAccountModalProps {
 // component only has to collect the credentials and call them.
 export default function ClaimAccountModal({ visible, onClose, onClaimed, titleKey, textKey }: ClaimAccountModalProps) {
   const { t } = useTranslation();
-  const { signUp, refreshProfile } = useAuth();
+  const { signUp, signIn, refreshProfile } = useAuth();
+  // This modal used to only ever create a NEW account (signUp/link) — a
+  // guest who already has a real account had no way to get back INTO it
+  // from here, which is the exact bug reported: "hesap oluştur ekranında
+  // sadece hesap oluşturuluyor giriş yapılmıyor". 'login' mode below calls
+  // plain email/password sign-in instead of signUp/link.
+  const [mode, setMode] = useState<'signup' | 'login'>('signup');
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -44,22 +51,50 @@ export default function ClaimAccountModal({ visible, onClose, onClaimed, titleKe
   const [submitting, setSubmitting] = useState(false);
   const google = useGoogleSignIn(async () => {
     await refreshProfile();
+    playSound('unlock');
     onClaimed?.();
     onClose();
   });
   const apple = useAppleSignIn(async () => {
     await refreshProfile();
+    playSound('unlock');
     onClaimed?.();
     onClose();
   });
 
   const finishClaim = async () => {
     await refreshProfile();
+    playSound('unlock');
     onClaimed?.();
     onClose();
   };
 
+  const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) {
+      setError(t('auth.fillAllFields'));
+      return;
+    }
+    setSubmitting(true);
+    setError('');
+    try {
+      // Plain sign-in, not signUp/link — this switches the session onto the
+      // person's existing account. Any guest cards on THIS anonymous
+      // session are not carried over (they belong to a different uid);
+      // that's expected when logging into an already-existing account.
+      await signIn(email.trim(), password);
+      await finishClaim();
+    } catch {
+      setError(t('auth.invalidCredentials'));
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleSubmit = async () => {
+    if (mode === 'login') {
+      await handleLogin();
+      return;
+    }
     if (!email.trim() || !password.trim() || !confirm.trim()) {
       setError(t('auth.fillAllFields'));
       return;
@@ -110,23 +145,37 @@ export default function ClaimAccountModal({ visible, onClose, onClaimed, titleKe
               <Text style={styles.title}>{t(titleKey ?? 'guest.claimTitle')}</Text>
               <Text style={styles.text}>{t(textKey ?? 'guest.claimText')}</Text>
 
+              <TouchableOpacity
+                style={styles.modeToggle}
+                onPress={() => { setMode(m => m === 'signup' ? 'login' : 'signup'); setError(''); }}
+              >
+                <Text style={styles.modeToggleText}>
+                  {mode === 'signup' ? t('auth.haveAccount') : t('auth.noAccount')}{' '}
+                  <Text style={styles.modeToggleAccent}>
+                    {mode === 'signup' ? t('auth.loginLink') : t('auth.signUpLink')}
+                  </Text>
+                </Text>
+              </TouchableOpacity>
+
               {(error || google.error || apple.error) ? (
                 <View style={styles.errorBox}>
                   <Text style={styles.errorText}>{error || google.error || apple.error}</Text>
                 </View>
               ) : null}
 
-              <View style={styles.field}>
-                <Text style={styles.label}>{t('auth.displayName')}</Text>
-                <TextInput
-                  style={styles.input}
-                  value={displayName}
-                  onChangeText={setDisplayName}
-                  placeholder={t('auth.displayNamePh')}
-                  placeholderTextColor={Colors.textMuted}
-                  autoCapitalize="words"
-                />
-              </View>
+              {mode === 'signup' && (
+                <View style={styles.field}>
+                  <Text style={styles.label}>{t('auth.displayName')}</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={displayName}
+                    onChangeText={setDisplayName}
+                    placeholder={t('auth.displayNamePh')}
+                    placeholderTextColor={Colors.textMuted}
+                    autoCapitalize="words"
+                  />
+                </View>
+              )}
 
               <View style={styles.field}>
                 <Text style={styles.label}>{t('common.email')}</Text>
@@ -154,17 +203,19 @@ export default function ClaimAccountModal({ visible, onClose, onClaimed, titleKe
                 />
               </View>
 
-              <View style={styles.field}>
-                <Text style={styles.label}>{t('auth.confirmPassword')}</Text>
-                <TextInput
-                  style={styles.input}
-                  value={confirm}
-                  onChangeText={setConfirm}
-                  placeholder="••••••••"
-                  placeholderTextColor={Colors.textMuted}
-                  secureTextEntry
-                />
-              </View>
+              {mode === 'signup' && (
+                <View style={styles.field}>
+                  <Text style={styles.label}>{t('auth.confirmPassword')}</Text>
+                  <TextInput
+                    style={styles.input}
+                    value={confirm}
+                    onChangeText={setConfirm}
+                    placeholder="••••••••"
+                    placeholderTextColor={Colors.textMuted}
+                    secureTextEntry
+                  />
+                </View>
+              )}
 
               <TouchableOpacity
                 style={[styles.btn, submitting && styles.btnDisabled]}
@@ -174,7 +225,7 @@ export default function ClaimAccountModal({ visible, onClose, onClaimed, titleKe
               >
                 {submitting
                   ? <ActivityIndicator color={Colors.background} />
-                  : <Text style={styles.btnText}>{t('guest.claimSaveCta')}</Text>
+                  : <Text style={styles.btnText}>{mode === 'signup' ? t('guest.claimSaveCta') : t('auth.loginBtn')}</Text>
                 }
               </TouchableOpacity>
 
@@ -264,6 +315,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 19,
     marginBottom: Spacing.lg,
+  },
+  modeToggle: {
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  modeToggleText: {
+    color: Colors.textSecondary,
+    fontSize: FontSizes.sm,
+  },
+  modeToggleAccent: {
+    color: Colors.accent,
+    fontWeight: '700',
   },
   errorBox: {
     backgroundColor: Colors.errorDim,

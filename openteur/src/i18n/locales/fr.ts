@@ -352,6 +352,9 @@ const fr: typeof en = {
     confirmNewPasswordPh: 'Répétez le nouveau mot de passe',
     dangerZone: 'Zone de Danger',
     dangerDesc: 'Supprimez définitivement votre compte et toutes les données associées. Cette action est irréversible.',
+    settingsTitle: 'Paramètres',
+    soundEffects: 'Effets sonores',
+    soundEffectsHint: 'Joue des sons lors de la révélation des cartes, de la configuration du match et d\'autres actions',
   },
   mdm: {
     title: 'Détails du Match',

@@ -352,6 +352,9 @@ const de: typeof en = {
     confirmNewPasswordPh: 'Neues Passwort wiederholen',
     dangerZone: 'Gefahrenzone',
     dangerDesc: 'Löscht dein Konto und alle zugehörigen Daten dauerhaft. Dies kann nicht rückgängig gemacht werden.',
+    settingsTitle: 'Einstellungen',
+    soundEffects: 'Soundeffekte',
+    soundEffectsHint: 'Sounds für Kartenenthüllungen, Spielaufbau und andere Aktionen abspielen',
   },
   mdm: {
     title: 'Spieldetails',

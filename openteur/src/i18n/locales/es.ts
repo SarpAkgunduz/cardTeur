@@ -350,6 +350,9 @@ export default {
     confirmNewPasswordPh: 'Repite la nueva contraseña',
     dangerZone: 'Zona de Peligro',
     dangerDesc: 'Elimina permanentemente tu cuenta y todos los datos asociados. Esto no se puede deshacer.',
+    settingsTitle: 'Ajustes',
+    soundEffects: 'Efectos de sonido',
+    soundEffectsHint: 'Reproduce sonidos al revelar cartas, configurar el partido y otras acciones',
   },
   mdm: {
     title: 'Detalles del Partido',
